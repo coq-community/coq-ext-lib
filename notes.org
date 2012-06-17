@@ -1,0 +1,34 @@
+* Libraries
+** Numbers
+*** Group
+*** Ring
+*** Field
+** Structures
+*** Monad
+*** Monoid
+*** Decidables
+** Containers
+*** Lists
+*** Sets 
+*** Finite Maps
+*** Multi-maps
+** Comparison
+*** Ordering
+*** Setoid Equivalences
+*** Sorting
+** Reflection
+*** 'consider'
+** Tactics
+*** 'think'
+
+* Ideas
+** Modules are for controlling namespaces only
+*** No functors
+*** Entities are mostly described in terms of type classes
+** Nothing exports notation
+** Nothing exports hiints to core
+** Avoid use of dependent functions
+*** Use the Decidables library as much as posible
+*** Derive as much as possible
+** Tactics for reasoning about theories
+** 
