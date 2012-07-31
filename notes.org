@@ -1,3 +1,10 @@
+* File Structure
+** plugins/
+   - Base directory to the provided plugins
+** theories/
+   - Base directory to the provided theories
+
+
 * Libraries
 ** Numbers
 *** Group
