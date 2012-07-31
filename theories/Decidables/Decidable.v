@@ -1,24 +1,35 @@
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Class EquivDec (T : Type) (equ : T -> T -> Prop) : Type :=
-{ equiv_dec : T -> T -> bool }.
+Class RelDec (T : Type) (equ : T -> T -> Prop) : Type :=
+{ rel_dec : T -> T -> bool }.
 
-Class EquivDec_Correct T (equ : T -> T -> Prop) (ED : EquivDec equ) : Prop :=
-{ equiv_dec_correct : forall x y : T, equiv_dec x y = true <-> equ x y }.
+Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
+{ rel_dec_correct : forall x y : T, rel_dec x y = true <-> equ x y }.
 
-Definition eq_dec (T : Type) (ED : EquivDec (@eq T)) := equiv_dec.
+Definition eq_dec (T : Type) (ED : RelDec (@eq T)) := rel_dec.
 
 (** Base Instances **)
-Global Instance EquivDec_eq_unit : EquivDec (@eq unit) := 
-{ equiv_dec := fun _ _ => true }.
+Global Instance RelDec_eq_unit : RelDec (@eq unit) := 
+{ rel_dec := fun _ _ => true }.
+Global Instance RelDec_Correct_eq_unit : RelDec_Correct RelDec_eq_unit.
+  constructor. destruct x; destruct y; auto; simpl. intuition.
+Qed.
 
-Global Instance EquivDec_eq_bool : EquivDec (@eq bool) := 
-{ equiv_dec := fun x y => match x , y with 
+Global Instance RelDec_eq_bool : RelDec (@eq bool) := 
+{ rel_dec := fun x y => match x , y with 
                             | true , true
                             | false , false => true
                             | _ , _=> false
                           end }.
+Global Instance RelDec_Correct_eq_bool : RelDec_Correct RelDec_eq_bool.
+  constructor. destruct x; destruct y; auto; simpl; intuition.
+Qed.
+
+Require Import Arith.
+Global Instance RelDec_eq_nat : RelDec (@eq nat) :=
+{ rel_dec := EqNat.beq_nat }.
+
 
 Section PairParam.
   Variable T : Type.
@@ -26,12 +37,12 @@ Section PairParam.
   Variable U : Type.
   Variable eqU : U -> U -> Prop.
 
-  Variable EDT : EquivDec eqT.
-  Variable EDU : EquivDec eqU.
+  Variable EDT : RelDec eqT.
+  Variable EDU : RelDec eqU.
 
-  Global Instance EquivDec_equ_pair : EquivDec (fun x y => eqT (fst x) (fst y) /\ eqU (snd x) (snd y)) :=
-  { equiv_dec := fun x y => 
-    if equiv_dec (fst x) (fst y) then
-      equiv_dec (snd x) (snd y)
+  Global Instance RelDec_equ_pair : RelDec (fun x y => eqT (fst x) (fst y) /\ eqU (snd x) (snd y)) :=
+  { rel_dec := fun x y => 
+    if rel_dec (fst x) (fst y) then
+      rel_dec (snd x) (snd y)
     else false }.
 End PairParam.
