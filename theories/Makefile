@@ -1,7 +1,8 @@
 TESTS      := 
 MONAD      := $(patsubst %.v,%,$(wildcard Monad/*.v))
 TACTICS    := $(patsubst %.v,%,$(wildcard Tactics/*.v))
-MODULES    := $(TACTICS) $(MONAD)
+DATA       := $(patsubst %.v,%,$(wildcard Data/*.v))
+MODULES    := $(TACTICS) $(MONAD) $(DATA)
 VS         := $(MODULES:%=%.v)
 TVS        := $(TESTS:%=%.v)
 
