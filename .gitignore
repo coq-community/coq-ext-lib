@@ -3,3 +3,5 @@
 *.v.d
 Makefile.coq
 *~
+#*#
+.#*

@@ -4,8 +4,12 @@
 ** theories/
    - Base directory to the provided theories
 
-
 * Libraries
+** Equality
+   type-class based decidable equality
+   - how to integrate this with different notions of equality
+     [equiv_dec] is standard
+     [eq_dec] is [equiv_dec (equ := eq)]
 ** Numbers
 *** Group
 *** Ring

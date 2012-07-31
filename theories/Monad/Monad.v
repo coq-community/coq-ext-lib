@@ -32,7 +32,7 @@ Class State (T : Type) (m : Type -> Type) : Type :=
 }.
 
 Class Zero (m : Type -> Type) : Type :=
-{ zero : forall T, m T }.
+{ zero : forall {T}, m T }.
 
 (*
 Class GenSym {T : Type} {m : Type -> Type} : Type :=
