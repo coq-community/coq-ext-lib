@@ -1,10 +1,4 @@
-* File Structure
-** plugins/
-   - Base directory to the provided plugins
-** theories/
-   - Base directory to the provided theories
-
-* Libraries
+* Theories
 ** Equality
    type-class based decidable equality
    - how to integrate this with different notions of equality
@@ -32,14 +26,3 @@
 ** Tactics
 *** 'think'
 
-* Ideas
-** Modules are for controlling namespaces only
-*** No functors
-*** Entities are mostly described in terms of type classes
-** Nothing exports notation
-** Nothing exports hiints to core
-** Avoid use of dependent functions
-*** Use the Decidables library as much as posible
-*** Derive as much as possible
-** Tactics for reasoning about theories
-** 
