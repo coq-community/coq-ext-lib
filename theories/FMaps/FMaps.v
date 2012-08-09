@@ -1,3 +1,4 @@
+(** First-class finite maps **)
 
 Class Map (K V : Type) (T : Type) : Type :=
 { In       : K -> T -> Prop
@@ -7,7 +8,6 @@ Class Map (K V : Type) (T : Type) : Type :=
 ; find     : K -> T -> option V
 }.
 
-Class FMap (K V : Type) (T : Type) : Type :=
-{ 
+
 
 
