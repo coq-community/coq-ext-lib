@@ -1,3 +1,5 @@
+Require Import Tactics.Consider.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -9,6 +11,13 @@ Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
 
 Definition eq_dec (T : Type) (ED : RelDec (@eq T)) := rel_dec.
 
+Global Instance Reflect_RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) {_ : RelDec_Correct ED} x y : Reflect (rel_dec x y) (equ x y) (~equ x y).
+Proof.
+  apply iff_to_reflect.
+  apply rel_dec_correct.
+Qed.
+
+
 (** Base Instances **)
 Global Instance RelDec_eq_unit : RelDec (@eq unit) := 
 { rel_dec := fun _ _ => true }.
@@ -18,10 +27,10 @@ Qed.
 
 Global Instance RelDec_eq_bool : RelDec (@eq bool) := 
 { rel_dec := fun x y => match x , y with 
-                            | true , true
-                            | false , false => true
-                            | _ , _=> false
-                          end }.
+                          | true , true
+                          | false , false => true
+                          | _ , _=> false
+                        end }.
 Global Instance RelDec_Correct_eq_bool : RelDec_Correct RelDec_eq_bool.
   constructor. destruct x; destruct y; auto; simpl; intuition.
 Qed.
@@ -46,3 +55,18 @@ Section PairParam.
       rel_dec (snd x) (snd y)
     else false }.
 End PairParam.
+
+Section PairEq.
+  Variable T : Type.
+  Variable U : Type.
+
+  Variable EDT : RelDec (@eq T).
+  Variable EDU : RelDec (@eq U).
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_pair : RelDec (@eq (T * U)) :=
+  { rel_dec := fun x y => 
+    if rel_dec (fst x) (fst y) then
+      rel_dec (snd x) (snd y)
+    else false }.
+End PairEq.
