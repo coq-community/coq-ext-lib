@@ -1,6 +1,7 @@
 Require Import String.
 Require Import Tactics.Consider.
 Require Import EqNat.
+Require Import Decidable.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -18,10 +19,18 @@ Proof.
   congruence.
 Qed.
 
+Global Instance RelDec_ascii : RelDec (@eq Ascii.ascii) :=
+{| rel_dec := ascii_dec |}.
+
+Global Instance RelDec_Correct_ascii : RelDec_Correct RelDec_ascii.
+Proof.
+  constructor. auto using ascii_dec_sound.
+Qed.
+
 Global Instance Reflect_ascii_dec a b : Reflect (ascii_dec a b) (a = b) (a <> b).
 Proof. 
   apply iff_to_reflect; auto using ascii_dec_sound.
-Qed.     
+Qed.
 
 Fixpoint string_dec (l r : string) : bool :=
   match l , r with 
@@ -39,6 +48,14 @@ Proof.
   consider (ascii_dec a a0); intros; subst. f_equal. eapply IHl; auto.
   apply IHl. congruence.
   inversion H0. congruence.
+Qed.
+
+Global Instance RelDec_string : RelDec (@eq string) :=
+{| rel_dec := string_dec |}.
+
+Global Instance RelDec_Correct_string : RelDec_Correct RelDec_string.
+Proof.
+  constructor. auto using string_dec_sound.
 Qed.
 
 Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> b).
