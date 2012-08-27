@@ -17,7 +17,18 @@ Definition liftM2 m (M : Monad m) T U V (f : T -> U -> V) : m T -> m U -> m V :=
 
 Module MonadNotation.
 
-  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 50).
+  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 51, right associativity).
+
+(*
+  Section test.
+    Variable m : Type -> Type.
+    Variable M : Monad m.
+
+    Definition test : m nat :=
+      x <- ret 2 ;
+      y <- ret 3 ;
+      ret (x + y).
+*)
 
 End MonadNotation.
 
@@ -33,8 +44,3 @@ Class State (T : Type) (m : Type -> Type) : Type :=
 
 Class Zero (m : Type -> Type) : Type :=
 { zero : forall {T}, m T }.
-
-(*
-Class GenSym {T : Type} {m : Type -> Type} : Type :=
-{ fresh : m T }.
-*)
