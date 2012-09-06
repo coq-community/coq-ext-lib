@@ -36,7 +36,6 @@ Section parametric.
   | RTFin : forall x y, R x y -> rightTrans x y
   | RTStep : forall x y z, rightTrans x y -> R y z -> rightTrans x z.
 
-
   (** Equivalence of definitions of transitivity **)
   Fixpoint leftTrans_rightTrans_acc x y (l : leftTrans y x) : forall z, rightTrans z y -> rightTrans z x :=
     match l in leftTrans y x return forall z, rightTrans z y -> rightTrans z x with
@@ -51,6 +50,14 @@ Section parametric.
       | LTStep _ _ _ pf pfR =>
         leftTrans_rightTrans_acc pfR (RTFin pf)
     end.
+
+  Theorem makeTrans_leftTrans : forall s s',
+    makeTrans s s' <-> leftTrans s s'.
+  Proof. Admitted.
+
+  Theorem makeTrans_rightTrans : forall s s',
+    makeTrans s s' <-> rightTrans s s'.
+  Proof. Admitted.
 
 End parametric.
 
