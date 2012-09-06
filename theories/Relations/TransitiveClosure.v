@@ -1,8 +1,8 @@
 Require Import RelationClasses.
+Require Import Setoid. 
 
 Set Implicit Arguments.
 Set Strict Implicit.
-
 
 Section parametric.
   Variable T : Type.
@@ -44,20 +44,50 @@ Section parametric.
         leftTrans_rightTrans_acc pfL (RTStep pfR pf)
     end.
 
-  Definition leftTrans_rightTrans x y (l : leftTrans x y) : rightTrans x y :=
-    match l with
-      | LTFin _ _ pf => RTFin pf
-      | LTStep _ _ _ pf pfR =>
-        leftTrans_rightTrans_acc pfR (RTFin pf)
+  Fixpoint rightTrans_leftTrans_acc x y (l : rightTrans x y) : forall z, leftTrans y z -> leftTrans x z :=
+    match l in rightTrans x y return forall z, leftTrans y z -> leftTrans x z with
+      | RTFin _ _ pf => fun z pfR => LTStep pf pfR
+      | RTStep _ _ _ pf pfL => fun z pfR =>
+        rightTrans_leftTrans_acc pf (LTStep pfL pfR)
+    end.
+
+  Theorem leftTrans_rightTrans : forall x y, 
+    leftTrans x y <-> rightTrans x y.
+  Proof.
+    split.
+    { destruct 1. apply RTFin; assumption. 
+      eapply leftTrans_rightTrans_acc. eassumption. eapply RTFin. eassumption. }
+    { destruct 1. apply LTFin. assumption.
+      eapply rightTrans_leftTrans_acc. eassumption. eapply LTFin. eassumption. }
+  Qed.
+  
+  Fixpoint leftTrans_makeTrans_acc x y (l : leftTrans x y) : makeTrans x y :=
+    match l in leftTrans x y return makeTrans x y with
+      | LTFin _ _ pf => TStep pf
+      | LTStep _ _ _ pf pfL =>
+        TTrans (TStep pf) (leftTrans_makeTrans_acc pfL)
+    end.
+
+  Fixpoint leftTrans_trans x y (l : leftTrans x y) : forall z (r : leftTrans y z), leftTrans x z :=
+    match l in leftTrans x y return forall z (r : leftTrans y z), leftTrans x z with
+      | LTFin _ _ pf => fun _ pfL => LTStep pf pfL
+      | LTStep _ _ _ pf pfL => fun _ pfR => LTStep pf (leftTrans_trans pfL pfR)
     end.
 
   Theorem makeTrans_leftTrans : forall s s',
     makeTrans s s' <-> leftTrans s s'.
-  Proof. Admitted.
+  Proof. 
+    split; intros.
+    { induction H. eapply LTFin. eassumption.
+      eapply leftTrans_trans; eassumption. }
+    { apply leftTrans_makeTrans_acc. assumption. }
+  Qed.
 
   Theorem makeTrans_rightTrans : forall s s',
     makeTrans s s' <-> rightTrans s s'.
-  Proof. Admitted.
+  Proof. 
+    intros. rewrite makeTrans_leftTrans. apply leftTrans_rightTrans.
+  Qed.
 
 End parametric.
 
