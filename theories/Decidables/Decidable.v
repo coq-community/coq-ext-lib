@@ -17,6 +17,18 @@ Proof.
   apply rel_dec_correct.
 Qed.
 
+Theorem rel_dec_eq_true : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
+  eqt x y -> rel_dec x y = true.
+Proof.
+  intros. consider (rel_dec x y); auto.
+Qed.
+
+Theorem rel_dec_neq_false : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
+  ~eqt x y -> rel_dec x y = false.
+Proof.
+  intros. consider (rel_dec x y); auto.
+  intros; exfalso; auto.
+Qed.
 
 (** Base Instances **)
 Global Instance RelDec_eq_unit : RelDec (@eq unit) := 

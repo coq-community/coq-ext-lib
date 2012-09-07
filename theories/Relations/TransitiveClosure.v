@@ -91,3 +91,35 @@ Section parametric.
 
 End parametric.
 
+Section param.
+  Variable T : Type.
+  Variable R : T -> T -> Prop.
+
+  Theorem makeTrans_idem : forall s s',
+    makeTrans (makeTrans R) s s' <-> makeTrans R s s'.
+  Proof.
+    split.
+    { induction 1; eauto using TTrans. }
+    { eapply TStep. }
+  Qed.
+
+  Theorem makeTrans_makeRefl_comm : forall s s',
+    makeTrans (makeRefl R) s s' <-> makeRefl (makeTrans R) s s'.
+  Proof.
+    split.
+    { induction 1;
+      repeat match goal with
+               | [ H : makeRefl _ _ _ |- _ ] => inversion H; clear H; subst
+             end; eauto using RRefl, RStep, TStep, TTrans. }
+    { intros. inversion H; clear H; subst; auto. apply TStep. apply RRefl.
+      induction H0; eauto using RStep, TStep, TTrans. }
+  Qed.
+
+  Theorem makeRefl_idem : forall s s',
+    makeRefl (makeRefl R) s s' <-> makeRefl R s s'.
+  Proof.
+    split; inversion 1; subst; eauto using RStep, RRefl.
+  Qed.
+
+End param.
+
