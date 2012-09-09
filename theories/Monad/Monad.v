@@ -42,5 +42,8 @@ Class State (T : Type) (m : Type -> Type) : Type :=
 ; put : T -> m unit
 }.
 
+Class Cont (m : Type -> Type) : Type :=
+{ callCC : forall a b, ((a -> m b) -> m a) -> m a }.
+
 Class Zero (m : Type -> Type) : Type :=
 { zero : forall {T}, m T }.
