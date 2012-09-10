@@ -9,6 +9,13 @@ Section StateType.
   Record state (t : Type) : Type := mkState
   { runState : S -> t * S }.
 
+  Definition evalState {t} (c : state t) (s : S) : t :=
+    fst (runState c s).
+
+  Definition execState {t} (c : state t) (s : S) : S :=
+    snd (runState c s).
+
+
   Global Instance Monad_state : Monad state :=
   { ret  := fun _ v => mkState (fun s => (v, s))
   ; bind := fun _ c1 _ c2 => 
@@ -27,7 +34,16 @@ Section StateType.
   Record stateT (t : Type) : Type := mkStateT
   { runStateT : S -> m (t * S)%type }.
 
-  Global Instance Monad_stateT (M : Monad m) : Monad stateT :=
+  Variable M : Monad m.
+
+  Definition evalStateT {t} (c : stateT t) (s : S) : m t :=
+    bind (runStateT c s) (fun x => ret (fst x)).
+
+  Definition execStateT {t} (c : stateT t) (s : S) : m S :=
+    bind (runStateT c s) (fun x => ret (snd x)).
+
+
+  Global Instance Monad_stateT : Monad stateT :=
   { ret := fun _ x => mkStateT (fun s => @ret _ M _ (x,s))
   ; bind := fun _ c1 _ c2 =>
     mkStateT (fun s => 
@@ -36,12 +52,12 @@ Section StateType.
         runStateT (c2 v) s))
   }.
 
-  Global Instance State_stateT (M : Monad m) : State S stateT :=
+  Global Instance State_stateT : State S stateT :=
   { get := mkStateT (fun x => ret (x,x))
   ; put := fun v => mkStateT (fun _ => ret (tt, v))
   }.
 
-  Global Instance MonadT_stateT (M : Monad m) : MonadT stateT m :=
+  Global Instance MonadT_stateT : MonadT stateT m :=
   { lift := fun _ c => mkStateT (fun s => bind c (fun t => ret (t, s)))
   }.
 
