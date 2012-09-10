@@ -9,10 +9,10 @@ Class Monad (m : Type -> Type) : Type :=
 Class MonadT (m : Type -> Type) (mt : Type -> Type) : Type :=
 { lift : forall {t}, mt t -> m t }.
 
-Definition liftM m (M : Monad m) T U (f : T -> U) : m T -> m U :=
+Definition liftM m {M : Monad m} T U (f : T -> U) : m T -> m U :=
   fun x => bind x (fun x => ret (f x)).
 
-Definition liftM2 m (M : Monad m) T U V (f : T -> U -> V) : m T -> m U -> m V :=
+Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
   fun x y => bind x (fun x => bind y (fun y => ret (f x y))).
 
 Module MonadNotation.

@@ -14,9 +14,7 @@ Section ContType.
   ; bind := fun _ c1 _ c2 => 
     mkCont (fun k => 
       runCont c1 (fun t => 
-        match c2 t with
-          | mkCont k' => k' k
-        end))
+        runCont (c2 t) k))
   }.
 
   Global Instance Cont_cont : Cont cont :=

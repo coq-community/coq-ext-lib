@@ -25,7 +25,7 @@ Instance Monad_listT m (M : Monad m) : Monad (listT m) :=
   @bind _ M _ c1 _ (fix recur vs :=
     match vs with
       | nil => @ret _ M _ nil
-      | v :: vs => Monad.liftM2 M (@app _) (c2 v) (recur vs)
+      | v :: vs => Monad.liftM2 (@app _) (c2 v) (recur vs)
     end)
 }.
 
