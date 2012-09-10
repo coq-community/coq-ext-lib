@@ -6,7 +6,7 @@ Class Monad (m : Type -> Type) : Type :=
 ; bind : forall {t}, m t -> forall {u}, (t -> m u) -> m u
 }.
 
-Class MonadT (mt : Type -> Type) (m : Type -> Type) : Type :=
+Class MonadT (m : Type -> Type) (mt : Type -> Type) : Type :=
 { lift : forall {t}, mt t -> m t }.
 
 Definition liftM m (M : Monad m) T U (f : T -> U) : m T -> m U :=
