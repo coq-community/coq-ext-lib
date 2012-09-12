@@ -18,6 +18,7 @@ Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
 Module MonadNotation.
 
   Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 51, right associativity).
+  Notation "e1 ;; e2" := (_ <- e1 ; e2) (at level 51, right associativity).
 
 (*
   Section test.
