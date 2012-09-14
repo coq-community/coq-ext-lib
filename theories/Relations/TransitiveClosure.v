@@ -18,6 +18,13 @@ Section parametric.
     constructor.
   Qed.
 
+  Global Instance Refl_makeTrans : Transitive R -> Transitive makeRefl.
+  Proof.
+    intro. intro. intros. inversion H0; clear H0; subst; auto.
+    inversion H1; clear H1; subst; auto using RStep.
+    apply RStep. etransitivity; eauto.
+  Qed.
+
   (** Transitivity **)
   Inductive makeTrans : T -> T -> Prop :=
   | TStep : forall x y, R x y -> makeTrans x y
@@ -26,6 +33,11 @@ Section parametric.
   Global Instance Trans_makeTrans : Transitive makeTrans.
   Proof.
     intro. intros; eapply TTrans; eassumption.
+  Qed.
+
+  Global Instance Trans_makeRefl : Reflexive R -> Reflexive makeTrans.
+  Proof.
+    intro. intro. apply TStep. reflexivity.
   Qed.
 
   Inductive leftTrans : T -> T -> Prop :=
