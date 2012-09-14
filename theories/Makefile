@@ -1,11 +1,6 @@
+PACKAGES   := Monad Tactics Data Decidables With Relations
+MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v)))
 TESTS      := 
-MONAD      := $(patsubst %.v,%,$(wildcard Monad/*.v))
-TACTICS    := $(patsubst %.v,%,$(wildcard Tactics/*.v))
-DATA       := $(patsubst %.v,%,$(wildcard Data/*.v))
-DECIDABLES := $(patsubst %.v,%,$(wildcard Decidables/*.v))
-WITH       := $(patsubst %.v,%,$(wildcard With/*.v))
-RELATIONS  := $(patsubst %.v,%,$(wildcard Relations/*.v))
-MODULES    := $(TACTICS) $(MONAD) $(DATA) $(DECIDABLES) $(WITH) $(RELATIONS)
 VS         := $(MODULES:%=%.v)
 TVS        := $(TESTS:%=%.v)
 
