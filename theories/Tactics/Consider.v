@@ -113,6 +113,11 @@ Section reflect_peano.
   Qed. 
 End reflect_peano.
 
+Global Instance Reflect_bool_dec a b : Reflect (Bool.eqb a b) (a = b) (a <> b).
+Proof. 
+  apply iff_to_reflect; auto using Bool.eqb_true_iff.
+Qed.
+
 (** The main tactic. [consider f] will perform case-analysis (using
 [case]) on the function symbol [f] using a reflection-lemma that is
 inferred by type-class resolution. *)
@@ -174,18 +179,6 @@ Section test.
   Qed.
 
 End test.  
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
