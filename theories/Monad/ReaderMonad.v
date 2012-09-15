@@ -45,5 +45,8 @@ Section ReaderType.
   Global Instance MonadT_readerT : MonadT readerT m :=
   { lift := fun _ c => mkReaderT (fun _ => c)
   }.
+  
+  Global Instance Zero_readerT (MZ : Zero m) : Zero readerT :=
+  { zero := fun _ => lift zero }.
 
 End ReaderType.
