@@ -42,7 +42,7 @@ Section Trans.
 
   Global Instance Reader_optionT {T} (SM : Reader T m) : Reader T optionT :=
   { ask := lift ask
-  ; local := fun v T cmd => local (Reader := SM) v _ cmd 
+  ; local := fun v T cmd => local (Reader := SM) v cmd 
   }.
 
 End Trans.

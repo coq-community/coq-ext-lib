@@ -34,7 +34,7 @@ Module MonadNotation.
 End MonadNotation.
 
 Class Reader (T : Type) (m : Type -> Type) : Type :=
-{ local : T -> forall t, m t -> m t
+{ local : T -> forall {t}, m t -> m t
 ; ask : m T
 }.
 

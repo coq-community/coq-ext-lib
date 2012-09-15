@@ -50,3 +50,7 @@ Section ReaderType.
   { zero := fun _ => lift zero }.
 
 End ReaderType.
+
+Definition mapReader {T} (m : Type -> Type) (M : Monad m) (RM : Reader T m)
+  (f : T -> T) {U} (cmd : m U) : m U :=
+  bind ask (fun s => local (f s) cmd).

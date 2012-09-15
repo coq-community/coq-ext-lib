@@ -47,6 +47,6 @@ Section trans.
 
   Global Instance Reader_listT {T} (RM : Reader T m) : Reader T listT :=
   { ask   := lift ask
-  ; local := fun v _ cmd => local (Reader := RM) v _ cmd
+  ; local := fun v _ cmd => local (Reader := RM) v cmd
   }.
 End trans.
