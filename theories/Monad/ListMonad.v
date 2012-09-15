@@ -4,7 +4,7 @@ Require Import List.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Instance Monad_list : Monad list :=
+Global Instance Monad_list : Monad list :=
 { ret := fun _ v => v :: nil
 ; bind := fix recur _ c1 _ c2 :=
   match c1 with 
@@ -13,21 +13,40 @@ Instance Monad_list : Monad list :=
   end
 }.
 
-Instance Zero_list : Zero list :=
+Global Instance Zero_list : Zero list :=
 { zero := @nil }.
 
-Definition listT (m : Type -> Type) : Type -> Type := 
-  fun x => m (list x).
+Section trans.
+  Variable m : Type -> Type.
+  
+  Definition listT : Type -> Type := 
+    fun x => m (list x).
 
-Instance Monad_listT m (M : Monad m) : Monad (listT m) :=
-{ ret := fun _ x => @ret m M _ (x :: nil)
-; bind := fun _ c1 _ c2 =>
-  @bind _ M _ c1 _ (fix recur vs :=
-    match vs with
-      | nil => @ret _ M _ nil
-      | v :: vs => Monad.liftM2 (@app _) (c2 v) (recur vs)
-    end)
-}.
+  Context {M : Monad m}.
+  
+  Global Instance Monad_listT : Monad listT :=
+  { ret := fun _ x => @ret m M _ (x :: nil)
+  ; bind := fun _ c1 _ c2 =>
+    @bind _ M _ c1 _ (fix recur vs :=
+      match vs with
+        | nil => @ret _ M _ nil
+        | v :: vs => Monad.liftM2 (@app _) (c2 v) (recur vs)
+      end)
+  }.
+  
+  Global Instance MonadT_listT : MonadT listT m :=
+  { lift := fun _ cmd => bind cmd (fun x => ret (x :: nil)) }.
 
-Instance Zero_optionT m (M : Monad m) : Zero (listT m) :=
-{ zero := fun _ => @ret _ M _ nil }.
+  Global Instance Zero_listT : Zero listT :=
+  { zero := fun _ => @ret _ M _ nil }.
+
+  Global Instance State_listT {T} (SM : State T m) : State T listT :=
+  { get := lift get
+  ; put := fun v => lift (put v)
+  }.
+
+  Global Instance Reader_listT {T} (RM : Reader T m) : Reader T listT :=
+  { ask   := lift ask
+  ; local := fun v _ cmd => local (Reader := RM) v _ cmd
+  }.
+End trans.
