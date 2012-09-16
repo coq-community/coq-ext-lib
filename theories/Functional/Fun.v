@@ -8,7 +8,7 @@ Definition compose A B C (g:B -> C) (f:A -> B) (x:A) : C := g (f x).
 
 Definition forEach A B (xs:list A) (f:A -> B) : list B := map f xs.
 
-Definition forEachM m {M:Monad m} A B (xs:list A) (f:A -> m B) : m (list B) :=
+Definition forEachM {m} {M:Monad m} {A B} (xs:list A) (f:A -> m B) : m (list B) :=
   mapM _ f xs.
 
 Module FunNotation.

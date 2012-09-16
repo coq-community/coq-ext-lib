@@ -19,12 +19,6 @@ Definition liftM m {M : Monad m} T U (f : T -> U) : m T -> m U :=
 Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
   fun x y => bind x (fun x => bind y (fun y => ret (f x y))).
 
-Fixpoint mapM m {M : Monad m} T U (f : T -> m U) (xs : list T) : m (list U) :=
-  match xs with
-  | [] => ret []
-  | x::xs => bind (f x) (fun y => bind (mapM _ f xs) (fun ys => ret (y::ys)))
-  end.
-
 Module MonadNotation.
 
   Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 51, right associativity).

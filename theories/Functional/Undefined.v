@@ -1,1 +1,1 @@
-Definition undefined : forall A, A. admit. Defined.
+Definition undefined : forall {A}, A. admit. Defined.
