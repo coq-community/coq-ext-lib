@@ -9,7 +9,7 @@ Class RelDec (T : Type) (equ : T -> T -> Prop) : Type :=
 Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
 { rel_dec_correct : forall x y : T, rel_dec x y = true <-> equ x y }.
 
-Definition eq_dec (T : Type) (ED : RelDec (@eq T)) := rel_dec.
+Definition eq_dec {T : Type} {ED : RelDec (@eq T)} := rel_dec.
 
 Global Instance Reflect_RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) {_ : RelDec_Correct ED} x y : Reflect (rel_dec x y) (equ x y) (~equ x y).
 Proof.

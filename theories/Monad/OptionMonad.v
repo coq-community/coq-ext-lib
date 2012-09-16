@@ -33,7 +33,16 @@ Section Trans.
   { zero := fun _ => @ret _ M _ None }.
 
   Global Instance MonadT_optionT : MonadT optionT m :=
-  { lift := fun _ c => bind c (fun x => ret (ret x))
-  }.
-End Trans.
+  { lift := fun _ c => bind c (fun x => ret (ret x)) }.
 
+  Global Instance State_optionT {T} (SM : State T m) : State T optionT :=
+  { get := lift get 
+  ; put := fun v => lift (put v)
+  }.
+
+  Global Instance Reader_optionT {T} (SM : Reader T m) : Reader T optionT :=
+  { ask := lift ask
+  ; local := fun v T cmd => local (Reader := SM) v cmd 
+  }.
+
+End Trans.
