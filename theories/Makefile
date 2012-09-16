@@ -1,4 +1,4 @@
-PACKAGES   := Monad Tactics Data Decidables With Relations Rec
+PACKAGES   := Monad Tactics Data Decidables With Relations Rec Functional
 MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v)))
 TESTS      := 
 VS         := $(MODULES:%=%.v)
