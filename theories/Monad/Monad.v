@@ -48,3 +48,6 @@ Class Cont (m : Type -> Type) : Type :=
 
 Class Zero (m : Type -> Type) : Type :=
 { zero : forall {T}, m T }.
+
+Class MonadFix (m : Type -> Type) : Type :=
+{ mfix : forall {T U}, ((T -> m U) -> T -> m U) -> T -> m U }.
