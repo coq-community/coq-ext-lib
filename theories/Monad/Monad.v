@@ -51,3 +51,8 @@ Class Zero (m : Type -> Type) : Type :=
 
 Class MonadFix (m : Type -> Type) : Type :=
 { mfix : forall {T U}, ((T -> m U) -> T -> m U) -> T -> m U }.
+
+Class MonadExc E (m : Type -> Type) : Type :=
+{ raise : E -> forall {T}, m T 
+; catch : forall {T}, m T -> (E -> m T) -> m T
+}.
