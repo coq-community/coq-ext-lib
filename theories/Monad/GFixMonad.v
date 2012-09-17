@@ -55,6 +55,11 @@ Section gfix.
   Global Instance Zero_GFixT (ZM : Zero m) : Zero GFixT :=
   { zero := fun _ => lift zero }.
 
+  Global Instance Exception_GFixT {E} (ME : MonadExc E m) : MonadExc E GFixT :=
+  { raise := fun v _ => lift (raise v)
+  ; catch := fun _ c h => mkGFixT (fun s => catch (runGFixT c s) (fun x => runGFixT (h x) s))
+  }.
+
 End gfix.
 
 (*

@@ -49,6 +49,11 @@ Section ReaderType.
   Global Instance Zero_readerT (MZ : Zero m) : Zero readerT :=
   { zero := fun _ => lift zero }.
 
+  Global Instance Exception_readerT {E} (ME : MonadExc E m) : MonadExc E readerT :=
+  { raise := fun v _ => lift (raise v)
+  ; catch := fun _ c h => mkReaderT (fun s => catch (runReaderT c s) (fun x => runReaderT (h x) s))
+  }.
+
 End ReaderType.
 
 Definition mapReader {T} (m : Type -> Type) (M : Monad m) (RM : Reader T m)

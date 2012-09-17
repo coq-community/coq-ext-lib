@@ -20,12 +20,12 @@ Inductive fuel (m:Type->Type) A := mkFuel { unFuel : nat -> m A }.
 Implicit Arguments mkFuel [m A].
 
 Section FuelFix.
-  Context {m} {e} {mError:Error e m} {eHasGasError:HasGasError e}.
+  Context {m} {e} {mError:MonadExc e m} {eHasGasError:HasGasError e}.
 
   Fixpoint fuelFix' {A B:Type}
     (ff:(A -> fuel m B) -> (A -> fuel m B)) (k:nat) (a:A) {struct k} : m B :=
       match k with
-      | O => throw gasError
+      | O => raise gasError
       | S k' => unFuel (ff (fun a' => mkFuel (fun _k => fuelFix' ff k' a'))
                            a)
                        k'
