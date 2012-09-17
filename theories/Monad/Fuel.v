@@ -1,6 +1,5 @@
 Require Import Monad.
 Require Import OptionMonad.
-Require Import Undefined.
 Require Import Fun.
 
 Set Implicit Arguments.

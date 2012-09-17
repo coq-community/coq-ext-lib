@@ -19,7 +19,7 @@ Section ReaderType.
 
   Global Instance Reader_reader : Reader S reader :=
   { ask := mkReader (fun x => x)
-  ; local := fun v _ cmd => mkReader (fun _ => runReader cmd v)
+  ; local := fun f _ cmd => mkReader (fun x => runReader cmd (f x))
   }.
 
   Variable m : Type -> Type.
@@ -39,7 +39,7 @@ Section ReaderType.
 
   Global Instance Reader_readerT : Reader S readerT :=
   { ask := mkReaderT (fun x => ret x)
-  ; local := fun v _ cmd => mkReaderT (fun _ => runReaderT cmd v)
+  ; local := fun f _ cmd => mkReaderT (fun x => runReaderT cmd (f x))
   }.
 
   Global Instance MonadT_readerT : MonadT readerT m :=
@@ -55,7 +55,3 @@ Section ReaderType.
   }.
 
 End ReaderType.
-
-Definition mapReader {T} (m : Type -> Type) (M : Monad m) (RM : Reader T m)
-  (f : T -> T) {U} (cmd : m U) : m U :=
-  bind ask (fun s => local (f s) cmd).
