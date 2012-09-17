@@ -44,4 +44,11 @@ Section MonadLaws.
     forall A B c, meq (@bind _ M _ (@zero _ _ A) _ c) (@zero _ _ B)
   }.
 
+  Class MonadFixLaws (MF : MonadFix m) (leq : forall {T}, m T -> m T -> Prop) 
+    : Prop :=
+  { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
+    forall x, leq (mfix F x) (F (mfix F) x)
+  (** This probably needs stronger properties that express what F is doing **)
+  }.
+
 End MonadLaws.
