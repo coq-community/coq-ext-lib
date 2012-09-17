@@ -1,3 +1,7 @@
+Require Import Coq.Program.Syntax.
+
+Open Scope list_scope.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -32,6 +36,16 @@ Module MonadNotation.
 *)
 
 End MonadNotation.
+
+Module MonadNotationX.
+
+  Notation "x <- c1 ;; c2" := (bind c1 (fun x => c2))
+    (at level 100, c1 at next level, right associativity).
+
+  Notation "e1 ;; e2" := (_ <- e1 ;; e2)
+    (at level 100, right associativity).
+
+End MonadNotationX.
 
 Class Reader (T : Type) (m : Type -> Type) : Type :=
 { local : T -> forall {t}, m t -> m t
