@@ -1,4 +1,8 @@
 Require Import Monad.
+Import MonadNotationX.
+
+Set Implicit Arguments.
+Set Strict Implicit.
 
 Global Instance Monad_option : Monad option :=
 { ret  := @Some 
@@ -14,35 +18,44 @@ Global Instance Zero_option : Zero option :=
 Section Trans.
   Variable m : Type -> Type.
 
-  Definition optionT : Type -> Type := 
-    fun x => m (option x).
+  Inductive optionT a := mkOptionT { unOptionT : m (option a) }.
 
-  Variable M : Monad m.
+  Context {M : Monad m}.
 
   Global Instance Monad_optionT : Monad optionT :=
-  { ret := fun _ x => @ret m M _ (Some x)
-  ; bind := fun _ c1 _ c2 =>
-    @bind _ M _ c1 _ (fun c1 =>
-      match c1 with
-        | None => @ret _ M _ None
-        | Some v => c2 v
-      end)
+  { ret _A := fun x => mkOptionT (ret (Some x))
+  ; bind _A aMM _B f := mkOptionT
+      (aM <- unOptionT aMM ;;
+       match aM with
+       | None => ret None
+       | Some a => unOptionT (f a)
+       end)
   }.
 
   Global Instance Zero_optionT : Zero optionT :=
-  { zero := fun _ => @ret _ M _ None }.
+  { zero _A := mkOptionT (ret None) }.
 
   Global Instance MonadT_optionT : MonadT optionT m :=
-  { lift := fun _ c => bind c (fun x => ret (ret x)) }.
+  { lift _A aM := mkOptionT (liftM ret aM) }.
 
   Global Instance State_optionT {T} (SM : State T m) : State T optionT :=
   { get := lift get 
-  ; put := fun v => lift (put v)
+  ; put v := lift (put v)
   }.
 
   Global Instance Reader_optionT {T} (SM : Reader T m) : Reader T optionT :=
   { ask := lift ask
-  ; local := fun v T cmd => local (Reader := SM) v cmd 
+  ; local v _T cmd := mkOptionT (local v (unOptionT cmd))
+  }.
+
+  Instance OptionTError {mMonad:Monad m} : Error unit optionT :=
+  { throw _A _u := zero
+  ; catch _A aMM f := mkOptionT
+      (aM <- unOptionT aMM ;;
+       match aM with
+       | None => unOptionT (f tt)
+       | Some x => ret (Some x)
+       end)
   }.
 
 End Trans.
