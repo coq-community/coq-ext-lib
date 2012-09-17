@@ -24,13 +24,19 @@ Section MonadLaws.
     forall c, meq (bind c f) (bind c g)
   }.
 
+  Class MonadTLaws (n : Type -> Type) (nM : Monad n) (MT : MonadT m n) : Prop :=
+  { lift_ret  : forall T (x : T), meq (lift (ret x)) (ret x)
+  ; lift_bind : forall T U (c : n T) (f : T -> n U), lift (bind c f) = bind (lift c) (fun x => lift (f x))
+  }.
+
   Class MonadStateLaws s (MS : State s m) : Prop :=
   { get_put : meq (bind get put) (ret tt)
   }.
 
   Class MonadReaderLaws S (MS : Reader S m) : Prop :=
-  { ask_local : forall s, meq (local s ask) (ret s)
-  ; local_local : forall T (s s' : S) (c : m T), meq (local s (local s' c)) (local s' c)
+  { ask_local : forall f, meq (local f ask) (bind ask (fun x => ret (f x)))
+  ; local_local : forall T (s s' : S -> S) (c : m T), 
+    meq (local s (local s' c)) (local (fun x => s' (s x)) c)
   }.
 
   Class MonadZeroLaws (MZ : Zero m) : Prop :=
