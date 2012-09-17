@@ -35,6 +35,9 @@ End MonadNotation.
 
 Module MonadNotationX.
 
+  Notation "c >>= f" := (bind c f) (at level 51, right associativity).
+  Notation "f =<< c" := (bind c f) (at level 50, left associativity).
+
   Notation "x <- c1 ;; c2" := (bind c1 (fun x => c2))
     (at level 100, c1 at next level, right associativity).
 
@@ -44,7 +47,7 @@ Module MonadNotationX.
 End MonadNotationX.
 
 Class Reader (T : Type) (m : Type -> Type) : Type :=
-{ local : T -> forall {t}, m t -> m t
+{ local : (T -> T) -> forall {t}, m t -> m t
 ; ask : m T
 }.
 
