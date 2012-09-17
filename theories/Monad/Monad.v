@@ -1,7 +1,3 @@
-Require Import Coq.Program.Syntax.
-
-Open Scope list_scope.
-
 Set Implicit Arguments.
 Set Strict Implicit.
 
