@@ -1,5 +1,3 @@
-Require Import Fun.
-
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -16,5 +14,5 @@ Import FunctorNotation.
 Definition Fun A B := A -> B.
 
 Instance FunFunctor A : Functor (Fun A) :=
-{ fmap _A _B g f := compose g f
+{ fmap _A _B g f x := g (f x)
 }.

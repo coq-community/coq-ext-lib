@@ -27,6 +27,7 @@ Section ReaderType.
   Record readerT (t : Type) : Type := mkReaderT
   { runReaderT : S -> m t }.
 
+
   Variable M : Monad m.
 
   Global Instance Monad_readerT : Monad readerT :=
@@ -55,3 +56,5 @@ Section ReaderType.
   }.
 
 End ReaderType.
+
+Implicit Arguments mkReaderT [S m t].

@@ -1,5 +1,10 @@
 Require Import Monad.
 
+Import MonadNotationX.
+
+Set Implicit Arguments.
+Set Strict Implicit.
+
 Section except.
   Variable T : Type.
   
@@ -21,33 +26,34 @@ Section except.
 
   Variable m : Type -> Type.
 
-  Definition eitherT : Type -> Type := 
-    fun x => m (sum T x).
+  Inductive eitherT A := mkEitherT { unEitherT : m (sum T A) }.
 
   Variable M : Monad m.
 
   Global Instance Monad_eitherT : Monad eitherT :=
-  { ret := fun _ x => @ret m M _ (inr x)
-  ; bind := fun _ c1 _ c2 =>
-    @bind _ M _ c1 _ (fun c1 =>
-      match c1 with
-        | inl x => @ret _ M _ (inl x)
-        | inr v => c2 v
-      end)
+  { ret := fun _ x => mkEitherT (ret (inr x))
+  ; bind := fun _ c _ f => mkEitherT (
+      xM <- unEitherT c ;;
+      match xM with
+      | inl x => ret (inl x)
+      | inr x => unEitherT (f x)
+      end
+    )
   }.
 
   Global Instance Exception_eitherT : MonadExc T eitherT :=
-  { raise := fun v _ => @ret _ M _ (inl v)
-  ; catch := fun _ c h =>
-    bind (Monad := M) c (fun e_v =>
-      match e_v with
-        | inl x => h x
+  { raise := fun v _ => mkEitherT (ret (inl v))
+  ; catch := fun _ c h => mkEitherT (
+      xM <- unEitherT c ;;
+      match xM with
+        | inl x => unEitherT (h x)
         | inr x => ret (inr x)
-      end)
+      end
+    )
   }.
 
   Global Instance MonadT_eitherT : MonadT eitherT m :=
-  { lift := fun _ c => bind c (fun x => ret (ret x)) }.
+  { lift := fun _ c => mkEitherT (liftM ret c) }.
 
   Global Instance State_eitherT {T} (SM : State T m) : State T eitherT :=
   { get := lift get 
@@ -56,7 +62,7 @@ Section except.
 
   Global Instance Reader_eitherT {T} (SM : Reader T m) : Reader T eitherT :=
   { ask := lift ask
-  ; local := fun v T cmd => local (Reader := SM) v cmd 
+  ; local := fun f T cmd => mkEitherT (local f (unEitherT cmd))
   }.
 
 End except.

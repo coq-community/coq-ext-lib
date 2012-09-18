@@ -1,6 +1,8 @@
 Require Import List.
 Require Import Monad.
 Require Import Monad.Folds.
+Require Import Coq.Program.Syntax.
+Require Import Decidables.Decidable.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -16,6 +18,25 @@ Module FunNotation.
 End FunNotation.
 
 Definition compose A B C (g:B -> C) (f:A -> B) (x:A) : C := g (f x).
+
+Definition uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
+
+Definition const {A B} (x:B) : A -> B := fun _ => x.
+
+Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=
+  match xs, ys with
+  | [], _ => []
+  | _, [] => []
+  | x::xs, y::ys => (x,y)::zip xs ys
+  end
+.
+
+Definition lfst {m} {mMonad:Monad m} {mZero:Zero m} {A} (l:list A) : m A :=
+  match l with
+  | [] => zero
+  | x::_ => ret x
+  end
+.
 
 Definition forEach A B (xs:list A) (f:A -> B) : list B := map f xs.
 
@@ -48,3 +69,15 @@ Section MonadFixDefs.
   .
 End MonadFixDefs.
 
+Fixpoint update {K V} {kRealDec:RelDec (@eq K)} x v l : list (K * V) :=
+  match l with
+  | [] => [(x,v)]
+  | (y,w)::l' => if eq_dec x y then (x,v)::l' else (y,w)::update x v l'
+  end
+.
+
+Definition updateMany {K V} {kRealDec:RelDec (@eq K)}
+  (ups:list (K * V)) (init:list (K * V)) : list (K * V) :=
+    fold_right (uncurry update) init ups.
+
+Definition lsingleton {A} (x:A) : list A := [x].

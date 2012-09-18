@@ -1,3 +1,5 @@
+Require Import Functor.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -69,3 +71,5 @@ Class MonadExc E (m : Type -> Type) : Type :=
 { raise : E -> forall {T}, m T 
 ; catch : forall {T}, m T -> (E -> m T) -> m T
 }.
+
+Instance MonadFunctor {m} {mMonad:Monad m} : Functor m := { fmap := @liftM _ _ }.

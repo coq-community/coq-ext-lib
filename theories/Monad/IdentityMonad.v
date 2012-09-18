@@ -4,11 +4,11 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Section Ident.
-  Definition ident (t : Type) : Type := t.
+  Inductive ident A := mkIdent { unIdent : A }.
 
   Global Instance Monad_ident : Monad ident :=
-  { ret  := fun _ v => v
-  ; bind := fun _ c1 _ c2 => c2 c1
+  { ret  := fun _ v => mkIdent v
+  ; bind := fun _ c _ f => f (unIdent c)
   }.
 
 End Ident.
