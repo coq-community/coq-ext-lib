@@ -17,26 +17,6 @@ Definition liftM m {M : Monad m} T U (f : T -> U) : m T -> m U :=
 Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
   fun x y => bind x (fun x => bind y (fun y => ret (f x y))).
 
-(*
-Module MonadNotation.
-
-  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 51, right associativity).
-  Notation "e1 ;; e2" := (_ <- e1 ; e2) (at level 51, right associativity).
-
-(*
-  Section test.
-    Variable m : Type -> Type.
-    Variable M : Monad m.
-
-    Definition test : m nat :=
-      x <- ret 2 ;
-      y <- ret 3 ;
-      ret (x + y).
-*)
-
-End MonadNotation.
-*)
-
 Module MonadNotation.
 
   Delimit Scope monad_scope with monad.
@@ -45,6 +25,10 @@ Module MonadNotation.
   Notation "f =<< c" := (@bind _ _ _ c _ f) (at level 50, left associativity) : monad_scope.
 
   Notation "x <- c1 ;; c2" := (@bind _ _ _ c1 _ (fun x => c2))
+    (at level 100, c1 at next level, right associativity) : monad_scope.
+
+  (** DEPRECATED **)
+  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2))
     (at level 100, c1 at next level, right associativity) : monad_scope.
 
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
