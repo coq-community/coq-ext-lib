@@ -1,19 +1,20 @@
 Require Import Monad.
 
-Import MonadNotationX.
-
 Set Implicit Arguments.
 Set Strict Implicit.
 
+Import MonadNotation.
+Open Local Scope monad.
+
 Section except.
   Variable T : Type.
-  
+
   Global Instance Monad_either : Monad (sum T) :=
   { ret  := fun _ v => inr v
-  ; bind := fun _ c1 _ c2 => match c1 with 
+  ; bind := fun _ c1 _ c2 => match c1 with
                                | inl v => inl v
                                | inr v => c2 v
-                             end 
+                             end
   }.
 
   Global Instance Exception_either : MonadExc T (sum T) :=
@@ -56,7 +57,7 @@ Section except.
   { lift := fun _ c => mkEitherT (liftM ret c) }.
 
   Global Instance State_eitherT {T} (SM : State T m) : State T eitherT :=
-  { get := lift get 
+  { get := lift get
   ; put := fun v => lift (put v)
   }.
 

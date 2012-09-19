@@ -1,5 +1,5 @@
 Require Import RelationClasses.
-Require Import Setoid. 
+Require Import Setoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -63,16 +63,16 @@ Section parametric.
         rightTrans_leftTrans_acc pf (LTStep pfL pfR)
     end.
 
-  Theorem leftTrans_rightTrans : forall x y, 
+  Theorem leftTrans_rightTrans : forall x y,
     leftTrans x y <-> rightTrans x y.
   Proof.
     split.
-    { destruct 1. apply RTFin; assumption. 
+    { destruct 1. apply RTFin; assumption.
       eapply leftTrans_rightTrans_acc. eassumption. eapply RTFin. eassumption. }
     { destruct 1. apply LTFin. assumption.
       eapply rightTrans_leftTrans_acc. eassumption. eapply LTFin. eassumption. }
   Qed.
-  
+
   Fixpoint leftTrans_makeTrans_acc x y (l : leftTrans x y) : makeTrans x y :=
     match l in leftTrans x y return makeTrans x y with
       | LTFin _ _ pf => TStep pf
@@ -88,7 +88,7 @@ Section parametric.
 
   Theorem makeTrans_leftTrans : forall s s',
     makeTrans s s' <-> leftTrans s s'.
-  Proof. 
+  Proof.
     split; intros.
     { induction H. eapply LTFin. eassumption.
       eapply leftTrans_trans; eassumption. }
@@ -97,7 +97,7 @@ Section parametric.
 
   Theorem makeTrans_rightTrans : forall s s',
     makeTrans s s' <-> rightTrans s s'.
-  Proof. 
+  Proof.
     intros. rewrite makeTrans_leftTrans. apply leftTrans_rightTrans.
   Qed.
 

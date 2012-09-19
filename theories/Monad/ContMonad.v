@@ -11,9 +11,9 @@ Section ContType.
 
   Global Instance Monad_cont : Monad cont :=
   { ret  := fun _ v => mkCont (fun k => k v)
-  ; bind := fun _ c1 _ c2 => 
-    mkCont (fun k => 
-      runCont c1 (fun t => 
+  ; bind := fun _ c1 _ c2 =>
+    mkCont (fun k =>
+      runCont c1 (fun t =>
         runCont (c2 t) k))
   }.
 
@@ -35,7 +35,7 @@ Section ContType.
   Global Instance Monad_contT : Monad contT :=
   { ret := fun _ x => mkContT (fun k => k x)
   ; bind := fun _ c1 _ c2 =>
-    mkContT (fun c => 
+    mkContT (fun c =>
       runContT c1 (fun a => runContT (c2 a) c))
   }.
 

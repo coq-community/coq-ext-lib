@@ -19,7 +19,7 @@ Proof.
   f_equal. eapply IHn; eauto. omega.
 Qed.
 
-Lemma firstn_all : forall T n (a : list T), 
+Lemma firstn_all : forall T n (a : list T),
   length a <= n ->
   firstn n a = a.
 Proof.

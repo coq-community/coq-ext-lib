@@ -20,7 +20,7 @@ Section parametric.
     nth_error (A ++ B) n = nth_error B (n - length A).
   Proof.
     induction A; destruct n; simpl; intros; try omega; auto.
-    apply IHA. omega. 
+    apply IHA. omega.
   Qed.
 
   Lemma nth_error_weaken : forall ls' (ls : list T) n v,
@@ -34,9 +34,9 @@ Section parametric.
     nth_error nil n = @None T.
   Proof.
     destruct n; reflexivity.
-  Qed.    
+  Qed.
 
-  Lemma nth_error_past_end : forall (ls : list T) n, 
+  Lemma nth_error_past_end : forall (ls : list T) n,
     length ls <= n ->
     nth_error ls n = None.
   Proof.

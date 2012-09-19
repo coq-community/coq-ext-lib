@@ -6,7 +6,7 @@ TVS        := $(TESTS:%=%.v)
 
 ARGS :=-R . ExtLib
 
-.PHONY: coq clean admit depgraph toplevel
+.PHONY: coq clean admit depgraph toplevel whitespace
 
 coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
@@ -22,7 +22,10 @@ test: coq Makefile.test.coq
 
 clean:: Makefile.coq
 	$(MAKE) -f Makefile.coq clean
-	rm -f Makefile.coq .depend 
+	rm -f Makefile.coq .depend
+
+whitespace:
+	@ ./../tools/whitespace.sh $(MODULES:%=%.v)
 
 admit:
 	@ grep -n -e 'admit' -e 'Admitted' ${VS}

@@ -1,15 +1,17 @@
 Require Import Monad.
-Import MonadNotationX.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 
+Import MonadNotation.
+Open Local Scope monad.
+
 Global Instance Monad_option : Monad option :=
-{ ret  := @Some 
-; bind := fun _ c1 _ c2 => match c1 with 
+{ ret  := @Some
+; bind := fun _ c1 _ c2 => match c1 with
                              | None => None
                              | Some v => c2 v
-                           end 
+                           end
 }.
 
 Global Instance Zero_option : Zero option :=
@@ -39,7 +41,7 @@ Section Trans.
   { lift _A aM := mkOptionT (liftM ret aM) }.
 
   Global Instance State_optionT {T} (SM : State T m) : State T optionT :=
-  { get := lift get 
+  { get := lift get
   ; put v := lift (put v)
   }.
 
@@ -62,7 +64,7 @@ Section Trans.
     Require Import RelationClasses.
     Require Import MonadLaws.
     Require Import Setoid.
-    
+
     Variable meq : forall T, m T -> m T -> Prop.
     Variable MonadLaws_m : MonadLaws M meq.
 
@@ -79,8 +81,8 @@ Section Trans.
 
     Global Instance MonadLaws_OptionT : MonadLaws Monad_optionT o_meq.
     Proof.
-      constructor; eauto with typeclass_instances; 
-        unfold o_meq; destruct MonadLaws_m; simpl; intros; monad_norm; 
+      constructor; eauto with typeclass_instances;
+        unfold o_meq; destruct MonadLaws_m; simpl; intros; monad_norm;
           try reflexivity; auto.
       { eapply return_of_bind. destruct x; auto; reflexivity. }
       { destruct a; auto; try reflexivity.
@@ -92,7 +94,7 @@ Section Trans.
     Proof.
       constructor; intros; simpl in *; destruct MonadLaws_m; unfold o_meq, liftM.
       { simpl; monad_norm; simpl; reflexivity. }
-      { simpl. autorewrite with monad_rw. 
+      { simpl. autorewrite with monad_rw.
         apply bind_parametric_tl; intros. autorewrite with monad_rw.
         reflexivity. }
     Qed.

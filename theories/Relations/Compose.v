@@ -5,4 +5,3 @@ Section compose.
   Definition compose (x z : T) : Prop :=
     exists y, R1 x y /\ R2 y z.
 End compose.
-  

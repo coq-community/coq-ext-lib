@@ -2,21 +2,21 @@ Require Import Monad.
 Require Import OptionMonad.
 Require Import Fun.
 Require Import ReaderMonad.
-
 Require Import Functor.
-Import FunctorNotation.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Import MonadNotationX.
+Import FunctorNotation.
+Import MonadNotation.
 Import FunNotation.
+
+Open Local Scope monad.
 
 Class HasGasError e := { gasError : e}.
 Instance UnitHasGasError : HasGasError unit := { gasError := tt }.
 
 Inductive fuel (m:Type->Type) A := mkFuel { unFuel : readerT nat m A }.
-Print mkFuel.
 
 Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A :=
   @mkFuel _ _ <$> @mkReaderT _ _ _.
@@ -25,16 +25,15 @@ Definition unFuelReaderT {m} {A} : fuel m A -> (nat -> m A) :=
   @runReaderT _ _ _ <$> @unFuel _ _.
 
 Instance FuelMonad {m} {mMonad:Monad m} : Monad (fuel m) :=
-  { ret _A x := mkFuel (ret x)
-  ; bind _A c _B f := mkFuel (
-      x <- unFuel c ;;
-      unFuel (f x)
-    )
-  }
-.
+{ ret _A x := mkFuel (ret x)
+; bind _A c _B f := mkFuel (
+    x <- unFuel c ;;
+    unFuel (f x)
+  )
+}.
 
 Instance FuelZero {m} {mMonad:Monad m} {mZero:Zero m} : Zero (fuel m) :=
-  { zero _A := mkFuel zero}.
+{ zero _A := mkFuel zero}.
 
 Section FuelFix.
   Context {m} {e} {mMonad:Monad m} {mError:MonadExc e m} {eHasGasError:HasGasError e}.
@@ -61,7 +60,7 @@ Section FuelFix.
 End FuelFix.
 
 Instance FuelTrans {m} {mMonad:Monad m} : MonadT (fuel m) m :=
-  { lift _A aM := mkFuel (lift aM) }.
+{ lift _A aM := mkFuel (lift aM) }.
 
 Instance FuelMonadExc {E} {m} {mMonad:Monad m} {ME : MonadExc E m}
   : MonadExc E (fuel m) :=

@@ -10,13 +10,13 @@ Definition ascii_dec (l r : Ascii.ascii) : bool :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
       Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
-      if Bool.eqb l1 r1 then 
-      if Bool.eqb l2 r2 then 
-      if Bool.eqb l3 r3 then 
-      if Bool.eqb l4 r4 then 
-      if Bool.eqb l5 r5 then 
-      if Bool.eqb l6 r6 then 
-      if Bool.eqb l7 r7 then 
+      if Bool.eqb l1 r1 then
+      if Bool.eqb l2 r2 then
+      if Bool.eqb l3 r3 then
+      if Bool.eqb l4 r4 then
+      if Bool.eqb l5 r5 then
+      if Bool.eqb l6 r6 then
+      if Bool.eqb l7 r7 then
       if Bool.eqb l8 r8 then true
         else false
         else false
@@ -28,7 +28,7 @@ Definition ascii_dec (l r : Ascii.ascii) : bool :=
         else false
   end.
 
-Theorem ascii_dec_sound : forall l r, 
+Theorem ascii_dec_sound : forall l r,
   ascii_dec l r = true <-> l = r.
 Proof.
   unfold ascii_dec. intros.
@@ -48,20 +48,20 @@ Proof.
 Qed.
 
 Global Instance Reflect_ascii_dec a b : Reflect (ascii_dec a b) (a = b) (a <> b).
-Proof. 
+Proof.
   apply iff_to_reflect; auto using ascii_dec_sound.
 Qed.
 
 Fixpoint string_dec (l r : string) : bool :=
-  match l , r with 
+  match l , r with
     | EmptyString , EmptyString => true
-    | String l ls , String r rs => 
+    | String l ls , String r rs =>
       if ascii_dec l r then string_dec ls rs
       else false
     | _ , _ => false
   end.
 
-Theorem string_dec_sound : forall l r, 
+Theorem string_dec_sound : forall l r,
   string_dec l r = true <-> l = r.
 Proof.
   induction l; destruct r; simpl; split; try solve [ intuition ; congruence ];
@@ -79,6 +79,6 @@ Proof.
 Qed.
 
 Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> b).
-Proof. 
+Proof.
   apply iff_to_reflect; auto using string_dec_sound.
 Qed.
