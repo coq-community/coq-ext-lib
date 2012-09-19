@@ -5,7 +5,7 @@ Section PairWF.
   Variables T U : Type.
   Variable RT : T -> T -> Prop.
   Variable RU : U -> U -> Prop.
-  
+
   Inductive R_pair : T * U -> T * U -> Prop :=
   | L : forall l l' r r',
     RT l l' -> R_pair (l,r) (l',r')
@@ -57,7 +57,7 @@ Section list.
   Theorem wf_R_list_len T : well_founded (@R_list_len T).
   Proof.
     constructor. intros.
-    refine (@Fix _ _ wf_R_lt (fun n : nat => forall ls : list T, n = length ls -> Acc R_list_len ls) 
+    refine (@Fix _ _ wf_R_lt (fun n : nat => forall ls : list T, n = length ls -> Acc R_list_len ls)
       (fun x rec ls pfls => Acc_intro _ _)
       _ _ refl_equal).
     refine (
@@ -82,7 +82,7 @@ Section string.
   Theorem wf_R_string_len : well_founded R_string_len.
   Proof.
     constructor. intros.
-    refine (@Fix _ _ wf_R_lt (fun n : nat => forall ls : string, n = length ls -> Acc R_string_len ls) 
+    refine (@Fix _ _ wf_R_lt (fun n : nat => forall ls : string, n = length ls -> Acc R_string_len ls)
       (fun x rec ls pfls => Acc_intro _ _)
       _ _ refl_equal).
     refine (

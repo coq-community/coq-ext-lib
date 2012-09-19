@@ -28,7 +28,7 @@ Section hlist.
       | HNil => tt
       | HCons _ _ _ x => x
     end.
-  
+
   Inductive member (a : iT) : list iT -> Type :=
   | MZ : forall ls, member a (a :: ls)
   | MN : forall l ls, member a ls -> member a (l :: ls).

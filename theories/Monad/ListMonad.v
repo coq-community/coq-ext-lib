@@ -7,7 +7,7 @@ Set Strict Implicit.
 Global Instance Monad_list : Monad list :=
 { ret := fun _ v => v :: nil
 ; bind := fix recur _ c1 _ c2 :=
-  match c1 with 
+  match c1 with
     | nil => nil
     | a :: b => c2 a ++ recur _ b _ c2
   end
@@ -19,15 +19,15 @@ Global Instance Zero_list : Zero list :=
 (* List does not have a monad transformer!
 Section trans.
   Variable m : Type -> Type.
-  
-  Inductive listT (T : Type) : Type := 
+
+  Inductive listT (T : Type) : Type :=
   | mkListT : m (option (T * listT T)) -> listT T.
 
-  Definition listT : Type -> Type := 
+  Definition listT : Type -> Type :=
     fun x => m (list x).
 
   Context {M : Monad m}.
-  
+
   Fixpoint flat_map T U (c2 : T -> m (list U)) (vs : list T) : m (list U) :=
     match vs with
       | nil => ret nil
@@ -39,7 +39,7 @@ Section trans.
   ; bind := fun _ c1 _ c2 =>
     @bind _ M _ c1 _ (flat_map c2)
   }.
-  
+
   Global Instance MonadT_listT : MonadT listT m :=
   { lift := fun _ cmd => bind cmd (fun x => ret (x :: nil)) }.
 
@@ -60,7 +60,7 @@ Section trans.
     Require Import RelationClasses.
     Require Import MonadLaws.
     Require Import Setoid.
-    
+
     Variable meq : forall T, m T -> m T -> Prop.
     Variable MonadLaws_m : MonadLaws M meq.
 
@@ -75,7 +75,7 @@ Section trans.
       { intros. etransitivity; eauto. }
     Qed.
 
-    Theorem flat_map_app : forall T U (c : T -> m (list U)) vs vs', 
+    Theorem flat_map_app : forall T U (c : T -> m (list U)) vs vs',
       meq (flat_map c (vs ++ vs'))
           (bind (flat_map c vs) (fun x =>
             (bind (flat_map c vs') (fun y =>
@@ -89,20 +89,20 @@ Section trans.
 
     Global Instance MonadLaws_OptionT : MonadLaws Monad_listT o_meq.
     Proof.
-      constructor; eauto with typeclass_instances; 
-        unfold o_meq; destruct MonadLaws_m; simpl; intros; monad_norm.          
-      { monad_norm. 
+      constructor; eauto with typeclass_instances;
+        unfold o_meq; destruct MonadLaws_m; simpl; intros; monad_norm.
+      { monad_norm.
         apply return_of_bind; intros. rewrite bind_of_return. rewrite List.app_nil_r. reflexivity. }
       { apply return_of_bind. intros. induction x; simpl; auto; try reflexivity.
         unfold liftM2. specialize (H a). rewrite bind_parametric_hd. 2: eapply H.
         monad_norm. simpl. rewrite bind_parametric_hd. 2: eapply IHx.
         monad_norm. reflexivity. }
-      { induction a. 
+      { induction a.
         { simpl. monad_norm. reflexivity. }
         { simpl. unfold liftM2; simpl.
-          symmetry. etransitivity. 
+          symmetry. etransitivity.
           eapply bind_parametric_tl.
-          intros. eapply bind_parametric_hd. symmetry. eapply IHa. 
+          intros. eapply bind_parametric_hd. symmetry. eapply IHa.
           monad_norm.
 
 monad_norm.
@@ -119,9 +119,9 @@ monad_norm.
           instantiate (1 := bind (flat_map f a0) (fun x => bind (flat_map g a1) (fun y => bind (flat_map g x) (fun z => ret (y ++ z))))).
           eapply bind_parametric_tl.
           intro. rewrite bind_of_return. eapply flat_map_app.
-          etransitivity. instantiate (1 := 
+          etransitivity. instantiate (1 :=
           eapply bind_parametric_tl. intro. inst
-          
+
 
 
 
@@ -133,11 +133,11 @@ monad_norm.
 
 generalize dependent a0. clear a.
           induction a1. simpl.
-          { intros. etransitivity. eapply bind_parametric_tl. intros. 
+          { intros. etransitivity. eapply bind_parametric_tl. intros.
             rewrite bind_of_return. reflexivity.
             monad_norm. reflexivity. }
           { intros.
-            etransitivity. eapply bind_parametric_tl. 
+            etransitivity. eapply bind_parametric_tl.
             intro. rewrite bind_of_return. simpl.
             instantiate (1 := fun a2 => (bind (g a)
         (fun x : list C =>
@@ -150,7 +150,7 @@ generalize dependent a0. clear a.
                      (fun x0 : list C =>
                       bind (recur vs0) (fun y : list C => ret (x0 ++ y)))
                end) (a1 ++ a2)) (fun y : list C => ret (x ++ y))))).
-            
+
 
 
  match goal with
@@ -162,13 +162,13 @@ generalize dependent a0. clear a.
         induction a; monad_norm.
         { etransitivity. eapply H. reflexivity. }
         { etransitivity. eapply bind_parametric_hd. eapply IHa.
-        
-        
+
+
 
 
 induction a; monad_norm. reflexivity.
-        
-        
+
+
 
 destruct x; auto; reflexivity. }
       { destruct a; auto; try reflexivity.
@@ -180,7 +180,7 @@ destruct x; auto; reflexivity. }
     Proof.
       constructor; intros; simpl in *; destruct MonadLaws_m; unfold o_meq, liftM.
       { simpl; monad_norm; simpl; reflexivity. }
-      { simpl. autorewrite with monad_rw. 
+      { simpl. autorewrite with monad_rw.
         apply bind_parametric; intros. autorewrite with monad_rw.
         reflexivity. }
     Qed.

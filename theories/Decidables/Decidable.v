@@ -31,14 +31,14 @@ Proof.
 Qed.
 
 (** Base Instances **)
-Global Instance RelDec_eq_unit : RelDec (@eq unit) := 
+Global Instance RelDec_eq_unit : RelDec (@eq unit) :=
 { rel_dec := fun _ _ => true }.
 Global Instance RelDec_Correct_eq_unit : RelDec_Correct RelDec_eq_unit.
   constructor. destruct x; destruct y; auto; simpl. intuition.
 Qed.
 
-Global Instance RelDec_eq_bool : RelDec (@eq bool) := 
-{ rel_dec := fun x y => match x , y with 
+Global Instance RelDec_eq_bool : RelDec (@eq bool) :=
+{ rel_dec := fun x y => match x , y with
                           | true , true
                           | false , false => true
                           | _ , _=> false
@@ -62,7 +62,7 @@ Section PairParam.
   Variable EDU : RelDec eqU.
 
   Global Instance RelDec_equ_pair : RelDec (fun x y => eqT (fst x) (fst y) /\ eqU (snd x) (snd y)) :=
-  { rel_dec := fun x y => 
+  { rel_dec := fun x y =>
     if rel_dec (fst x) (fst y) then
       rel_dec (snd x) (snd y)
     else false }.
@@ -77,7 +77,7 @@ Section PairEq.
 
   (** Specialization for equality **)
   Global Instance RelDec_eq_pair : RelDec (@eq (T * U)) :=
-  { rel_dec := fun x y => 
+  { rel_dec := fun x y =>
     if rel_dec (fst x) (fst y) then
       rel_dec (snd x) (snd y)
     else false }.

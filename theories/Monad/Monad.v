@@ -19,34 +19,22 @@ Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
 
 Module MonadNotation.
 
-  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2)) (at level 51, right associativity).
-  Notation "e1 ;; e2" := (_ <- e1 ; e2) (at level 51, right associativity).
+  Delimit Scope monad_scope with monad.
 
-(*
-  Section test.
-    Variable m : Type -> Type.
-    Variable M : Monad m.
+  Notation "c >>= f" := (@bind _ _ _ c _ f) (at level 51, right associativity) : monad_scope.
+  Notation "f =<< c" := (@bind _ _ _ c _ f) (at level 50, left associativity) : monad_scope.
 
-    Definition test : m nat :=
-      x <- ret 2 ;
-      y <- ret 3 ;
-      ret (x + y).
-*)
+  Notation "x <- c1 ;; c2" := (@bind _ _ _ c1 _ (fun x => c2))
+    (at level 100, c1 at next level, right associativity) : monad_scope.
+
+  (** DEPRECATED **)
+  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2))
+    (at level 100, c1 at next level, right associativity) : monad_scope.
+
+  Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
+    (at level 100, right associativity) : monad_scope.
 
 End MonadNotation.
-
-Module MonadNotationX.
-
-  Notation "c >>= f" := (bind c f) (at level 51, right associativity).
-  Notation "f =<< c" := (bind c f) (at level 50, left associativity).
-
-  Notation "x <- c1 ;; c2" := (bind c1 (fun x => c2))
-    (at level 100, c1 at next level, right associativity).
-
-  Notation "e1 ;; e2" := (_ <- e1 ;; e2)
-    (at level 100, right associativity).
-
-End MonadNotationX.
 
 Class Reader (T : Type) (m : Type -> Type) : Type :=
 { local : (T -> T) -> forall {t}, m t -> m t
@@ -54,7 +42,7 @@ Class Reader (T : Type) (m : Type -> Type) : Type :=
 }.
 
 Class State (T : Type) (m : Type -> Type) : Type :=
-{ get : m T 
+{ get : m T
 ; put : T -> m unit
 }.
 
@@ -68,7 +56,7 @@ Class MonadFix (m : Type -> Type) : Type :=
 { mfix : forall {T U}, ((T -> m U) -> T -> m U) -> T -> m U }.
 
 Class MonadExc E (m : Type -> Type) : Type :=
-{ raise : E -> forall {T}, m T 
+{ raise : E -> forall {T}, m T
 ; catch : forall {T}, m T -> (E -> m T) -> m T
 }.
 

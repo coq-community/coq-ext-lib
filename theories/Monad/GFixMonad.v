@@ -4,7 +4,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 (** The GFix monad is like monad fix except that
- ** it encapsulates the "gas" that is used as the measure 
+ ** it encapsulates the "gas" that is used as the measure
  **)
 Section gfix.
   Variable m : Type -> Type.
@@ -14,11 +14,11 @@ Section gfix.
   Inductive GFixT (T : Type) : Type := mkGFixT
   { runGFixT : nat -> m (option T) }.
 
-  Global Instance MonadFix_GFixT : MonadFix GFixT := 
+  Global Instance MonadFix_GFixT : MonadFix GFixT :=
   { mfix := fun T U f v =>
       mkGFixT (fun g =>
         (fix rec (gas : nat) : T -> m (option U) :=
-          fun v => runGFixT (f (fun t => mkGFixT (fun _ => 
+          fun v => runGFixT (f (fun t => mkGFixT (fun _ =>
             match gas with
               | 0 => ret None
               | S n => rec n t
@@ -33,7 +33,7 @@ Section gfix.
       bind (runGFixT c1 gas) (fun x =>
         match x with
           | None => ret None
-          | Some v => runGFixT (c2 v) gas  
+          | Some v => runGFixT (c2 v) gas
         end))
   }.
 
@@ -48,7 +48,7 @@ Section gfix.
   }.
 
   Global Instance Reader_GFixT {T} (RM : Reader T m) : Reader T GFixT :=
-  { ask := lift ask 
+  { ask := lift ask
   ; local := fun v _ c => mkGFixT (fun gas => local v (runGFixT c gas))
   }.
 
@@ -67,7 +67,7 @@ Require Import IdentityMonad.
 Require Import Decidable.
 
 Definition func : nat -> GFixT ident nat :=
-  mfix (fun rec n => 
+  mfix (fun rec n =>
     if eq_dec n 9 then ret 100 else rec (S n)).
 
 Eval compute in runGFixT (func 0) 8.

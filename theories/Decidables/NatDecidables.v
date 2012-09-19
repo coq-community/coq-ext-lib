@@ -4,7 +4,6 @@ Require Import Tactics.Consider.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-
 Global Instance RelDec_lt : RelDec lt :=
 { rel_dec := NPeano.ltb }.
 

@@ -3,14 +3,13 @@ Require Import OptionMonad.
 Require Import Fun.
 Require Import ReaderMonad.
 Require Import Injection.
-
 Require Import Functor.
-Import FunctorNotation.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 
-Import MonadNotationX.
+Import FunctorNotation.
+Import MonadNotation.
 Import FunNotation.
 
 Inductive gasError := GasError.
@@ -22,16 +21,15 @@ Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A := mkFuel <$> mkRead
 Definition unFuelReaderT {m} {A} : fuel m A -> (nat -> m A) := runReaderT <$> unFuel.
 
 Instance FuelMonad {m} {mMonad:Monad m} : Monad (fuel m) :=
-  { ret _A x := mkFuel (ret x)
-  ; bind _A c _B f := mkFuel (
-      x <- unFuel c ;;
-      unFuel (f x)
-    )
-  }
-.
+{ ret _A x := mkFuel (ret x)
+; bind _A c _B f := mkFuel (
+    x <- unFuel c ;;
+    unFuel (f x)
+  )
+}.
 
 Instance FuelZero {m} {mMonad:Monad m} {mZero:Zero m} : Zero (fuel m) :=
-  { zero _A := mkFuel zero}.
+{ zero _A := mkFuel zero}.
 
 Section FuelFix.
   Context {m} {mMonad:Monad m}.
@@ -59,7 +57,7 @@ Section FuelFix.
 End FuelFix.
 
 Instance FuelTrans {m} {mMonad:Monad m} : MonadT (fuel m) m :=
-  { lift _A aM := mkFuel (lift aM) }.
+{ lift _A aM := mkFuel (lift aM) }.
 
 Instance FuelMonadExc {E} {m} {mMonad:Monad m} {ME : MonadExc E m}
   : MonadExc E (fuel m) :=

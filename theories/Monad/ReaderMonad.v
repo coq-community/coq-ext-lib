@@ -11,8 +11,8 @@ Section ReaderType.
 
   Global Instance Monad_reader : Monad reader :=
   { ret  := fun _ v => mkReader (fun _ => v)
-  ; bind := fun _ c1 _ c2 => 
-    mkReader (fun s => 
+  ; bind := fun _ c1 _ c2 =>
+    mkReader (fun s =>
       let v := runReader c1 s in
       runReader (c2 v) s)
   }.
@@ -32,7 +32,7 @@ Section ReaderType.
   Global Instance Monad_readerT : Monad readerT :=
   { ret := fun _ x => mkReaderT (fun s => @ret _ M _ x)
   ; bind := fun _ c1 _ c2 =>
-    mkReaderT (fun s => 
+    mkReaderT (fun s =>
       @bind _ M _ (runReaderT c1 s) _ (fun v =>
         runReaderT (c2 v) s))
   }.
@@ -45,7 +45,7 @@ Section ReaderType.
   Global Instance MonadT_readerT : MonadT readerT m :=
   { lift := fun _ c => mkReaderT (fun _ => c)
   }.
-  
+
   Global Instance Zero_readerT (MZ : Zero m) : Zero readerT :=
   { zero := fun _ => lift zero }.
 

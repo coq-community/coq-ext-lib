@@ -18,7 +18,7 @@ Global Instance Acc_RTest_b : Accessor b := { acc := Next Here }.
 
 Global Instance Acc_RTest_c : Accessor c := { acc := Next (Next Here) }.
 
-(** 
+(**
 Eval compute in {$ mkRTest true 1 true with c := false $}%record.
 
 Eval compute in forall x : RTest, c {$ x with c := false $}%record = false.

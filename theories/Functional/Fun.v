@@ -4,7 +4,8 @@ Require Import String.
 Open Scope string_scope.
 
 Require Import Monad.
-Import MonadNotationX.
+Import MonadNotation.
+Open Scope monad_scope.
 Require Import Monad.Folds.
 Require Import Decidables.Decidable.
 Require Import Injection.
