@@ -5,8 +5,6 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 
-Print RelDec.
-
 Global Instance RelDec_lt : RelDec lt :=
 { rel_dec := NPeano.ltb }.
 

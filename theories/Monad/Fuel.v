@@ -2,27 +2,24 @@ Require Import Monad.
 Require Import OptionMonad.
 Require Import Fun.
 Require Import ReaderMonad.
+Require Import Injection.
 
 Require Import Functor.
 Import FunctorNotation.
 
 Set Implicit Arguments.
-Set Strict Implicit.
+Set Maximal Implicit Insertion.
 
 Import MonadNotationX.
 Import FunNotation.
 
-Class HasGasError e := { gasError : e}.
-Instance UnitHasGasError : HasGasError unit := { gasError := tt }.
+Inductive gasError := GasError.
 
 Inductive fuel (m:Type->Type) A := mkFuel { unFuel : readerT nat m A }.
-Print mkFuel.
 
-Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A :=
-  @mkFuel _ _ <$> @mkReaderT _ _ _.
+Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A := mkFuel <$> mkReaderT.
 
-Definition unFuelReaderT {m} {A} : fuel m A -> (nat -> m A) :=
-  @runReaderT _ _ _ <$> @unFuel _ _.
+Definition unFuelReaderT {m} {A} : fuel m A -> (nat -> m A) := runReaderT <$> unFuel.
 
 Instance FuelMonad {m} {mMonad:Monad m} : Monad (fuel m) :=
   { ret _A x := mkFuel (ret x)
@@ -37,12 +34,13 @@ Instance FuelZero {m} {mMonad:Monad m} {mZero:Zero m} : Zero (fuel m) :=
   { zero _A := mkFuel zero}.
 
 Section FuelFix.
-  Context {m} {e} {mMonad:Monad m} {mError:MonadExc e m} {eHasGasError:HasGasError e}.
+  Context {m} {mMonad:Monad m}.
+  Context {e} {mError:MonadExc e m} {eInject:Injection gasError e}.
 
   Fixpoint fuelFix' {A B:Type}
     (ff:(A -> fuel m B) -> (A -> fuel m B)) (k:nat) (a:A) {struct k} : m B :=
       match k with
-      | O => raise gasError
+      | O => raise (inject GasError)
       | S k' => unFuelReaderT
                   (ff (fun a' => mkFuelReaderT (fun _k => fuelFix' ff k' a'))
                       a)
@@ -74,3 +72,6 @@ Instance FuelReader {r} {m} {mMonad:Monad m} {mReader:Reader r m}
 { ask := lift ask
 ; local f _A c := mkFuelReaderT (fun k => local f (unFuelReaderT c k))
 }.
+
+Instance FuelPlus {m} {mMonad:Monad m} {mPlus:MonadPlus m} : MonadPlus (fuel m) :=
+{ mplus _A _B mA mB := mkFuel (mplus (unFuel mA) (unFuel mB)) }.

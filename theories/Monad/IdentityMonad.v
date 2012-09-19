@@ -1,7 +1,7 @@
 Require Import Monad.
 
 Set Implicit Arguments.
-Set Strict Implicit.
+Set Maximal Implicit Insertion.
 
 Section Ident.
   Inductive ident A := mkIdent { unIdent : A }.

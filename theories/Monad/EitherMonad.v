@@ -65,4 +65,21 @@ Section except.
   ; local := fun f T cmd => mkEitherT (local f (unEitherT cmd))
   }.
 
+  Axiom undef : forall {A}, A.
+
+  Global Instance MonadPlus_eitherT : MonadPlus eitherT :=
+  { mplus _A _B mA mB := mkEitherT (
+      x <- unEitherT mA ;;
+      match x with
+      | inl _ =>
+          y <- unEitherT mB ;;
+          match y with
+          | inl t => ret (inl t)
+          | inr b => ret (inr (inr b))
+          end
+      | inr a => ret (inr (inl a))
+      end
+    )
+  }.
+
 End except.

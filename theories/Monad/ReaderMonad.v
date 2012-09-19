@@ -1,7 +1,7 @@
 Require Import Monad.
 
 Set Implicit Arguments.
-Set Strict Implicit.
+Set Maximal Implicit Insertion.
 
 Section ReaderType.
   Variable S : Type.
@@ -26,7 +26,6 @@ Section ReaderType.
 
   Record readerT (t : Type) : Type := mkReaderT
   { runReaderT : S -> m t }.
-
 
   Variable M : Monad m.
 
@@ -55,6 +54,11 @@ Section ReaderType.
   ; catch := fun _ c h => mkReaderT (fun s => catch (runReaderT c s) (fun x => runReaderT (h x) s))
   }.
 
+  Global Instance MonadPlus_readerT {mMonadPlus:MonadPlus m} : MonadPlus readerT :=
+  { mplus _A _B mA mB := mkReaderT (fun r => mplus (runReaderT mA r)
+                                                   (runReaderT mB r))
+  }.
+
 End ReaderType.
 
-Implicit Arguments mkReaderT [S m t].
+Arguments mkReaderT {S} {m} {t} _.

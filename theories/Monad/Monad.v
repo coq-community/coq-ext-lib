@@ -72,4 +72,10 @@ Class MonadExc E (m : Type -> Type) : Type :=
 ; catch : forall {T}, m T -> (E -> m T) -> m T
 }.
 
+Class MonadPlus m := { mplus : forall {A B:Type}, m A -> m B -> m (A + B)%type }.
+
+Module MonadPlusNotation.
+  Notation "x <+> y" := (mplus x y) (at level 49, right associativity).
+End MonadPlusNotation.
+
 Instance MonadFunctor {m} {mMonad:Monad m} : Functor m := { fmap := @liftM _ _ }.
