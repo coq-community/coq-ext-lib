@@ -66,6 +66,20 @@ Section PairParam.
     if rel_dec (fst x) (fst y) then
       rel_dec (snd x) (snd y)
     else false }.
+
+  Variable EDCT : RelDec_Correct EDT.
+  Variable EDCU : RelDec_Correct EDU.
+
+  Global Instance RelDec_Correct_equ_pair : RelDec_Correct RelDec_equ_pair.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; intuition.
+  Qed.
 End PairParam.
 
 Section PairEq.
@@ -81,4 +95,50 @@ Section PairEq.
     if rel_dec (fst x) (fst y) then
       rel_dec (snd x) (snd y)
     else false }.
+
+  Variable EDCT : RelDec_Correct EDT.
+  Variable EDCU : RelDec_Correct EDU.
+
+  Global Instance RelDec_Correct_eq_pair : RelDec_Correct RelDec_eq_pair.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; congruence. 
+  Qed.
 End PairEq.
+
+Section ListEq.
+  Variable T : Type.
+  Variable EDT : RelDec (@eq T).
+
+  Fixpoint list_eq (ls rs : list T) : bool :=
+    match ls , rs with
+      | nil , nil => true
+      | cons l ls , cons r rs => 
+        if rel_dec l r then list_eq ls rs else false
+      | _ , _ => false
+    end.
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_list : RelDec (@eq (list T)) :=
+  { rel_dec := list_eq }.
+
+  Variable EDCT : RelDec_Correct EDT.
+
+  Global Instance RelDec_Correct_eq_list : RelDec_Correct RelDec_eq_list.
+  Proof.
+    constructor; induction x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; intuition; try congruence. 
+    eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
+  Qed.
+
+End ListEq.
