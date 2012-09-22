@@ -107,7 +107,7 @@ Section PairEq.
                  consider (rel_dec X Y); intros; subst
                | [ |- context [ rel_dec ?X ?Y ] ] =>
                  consider (rel_dec X Y); intros; subst
-             end; congruence. 
+             end; congruence.
   Qed.
 End PairEq.
 
@@ -118,7 +118,7 @@ Section ListEq.
   Fixpoint list_eq (ls rs : list T) : bool :=
     match ls , rs with
       | nil , nil => true
-      | cons l ls , cons r rs => 
+      | cons l ls , cons r rs =>
         if rel_dec l r then list_eq ls rs else false
       | _ , _ => false
     end.
@@ -137,7 +137,7 @@ Section ListEq.
                  consider (rel_dec X Y); intros; subst
                | [ |- context [ rel_dec ?X ?Y ] ] =>
                  consider (rel_dec X Y); intros; subst
-             end; intuition; try congruence. 
+             end; intuition; try congruence.
     eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
   Qed.
 

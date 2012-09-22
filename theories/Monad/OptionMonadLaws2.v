@@ -15,7 +15,7 @@ Section Laws2.
   Variable MonadLaws_mleq : MonadLaws Monad_m mleq.
 
   Definition o_mleq T (e : T -> T -> Prop) (a b : optionT m T) : Prop :=
-    mleq (fun l r => 
+    mleq (fun l r =>
       match l , r with
         | None , None => True
         | Some l , Some r => e l r
@@ -36,7 +36,7 @@ Section Laws2.
 
   Lemma lower_meq : forall (A : Type) (c c' : optionT m A)
     (eA : A -> A -> Prop),
-    meq m mleq (fun l r => 
+    meq m mleq (fun l r =>
       match l , r with
         | None , None => True
         | Some l , Some r => eA l r
@@ -88,7 +88,7 @@ Section Laws2.
     { intros. simpl. eapply lower_meq; simpl.
       eapply bind_of_return; eauto. }
     { intros; simpl. eapply lower_meq; simpl.
-      eapply return_of_bind; eauto. 
+      eapply return_of_bind; eauto.
       eauto using refl_omleq.
       { destruct x. specialize (H0 a).
         red in H0. simpl in *. unfold o_mleq in *. eauto.
@@ -105,6 +105,13 @@ Section Laws2.
       destruct c; simpl in *.
       eapply bind_parametric_tl_leq; eauto with typeclass_instances.
       destruct a; auto. eapply me_refl; eauto with typeclass_instances. }
+  Qed.
+
+  Global Instance MonadTLaws_optionT : @MonadTLaws (optionT m) (@Monad_optionT m _)
+    o_mleq m Monad_m (@MonadT_optionT _ Monad_m).
+  Proof.
+    constructor; intros; simpl; eapply lower_meq; unfold liftM; simpl; monad_norm;
+      reflexivity.
   Qed.
 
 End Laws2.
