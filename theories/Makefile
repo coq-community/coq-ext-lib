@@ -1,4 +1,4 @@
-PACKAGES   := Monad Tactics Data Decidables With Relations Rec Functional Functor FMaps
+PACKAGES   := Monad Tactics Data Decidables With Relations Rec Functional Functor FMaps Graph
 MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v)))
 TESTS      := 
 VS         := $(MODULES:%=%.v)
