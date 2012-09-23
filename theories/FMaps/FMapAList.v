@@ -32,6 +32,7 @@ Section keyed.
   ; add    := alist_add
   ; remove := alist_remove
   ; find   := alist_find
+  ; keys   := fun _ => List.map (@fst _ _)
   }.
 
 End keyed.

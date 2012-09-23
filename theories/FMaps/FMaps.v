@@ -13,10 +13,18 @@ Section Maps.
   ; add      : forall {V}, K -> V -> map V -> map V
   ; remove   : forall {V}, K -> map V -> map V
   ; find     : forall {V}, K -> map V -> option V
+  ; keys     : forall {V}, map V -> list K
   }.
   
   Variable M : Map.
 
+  Definition contains {V} (k : K) (m : map V) : bool :=
+    match find k m with
+      | None => false
+      | Some _ => true
+    end.
+
+(*
   Class MapMember : Type :=
   { MapsTo : forall {V}, K -> V -> map V -> Prop }.
 
@@ -37,6 +45,7 @@ Section Maps.
   Proof.
     red. red. auto.
   Qed.
+*)
 
 (*
   Class MapFacts (K : Type) (map : Type -> Type) (M : Map K map) : Type :=
@@ -49,3 +58,4 @@ Arguments empty {_} {_} {_} {_} .
 Arguments add {K} {map} {Map} {V} _ _ _.
 Arguments remove {K} {map} {Map} {V} _ _.
 Arguments find {K} {map} {Map} {V} _ _.
+Arguments contains {K} {map} {M} {V} _ _.

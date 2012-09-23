@@ -49,4 +49,24 @@ Section foldM.
 
 End foldM.
 
+Section filterM.
+  Context {A : Type}.
+  Context {m : Type -> Type}.
+  Context {M : Monad m}.
+  Variable f : A -> m bool.
+
+  Fixpoint filterM (ls : list A) : m (list A) :=
+    match ls with
+      | nil => ret nil
+      | l :: ls =>
+        b <- f l ;;
+        if b then 
+          ls <- filterM ls ;;
+          ret (l :: ls)
+        else
+          filterM ls
+    end.
+
+End filterM.
+
 

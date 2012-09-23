@@ -63,3 +63,8 @@ Section StateType.
 
 
 End StateType.
+
+Arguments evalState {S} {t} (c) (s).
+Arguments execState {S} {t} (c) (s).
+Arguments evalStateT {S} {m} {M} {t} (c) (s).
+Arguments execStateT {S} {m} {M} {t} (c) (s).
