@@ -21,8 +21,8 @@ Module MonadNotation.
 
   Delimit Scope monad_scope with monad.
 
-  Notation "c >>= f" := (@bind _ _ _ c _ f) (at level 51, right associativity) : monad_scope.
-  Notation "f =<< c" := (@bind _ _ _ c _ f) (at level 50, left associativity) : monad_scope.
+  Notation "c >>= f" := (@bind _ _ _ c _ f) (at level 50, left associativity) : monad_scope.
+  Notation "f =<< c" := (@bind _ _ _ c _ f) (at level 51, right associativity) : monad_scope.
 
   Notation "x <- c1 ;; c2" := (@bind _ _ _ c1 _ (fun x => c2))
     (at level 100, c1 at next level, right associativity) : monad_scope.
