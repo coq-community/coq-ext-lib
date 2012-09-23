@@ -3,6 +3,8 @@
 *.v.d
 Makefile.coq
 *~
-#*#
+\#*
 .#*
 .dir-locals.el
+deps.dot
+deps.pdf

@@ -10,7 +10,7 @@ Section keyed.
   Variable RD_K : RelDec (@eq K).
 
   Definition alist (T : Type) : Type := list (K * T).
-  
+
   Definition alist_add V (k : K) (v : V) (m : alist V) : alist V :=
     (k, v) :: m.
 
@@ -20,10 +20,10 @@ Section keyed.
   Fixpoint alist_find V (k : K) (m : alist V) : option V :=
     match m with
       | nil => None
-      | (k',v) :: ms => 
-        if eq_dec k k' then 
+      | (k',v) :: ms =>
+        if eq_dec k k' then
           Some v
-        else 
+        else
           alist_find k ms
     end.
 
@@ -32,7 +32,7 @@ Section keyed.
   ; add    := alist_add
   ; remove := alist_remove
   ; find   := alist_find
+  ; keys   := fun _ => List.map (@fst _ _)
   }.
 
 End keyed.
-  
