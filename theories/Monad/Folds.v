@@ -5,7 +5,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Import MonadNotation.
-Open Local Scope monad.
+Open Local Scope monad_scope.
 
 Section mapM.
   Context {A B : Type}.

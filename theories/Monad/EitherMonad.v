@@ -4,7 +4,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Import MonadNotation.
-Open Local Scope monad.
+Open Local Scope monad_scope.
 
 Section except.
   Variable T : Type.
