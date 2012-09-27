@@ -18,7 +18,7 @@ Section except.
   }.
 
   Global Instance Exception_either : MonadExc T (sum T) :=
-  { raise := fun v _ => inl v
+  { raise := fun _ v => inl v
   ; catch := fun _ c h => match c with
                             | inl v => h v
                             | x => x
@@ -43,7 +43,7 @@ Section except.
   }.
 
   Global Instance Exception_eitherT : MonadExc T eitherT :=
-  { raise := fun v _ => mkEitherT (ret (inl v))
+  { raise := fun _ v => mkEitherT (ret (inl v))
   ; catch := fun _ c h => mkEitherT (
       xM <- unEitherT c ;;
       match xM with

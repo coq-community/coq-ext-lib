@@ -50,7 +50,7 @@ Section ReaderType.
   { zero := fun _ => lift zero }.
 
   Global Instance Exception_readerT {E} (ME : MonadExc E m) : MonadExc E readerT :=
-  { raise := fun v _ => lift (raise v)
+  { raise := fun _ v => lift (raise v)
   ; catch := fun _ c h => mkReaderT (fun s => catch (runReaderT c s) (fun x => runReaderT (h x) s))
   }.
 

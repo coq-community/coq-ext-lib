@@ -91,9 +91,10 @@ Section MonadFix.
       (fun packed => apply ls (m R) (f (wrap ls packed)))).
 
 End MonadFix.
+Arguments mfix {m MonadFix T U} _ _.
 
 Class MonadExc E (m : Type -> Type) : Type :=
-{ raise : E -> forall {T}, m T
+{ raise : forall {T}, E -> m T
 ; catch : forall {T}, m T -> (E -> m T) -> m T
 }.
 

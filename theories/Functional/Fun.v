@@ -38,6 +38,12 @@ Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=
   end
 .
 
+Fixpoint unzip A B (xys:list (A * B)) : list A * list B :=
+match xys with
+| [] => ([], [])
+| (x,y)::xys => let (xs,ys) := unzip xys in (x::xs,y::ys)
+end.
+
 Definition forEach A B (xs:list A) (f:A -> B) : list B := map f xs.
 
 Section MonadFixDefs.

@@ -3,180 +3,291 @@ Set Maximal Implicit Insertion.
 
 Inductive order := Less | Equal | Greater.
 
-(* a two-three tree *)
-Inductive tree23 K V :=
-| Null23 : tree23 K V
-| Two23 : tree23 K V -> K * V -> tree23 K V -> tree23 K V
-| Three23 : tree23 K V -> K * V -> tree23 K V -> K * V -> tree23 K V -> tree23 K V
-.
-Arguments Null23 {K} {V}.
+Section tree.
+  Variable A:Type.
+  Variable A_eq : A -> A -> Prop.
+  Variable A_eq_dec : A -> A -> bool.
+  Variable A_lt : A -> A -> Prop.
+  Variable A_lt_dec : A -> A -> bool.
 
-(* a context of a two-three tree. this is the type of taking a tree and
- * replacing a sub-tree with a hole.
- *)
-Inductive context23 K V :=
-| Top23 : context23 K V
-| TwoLeftHole23 : K * V -> tree23 K V -> context23 K V -> context23 K V
-| TwoRightHole23 : tree23 K V -> K * V -> context23 K V -> context23 K V
-| ThreeLeftHole23 : K * V -> tree23 K V -> K * V -> tree23 K V -> context23 K V -> context23 K V
-| ThreeMiddleHole23 : tree23 K V -> K * V -> K * V -> tree23 K V -> context23 K V -> context23 K V
-| ThreeRightHole23 : tree23 K V -> K * V -> tree23 K V -> K * V -> context23 K V -> context23 K V
-.
+  Definition compareo (a1:A) (a2:A) : order :=
+  if A_eq_dec a1 a2 then Equal
+  else if A_lt_dec a1 a2 then Less
+  else Greater.
 
-(* zip takes a context (which can be thought of as a tree with a hole), and a
- * subtree, and fills the hole with the subtree
- *)
-Fixpoint zip23 {K V} (t:tree23 K V) (c:context23 K V) : tree23 K V :=
-match c with
-| Top23 => t
-| TwoLeftHole23 p r c' => zip23 (Two23 t p r) c'
-| TwoRightHole23 l p c' => zip23 (Two23 l p t) c'
-| ThreeLeftHole23 lp m rp r c' => zip23 (Three23 t lp m rp r) c'
-| ThreeMiddleHole23 l lp rp r c' => zip23 (Three23 l lp t rp r) c'
-| ThreeRightHole23 l lp m rp c' => zip23 (Three23 l lp m rp t) c'
-end.
+  (* a two-three tree *)
+  Inductive tree :=
+  (* Null_t = _ *)
+  | Null_t : tree
+  (*                [a]
+   * Two_t X a y =  / \
+   *               X   Y
+   * Invariant: x in X => x < a; y in Y => y > a
+   *)
+  | Two_t : tree -> A -> tree -> tree
+  (*                       [a][b]
+   * Three_t X a Y b Z =  /  |  \
+   *                     X   Y   Z
+   * Invariant: x in X => x < a; y in Y => a < y < b; z in Z => z > b
+   *)
+  | Three_t : tree -> A -> tree -> A -> tree -> tree
+  .
 
+  Fixpoint in_t (a:A) (t:tree) : Prop :=
+  match t with
+  | Null_t => False
+  | Two_t tl a' tr => A_eq a a' \/ in_t a tl \/ in_t a tr
+  | Three_t tl al tm ar tr => A_eq a al \/ A_eq a ar \/ in_t a tl \/ in_t a tm \/ in_t a tr
+  end.
 
-Section ordered.
-  Variable (K:Type) (V:Type).
-  Variable compareo : K -> K -> order.
+  Fixpoint height_t (t:tree) : nat :=
+  match t with
+  | Null_t => O
+  | Two_t tl _ tr => max (height_t tl) (height_t tr)
+  | Three_t tl _ tm _ tr => max (max (height_t tl) (height_t tm)) (height_t tr)
+  end.
+
+  Fixpoint tree_wf (t:tree) : Prop :=
+  match t with
+  | Null_t => True
+  | Two_t tl a tr =>
+         (forall x:A, (in_t x tl -> A_lt x a)
+                   /\ (in_t x tr -> A_lt a x))
+      /\ (height_t tl = height_t tr)
+  | Three_t tl al tm ar tr =>
+          (forall x:A, (in_t x tl -> A_lt x al)
+                    /\ (in_t x tm -> A_lt al x /\ A_lt x ar)
+                    /\ (in_t x tr -> A_lt ar x))
+      /\ (height_t tl = height_t tm)
+      /\ (height_t tm = height_t tr)
+  end.
+
+  (* a context of a two-three tree. this is the type of taking a tree and
+   * replacing a sub-tree with a hole.
+   *)
+  Inductive context :=
+  (* Top_c = _ *)
+  | Top_c : context
+  (*                         C
+   * TwoLeftHole_c a Y C =   |
+   *                        [a]
+   *                        / \
+   *                       ?   Y
+   *)
+  | TwoLeftHole_c : A -> tree -> context -> context
+  (*                          C
+   * TwoRightHole_c X a C =   |
+   *                         [a]
+   *                         / \
+   *                        X   ?
+   *)
+  | TwoRightHole_c : tree -> A -> context -> context
+  (*                             C
+   * ThreeLeftHole a Y b Z C =   |
+   *                           [a][b]
+   *                          /  |  \
+   *                         ?   Y   Z
+   *)
+  | ThreeLeftHole23 : A -> tree -> A -> tree -> context -> context 
+  (*                               C
+   * ThreeMiddleHole X a b Z C =   |
+   *                             [a][b]
+   *                            /  |  \
+   *                           X   ?   Z
+   *)
+  | ThreeMiddleHole23 : tree -> A -> A -> tree -> context -> context
+  (*                              C
+   * ThreeRightHole X a Y b C =   |
+   *                            [a][b]
+   *                           /  |  \
+   *                          X   Y   ?
+   *)
+  | ThreeRightHole23 : tree -> A -> tree -> A -> context -> context
+  .
+
+  (* zip takes a context (which can be thought of as a tree with a hole), and a
+   * subtree, and fills the hole with the subtree
+   *)
+  Fixpoint zip23 (t:tree) (c:context) : tree :=
+  match c with
+  | Top_c => t
+  | TwoLeftHole_c p r c' => zip23 (Two_t t p r) c'
+  | TwoRightHole_c l p c' => zip23 (Two_t l p t) c'
+  | ThreeLeftHole23 lp m rp r c' => zip23 (Three_t t lp m rp r) c'
+  | ThreeMiddleHole23 l lp rp r c' => zip23 (Three_t l lp t rp r) c'
+  | ThreeRightHole23 l lp m rp c' => zip23 (Three_t l lp m rp t) c'
+  end.
+
+  Fixpoint context_wf (c:context) : Prop :=
+  exists n:nat, forall t:tree, tree_wf t -> height_t t = n -> tree_wf (zip23 t c).
+
+  (* if insertion results in a subtree which is too tall, propegate it up into
+   * its context.
+   *)
+  Fixpoint insertUp23 (tpt:tree * A * tree) (c:context) : tree :=
+  let '(l,p,r) := tpt in
+  match c with
+  (*       _              [p]
+   *       |              / \
+   *      [p]      =>    l   r
+   *     // \\
+   *     l   r
+   *)
+  | Top_c => Two_t l p r
+  (*           c'             c'
+   *           |              |
+   *          [p']    =>    [p][p']
+   *          /  \          /  |  \
+   *        [p]   r'       l   r   r'
+   *       // \\
+   *       l   r
+   *)
+  | TwoLeftHole_c  p' r' c' => zip23 (Three_t l p r p' r') c'
+  (*           c'             c'
+   *           |              |
+   *          [p']    =>    [p'][p]
+   *          /  \          /  |  \
+   *         l'  [p]       l'  l   r
+   *            // \\
+   *            l   r
+   *)
+  | TwoRightHole_c  l' p' c' => zip23 (Three_t  l' p' l p r ) c'
+  (*           c'               c'
+   *           |                |
+   *        [lp][rp]    =>    [lp]
+   *        /  |  \          //  \\
+   *      [p]  m   r'      [p]    [rp]
+   *     // \\             / \     / \
+   *     l   r            l   r   m   r'
+   *)
+  | ThreeLeftHole23 lp m rp r' c' => insertUp23 (Two_t l p r, lp, Two_t m rp r') c'
+  (*           c'               c'
+   *           |                |
+   *        [lp][rp]    =>     [p]
+   *        /  |  \           //  \\
+   *       l' [p]  r'       [lp]   [rp]
+   *         // \\          / \     / \
+   *         l   r         l'  l   r   r'
+   *)
+  | ThreeMiddleHole23 l' lp rp r' c' => insertUp23 (Two_t l' lp l, p, Two_t r rp r') c'
+  (*           c'               c'
+   *           |                |
+   *        [lp][rp]    =>    [rp]
+   *        /  |  \          //  \\
+   *       l'  m  [p]      [lp]   [p]
+   *             // \\     / \    / \
+   *             l   r    l'  m  l   r
+   *)
+  | ThreeRightHole23 l' lp m rp c' => insertUp23 (Two_t l' lp m, rp, Two_t l p r) c'
+  end.
 
   (* insert an element into the two-three tree *)
-  Fixpoint insert23 (p:K * V) (t:tree23 K V) (c:context23 K V) : tree23 K V :=
-  (* if insertion results in a subtree which is too tall, propegate it up into
-   * its context
-   *)
-  let insertUp23 :=
-    fix insertUp23
-        (tpt:tree23 K V * (K * V) * tree23 K V) (c:context23 K V) : tree23 K V:=
-      let '(l,p,r) := tpt in
-      match c with
-      | Top23 => Two23 l p r
-      | TwoLeftHole23  p' r' c' => zip23 (Three23 l p r p' r') c'
-      | TwoRightHole23  l' p' c' => zip23 (Three23  l' p' l p r ) c'
-      | ThreeLeftHole23 lp m rp r' c' =>
-          insertUp23 (Two23 l p r, lp, Two23 m rp r') c'
-      | ThreeMiddleHole23 l' lp rp r' c' =>
-          insertUp23 (Two23 l' lp l, p, Two23 r rp r') c'
-      | ThreeRightHole23 l' lp m rp c' =>
-          insertUp23 (Two23 l' lp m, rp, Two23 l p r) c'
-      end
-  in
-  let (k,v) := p in
+  Fixpoint insert23 (k:A) (t:tree) (c:context) : tree :=
   match t with
-  | Null23 => insertUp23 (Null23, p, Null23) c
-  | Two23 l p' r =>
-      let (k',v') := p' in
+  | Null_t => insertUp23 (Null_t, k, Null_t) c
+  | Two_t l k' r =>
       match compareo k k' with
-      | Less => insert23 p l (TwoLeftHole23 p' r c)
-      | Equal => zip23 (Two23 l (k',v) r) c
-      | Greater => insert23 p r (TwoRightHole23 l p' c)
+      | Less => insert23 k l (TwoLeftHole_c k' r c)
+      | Equal => zip23 (Two_t l k' r) c
+      | Greater => insert23 k r (TwoRightHole_c l k' c)
       end
-  | Three23 l lp m rp r =>
-      let '((lk,lv),(rk,rv)) := (lp,rp) in
+  | Three_t l lk m rk r =>
       match compareo k lk, compareo k rk with
-      | Less, _ => insert23 p l (ThreeLeftHole23 lp m rp r c)
-      | Equal, _ => zip23 (Three23 l (lk,v) m rp r) c
-      | Greater, Less => insert23 p m (ThreeMiddleHole23 l lp rp r c)
-      | _, Equal => zip23 (Three23 l lp m (rk,v) r) c
-      | _, Greater => insert23 p r (ThreeRightHole23 l lp m rp c)
+      | Less, _ => insert23 k l (ThreeLeftHole23 lk m rk r c)
+      | Equal, _ => zip23 (Three_t l lk m rk r) c
+      | Greater, Less => insert23 k m (ThreeMiddleHole23 l lk rk r c)
+      | _, Equal => zip23 (Three_t l lk m rk r) c
+      | _, Greater => insert23 k r (ThreeRightHole23 l lk m rk c)
       end
   end.
 
-  Axiom impossible : forall {A}, A.
-
-  (* remove an element from the two-three tree *)
-  Fixpoint remove23 (k:K) (t:tree23 K V) (c:context23 K V) : tree23 K V :=
   (* if remove results in a tree which is too short, propegate the gap into the
    * context *)
-  let removeUp23 :=
-    fix removeUp23 (t:tree23 K V) (c:context23 K V) : tree23 K V :=
-    match c with
-    | Top23 => t
-    | TwoLeftHole23 p (Two23 l' p' r') c' =>
-        removeUp23 (Three23 t p l' p' r') c'
-    | TwoRightHole23 (Two23 l' p' r') p c' =>
-        removeUp23 (Three23 l' p' r' p t) c'
-    | TwoLeftHole23 p (Three23 l' lp' m' rp' r') c' =>
-        zip23 (Two23 (Two23 t p l') lp' (Two23 m' rp' r')) c'
-    | TwoRightHole23 (Three23 l' lp' m' rp' r') p c' =>
-        zip23 (Two23 (Two23  l' lp' m') rp' (Two23 r' p t)) c'
-    | ThreeLeftHole23  lp (Two23 l' p' r') rp r c' =>
-        zip23 (Two23 (Three23 t lp l' p' r') rp r) c'
-    | ThreeMiddleHole23 (Two23 l' p' r') lp rp r c' =>
-        zip23 (Two23 (Three23 l' p' r' lp t) rp r) c'
-    | ThreeMiddleHole23 l lp rp (Two23 l' p' r') c' =>
-        zip23 (Two23 l lp (Three23 t rp l' p' r')) c'
-    | ThreeRightHole23 l lp (Two23 l' p' r') rp c' =>
-        zip23 (Two23 l lp (Three23 l' p' r' rp t)) c'
-    | ThreeLeftHole23  lp (Three23 l' lp' m' rp' r') rp r c' =>
-        zip23 (Three23 (Two23 t lp l') lp' (Two23 m' rp' r') rp r) c'
-    | ThreeMiddleHole23 (Three23 l' lp' m' rp' r') lp rp r c' =>
-        zip23 (Three23 (Two23 l' lp' m') rp' (Two23 r' lp t) rp r) c'
-    | ThreeMiddleHole23 l lp rp (Three23 l' lp' m' rp' r') c' =>
-        zip23 (Three23 l lp (Two23 t rp l') lp' (Two23 m' rp' r')) c'
-    | ThreeRightHole23 l lp (Three23 l' lp' m' rp' r') rp c' =>
-        zip23 (Three23 l lp (Two23 l' lp' m') rp' (Two23 r' rp t)) c'
-    | TwoLeftHole23 _ Null23 _ => impossible
-    | TwoRightHole23 Null23 _ _ => impossible
-    | ThreeLeftHole23 _ Null23 _ _ _ => impossible
-    | ThreeMiddleHole23 Null23 _ _ _ _ => impossible
-    | ThreeRightHole23 _ _ Null23 _ _ => impossible
-    end
-  in
+  Fixpoint removeUp23 (t:tree) (c:context) : option tree :=
+  match c with
+  | Top_c => Some t
+  | TwoLeftHole_c _ Null_t _ => None
+  | TwoLeftHole_c p (Two_t l' p' r') c' =>
+      removeUp23 (Three_t t p l' p' r') c'
+  | TwoLeftHole_c p (Three_t l' lp' m' rp' r') c' =>
+      Some (zip23 (Two_t (Two_t t p l') lp' (Two_t m' rp' r')) c')
+  | TwoRightHole_c (Two_t l' p' r') p c' =>
+      removeUp23 (Three_t l' p' r' p t) c'
+  | TwoRightHole_c (Three_t l' lp' m' rp' r') p c' =>
+      Some (zip23 (Two_t (Two_t  l' lp' m') rp' (Two_t r' p t)) c')
+  | ThreeLeftHole23  lp (Two_t l' p' r') rp r c' =>
+      Some (zip23 (Two_t (Three_t t lp l' p' r') rp r) c')
+  | ThreeMiddleHole23 (Two_t l' p' r') lp rp r c' =>
+      Some (zip23 (Two_t (Three_t l' p' r' lp t) rp r) c')
+  | ThreeMiddleHole23 l lp rp (Two_t l' p' r') c' =>
+      Some (zip23 (Two_t l lp (Three_t t rp l' p' r')) c')
+  | ThreeRightHole23 l lp (Two_t l' p' r') rp c' =>
+      Some (zip23 (Two_t l lp (Three_t l' p' r' rp t)) c')
+  | ThreeLeftHole23  lp (Three_t l' lp' m' rp' r') rp r c' =>
+      Some (zip23 (Three_t (Two_t t lp l') lp' (Two_t m' rp' r') rp r) c')
+  | ThreeMiddleHole23 (Three_t l' lp' m' rp' r') lp rp r c' =>
+      Some (zip23 (Three_t (Two_t l' lp' m') rp' (Two_t r' lp t) rp r) c')
+  | ThreeMiddleHole23 l lp rp (Three_t l' lp' m' rp' r') c' =>
+      Some (zip23 (Three_t l lp (Two_t t rp l') lp' (Two_t m' rp' r')) c')
+  | ThreeRightHole23 l lp (Three_t l' lp' m' rp' r') rp c' =>
+      Some (zip23 (Three_t l lp (Two_t l' lp' m') rp' (Two_t r' rp t)) c')
+  | TwoRightHole_c Null_t _ _ => None
+  | ThreeLeftHole23 _ Null_t _ _ _ => None
+  | ThreeMiddleHole23 Null_t _ _ _ _ => None
+  | ThreeRightHole23 _ _ Null_t _ _ => None
+  end.
+
+  (* remove an element from the two-three tree *)
+  Fixpoint remove23 (k:A) (t:tree) (c:context) : option tree :=
   (* removes the greatest element in a tree and if it results in a tree which is
    * too short it propegats the gap into a provided context
    *)
   let removeGreatest23 :=
-    fix removeGreatest23
-      (t:tree23 K V) (k:(K * V) -> context23 K V) : option (tree23 K V) :=
+  fix removeGreatest23 (t:tree) (k:A -> context) : option tree :=
     match t with
-    | Two23 l p r  => 
+    | Two_t l p r  => 
         match l with
-        | Null23 => (* (assert (r = Null) ; *)
-            Some (removeUp23 Null23 (k p))
-        | _ => removeGreatest23 r (fun p' => TwoRightHole23 l p (k p'))
+        | Null_t => (* (assert (r = Null_t) ; *) removeUp23 Null_t (k p)
+        | _ => removeGreatest23 r (fun p' => TwoRightHole_c l p (k p'))
         end
-    | Three23 l lp m rp r =>
+    | Three_t l lp m rp r =>
         match l with
-        | Null23 => (* (assert (m = Null) ; assert (r = Null) ; *)
-            Some (zip23 (Two23 Null23 lp Null23) (k rp))
+        | Null_t => (* (assert (m = Null_t) ; assert (r = Null_t) ; *)
+            Some (zip23 (Two_t Null_t lp Null_t) (k rp))
         | _ => removeGreatest23 r (fun p' => ThreeRightHole23 l lp m rp (k p'))
         end
-    | Null23 => None
+    | Null_t => None
     end
   in
   match t with
-  | Null23 => zip23 Null23 c
-  | Two23 l (k',v) r =>
+  | Null_t => Some (zip23 Null_t c)
+  | Two_t l k' r =>
       match compareo k k' with
-      | Less => remove23 k l (TwoLeftHole23 (k',v) r c )
+      | Less => remove23 k l (TwoLeftHole_c k' r c )
       | Equal =>
-          match removeGreatest23 l (fun p => TwoLeftHole23 p r c) with
-          | None => (* assert (r = Null) ; *) removeUp23 Null23 c
-          | Some t => t
+          match removeGreatest23 l (fun p => TwoLeftHole_c p r c) with
+          | None => (* assert (r = Null_t) ; *) removeUp23 Null_t c
+          | Some t => Some t
           end
-      | Greater => remove23 k r (TwoRightHole23 l (k',v) c)
+      | Greater => remove23 k r (TwoRightHole_c l k' c)
       end
-  | Three23 l (lk,lv) m (rk,rv) r =>
+  | Three_t l lk m rk r =>
     match compareo k lk,compareo k rk with
-    | Less, _ => remove23 k l (ThreeLeftHole23 (lk,lv) m (rk,rv) r c)
+    | Less, _ => remove23 k l (ThreeLeftHole23 lk m rk r c)
     | Equal, _ =>
-        match removeGreatest23 l (fun p => ThreeLeftHole23 p m (rk,rv) r c) with
-        | None => (* assert (m = Null) ; assert (r = Null) ; *)
-            zip23 (Two23 Null23 (rk,rv) Null23) c
-        | Some t => t
+        match removeGreatest23 l (fun p => ThreeLeftHole23 p m rk r c) with
+        | None => (* assert (m = Null_t) ; assert (r = Null_t) ; *) Some (zip23 (Two_t Null_t rk Null_t) c)
+        | Some t => Some t
         end
-    | Greater, Less => remove23 k m (ThreeMiddleHole23 l (lk,lv) (rk,rv) r c)
+    | Greater, Less => remove23 k m (ThreeMiddleHole23 l lk rk r c)
     | _, Equal =>
-        match removeGreatest23 m (fun p => ThreeMiddleHole23 l (lk, lv) p r c) with
-        | None => (* assert (l = Null) ; assert (r = Null) ; *)
-            zip23 (Two23 Null23 (lk,lv) Null23) c
-        | Some t => t
+        match removeGreatest23 m (fun p => ThreeMiddleHole23 l lk p r c) with
+        | None => (* assert (l = Null_t) ; assert (r = Null_t) ; *) Some (zip23 (Two_t Null_t lk Null_t) c)
+        | Some t => Some (t)
         end
-    | _, Greater => remove23 k r (ThreeRightHole23 l (lk,lv) m (rk,rv) c)
+    | _, Greater => remove23 k r (ThreeRightHole23 l lk m rk c)
     end
   end.
-  
-End ordered.
+
+End tree.
 

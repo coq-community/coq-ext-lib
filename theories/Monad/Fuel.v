@@ -61,7 +61,7 @@ Instance FuelTrans {m} {mMonad:Monad m} : MonadT (fuel m) m :=
 
 Instance FuelMonadExc {E} {m} {mMonad:Monad m} {ME : MonadExc E m}
   : MonadExc E (fuel m) :=
-{ raise := fun v _ => lift (raise v)
+{ raise := fun _ v => lift (raise v)
 ; catch := fun _ c h => mkFuelReaderT (fun s => catch (unFuelReaderT c s) (fun x => unFuelReaderT (h x) s))
 }.
 
