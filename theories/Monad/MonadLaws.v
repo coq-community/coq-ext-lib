@@ -11,10 +11,12 @@ Section MonadLaws.
   Variable mleq : forall {T}, (T -> T -> Prop) -> m T -> m T -> Prop.
 
   Class MonadOrder : Type :=
-  { me_refl : forall T (e : T -> T -> Prop),
+  { me_refl   : forall T (e : T -> T -> Prop),
     Reflexive e -> Reflexive (mleq e)
-  ; me_trans : forall T (e : T -> T -> Prop),
+  ; me_trans  : forall T (e : T -> T -> Prop),
     Transitive e -> Transitive (mleq e)
+  ; me_ret    : forall T (e : T -> T -> Prop) x y,
+    e x y -> mleq e (ret x) (ret y)
   }.
 
   Definition meq {T} (leq : T -> T -> Prop) (a b : m T) :  Prop :=
@@ -90,28 +92,35 @@ Section MonadLaws.
     meq eU (lift (bind c f)) (bind (lift c) (fun x => lift (f x)))
   }.
 
-(*
   Class MonadStateLaws s (MS : State s m) : Type :=
-  { get_put : meq (bind get put) (ret tt)
+  { get_put : forall eA, 
+    meq eA (bind get put) (ret tt)
   }.
 
   Class MonadReaderLaws S (MS : Reader S m) : Type :=
-  { ask_local : forall f, meq (local f ask) (bind ask (fun x => ret (f x)))
-  ; local_local : forall T (s s' : S -> S) (c : m T),
-    meq (local s (local s' c)) (local (fun x => s' (s x)) c)
+  { ask_local : forall f eA, 
+    meq eA (local f ask) (bind ask (fun x => ret (f x)))
+  ; local_local : forall T (s s' : S -> S) (c : m T) eA,
+    meq eA (local s (local s' c)) (local (fun x => s' (s x)) c)
   }.
 
   Class MonadZeroLaws (MZ : Zero m) : Type :=
   { bind_zero :
-    forall A B c, meq (@bind _ M _ (@zero _ _ A) _ c) (@zero _ _ B)
+    forall A B c eB, meq eB (@bind _ M _ (@zero _ _ A) _ c) (@zero _ _ B)
   }.
 
-  Class MonadFixLaws (MF : MonadFix m) (leq : forall {T}, m T -> m T -> Prop)
-    : Type :=
-  { leq_refl : forall T, Reflexive (@leq T)
-  ; leq_trans : forall T, Transitive (@leq T)
-  ; mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
-    forall x, leq (mfix F x) (F (mfix F) x)
+  Class MonadFixLaws (MF : MonadFix m) : Type :=
+  { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
+    (forall R R', 
+      (forall x, mleq (@eq _) (R x) (R' x)) ->
+      forall x, mleq (@eq _) (F R x) (F R' x)) ->
+    forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
+  }.
+
+(*
+  Class MonadFixLaws (MF : MonadFix m) : Type :=
+  { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
+    forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
   }.
 *)
 
