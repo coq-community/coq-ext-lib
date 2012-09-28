@@ -41,6 +41,12 @@ Class Reader (T : Type) (m : Type -> Type) : Type :=
 ; ask : m T
 }.
 
+Class Writer (T : Type) (m : Type -> Type) : Type :=
+{ tell : T -> m unit
+; listen : forall {A}, m A -> m (A * T)%type
+; pass : forall {A}, m (A * (T -> T))%type -> m A
+}.
+
 Class State (T : Type) (m : Type -> Type) : Type :=
 { get : m T
 ; put : T -> m unit

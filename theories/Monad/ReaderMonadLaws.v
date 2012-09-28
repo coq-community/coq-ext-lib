@@ -1,7 +1,7 @@
 Require Import RelationClasses.
 Require Import Setoid.
 Require Import ExtLib.Monad.Monad.
-Require Import ExtLib.Monad.MonadLaws2.
+Require Import ExtLib.Monad.MonadLaws.
 Require Import ExtLib.Monad.ReaderMonad.
 
 Set Implicit Arguments.
