@@ -93,12 +93,12 @@ Section MonadLaws.
   }.
 
   Class MonadStateLaws s (MS : State s m) : Type :=
-  { get_put : forall eA, 
+  { get_put : forall eA,
     meq eA (bind get put) (ret tt)
   }.
 
   Class MonadReaderLaws S (MS : Reader S m) : Type :=
-  { ask_local : forall f eA, 
+  { ask_local : forall f eA,
     meq eA (local f ask) (bind ask (fun x => ret (f x)))
   ; local_local : forall T (s s' : S -> S) (c : m T) eA,
     meq eA (local s (local s' c)) (local (fun x => s' (s x)) c)
@@ -111,7 +111,7 @@ Section MonadLaws.
 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
   { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
-    (forall R R', 
+    (forall R R',
       (forall x, mleq (@eq _) (R x) (R' x)) ->
       forall x, mleq (@eq _) (F R x) (F R' x)) ->
     forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)

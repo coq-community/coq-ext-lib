@@ -26,7 +26,7 @@ Section Laws2.
     { intros. red. destruct x; red; simpl. intros.
       eapply me_refl; eauto. }
     { intros; red; destruct x; destruct y; destruct z; red; simpl in *; try congruence; intros.
-      eapply me_trans; eauto. } 
+      eapply me_trans; eauto. }
     { unfold r_mleq; simpl; intros.
       apply me_ret; eauto. }
   Qed.
