@@ -37,7 +37,7 @@ Section WriterType.
 
   Variable M : Monad m.
 
-  Global Instance Monad_readerT : Monad writerT :=
+  Global Instance Monad_writerT : Monad writerT :=
   { ret := fun _ x => mkWriterT (@ret _ M _ (x, monoid_unit Monoid_S))
   ; bind := fun _ c1 _ c2 =>
     mkWriterT (
@@ -46,17 +46,23 @@ Section WriterType.
         ret (fst v', monoid_plus Monoid_S (snd v) (snd v')))))
   }.
 
-  Global Instance Reader_readerT : Writer S writerT :=
+  Global Instance Writer_writerT : Writer S writerT :=
   { tell   := fun x => mkWriterT (ret (tt, x))
   ; listen := fun _ c => mkWriterT (bind (runWriterT c) (fun x => ret (fst x, snd x, snd x)))
   ; pass   := fun _ c => mkWriterT (bind (runWriterT c) (fun x => ret (let '(x,ss,s) := x in (x, ss s))))
   }.
 
-  Global Instance MonadT_readerT : MonadT writerT m :=
+  Global Instance MonadT_writerT : MonadT writerT m :=
   { lift := fun _ c => mkWriterT (bind c (fun x => ret (x, monoid_unit Monoid_S)))
   }.
 
-  Global Instance Zero_readerT (MZ : Zero m) : Zero writerT :=
+  Global Instance Reader_writerT {S'} (MR : Reader S' m) : Reader S' writerT :=
+  { ask := mkWriterT (bind ask (fun v => @ret _ M _ (v, monoid_unit Monoid_S)))
+  ; local := fun f _ c =>
+    mkWriterT (local f (runWriterT c))
+  }.  
+
+  Global Instance Zero_writerT (MZ : Zero m) : Zero writerT :=
   { zero := fun _ => lift zero }.
 
   Global Instance Exception_writerT {E} (ME : MonadExc E m) : MonadExc E writerT :=
@@ -67,8 +73,8 @@ Section WriterType.
 End WriterType.
 
 Section WriterOps.
-  Variable m : Type -> Type.
-  Variable S : Type.
+  Context {m : Type -> Type}.
+  Context {S : Type}.
   Context {Monad_m : Monad m}.
   Context {Writer_m : Writer S m}.
 

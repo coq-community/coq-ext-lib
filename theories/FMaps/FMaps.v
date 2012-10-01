@@ -62,3 +62,4 @@ Arguments add {K} {map} {Map} {V} _ _ _.
 Arguments remove {K} {map} {Map} {V} _ _.
 Arguments find {K} {map} {Map} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
+Arguments singleton {K} {map} {M} {V} _ _.
