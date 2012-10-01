@@ -24,6 +24,9 @@ Section Maps.
       | Some _ => true
     end.
 
+  Definition singleton {V} (k : K) (v : V) : map V :=
+    add k v empty.
+
 (*
   Class MapMember : Type :=
   { MapsTo : forall {V}, K -> V -> map V -> Prop }.
