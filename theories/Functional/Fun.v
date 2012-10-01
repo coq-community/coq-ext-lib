@@ -44,6 +44,8 @@ match xys with
 | (x,y)::xys => let (xs,ys) := unzip xys in (x::xs,y::ys)
 end.
 
+Definition sum_tot {A} (x:A + A) : A := match x with inl a => a | inr a => a end.
+
 Definition forEach A B (xs:list A) (f:A -> B) : list B := map f xs.
 
 Section MonadFixDefs.

@@ -1,4 +1,5 @@
 Require Import Functor.
+Require Import Applicative.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -16,6 +17,8 @@ Definition liftM m {M : Monad m} T U (f : T -> U) : m T -> m U :=
 
 Definition liftM2 m {M : Monad m} T U V (f : T -> U -> V) : m T -> m U -> m V :=
   fun x y => bind x (fun x => bind y (fun y => ret (f x y))).
+
+Definition apM m {M:Monad m} {A B} (fM:m (A -> B)) (aM:m A) : m B := bind fM (fun f => liftM f aM).
 
 Module MonadNotation.
 
@@ -107,3 +110,8 @@ End MonadPlusNotation.
 
 Instance MonadFunctor {m} {mMonad:Monad m} : Functor m :=
 { fmap := @liftM _ _ }.
+
+Instance MonadApplicative {m} {M:Monad m} : Applicative m :=
+{ pure := @ret _ _
+; ap := @apM _ _
+}.

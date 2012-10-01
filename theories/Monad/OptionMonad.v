@@ -17,6 +17,14 @@ Global Instance Monad_option : Monad option :=
 Global Instance Zero_option : Zero option :=
 { zero := @None }.
 
+Global Instance Plus_option : MonadPlus option :=
+{ mplus _A _B aM bM :=
+    match aM with
+    | None => liftM inr bM
+    | Some a => Some (inl a)
+    end
+}.
+
 Section Trans.
   Variable m : Type -> Type.
 
