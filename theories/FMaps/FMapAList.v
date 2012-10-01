@@ -1,6 +1,7 @@
 Require Import ExtLib.FMaps.FMaps.
 Require Import List.
 Require Import Decidables.Decidable.
+Require Import ExtLib.Monad.Monad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -34,5 +35,26 @@ Section keyed.
   ; find   := alist_find
   ; keys   := fun _ => List.map (@fst _ _)
   }.
+
+  Section fold.
+    Import MonadNotation.
+    Local Open Scope monad_scope.
+
+    Variable m : Type -> Type.
+    Variable Monad_m : Monad m.
+    Variables V T : Type.
+    Variable f : K -> V -> T -> m T.
+    
+    Fixpoint fold_alist (acc : T) (map : alist V) : m T :=
+      match map with
+        | nil => ret acc
+        | (k,v) :: m =>
+          acc <- f k v acc ;;
+          fold_alist acc m
+      end.
+  End fold.
+
+  Global Instance FMap_alist : FMap K alist :=
+  { fmap_foldM := fold_alist }.
 
 End keyed.

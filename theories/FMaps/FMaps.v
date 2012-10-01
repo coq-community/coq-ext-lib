@@ -1,4 +1,6 @@
 Require Import RelationClasses.
+Require Import ExtLib.Monad.Monad.
+Require Import ExtLib.Monad.IdentityMonad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -8,6 +10,7 @@ Section Maps.
   Variable K : Type.
   Variable map : Type -> Type.
 
+  (** General Maps **)
   Class Map : Type :=
   { empty    : forall {V}, map V
   ; add      : forall {V}, K -> V -> map V -> map V
@@ -15,6 +18,10 @@ Section Maps.
   ; find     : forall {V}, K -> map V -> option V
   ; keys     : forall {V}, map V -> list K
   }.
+
+  (** Finite Maps **)
+  Class FMap : Type :=
+  { fmap_foldM : forall {m} {M : Monad m} {V T} , (K -> V -> T -> m T) -> T -> map V -> m T }.
 
   Variable M : Map.
 
@@ -26,6 +33,16 @@ Section Maps.
 
   Definition singleton {V} (k : K) (v : V) : map V :=
     add k v empty.
+
+  Variable FM : FMap.
+
+  Definition combine {T} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
+    unIdent (fmap_foldM (m := ident) (fun k v acc =>
+      ret 
+      match find k acc with
+        | None => add k v acc
+        | Some v' => add k (f k v' v) acc
+      end) m2 m1).
 
 (*
   Class MapMember : Type :=
@@ -63,3 +80,5 @@ Arguments remove {K} {map} {Map} {V} _ _.
 Arguments find {K} {map} {Map} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
+Arguments fmap_foldM {K} {map} {FMap} {m} {M} {V} {T} _ _ _.
+Arguments combine {K} {map} {M} {FM} {T} _ _ _.
