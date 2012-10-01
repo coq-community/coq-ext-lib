@@ -60,7 +60,7 @@ Section filterM.
       | nil => ret nil
       | l :: ls =>
         b <- f l ;;
-        if b then 
+        if b then
           ls <- filterM ls ;;
           ret (l :: ls)
         else

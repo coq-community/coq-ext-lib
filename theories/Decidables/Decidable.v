@@ -111,6 +111,38 @@ Section PairEq.
   Qed.
 End PairEq.
 
+Section SumEq.
+  Variable T : Type.
+  Variable U : Type.
+
+  Variable EDT : RelDec (@eq T).
+  Variable EDU : RelDec (@eq U).
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_sum : RelDec (@eq (T + U)) :=
+  { rel_dec := fun x y =>
+    match x , y with
+      | inl x , inl y => eq_dec x y
+      | inr x , inr y => eq_dec x y
+      | _ , _ => false
+    end }.
+
+  Variable EDCT : RelDec_Correct EDT.
+  Variable EDCU : RelDec_Correct EDU.
+
+  Global Instance RelDec_Correct_eq_sum : RelDec_Correct RelDec_eq_sum.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros; try congruence;
+      f_equal; try match goal with
+                     | [ H : context [ eq_dec ?X ?Y ] |- _ ] =>
+                       consider (eq_dec X Y)
+                     | [ |- context [ eq_dec ?X ?Y ] ] =>
+                       consider (eq_dec X Y)
+                   end; auto; congruence.
+  Qed.
+
+End SumEq.
+
 Section ListEq.
   Variable T : Type.
   Variable EDT : RelDec (@eq T).

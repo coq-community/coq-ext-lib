@@ -15,14 +15,14 @@ Section gfix.
   { runGFixT : nat -> m (option T) }.
 
   Global Instance MonadFix_GFixT : MonadFix GFixT :=
-  { mfix := fun T U f v =>
-      mkGFixT (fun g =>
-        (fix rec (gas : nat) : T -> m (option U) :=
-          fun v => runGFixT (f (fun t => mkGFixT (fun _ =>
-            match gas with
-              | 0 => ret None
-              | S n => rec n t
-            end)) v) gas) g v)
+  { mfix := fun T U f =>
+    let F := fix rec (gas : nat) : T -> m (option U) :=
+      fun v => runGFixT (f (fun t => mkGFixT (fun _ =>
+        match gas with
+          | 0 => ret None
+          | S n => rec n t
+        end)) v) gas
+    in fun v => mkGFixT (fun g => F g v)
   }.
 
 
