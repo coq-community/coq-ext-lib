@@ -32,12 +32,12 @@ Section GraphImpl.
 
   Definition add_vertex (v : V) (g : adj_graph) : adj_graph :=
     if contains v g then g else add v nil g.
-  
+
   (** TODO: Move this **)
   Fixpoint list_in_dec v (ls : list V) : bool :=
       match ls with
         | nil => false
-        | l :: ls => 
+        | l :: ls =>
           if eq_dec l v then true
           else list_in_dec v ls
       end.
@@ -50,13 +50,13 @@ Section GraphImpl.
         if list_in_dec t vs then g
         else add f (t :: vs) g
     end.
-  
+
   Global Instance GraphBuilder_adj_graph : BuildGraph V adj_graph :=
   { emptyGraph := empty
   ; addVertex := add_vertex
   ; addEdge   := add_edge
   }.
-  
+
 
 End GraphImpl.
 

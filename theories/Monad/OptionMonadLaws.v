@@ -7,11 +7,11 @@ Require Import ExtLib.Monad.OptionMonad.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Section Laws2.
+Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
-  Variable MonadOrder_mleq : MonadOrder m mleq.
+  Variable MonadOrder_mleq : MonadOrder Monad_m mleq.
   Variable MonadLaws_mleq : MonadLaws Monad_m mleq.
 
   Definition o_mleq T (e : T -> T -> Prop) (a b : optionT m T) : Prop :=
@@ -23,7 +23,7 @@ Section Laws2.
       end)
     (unOptionT a) (unOptionT b).
 
-  Global Instance MonadOrder_omleq : MonadOrder (optionT m) o_mleq.
+  Global Instance MonadOrder_omleq : MonadOrder (@Monad_optionT _ _) o_mleq.
   Proof.
     constructor.
     { intros. red. destruct x; red; simpl.
@@ -32,6 +32,7 @@ Section Laws2.
       eapply me_trans; eauto. red; simpl in *.
       destruct x; destruct y; destruct z; try congruence; intuition.
       etransitivity; eassumption. }
+    { intros. unfold o_mleq. simpl. eapply me_ret; eauto. }
   Qed.
 
   Lemma lower_meq : forall (A : Type) (c c' : optionT m A)
@@ -114,4 +115,4 @@ Section Laws2.
       reflexivity.
   Qed.
 
-End Laws2.
+End Laws.

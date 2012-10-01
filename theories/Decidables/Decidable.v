@@ -123,7 +123,7 @@ Section SumEq.
   { rel_dec := fun x y =>
     match x , y with
       | inl x , inl y => eq_dec x y
-      | inr x , inr y => eq_dec x y 
+      | inr x , inr y => eq_dec x y
       | _ , _ => false
     end }.
 

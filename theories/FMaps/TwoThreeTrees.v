@@ -88,7 +88,7 @@ Section tree.
    *                          /  |  \
    *                         ?   Y   Z
    *)
-  | ThreeLeftHole23 : A -> tree -> A -> tree -> context -> context 
+  | ThreeLeftHole23 : A -> tree -> A -> tree -> context -> context
   (*                               C
    * ThreeMiddleHole X a b Z C =   |
    *                             [a][b]
@@ -245,7 +245,7 @@ Section tree.
   let removeGreatest23 :=
   fix removeGreatest23 (t:tree) (k:A -> context) : option tree :=
     match t with
-    | Two_t l p r  => 
+    | Two_t l p r  =>
         match l with
         | Null_t => (* (assert (r = Null_t) ; *) removeUp23 Null_t (k p)
         | _ => removeGreatest23 r (fun p' => TwoRightHole_c l p (k p'))

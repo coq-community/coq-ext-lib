@@ -90,10 +90,10 @@ Section MonadFix.
 
   Context {MF : MonadFix}.
 
-  Definition mfix_multi (ls : list Type) (R : Type) 
+  Definition mfix_multi (ls : list Type) (R : Type)
     (f : ftype ls (m R) -> ftype ls (m R))
     : ftype ls (m R) :=
-    @wrap ls (m R) (@mfix MF (tuple ls) R 
+    @wrap ls (m R) (@mfix MF (tuple ls) R
       (fun packed => apply ls (m R) (f (wrap ls packed)))).
 
 End MonadFix.

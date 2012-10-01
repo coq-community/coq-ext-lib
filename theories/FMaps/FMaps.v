@@ -15,7 +15,7 @@ Section Maps.
   ; find     : forall {V}, K -> map V -> option V
   ; keys     : forall {V}, map V -> list K
   }.
-  
+
   Variable M : Map.
 
   Definition contains {V} (k : K) (m : map V) : bool :=
@@ -52,7 +52,7 @@ Section Maps.
 
 (*
   Class MapFacts (K : Type) (map : Type -> Type) (M : Map K map) : Type :=
-  { empty_is_Empty : forall {V}, exists MapsTo empty 
+  { empty_is_Empty : forall {V}, exists MapsTo empty
   }.
 *)
 End Maps.
