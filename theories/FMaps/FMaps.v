@@ -15,18 +15,18 @@ Section Maps.
   { empty    : forall {V}, map V
   ; add      : forall {V}, K -> V -> map V -> map V
   ; remove   : forall {V}, K -> map V -> map V
-  ; find     : forall {V}, K -> map V -> option V
-  ; keys     : forall {V}, map V -> list K
+  ; lookup   : forall {V}, K -> map V -> option V
   }.
 
   (** Finite Maps **)
+  (** This is temporary, it should be something like "foldable" **)
   Class FMap : Type :=
   { fmap_foldM : forall {m} {M : Monad m} {V T} , (K -> V -> T -> m T) -> T -> map V -> m T }.
 
   Variable M : Map.
 
   Definition contains {V} (k : K) (m : map V) : bool :=
-    match find k m with
+    match lookup k m with
       | None => false
       | Some _ => true
     end.
@@ -38,11 +38,10 @@ Section Maps.
 
   Definition combine {T} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
     unIdent (fmap_foldM (m := ident) (fun k v acc =>
-      ret 
-      match find k acc with
-        | None => add k v acc
-        | Some v' => add k (f k v' v) acc
-      end) m2 m1).
+      ret match lookup k acc with
+            | None => add k v acc
+            | Some v' => add k (f k v' v) acc
+          end) m2 m1).
 
 (*
   Class MapMember : Type :=
@@ -77,7 +76,7 @@ End Maps.
 Arguments empty {_} {_} {_} {_} .
 Arguments add {K} {map} {Map} {V} _ _ _.
 Arguments remove {K} {map} {Map} {V} _ _.
-Arguments find {K} {map} {Map} {V} _ _.
+Arguments lookup {K} {map} {Map} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
 Arguments fmap_foldM {K} {map} {FMap} {m} {M} {V} {T} _ _ _.

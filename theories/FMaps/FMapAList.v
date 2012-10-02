@@ -32,8 +32,7 @@ Section keyed.
   { empty  := fun _ => @nil _
   ; add    := alist_add
   ; remove := alist_remove
-  ; find   := alist_find
-  ; keys   := fun _ => List.map (@fst _ _)
+  ; lookup := alist_find
   }.
 
   Section fold.

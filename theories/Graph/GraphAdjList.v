@@ -3,6 +3,10 @@ Require Import ExtLib.Graph.Graph.
 Require Import ExtLib.Graph.BuildGraph.
 Require Import ExtLib.FMaps.FMaps.
 Require Import ExtLib.Decidables.Decidable.
+Require Import ExtLib.Monad.Monad.
+Require Import ExtLib.Monad.WriterMonad.
+Require Import ExtLib.Monad.IdentityMonad.
+Require Import ExtLib.Data.Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -11,16 +15,20 @@ Section GraphImpl.
   Variable V : Type.
   Variable map : Type -> Type.
   Variable Map : Map V map.
+  Variable FMap : FMap V map.
   Variable RelDec_V : RelDec (@eq V).
 
   Definition adj_graph : Type :=
     map (list V).
 
   Definition verts (g : adj_graph) : list V :=
-    keys g.
+    let c := fmap_foldM (m := writerT (Monoid_list_app V) ident)
+      (fun k _ _ => tell (k :: nil)) tt g
+    in
+    snd (unIdent (runWriterT c)).
 
   Definition succs (g : adj_graph) (v : V) : list V :=
-    match find v g with
+    match lookup v g with
       | None => nil
       | Some vs => vs
     end.
@@ -43,7 +51,7 @@ Section GraphImpl.
       end.
 
   Definition add_edge (f t : V) (g : adj_graph) : adj_graph :=
-    match find f g with
+    match lookup f g with
       | None =>
         add f (t :: nil) g
       | Some vs =>

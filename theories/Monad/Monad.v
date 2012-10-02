@@ -1,5 +1,6 @@
 Require Import Functor.
 Require Import Applicative.
+Require Import ExtLib.Data.Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -29,7 +30,7 @@ Module MonadNotation.
 
   (** DEPRECATED **)
   Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2))
-    (at level 100, c1 at next level, right associativity) : monad_scope.
+    (at level 100, c1 at next level, right associativity, only parsing) : monad_scope.
 
   Notation "x <- c1 ;; c2" := (@bind _ _ _ c1 _ (fun x => c2))
     (at level 100, c1 at next level, right associativity) : monad_scope.
@@ -44,7 +45,7 @@ Class Reader (T : Type) (m : Type -> Type) : Type :=
 ; ask : m T
 }.
 
-Class Writer (T : Type) (m : Type -> Type) : Type :=
+Class Writer (T : Type) (M : Monoid T) (m : Type -> Type) : Type :=
 { tell : T -> m unit
 ; listen : forall {A}, m A -> m (A * T)%type
 ; pass : forall {A}, m (A * (T -> T))%type -> m A
@@ -121,3 +122,12 @@ Instance MonadApplicative {m} {M:Monad m} : Applicative m :=
 { pure := @ret _ _
 ; ap := @apM _ _
 }.
+
+Section ZeroFuncs.
+  Context {m : Type -> Type}.
+  Context {Monad_m : Monad m}.
+  Context {Zero_m : Zero m}.
+
+  Definition assert (b : bool) : m unit :=
+    if b then ret tt else zero.
+End ZeroFuncs.
