@@ -82,3 +82,60 @@ Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> 
 Proof.
   apply iff_to_reflect; auto using string_dec_sound.
 Qed.
+
+Require Import Ascii.
+
+Definition digit2ascii (n:nat) : Ascii.ascii :=
+  match n with
+    | 0 => "0"
+    | 1 => "1"
+    | 2 => "2"
+    | 3 => "3"
+    | 4 => "4"
+    | 5 => "5"
+    | 6 => "6"
+    | 7 => "7"
+    | 8 => "8"
+    | 9 => "9"
+    | n => ascii_of_nat (n - 9 + nat_of_ascii "A")
+  end%char.
+
+Section Program_Scope.
+  Require Import Program.
+  Import Arith Div2.
+  Variable mod : nat.
+  Hypothesis one_lt_mod : 1 < mod.
+
+  Program Fixpoint nat2string (n:nat) {measure n}: string :=
+    match NPeano.ltb n mod as x return NPeano.ltb n mod = x -> string with
+      | true => fun _ => String (digit2ascii n) EmptyString
+      | false => fun pf => 
+        let m := NPeano.div n mod in
+        String.append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
+    end eq_refl.
+  Next Obligation.
+    (* assert (NPeano.div n mod < n); eauto. *) eapply NPeano.Nat.div_lt; auto.
+    consider (NPeano.ltb n mod); try congruence. intros. omega.
+  Defined.
+  
+End Program_Scope.
+
+Definition nat2string10 : nat -> string.
+refine (@nat2string 10 _).
+repeat constructor.
+Defined.
+
+Definition nat2string2 : nat -> string.
+refine (@nat2string 2 _).
+repeat constructor.
+Defined.
+
+Definition nat2string8 : nat -> string.
+refine (@nat2string 8 _).
+repeat constructor.
+Defined.
+
+Definition nat2string16 : nat -> string.
+refine (@nat2string 16 _).
+repeat constructor.
+Defined.
