@@ -22,7 +22,7 @@ Section GraphImpl.
     map (list V).
 
   Definition verts (g : adj_graph) : list V :=
-    let c := fmap_foldM (m := writerT (Monoid_list_app V) ident)
+    let c := fmap_foldM (m := writerT (Monoid_list_app) ident)
       (fun k _ _ => tell (k :: nil)) tt g
     in
     snd (unIdent (runWriterT c)).

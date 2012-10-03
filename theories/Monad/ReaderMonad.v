@@ -62,3 +62,9 @@ Section ReaderType.
 End ReaderType.
 
 Arguments mkReaderT {S} {m} {t} _.
+
+Global Instance Reader_lift_readerT T S m (R : Reader T m) : Reader T (readerT S m) :=
+{ ask := mkReaderT (fun _ => ask)
+; local := fun f _ c =>
+  mkReaderT (fun s => local f (runReaderT c s))
+}.

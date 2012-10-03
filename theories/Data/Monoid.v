@@ -1,4 +1,4 @@
-Require List.
+Require Import List.
 Require Import ExtLib.Decidables.Decidable.
 
 Set Implicit Arguments.
@@ -7,20 +7,25 @@ Set Maximal Implicit Insertion.
 Section Monoid.
   Variable S : Type.
 
-  Record Monoid (S : Type) : Type :=
+  Record Monoid : Type :=
   { monoid_plus : S -> S -> S
   ; monoid_unit : S
   }.
 
+  Variable M : Monoid.
+
+  Definition monoid_sum (ls : list S) : S :=
+    fold_left (monoid_plus M) ls (monoid_unit M).
+
 End Monoid.
 
 (** Some Standard Instances **)
-Definition Monoid_list_app T : Monoid (list T) :=
+Definition Monoid_list_app {T} : Monoid (list T) :=
 {| monoid_plus := @List.app _ 
  ; monoid_unit := @nil _
  |}.
 
-Definition Monoid_list_union T (R : RelDec (@eq T)) : Monoid (list T) :=
+Definition Monoid_list_union {T} {R : RelDec (@eq T)} : Monoid (list T) :=
 {| monoid_plus := fix rec x y : list T :=
   match x with
     | nil => y
