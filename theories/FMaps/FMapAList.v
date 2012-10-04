@@ -57,3 +57,30 @@ Section keyed.
   { fmap_foldM := fold_alist }.
 
 End keyed.
+
+(** Performance Test **)
+(*
+Module TEST.
+  Definition m := alist nat nat.
+  Instance Map_m : Map nat (alist nat).
+    apply Map_alist. eauto with typeclass_instances.
+  Defined.
+
+  Definition z : m :=
+    (fix fill n acc : m :=
+      let acc := add n n acc in
+      match n with
+        | 0 => acc
+        | S n => fill n acc
+      end) 500 empty.
+  
+  Time Eval compute in 
+    let z := z in
+    (fix find_all n : unit :=
+      let _ := lookup n z in
+      match n with
+        | 0 => tt
+        | S n => find_all n
+      end) 500.
+End TEST.
+*)
