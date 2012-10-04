@@ -1,4 +1,5 @@
 Require Import Monad.
+Require Import Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -61,6 +62,19 @@ Section StateType.
   { lift := fun _ c => mkStateT (fun s => bind c (fun t => ret (t, s)))
   }.
 
+  Global Instance Reader_stateT T (MR : Reader T m) : Reader T stateT :=
+  { ask := mkStateT (fun s => bind ask (fun t => ret (t, s)))
+  ; local := fun f _ c => mkStateT (fun s => local f (runStateT c s))
+  }.
+
+  Global Instance Writer_stateT T (Mon : Monoid T) (MR : Writer Mon m) : Writer Mon stateT :=
+  { tell := fun x => mkStateT (fun s => bind (tell x) (fun v => ret (v, s)))
+  ; listen := fun _ c => mkStateT (fun s => bind (listen (runStateT c s)) 
+    (fun x => let '(a,s,t) := x in
+    ret (a,t,s)))
+  ; pass := fun _ c => mkStateT (fun s => bind (runStateT c s) (fun x => 
+    let '(a,t,s) := x in ret (a, s)))
+  }.
 
 End StateType.
 

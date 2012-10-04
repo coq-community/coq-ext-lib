@@ -1,4 +1,5 @@
 Require Import Monad.
+Require Import ExtLib.Data.Monoid.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
@@ -48,6 +49,17 @@ Section ReaderType.
 
   Global Instance Zero_readerT (MZ : Zero m) : Zero readerT :=
   { zero := fun _ => lift zero }.
+
+  Global Instance State_readerT T (MZ : State T m) : State T readerT :=
+  { get := lift get
+  ; put := fun x => lift (put x)
+  }.
+
+  Global Instance Writer_readerT T (Mon : Monoid T) (MZ : Writer Mon m) : Writer Mon readerT :=
+  { tell := fun v => lift (tell v)
+  ; listen := fun _ c => mkReaderT (fun s => listen (runReaderT c s))
+  ; pass := fun _ c => mkReaderT (fun s => pass (runReaderT c s))
+  }.
 
   Global Instance Exception_readerT {E} (ME : MonadExc E m) : MonadExc E readerT :=
   { raise := fun _ v => lift (raise v)
