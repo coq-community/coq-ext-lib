@@ -1,13 +1,13 @@
 
 
 Section Sets.
-  Variable S : forall {T : Type}, (T -> T -> Prop) -> Type.
+  Variable S : Type.
 
   Class CSet {T} (R : T -> T -> Prop) : Type :=
-  { contains : T -> S _ R -> bool
-  ; empty    : S _ R
-  ; add      : T -> S _ R -> S _ R
-  ; remove   : T -> S _ R -> S _ R
+  { contains : T -> S -> bool
+  ; empty    : S
+  ; add      : T -> S -> S
+  ; remove   : T -> S -> S
   }.
 
 End Sets.
