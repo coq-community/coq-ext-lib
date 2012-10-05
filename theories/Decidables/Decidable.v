@@ -1,4 +1,5 @@
 Require Import Tactics.Consider.
+Require Import Bool.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -10,6 +11,38 @@ Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
 { rel_dec_correct : forall x y : T, rel_dec x y = true <-> equ x y }.
 
 Definition eq_dec {T : Type} {ED : RelDec (@eq T)} := rel_dec.
+
+Section neg_rel_dec_correct.
+  Context {T} {R:T -> T -> Prop} {RD:RelDec R} {RDC:RelDec_Correct RD}.
+
+  Definition neg_rel_dec_correct : forall {x y}, ~R x y <-> rel_dec x y = false.
+  Proof. intros x y. destruct (bool_dec (rel_dec x y) true) ; constructor ; intros ;
+    repeat 
+      match goal with
+      | [ |- ~ _ ] => unfold not ; intros
+      | [ H1 : ?P, H2 : ~?P |- _ ] => specialize (H2 H1) ; contradiction
+      | [ H1 : ?P = true, H2 : ?P = false |- _ ] => rewrite H1 in H2 ; discriminate
+      | [ H1 : ?P <> true |- ?P = false ] => apply not_true_is_false ; exact H1
+      | [ H1 : ?rel_dec ?a ?b = true, H2 : ~?R ?a ?b |- _ ] =>
+          apply rel_dec_correct in H1
+      | [ H1 : ?rel_dec ?a ?b = false, H2 : ?R ?a ?b |- _ ] =>
+          apply rel_dec_correct in H2
+      end.
+  Qed.
+End neg_rel_dec_correct.
+
+Section rel_dec_p.
+  Context {T} {R:T -> T -> Prop} {RD:RelDec R} {RDC:RelDec_Correct RD}.
+
+  Definition rel_dec_p (x:T) (y:T) : {R x y} + {~R x y}.
+  Proof. destruct (bool_dec (rel_dec x y) true) as [H | H].
+    apply rel_dec_correct in H ; eauto.
+    apply not_true_is_false in H ; apply neg_rel_dec_correct in H ; eauto.
+  Qed.
+
+  Definition neg_rel_dec_p (x:T) (y:T) : {~R x y} + {R x y}.
+  Proof. destruct (rel_dec_p x y) ; [ right | left ] ; auto. Qed.
+End rel_dec_p.
 
 Global Instance Reflect_RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) {_ : RelDec_Correct ED} x y : Reflect (rel_dec x y) (equ x y) (~equ x y).
 Proof.

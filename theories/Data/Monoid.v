@@ -1,5 +1,6 @@
 Require Import List.
 Require Import ExtLib.Decidables.Decidable.
+Require Import String.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
@@ -44,3 +45,13 @@ Definition Monoid_nat_mult : Monoid nat :=
 {| monoid_plus := mult
  ; monoid_unit := 1
  |}.
+
+Definition Monoid_string_append : Monoid string :=
+{| monoid_plus := String.append
+ ; monoid_unit := EmptyString
+|}.
+
+Definition Monoid_string_append_compose : Monoid (string -> string) :=
+{| monoid_plus g f x := g (f x)
+ ; monoid_unit x := x
+|}.
