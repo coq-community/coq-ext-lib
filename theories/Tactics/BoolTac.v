@@ -39,10 +39,10 @@ Ltac do_bool' run :=
              symmetry in H; apply orb_true_iff in H; run H
          end.
 
-Ltac do_bool_case := 
+Ltac do_bool_case :=
   let t H := (destruct H) in do_bool' t.
 
-Ltac do_bool := 
+Ltac do_bool :=
   let t _ := idtac in do_bool' t.
 
 (** Test **)

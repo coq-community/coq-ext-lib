@@ -43,7 +43,7 @@ Section keyed.
     Variable Monad_m : Monad m.
     Variables V T : Type.
     Variable f : K -> V -> T -> m T.
-    
+
     Fixpoint fold_alist (acc : T) (map : alist V) : m T :=
       match map with
         | nil => ret acc
@@ -73,8 +73,8 @@ Module TEST.
         | 0 => acc
         | S n => fill n acc
       end) 500 empty.
-  
-  Time Eval compute in 
+
+  Time Eval compute in
     let z := z in
     (fix find_all n : unit :=
       let _ := lookup n z in

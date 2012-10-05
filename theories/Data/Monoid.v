@@ -22,7 +22,7 @@ End Monoid.
 
 (** Some Standard Instances **)
 Definition Monoid_list_app {T} : Monoid (list T) :=
-{| monoid_plus := @List.app _ 
+{| monoid_plus := @List.app _
  ; monoid_unit := @nil _
  |}.
 

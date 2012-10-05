@@ -69,10 +69,10 @@ Section StateType.
 
   Global Instance Writer_stateT T (Mon : Monoid T) (MR : Writer Mon m) : Writer Mon stateT :=
   { tell := fun x => mkStateT (fun s => bind (tell x) (fun v => ret (v, s)))
-  ; listen := fun _ c => mkStateT (fun s => bind (listen (runStateT c s)) 
+  ; listen := fun _ c => mkStateT (fun s => bind (listen (runStateT c s))
     (fun x => let '(a,s,t) := x in
     ret (a,t,s)))
-  ; pass := fun _ c => mkStateT (fun s => bind (runStateT c s) (fun x => 
+  ; pass := fun _ c => mkStateT (fun s => bind (runStateT c s) (fun x =>
     let '(a,t,s) := x in ret (a, s)))
   }.
 
