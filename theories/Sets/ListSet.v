@@ -29,7 +29,7 @@ Section ListSet.
     filter (fun x => negb (R_dec v x)).
 End ListSet.
 
-Global Instance CSet_weak_listset {T} (R : T -> T -> Prop) 
+Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
   (R_dec : RelDec R) : CSet (@lset T R) R :=
 { contains := lset_contains rel_dec
 ; empty    := lset_empty R

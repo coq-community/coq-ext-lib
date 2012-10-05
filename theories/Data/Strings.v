@@ -109,7 +109,7 @@ Section Program_Scope.
   Program Fixpoint nat2string (n:nat) {measure n}: string :=
     match NPeano.ltb n mod as x return NPeano.ltb n mod = x -> string with
       | true => fun _ => String (digit2ascii n) EmptyString
-      | false => fun pf => 
+      | false => fun pf =>
         let m := NPeano.div n mod in
         String.append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
     end eq_refl.
@@ -117,7 +117,7 @@ Section Program_Scope.
     (* assert (NPeano.div n mod < n); eauto. *) eapply NPeano.Nat.div_lt; auto.
     consider (NPeano.ltb n mod); try congruence. intros. omega.
   Defined.
-  
+
 End Program_Scope.
 
 Definition nat2string10 : nat -> string.

@@ -37,12 +37,12 @@ Section WriterType.
   { ask := mkWriterT _ _ _ (bind ask (fun v => @ret _ M _ (v, monoid_unit Monoid_S)))
   ; local := fun f _ c =>
     mkWriterT _ _ _ (local f (runWriterT c))
-  }.  
+  }.
 
   Global Instance State_writerT {S'} (MR : State S' m) : State S' (writerT Monoid_S m) :=
   { get := lift get
   ; put := fun v => lift (put v)
-  }.  
+  }.
 
   Global Instance Zero_writerT (MZ : Zero m) : Zero (writerT Monoid_S m) :=
   { zero := fun _ => lift zero }.

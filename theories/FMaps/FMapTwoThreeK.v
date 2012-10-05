@@ -15,7 +15,7 @@ Section keyed.
   | Leaf
   | Two : twothree T -> K -> T -> twothree T -> twothree T
   | Three : twothree T -> K -> T -> twothree T -> K -> T -> twothree T -> twothree T.
-  
+
   Arguments Leaf {T}.
   Arguments Two {T} _ _ _ _.
   Arguments Three {T} _ _ _ _ _ _ _.
@@ -37,7 +37,7 @@ Section keyed.
 
     Fixpoint twothree_modify (m : twothree V) {T} (k_ok : twothree V -> T) (k_splice_up : twothree V -> K -> V -> twothree V -> T) {struct m} : T :=
       match m with
-        | Leaf => 
+        | Leaf =>
           match def with
             | Some v => k_splice_up Leaf k v Leaf
             | None => k_ok Leaf
@@ -50,10 +50,10 @@ Section keyed.
                 | None => remove_greatest l (fun _ => k_ok r) (fun k v l => k_ok (Two l k v r))
               end
             | Lt =>
-              twothree_modify l (fun l => k_ok (Two l k' v' r)) 
+              twothree_modify l (fun l => k_ok (Two l k' v' r))
                                 (fun l'' k'' v'' r'' => k_ok (Three l'' k'' v'' r'' k' v' r))
-            | Gt => 
-              twothree_modify r (fun r => k_ok (Two l k' v' r)) 
+            | Gt =>
+              twothree_modify r (fun r => k_ok (Two l k' v' r))
                                 (fun l'' k'' v'' r'' => k_ok (Three l k' v' l'' k'' v'' r''))
           end
         | Three l k1 v1 m k2 v2 r =>
@@ -61,13 +61,13 @@ Section keyed.
             | Eq =>
               match upd v1 with
                 | Some v' => k_ok (Three l k v' m k2 v2 r)
-                | None => 
+                | None =>
                   remove_greatest l (fun _ => k_ok (Two m k2 v2 r)) (fun k1 v1 l => k_ok (Three l k1 v2 m k2 v2 r))
               end
             | Lt =>
               twothree_modify l (fun l' => k_ok (Three l' k1 v1 m k2 v2 r))
                                 (fun l' k' v' r' => k_splice_up (Two l' k' v' r') k1 v1 (Two m k2 v2 r))
-            | Gt => 
+            | Gt =>
               match RD_K k k2 with
                 | Eq =>
                   match upd v2 with
@@ -83,7 +83,7 @@ Section keyed.
                   twothree_modify r (fun r' => k_ok (Three l k1 v1 m k2 v2 r'))
                                     (fun l' k' v' r' => k_splice_up (Two l k1 v1 m) k2 v2 (Two l' k' v' r'))
               end
-          end          
+          end
       end.
 
   End modify.
@@ -130,7 +130,7 @@ Section keyed.
     Variable Monad_m : Monad m.
     Variables V T : Type.
     Variable f : K -> V -> T -> m T.
-    
+
     Fixpoint twothree_fold (acc : T) (map : twothree V) : m T :=
       match map with
         | Leaf => ret acc
@@ -168,8 +168,8 @@ Module TEST.
         | 0 => acc
         | S n => fill n acc
       end) 500 empty.
-  
-  Time Eval vm_compute in 
+
+  Time Eval vm_compute in
     let z := z in
     (fix find_all n : unit :=
       let _ := lookup n z in
