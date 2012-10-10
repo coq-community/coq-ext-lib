@@ -1,7 +1,7 @@
 (** Require the monad definitions **)
-Require Import ExtLib.Monad.Monad.
+Require Import ExtLib.Structures.Monads.
 (** Use the instances for exceptions **)
-Require Import ExtLib.Monad.EitherMonad.
+Require Import ExtLib.Data.Monads.EitherMonad.
 (** Strings will be used for error messages **)
 Require Import String.
 
