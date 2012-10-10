@@ -1,8 +1,8 @@
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Data.Monads.OptionMonad.
 Require Import ExtLib.Data.Monads.ReaderMonad.
-Require Import Fun.
-Require Import Injection.
+Require Import ExtLib.Programming.Extras.
+Require Import ExtLib.Programming.Injection.
 Require Import ExtLib.Structures.Functor.
 
 Set Implicit Arguments.

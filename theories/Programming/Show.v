@@ -4,7 +4,7 @@ Require Import Coq.Program.Wf.
 Require Import Omega.
 
 Require Import ExtLib.Structures.Monoid.
-Require Import Injection.
+Require Import ExtLib.Programming.Injection.
 
 Class Show T :=
 { show : forall {m} {I:Injection ascii m} (M:Monoid m), T -> m }.
