@@ -1,5 +1,6 @@
-PACKAGES   := Monad Tactics Data Decidables With Relations Rec Functional Functor FMaps Sets Graph Programming
-MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v)))
+DATA       := Monads Set Map Graph
+PACKAGES   := Core Tactics Structures Data $(DATA:%=Data/%) Programming
+MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v))) ExtLib
 TESTS      := 
 VS         := $(MODULES:%=%.v)
 TVS        := $(TESTS:%=%.v)

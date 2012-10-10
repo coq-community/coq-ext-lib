@@ -1,8 +1,9 @@
 Require Import Ascii.
 Require Import String.
 Require Import Coq.Program.Wf.
+Require Import Omega.
 
-Require Import Monoid.
+Require Import ExtLib.Structures.Monoid.
 Require Import Injection.
 
 Class Show T :=

@@ -1,6 +1,6 @@
 Require Import Equivalence.
 
-Require Import Decidable.
+Require Import ExtLib.Core.RelDec.
 
 Class Eqv T := { eqv : T -> T -> Prop }.
 Definition neg_eqv {T} {E:Eqv T} (x:T) (y:T) : Prop := not (eqv x y).

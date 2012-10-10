@@ -1,7 +1,7 @@
 Require Import String.
-Require Import Tactics.Consider.
 Require Import EqNat.
-Require Import Decidable.
+Require Import ExtLib.Tactics.Consider.
+Require Import ExtLib.Core.RelDec.
 
 Set Implicit Arguments.
 Set Strict Implicit.

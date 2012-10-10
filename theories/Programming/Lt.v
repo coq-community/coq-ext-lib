@@ -1,8 +1,6 @@
 Require Import Bool.
-
 Require Import Equivalence.
-
-Require Import Decidable.
+Require Import ExtLib.Core.RelDec.
 
 Class Lte T := { lte : T -> T -> Prop }.
 Definition neg_lte {T} {L:Lte T} (x:T) (y:T) : Prop := not (lte x y).
