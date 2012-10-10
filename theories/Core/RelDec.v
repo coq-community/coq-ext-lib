@@ -17,7 +17,7 @@ Section neg_rel_dec_correct.
 
   Definition neg_rel_dec_correct : forall {x y}, ~R x y <-> rel_dec x y = false.
   Proof. intros x y. destruct (bool_dec (rel_dec x y) true) ; constructor ; intros ;
-    repeat 
+    repeat
       match goal with
       | [ |- ~ _ ] => unfold not ; intros
       | [ H1 : ?P, H2 : ~?P |- _ ] => specialize (H2 H1) ; contradiction

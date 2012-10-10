@@ -13,7 +13,7 @@ Class Monad (m : Type -> Type) : Type :=
 Section monadic.
   Variable m : Type -> Type.
   Context {M : Monad m}.
-  
+
   Definition liftM T U (f : T -> U) : m T -> m U :=
     fun x => bind x (fun x => ret (f x)).
 

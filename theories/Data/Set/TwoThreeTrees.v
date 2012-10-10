@@ -67,7 +67,7 @@ Section tree.
    *                          /  |  \
    *                         ?   Y   Z
    *)
-  | ThreeLeftHole_c : E -> tree -> E -> tree -> context -> context 
+  | ThreeLeftHole_c : E -> tree -> E -> tree -> context -> context
   (*                               C
    * ThreeMiddleHole X a b Z C =   |
    *                             [a][b]
@@ -179,8 +179,8 @@ Section tree.
   Fixpoint insertUp (tet:tree * E * tree) (c:context) : tree :=
   let '(tl,em,tr) := tet in
   match c with
-  (*     _          
-   *     |          
+  (*     _
+   *     |
    *    [em]    =>   [em]
    *   //  \\        /  \
    *  tl    tr      tl   tr
@@ -249,7 +249,7 @@ Section tree.
    * context *)
   Fixpoint removeUp (t:tree) (c:context) : tree :=
   match c with
-  (*  _        
+  (*  _
    *  ||
    *  e  =>  e
    *)
@@ -261,17 +261,17 @@ Section tree.
    *  t  [el'][er']       [em]   [er']
    *     /   |   \        /  \    /  \
    *    tl'  tm'  tr'    t   tl' tm' tr'
-   *) 
+   *)
   | TwoLeftHole_c em (Three_t tl' el' tm' er' tr') c' =>
       zip (Two_t (Two_t t em tl') el' (Two_t tm' er' tr')) c'
   (*    c'                c'
-   *    |                 || 
+   *    |                 ||
    *   [em]       =>   [em][em']
    *  //  \            /   |   \
    *  t   [em']       t    tl'  tr'
    *     /    \
    *    tl'   tr'
-   *) 
+   *)
   | TwoLeftHole_c em (Two_t tl' em' tr') c' =>
       removeUp (Three_t t em tl' em' tr') c'
   (*          c'             c'
@@ -281,97 +281,97 @@ Section tree.
    *  [el'][er']  t     [el']   [em]
    *   /   |   \        /  \    /  \
    *  tl'  tm'  tr'    tl' tm' tr'  t
-   *) 
+   *)
   | TwoRightHole_c (Three_t tl' el' tm' er' tr') em c' =>
       zip (Two_t (Two_t tl' el' tm') er' (Two_t tr' em t)) c'
   (*        c'            c'
-   *        |             || 
+   *        |             ||
    *       [em]   =>   [em'][em]
    *       /  \\       /   |   \
-   *    [em']  t      tl'  tr'  t  
-   *   /    \     
+   *    [em']  t      tl'  tr'  t
+   *   /    \
    *  tl'   tr'
-   *) 
+   *)
   | TwoRightHole_c (Two_t tl' em' tr') em c' =>
       removeUp (Three_t tl' em' tr' em t) c'
   (*         c'                      c'
-   *         |                       | 
+   *         |                       |
    *      [el][er]      =>        [el][er]
    *   //    |     \             /   |    \
    *  t  [el'][er'] tr       [el']  [er']  tr
    *    /    |    \          /  \    /  \
    *   tl'   tm'  tr'       t   tl' tm' tr'
-   *) 
+   *)
   | ThreeLeftHole_c el (Three_t tl' el' tm' er' tr') er tr c' =>
       zip (Three_t (Two_t t el' tl') el (Two_t tm' er' tr') er tr) c'
   (*         c'                       c'
-   *         |                        | 
+   *         |                        |
    *      [el][er]      =>           [er]
    *   //    |     \                /    \
    *  t    [em']    tr        [el][em']   tr
    *       /   \             /    |    \
    *     tl'   tr'          t    tl'    tr'
-   *) 
+   *)
   | ThreeLeftHole_c el (Two_t tl' em' tr') er tr c' =>
       zip (Two_t (Three_t t el tl' em' tr') er tr) c'
   (*                c'                        c'
-   *                |                         | 
+   *                |                         |
    *             [el][er]      =>         [er'][er]
    *           /     ||   \              /    |    \
    *     [el'][er']  t     tr        [el']   [el]   tr
-   *    /    |    \                  /  \    /  \    
-   *  tl'   tm'   tr'              tl'  tm'  tr' t 
-   *) 
+   *    /    |    \                  /  \    /  \
+   *  tl'   tm'   tr'              tl'  tm'  tr' t
+   *)
   | ThreeMiddleHole_c (Three_t tl' el' tm' er' tr') el er tr c' =>
       zip (Three_t (Two_t tl' el' tm') er' (Two_t tr' el t) er tr) c'
   (*        c'                            c'
-   *        |                             | 
+   *        |                             |
    *     [el][er]             =>      [el][el']
    *   /    ||   \                  /    |     \
    *  tl    t  [el'][er']         tl   [er]     [er']
-   *           /    |    \              /  \     /  \   
+   *           /    |    \              /  \     /  \
    *         tl'   tm'   tr'           t   tl'  tm'  tr'
-   *) 
+   *)
   | ThreeMiddleHole_c tl el er (Three_t tl' el' tm' er' tr') c' =>
       zip (Three_t tl el (Two_t t er tl') el' (Two_t tm' er' tr')) c'
   (*            c'                        c'
-   *            |                         | 
+   *            |                         |
    *         [el][er]      =>           [er]
    *       /     ||   \                /   \
    *    [em']    t     tr        [em'][el]  tr
-   *    /  \                     /   |    \            
-   *  tl'  tr'                 tl'  tr'    t   
-   *) 
+   *    /  \                     /   |    \
+   *  tl'  tr'                 tl'  tr'    t
+   *)
   | ThreeMiddleHole_c (Two_t tl' em' tr') el er tr c' =>
       zip (Two_t (Three_t tl' em' tr' el t) er tr) c'
   (*        c'                   c'
-   *        |                    | 
+   *        |                    |
    *     [el][er]        =>    [el]
    *   /    ||   \             /   \
    *  tl    t   [em']        tl   [er][em']
-   *            /   \            /    |    \   
+   *            /   \            /    |    \
    *          tl'   tr'         t     tl'   tr'
-   *) 
+   *)
   | ThreeMiddleHole_c tl el er (Two_t tl' em' tr') c' =>
       zip (Two_t tl el (Three_t t er tl' em' tr')) c'
   (*         c'                  c'
-   *         |                   | 
+   *         |                   |
    *      [el][er]      =>     [el][er']
    *   /      |    \\         /   |     \
    *  tl [el'][er']  t      tl  [el']   [er]
    *     /   |     \           /   \    /   \
    *   tl'   tm'    tr'      tl'   tm' tr'   t
-   *) 
+   *)
   | ThreeRightHole_c tl el (Three_t tl' el' tm' er' tr') er c' =>
       zip (Three_t tl el (Two_t tl' el' tm') er' (Two_t tr' er t)) c'
   (*         c'                  c'
-   *         |                   | 
+   *         |                   |
    *      [el][er]      =>      [el]
    *     /    |   \\            /   \
    *    tl  [em']  t          tl  [em'][er]
    *        /   \                  /   |   \
    *      tl'    tr'              tl'  tr   t
-   *) 
+   *)
   | ThreeRightHole_c tl el (Two_t tl' em' tr') er c' =>
       zip (Two_t tl el (Three_t tl' em' tr' er t)) c'
   | TwoLeftHole_c _ Null_t _ => Null_t (* not wf *)
@@ -451,7 +451,7 @@ Section treeWfP.
       -> tree_wf tr h (IncEtndTopBot er) eRR
       -> tree_wf (Three_t tl el tm er tr) (S h) eLL eRR
   .
-        
+
   Inductive tree_in : E -> tree E -> Prop :=
   | TwoTreeIn : forall e tl em tr,
          e ~= em

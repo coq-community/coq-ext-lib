@@ -26,24 +26,24 @@ Theorem respectful_if_bool T : forall (x x' : bool) (t t' f f' : T) eqT,
   eqT t t' -> eqT f f' ->
   eqT (if x then t else f) (if x' then t' else f') .
 intros; subst; auto; destruct x'; auto.
-Qed.  
+Qed.
 
 (*
 Ltac find_inst T F F' :=
   match goal with
     | [ H : T F F' |- _ ] => H
-    | [ H : Proper T F |- _ ] => 
+    | [ H : Proper T F |- _ ] =>
       match F with
         | F' => H
       end
     | [ |- _ ] =>
       match F with
-        | F' => 
+        | F' =>
           let v := constr:(_ : Proper T F) in v
       end
   end.
 *)
-    
+
 Ltac derive_morph :=
 repeat (
   (apply Proper_red; intros) ||
@@ -98,19 +98,19 @@ Section Map.
   Inductive listEq {T} (eqT : relation T) : relation (list T) :=
   | listEq_nil : listEq eqT nil nil
   | listEq_cons : forall x x' y y', eqT x x' -> listEq eqT y y' ->listEq eqT (x :: y) (x' :: y').
-  
+
   Theorem listEq_match V U (eqV : relation V) (eqU : relation U) : forall x x' : list V,
     forall X X' Y Y',
     eqU X X' ->
     (eqV ==> listEq eqV ==> eqU)%signature Y Y' ->
     listEq eqV x x' ->
     eqU (match x with
-           | nil => X 
-           | x :: xs => Y x xs 
+           | nil => X
+           | x :: xs => Y x xs
          end)
         (match x' with
-           | nil => X' 
-           | x :: xs => Y' x xs 
+           | nil => X'
+           | x :: xs => Y' x xs
          end).
   Proof.
     intros. induction H1; auto. derive_morph; auto.
@@ -131,7 +131,7 @@ Section Map.
   Global Instance Proper_hd : Proper (listEq eqT ==> optionEq eqT) hd.
   Proof.
     foo. (** This has binders in the match... **)
-    
+
   Abort.
 *)
 
@@ -143,6 +143,6 @@ Section Map.
 
   Global Instance Proper_map' : Proper (listEq eqT ==> listEq eqU) map'.
   Proof.
-    derive_morph. induction H; econstructor; derive_morph; auto.    
+    derive_morph. induction H; econstructor; derive_morph; auto.
   Qed.
 End Map.
