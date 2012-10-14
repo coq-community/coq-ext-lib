@@ -38,4 +38,27 @@ Section hlist.
       | MZ _ => hlist_hd
       | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
     end.
+
+  Fixpoint hlist_nth {ls} (hs : hlist ls) (n : nat) 
+    : option (match nth_error ls n with
+                | None => unit
+                | Some x => F x
+              end) :=
+    match hs in hlist ls return option (match nth_error ls n with
+                                          | None => unit
+                                          | Some x => F x
+                                        end)
+      with
+      | HNil => None
+      | HCons l ls h hs => 
+        match n as n return option (match nth_error (l :: ls) n with
+                                      | None => unit
+                                      | Some x => F x
+                                    end)
+          with
+          | 0 => Some h
+          | S n => hlist_nth hs n
+        end
+    end.
+
 End hlist.
