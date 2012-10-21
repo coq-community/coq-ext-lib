@@ -148,14 +148,14 @@ Ltac consider f :=
       match goal with
         | _ =>
           ((let c := constr:(_ : Reflect f _ _) in
-            case c;
+            case c)) (*;
             let H := fresh in
-            intros H; try rewrite H; revert H))
+            intros H; try rewrite H; revert H)) *)
         | _ =>
           ((let c := constr:(_ : SemiReflect f _) in
-            case c;
+            case c)) (*;
             let H := fresh in
-            try (intros H; try rewrite H; revert H)))
+            try (intros H; try rewrite H; revert H))) *)
         | _ =>
           (** default to remembering the equality **)
           case_eq f
@@ -184,12 +184,3 @@ Section test.
   Qed.
 
 End test.
-
-
-
-
-
-
-
-
-
