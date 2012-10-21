@@ -11,3 +11,8 @@ Section Sets.
   }.
 
 End Sets.
+
+Arguments empty {S} {T} {R} {_}.
+Arguments contains {S} {T} {R} {_} _ _.
+Arguments add {S} {T} {R} {_} _ _.
+Arguments remove {S} {T} {R} {_} _ _.
