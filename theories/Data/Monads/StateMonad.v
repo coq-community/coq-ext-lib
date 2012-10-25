@@ -62,7 +62,7 @@ Section StateType.
   { lift := fun _ c => mkStateT (fun s => bind c (fun t => ret (t, s)))
   }.
 
-  Global Instance State_State_stateT T (MS : State T m) : State T stateT :=
+  Global Instance State_State_stateT T (MS : MonadState T m) : MonadState T stateT :=
   { get := lift get
   ; put := fun x => lift (put x)
   }.
