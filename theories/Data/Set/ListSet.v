@@ -1,9 +1,11 @@
 Require Import List.
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Data.Lists.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+
 
 Section ListSet.
 
@@ -27,12 +29,30 @@ Section ListSet.
 
   Definition lset_remove (v : T) : lset R -> lset R :=
     filter (fun x => negb (R_dec v x)).
+
+  Definition lset_union (l r : lset R) : lset R :=
+    fold_left (fun x y => lset_add y x) l r.
+
+  Definition lset_difference (l r : lset R) : lset R :=
+    filter (fun x => negb (lset_contains x r)) l.
+
+  Definition lset_intersect (l r : lset R) : lset R :=
+    filter (fun x => lset_contains x r) l.
+
+  Definition lset_subset (l r : lset R) : bool :=
+    allb (fun x => lset_contains x r) l.
+
 End ListSet.
 
 Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
-  (R_dec : RelDec R) : CSet (@lset T R) R :=
-{ contains := lset_contains rel_dec
-; empty    := lset_empty R
-; add      := lset_add rel_dec
-; remove   := lset_remove rel_dec
+  (R_dec : RelDec R) : DSet (@lset T R) R :=
+{ contains  := lset_contains rel_dec
+; empty     := lset_empty R
+; add       := lset_add rel_dec
+; singleton := fun x => lset_add rel_dec x (lset_empty R)
+; remove    := lset_remove rel_dec
+; union     := lset_union rel_dec
+; intersect := lset_union rel_dec
+; difference := lset_union rel_dec
+; subset     := lset_subset rel_dec
 }.
