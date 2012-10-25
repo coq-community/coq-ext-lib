@@ -62,7 +62,12 @@ Section StateType.
   { lift := fun _ c => mkStateT (fun s => bind c (fun t => ret (t, s)))
   }.
 
-  Global Instance MonadReader_stateT T (MR : MonadReader T m) : MonadReader T stateT :=
+  Global Instance State_State_stateT T (MS : State T m) : State T stateT :=
+  { get := lift get
+  ; put := fun x => lift (put x)
+  }.
+
+  Global Instance MonadReader_stateT T (MR : MonadReader T m) : MonadReader T stateT := 
   { ask := mkStateT (fun s => bind ask (fun t => ret (t, s)))
   ; local := fun f _ c => mkStateT (fun s => local f (runStateT c s))
   }.
@@ -76,6 +81,15 @@ Section StateType.
     let '(a,t,s) := x in ret (a, s)))
   }.
 
+  (** TODO: we don't want this do we? **)
+(*
+  Global Instance Exc_stateT T (MR : MonadExc T m) : MonadExc T stateT :=
+  { raise := fun _ e => lift (raise e)
+  ; catch := fun _ body hnd => 
+    mkStateT (fun s => catch (runStateT body s) (fun e => runStateT (hnd e) s))
+  }.
+*)
+  
 End StateType.
 
 Arguments evalState {S} {t} (c) (s).
