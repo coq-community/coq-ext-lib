@@ -1,4 +1,5 @@
-
+Set Implicit Arguments.
+Set Strict Implicit.
 
 Section Sets.
   Variable S : Type.
@@ -38,3 +39,13 @@ Section Sets.
   }.
 
 End Sets.
+
+Arguments contains {S} {T} {R} {_} _ _.
+Arguments empty {S} {T} {R} {_}.
+Arguments singleton {S} {T} {R} {_} _.
+Arguments union {S} {T} {R} {_} _ _.
+Arguments intersect {S} {T} {R} {_} _ _.
+Arguments difference {S} {T} {R} {_} _ _.
+Arguments subset {S} {T} {R} {_} _ _.
+Arguments add {S} {T} {R} {_} _ _.
+Arguments remove {S} {T} {R} {_} _ _.
