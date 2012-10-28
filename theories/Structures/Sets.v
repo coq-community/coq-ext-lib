@@ -1,3 +1,5 @@
+Require Import ExtLib.Structures.Monoid.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -5,11 +7,12 @@ Section Sets.
   Variable S : Type.
   Context {T : Type}.
 
-  Class DSet (R : T -> T -> Prop) : Type :=
+  Class CSet (R : T -> T -> Prop) : Type :=
   { contains   : T -> S -> bool
   ; empty      : S
   ; singleton  : T -> S 
   ; union      : S -> S -> S
+  ; filter     : (T -> bool) -> S -> S
   ; intersect  : S -> S -> S
   ; difference : S -> S -> S
   ; subset     : S -> S -> bool
@@ -19,7 +22,7 @@ Section Sets.
   }.
 
   Variable R : T -> T -> Prop.
-  Variable DS : DSet R.
+  Variable DS : CSet R.
 
   Class CSep_Laws : Type :=
   { empty_not_contains : forall t, contains t empty = false
@@ -49,3 +52,16 @@ Arguments difference {S} {T} {R} {_} _ _.
 Arguments subset {S} {T} {R} {_} _ _.
 Arguments add {S} {T} {R} {_} _ _.
 Arguments remove {S} {T} {R} {_} _ _.
+Arguments filter {S} {T} {R} {_} _ _.
+
+Section monoid.
+  Variable S : Type.
+  Context {T : Type}.
+  Variable R : T -> T -> Prop.
+  Context {set : CSet S R}. 
+
+  Definition Monoid_set_union : Monoid S :=
+  {| monoid_plus := union
+   ; monoid_unit := empty
+  |}.
+End monoid.

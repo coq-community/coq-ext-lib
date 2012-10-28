@@ -28,16 +28,16 @@ Section ListSet.
     if lset_contains v ls then ls else v :: ls.
 
   Definition lset_remove (v : T) : lset R -> lset R :=
-    filter (fun x => negb (R_dec v x)).
+    List.filter (fun x => negb (R_dec v x)).
 
   Definition lset_union (l r : lset R) : lset R :=
     fold_left (fun x y => lset_add y x) l r.
 
   Definition lset_difference (l r : lset R) : lset R :=
-    filter (fun x => negb (lset_contains x r)) l.
+    List.filter (fun x => negb (lset_contains x r)) l.
 
   Definition lset_intersect (l r : lset R) : lset R :=
-    filter (fun x => lset_contains x r) l.
+    List.filter (fun x => lset_contains x r) l.
 
   Definition lset_subset (l r : lset R) : bool :=
     allb (fun x => lset_contains x r) l.
@@ -45,7 +45,7 @@ Section ListSet.
 End ListSet.
 
 Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
-  (R_dec : RelDec R) : DSet (@lset T R) R :=
+  (R_dec : RelDec R) : CSet (@lset T R) R :=
 { contains  := lset_contains rel_dec
 ; empty     := lset_empty R
 ; add       := lset_add rel_dec
@@ -55,4 +55,7 @@ Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
 ; intersect := lset_union rel_dec
 ; difference := lset_union rel_dec
 ; subset     := lset_subset rel_dec
+; filter     := @List.filter _
 }.
+
+
