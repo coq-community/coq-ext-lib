@@ -7,6 +7,7 @@ Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Data.Monads.WriterMonad.
 Require Import ExtLib.Data.Monads.IdentityMonad.
 Require Import ExtLib.Structures.Monoid.
+Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -14,16 +15,16 @@ Set Strict Implicit.
 Section GraphImpl.
   Variable V : Type.
   Variable map : Type -> Type.
-  Variable Map : Map V map.
-  Variable FMap : FMap V map.
+  Variable Map : DMap V map.
+  Variable FMap : forall T, Foldable (map T) (V * T).
   Variable RelDec_V : RelDec (@eq V).
 
   Definition adj_graph : Type :=
     map (list V).
 
   Definition verts (g : adj_graph) : list V :=
-    let c := fmap_foldM (m := writerT (Monoid_list_app) ident)
-      (fun k _ _ => tell (k :: nil)) tt g
+    let c := foldM (m := writerT (Monoid_list_app) ident) 
+      (fun k_v _ => let k := fst k_v in tell (k :: nil)) (ret tt) g
     in
     snd (unIdent (runWriterT c)).
 
@@ -64,7 +65,6 @@ Section GraphImpl.
   ; addVertex := add_vertex
   ; addEdge   := add_edge
   }.
-
 
 End GraphImpl.
 

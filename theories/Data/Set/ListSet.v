@@ -2,6 +2,7 @@ Require Import List.
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.Lists.
+Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -44,8 +45,8 @@ Section ListSet.
 
 End ListSet.
 
-Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
-  (R_dec : RelDec R) : CSet (@lset T R) R :=
+Global Instance DSet_weak_listset {T} (R : T -> T -> Prop)
+  (R_dec : RelDec R) : DSet (@lset T R) R :=
 { contains  := lset_contains rel_dec
 ; empty     := lset_empty R
 ; add       := lset_add rel_dec
@@ -59,3 +60,6 @@ Global Instance CSet_weak_listset {T} (R : T -> T -> Prop)
 }.
 
 
+Global Instance Foldable_listset {T} (R : T -> T -> Prop)
+  : Foldable (@lset T R) T :=
+  fun _ f a t => List.fold_left (fun x y => f y x) t a.

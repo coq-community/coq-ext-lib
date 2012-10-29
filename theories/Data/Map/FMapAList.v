@@ -2,6 +2,7 @@ Require Import List.
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -28,7 +29,7 @@ Section keyed.
           alist_find k ms
     end.
 
-  Global Instance Map_alist : Map K alist :=
+  Global Instance DMap_alist : DMap K alist :=
   { empty  := fun _ => @nil _
   ; add    := alist_add
   ; remove := alist_remove
@@ -39,22 +40,20 @@ Section keyed.
     Import MonadNotation.
     Local Open Scope monad_scope.
 
-    Variable m : Type -> Type.
-    Variable Monad_m : Monad m.
     Variables V T : Type.
-    Variable f : K -> V -> T -> m T.
+    Variable f : K -> V -> T -> T.
 
-    Fixpoint fold_alist (acc : T) (map : alist V) : m T :=
+    Fixpoint fold_alist (acc : T) (map : alist V) : T :=
       match map with
-        | nil => ret acc
+        | nil => acc
         | (k,v) :: m =>
-          acc <- f k v acc ;;
+          let acc := f k v acc in
           fold_alist acc m
       end.
   End fold.
 
-  Global Instance FMap_alist : FMap K alist :=
-  { fmap_foldM := fold_alist }.
+  Global Instance Foldable_alist V : Foldable (alist V) (K * V) :=
+    fun _ f b => fold_alist (fun k v => f (k,v)) b.
 
 End keyed.
 

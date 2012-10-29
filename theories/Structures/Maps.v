@@ -10,19 +10,14 @@ Section Maps.
   Variable map : Type -> Type.
 
   (** General Maps **)
-  Class Map : Type :=
+  Class DMap : Type :=
   { empty    : forall {V}, map V
   ; add      : forall {V}, K -> V -> map V -> map V
   ; remove   : forall {V}, K -> map V -> map V
   ; lookup   : forall {V}, K -> map V -> option V
   }.
 
-  (** Finite Maps **)
-  (** This is temporary, it should be something like "foldable" **)
-  Class FMap : Type :=
-  { fmap_foldM : forall {m} {M : Monad m} {V T} , (K -> V -> T -> m T) -> T -> map V -> m T }.
-
-  Variable M : Map.
+  Variable M : DMap.
 
   Definition contains {V} (k : K) (m : map V) : bool :=
     match lookup k m with
@@ -32,8 +27,6 @@ Section Maps.
 
   Definition singleton {V} (k : K) (v : V) : map V :=
     add k v empty.
-
-  Variable FM : FMap.
 
 (*
   Definition combine {T} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
@@ -74,12 +67,11 @@ Section Maps.
 End Maps.
 
 Arguments empty {_} {_} {_} {_} .
-Arguments add {K} {map} {Map} {V} _ _ _.
-Arguments remove {K} {map} {Map} {V} _ _.
-Arguments lookup {K} {map} {Map} {V} _ _.
+Arguments add {K} {map} {DMap} {V} _ _ _.
+Arguments remove {K} {map} {DMap} {V} _ _.
+Arguments lookup {K} {map} {DMap} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
-Arguments fmap_foldM {K} {map} {FMap} {m} {M} {V} {T} _ _ _.
 (*
 Arguments combine {K} {map} {M} {FM} {T} _ _ _.
 *)

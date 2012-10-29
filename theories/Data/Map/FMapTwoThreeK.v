@@ -115,7 +115,7 @@ Section keyed.
         end
     end.
 
-  Global Instance Map_twothree : Map K twothree :=
+  Global Instance Map_twothree : DMap K twothree :=
   { empty  := @Leaf
   ; add    := @twothree_add
   ; remove := @twothree_remove
@@ -126,29 +126,30 @@ Section keyed.
     Import MonadNotation.
     Local Open Scope monad_scope.
 
-    Variable m : Type -> Type.
-    Variable Monad_m : Monad m.
     Variables V T : Type.
-    Variable f : K -> V -> T -> m T.
+    Variable f : K -> V -> T -> T.
 
-    Fixpoint twothree_fold (acc : T) (map : twothree V) : m T :=
+    Fixpoint twothree_fold (acc : T) (map : twothree V) : T :=
       match map with
-        | Leaf => ret acc
+        | Leaf => acc
         | Two l k v r =>
-          acc <- twothree_fold acc l ;;
-          acc <- f k v acc ;;
+          let acc := twothree_fold acc l in
+          let acc := f k v acc in
           twothree_fold acc r
         | Three l k1 v1 m k2 v2 r =>
-          acc <- twothree_fold acc l ;;
-          acc <- f k1 v1 acc ;;
-          acc <- twothree_fold acc m ;;
-          acc <- f k2 v2 acc ;;
+          let acc := twothree_fold acc l in
+          let acc := f k1 v1 acc in
+          let acc := twothree_fold acc m in
+          let acc := f k2 v2 acc in
           twothree_fold acc m
       end.
+
   End fold.
 
-  Global Instance FMap_twothree : FMap K twothree :=
-  { fmap_foldM := twothree_fold }.
+  Require Import ExtLib.Structures.Reducible.
+
+  Global Instance Foldable_twothree V : Foldable (twothree V) (K * V) :=
+    fun _ f b x => twothree_fold (fun k v => f (k,v)) b x.
 
 End keyed.
 

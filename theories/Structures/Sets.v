@@ -7,7 +7,7 @@ Section Sets.
   Variable S : Type.
   Context {T : Type}.
 
-  Class CSet (R : T -> T -> Prop) : Type :=
+  Class DSet (R : T -> T -> Prop) : Type :=
   { contains   : T -> S -> bool
   ; empty      : S
   ; singleton  : T -> S 
@@ -22,7 +22,7 @@ Section Sets.
   }.
 
   Variable R : T -> T -> Prop.
-  Variable DS : CSet R.
+  Variable DS : DSet R.
 
   Class CSep_Laws : Type :=
   { empty_not_contains : forall t, contains t empty = false
@@ -58,10 +58,25 @@ Section monoid.
   Variable S : Type.
   Context {T : Type}.
   Variable R : T -> T -> Prop.
-  Context {set : CSet S R}. 
+  Context {set : DSet S R}. 
 
   Definition Monoid_set_union : Monoid S :=
   {| monoid_plus := union
    ; monoid_unit := empty
   |}.
 End monoid.
+
+Section dmonad.
+  Require Import ExtLib.Structures.DMonad.
+
+  Variable S : Type.
+  Context {T : Type}.
+  Variable R : T -> T -> Prop.
+  Context {set : DSet S R}. 
+
+  Global Instance DMonda_set : DMonad S T :=
+  {| dzero := empty
+   ; dreturn := singleton
+   ; djoin := union
+  |}.
+End dmonad.

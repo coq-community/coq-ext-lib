@@ -1,5 +1,9 @@
 Require Import RelationClasses.
 Require Import ExtLib.Structures.BinOps.
+Require Import ExtLib.Structures.DMonad.
+
+Set Implicit Arguments.
+Set Strict Implicit.
 
 Class Reducible (T E : Type) : Type :=
   reduce : forall {A} (base : A) (single : E -> A) (join : A -> A -> A), T -> A.
@@ -10,37 +14,45 @@ Class Foldable (T E : Type) : Type :=
 Section RedFold.
   Variables T E : Type.
   
-  Definition Reducible_from_Foldable (R : Foldable T E) : Reducible T E :=
+  Global Instance Reducible_from_Foldable (R : Foldable T E) : Reducible T E | 100 :=
     fun A base single join =>
       @fold _ _ R A (fun x => join (single x)) base.
 End RedFold.
 
 Section foldM.
   Require Import ExtLib.Structures.Monad.
-  Variables T E : Type.
-  Variable Foldable_te : Foldable T E.
-  Variable m : Type -> Type.
-  Variable Monad_m : Monad m.
+  Context {T E : Type}.
+  Context {Foldable_te : Foldable T E}.
+  Context {m : Type -> Type}.
+  Context {Monad_m : Monad m}.
 
   Definition foldM {A} (add : E -> A -> m A) (base : m A) (t : T) : m A :=
     fold (fun x acc => bind acc (add x)) base t.  
 End foldM.
 
+Section reduceM.
+  Require Import ExtLib.Structures.Monad.
+  Context {T E : Type}.
+  Context {Reducible_te : Reducible T E}.
+  Context {m : Type -> Type}.
+  Context {Monad_m : Monad m}.
 
-(*
+  Definition reduceM {A} (base : m A) (single : E -> m A) (join : m A -> m A -> m A)  (t : T) : m A :=
+    reduce base single join t.  
+End reduceM.
+
 Section mapping.
-  Variables T E : Type.
-  Variables U V : Type.
+  Context {T E : Type}.
+  Context {U V : Type}.
+
+  Context {Red_te : Reducible T E}. 
+  Context {DMonad_uv : DMonad U V}.
   
   Variable f : E -> V.
 
-  Variable Red_te : Reducible T E. 
-  Variable Ctor_uv : Constructable U V. (* [unit], [inj], [plus] *)
-
-
-  reduce unit (fun x => inj (f x)) plus.
-*)  
-  
+  Definition map : T -> U :=
+    reduce dzero (fun x => dreturn (f x)) djoin.
+End mapping.
 
 
 
