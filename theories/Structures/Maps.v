@@ -1,5 +1,6 @@
 Require Import RelationClasses.
 Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -28,14 +29,14 @@ Section Maps.
   Definition singleton {V} (k : K) (v : V) : map V :=
     add k v empty.
 
-(*
-  Definition combine {T} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
-    unIdent (fmap_foldM (m := ident) (fun k v acc =>
-      ret match lookup k acc with
-            | None => add k v acc
-            | Some v' => add k (f k v' v) acc
-          end) m2 m1).
-*)
+  Definition combine {T} {F : Foldable (map T) (K * T)} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
+    fold (fun k_v acc =>
+      let '(k,v) := k_v in
+      match lookup k acc with
+        | None => add k v acc
+        | Some v' => add k (f k v v') acc
+      end) m2 m1.
+
 (*
   Class MapMember : Type :=
   { MapsTo : forall {V}, K -> V -> map V -> Prop }.
@@ -72,6 +73,4 @@ Arguments remove {K} {map} {DMap} {V} _ _.
 Arguments lookup {K} {map} {DMap} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
-(*
-Arguments combine {K} {map} {M} {FM} {T} _ _ _.
-*)
+Arguments combine {K} {map} {M} {T} {_} _ _ _.
