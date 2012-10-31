@@ -29,13 +29,6 @@ Section keyed.
           alist_find k ms
     end.
 
-  Global Instance DMap_alist : DMap K alist :=
-  { empty  := fun _ => @nil _
-  ; add    := alist_add
-  ; remove := alist_remove
-  ; lookup := alist_find
-  }.
-
   Section fold.
     Import MonadNotation.
     Local Open Scope monad_scope.
@@ -51,6 +44,18 @@ Section keyed.
           fold_alist acc m
       end.
   End fold.
+
+  Definition alist_union {V} (m1 m2 : alist V) : alist V :=
+    fold_alist (@alist_add _) m2 m1.
+
+  Global Instance DMap_alist : DMap K alist :=
+  { empty  := fun _ => @nil _
+  ; add    := alist_add
+  ; remove := alist_remove
+  ; lookup := alist_find
+  ; union  := @alist_union
+  }.
+
 
   Global Instance Foldable_alist V : Foldable (alist V) (K * V) :=
     fun _ f b => fold_alist (fun k v => f (k,v)) b.

@@ -2,6 +2,8 @@ Require Import String.
 Require Import EqNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.DMonad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -40,17 +42,38 @@ Proof.
 Qed.
 
 Global Instance RelDec_ascii : RelDec (@eq Ascii.ascii) :=
-{| rel_dec := ascii_dec |}.
+{ rel_dec := ascii_dec }.
 
 Global Instance RelDec_Correct_ascii : RelDec_Correct RelDec_ascii.
 Proof.
-  constructor. auto using ascii_dec_sound.
+  constructor; auto using ascii_dec_sound.
 Qed.
 
 Global Instance Reflect_ascii_dec a b : Reflect (ascii_dec a b) (a = b) (a <> b).
 Proof.
   apply iff_to_reflect; auto using ascii_dec_sound.
 Qed.
+
+Local Notation "x >> y" := (match x with
+                              | Eq => y
+                              | z => z
+                            end) (only parsing, at level 30).
+
+Definition bool_cmp (l r : bool) : comparison :=
+  match l , r with
+    | true , false => Gt
+    | false , true => Lt
+    | true , true
+    | false , false => Eq
+  end.
+
+Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
+  match l , r with
+    | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
+      Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
+      bool_cmp l1 r1 >> bool_cmp l2 r2 >> bool_cmp l3 r3 >> bool_cmp l4 r4 >>
+      bool_cmp l5 r5 >> bool_cmp l6 r6 >> bool_cmp l7 r7 >> bool_cmp l8 r8
+  end.
 
 Fixpoint string_dec (l r : string) : bool :=
   match l , r with
@@ -75,13 +98,22 @@ Global Instance RelDec_string : RelDec (@eq string) :=
 
 Global Instance RelDec_Correct_string : RelDec_Correct RelDec_string.
 Proof.
-  constructor. auto using string_dec_sound.
+  constructor; auto using string_dec_sound.
 Qed.
 
 Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> b).
 Proof.
   apply iff_to_reflect; auto using string_dec_sound.
 Qed.
+
+Fixpoint string_cmp (l r : string) : comparison :=
+  match l , r with
+    | EmptyString , EmptyString => Eq
+    | EmptyString , _ => Lt
+    | _ , EmptyString => Gt
+    | String l ls , String r rs =>
+      ascii_cmp l r >> string_cmp ls rs
+  end.
 
 Require Import Ascii.
 
@@ -139,3 +171,18 @@ Definition nat2string16 : nat -> string.
 refine (@nat2string 16 _).
 repeat constructor.
 Defined.
+
+Global Instance Foldable_string : Foldable string ascii :=
+  fun _ f =>
+    fix go acc ls :=
+    match ls with
+      | EmptyString => acc
+      | String l ls =>
+        go (f l acc) ls
+    end.
+
+Global Instance DMonad_string : DMonad string ascii :=
+{ dreturn := fun x => String x EmptyString
+; dzero := EmptyString
+; djoin  := String.append
+}.

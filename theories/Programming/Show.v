@@ -88,6 +88,17 @@ Next Obligation.
 Defined.
 Global Instance nat_Show : Show nat := { show := nat_show }.
 
+Global Instance Show_pos : Show positive :=
+  fun x => nat_show (Pos.to_nat x).
+
+Global Instance Show_Z : Show Z :=
+  fun x => 
+    match x with
+      | Z0 => "0"%char
+      | Zpos p => show p
+      | Zneg p => "-"%char << show p
+    end.
+
 Section pair_Show.
   Context {A B} {AS:Show A} {BS:Show B}.
   Global Instance pair_Show : Show (A*B) :=

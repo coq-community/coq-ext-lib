@@ -1,4 +1,6 @@
 Require Import List.
+Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.DMonad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -21,3 +23,20 @@ Section AllB.
         if p l then true else anyb ls
     end.
 End AllB.
+
+Global Instance Foldable_list {T} : Foldable (list T) T :=
+  fun _ f x ls => fold_left (fun x y => f y x) ls x.
+
+Global Instance DMonad_list {T} : DMonad (list T) T :=
+{ dreturn := fun x => cons x nil
+; dzero := nil
+; djoin := @List.app _
+}.
+
+Section toList.
+  Variable C E : Type.
+  Context {F : Foldable C E}.
+
+  Definition toList : C -> list E :=
+    map (fun x => x).
+End toList.

@@ -144,6 +144,34 @@ Section PairEq.
   Qed.
 End PairEq.
 
+Section OptionEq.
+  Variable T : Type.
+  Variable EDT : RelDec (@eq T).
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_option : RelDec (@eq (option T)) :=
+  { rel_dec := fun x y =>
+    match x , y with
+      | None , None => true
+      | Some x , Some y => eq_dec x y
+      | _ , _ => false
+    end }.
+
+  Variable EDCT : RelDec_Correct EDT.
+
+  Global Instance RelDec_Correct_eq_option : RelDec_Correct RelDec_eq_option.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros; try congruence;
+      f_equal; try match goal with
+                     | [ H : context [ eq_dec ?X ?Y ] |- _ ] =>
+                       consider (eq_dec X Y)
+                     | [ |- context [ eq_dec ?X ?Y ] ] =>
+                       consider (eq_dec X Y)
+                   end; auto; congruence.
+  Qed.
+
+End OptionEq.
+
 Section SumEq.
   Variable T : Type.
   Variable U : Type.

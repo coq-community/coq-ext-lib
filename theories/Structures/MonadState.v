@@ -14,7 +14,7 @@ Section monadic.
   Variable T : Type.
   Context {MR : MonadState T m}.
 
-  Definition modify (f : T -> T) : m unit :=
-    bind get (fun x => put (f x)).
+  Definition modify (f : T -> T) : m T :=
+    bind get (fun x => bind (put (f x)) (fun _ => ret x)).
 
 End monadic.

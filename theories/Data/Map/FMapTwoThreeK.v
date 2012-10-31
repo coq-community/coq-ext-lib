@@ -115,13 +115,6 @@ Section keyed.
         end
     end.
 
-  Global Instance Map_twothree : DMap K twothree :=
-  { empty  := @Leaf
-  ; add    := @twothree_add
-  ; remove := @twothree_remove
-  ; lookup := @twothree_find
-  }.
-
   Section fold.
     Import MonadNotation.
     Local Open Scope monad_scope.
@@ -145,6 +138,18 @@ Section keyed.
       end.
 
   End fold.
+
+  Definition twothree_union {V} (m1 m2 : twothree V) : twothree V :=
+    twothree_fold twothree_add m2 m1.
+
+  Global Instance Map_twothree : DMap K twothree :=
+  { empty  := @Leaf
+  ; add    := @twothree_add
+  ; remove := @twothree_remove
+  ; lookup := @twothree_find
+  ; union  := @twothree_union
+  }.
+
 
   Require Import ExtLib.Structures.Reducible.
 

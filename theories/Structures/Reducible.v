@@ -37,8 +37,8 @@ Section reduceM.
   Context {m : Type -> Type}.
   Context {Monad_m : Monad m}.
 
-  Definition reduceM {A} (base : m A) (single : E -> m A) (join : m A -> m A -> m A)  (t : T) : m A :=
-    reduce base single join t.  
+  Definition reduceM {A} (base : m A) (single : E -> m A) (join : A -> A -> m A)  (t : T) : m A :=
+    reduce base single (fun x y => bind x (fun x => bind y (fun y => join x y))) t.  
 End reduceM.
 
 Section mapping.
@@ -54,11 +54,36 @@ Section mapping.
     reduce dzero (fun x => dreturn (f x)) djoin.
 End mapping.
 
+Section mapM.
+  Context {T E : Type}.
+  Context {U V : Type}.
 
+  Context {m : Type -> Type}.
+  Context {Monad_m : Monad m}.
+  Context {Red_te : Reducible T E}. 
+  Context {DMonad_uv : DMonad U V}.
+  
+  Variable f : E -> m V.
 
+  Definition mapM : T -> m U :=
+    reduce (ret dzero)
+           (fun x => bind (f x) (fun x => ret (dreturn x))) 
+           (liftM2 djoin).
+End mapM.
 
+Section iterM.
+  Context {T E : Type}.
+  Context {U V : Type}.
 
+  Context {m : Type -> Type}.
+  Context {Monad_m : Monad m}.
+  Context {Red_te : Reducible T E}. 
+  
+  Variable f : E -> m unit.
 
+  Definition iterM : T -> m unit :=
+    reduce (ret tt) f (fun x y => bind x (fun _ => y)).
+End iterM.
 
 (*
 Section Laws.

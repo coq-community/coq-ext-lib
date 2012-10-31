@@ -16,6 +16,7 @@ Section Maps.
   ; add      : forall {V}, K -> V -> map V -> map V
   ; remove   : forall {V}, K -> map V -> map V
   ; lookup   : forall {V}, K -> map V -> option V
+  ; union    : forall {V}, map V -> map V -> map V
   }.
 
   Variable M : DMap.
@@ -74,3 +75,17 @@ Arguments lookup {K} {map} {DMap} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
 Arguments combine {K} {map} {M} {T} {_} _ _ _.
+
+Section dmonad.
+  Require Import ExtLib.Structures.DMonad.
+
+  Variable M : Type -> Type.
+  Context {K : Type}.
+  Context {set : DMap K M}. 
+
+  Global Instance DMonda_map {V} : DMonad (M V) (K * V) :=
+  {| dzero := empty
+   ; dreturn := fun k_v => singleton (fst k_v) (snd k_v)
+   ; djoin := @union _ _ _ _
+  |}.
+End dmonad.
