@@ -1,0 +1,10 @@
+* Version 0.0
+
+
+#+STARTUP: showall
+
+#+BEGIN_COMMENT
+Local Variables:
+mode: org
+End:
+#+END_COMMENT
