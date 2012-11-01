@@ -78,10 +78,10 @@ Global Instance string_Show : Show string :=
 
 Program Fixpoint nat_show (n:nat) {measure n} : showM :=
   if Compare_dec.le_gt_dec n 9 then
-    inject (digit2ascii n)
+    inject (Char.digit2ascii n)
   else
     let n' := NPeano.div n 10 in
-    (@nat_show n' _) << (inject (digit2ascii (n - 10 * n'))).
+    (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
 Next Obligation.
   assert (NPeano.div n 10 < n) ; eauto.
   eapply NPeano.Nat.div_lt ; omega.
@@ -104,11 +104,7 @@ Section pair_Show.
   Global Instance pair_Show : Show (A*B) :=
     { show p :=
         let (a,b) := p in
-        "("%char <<
-        show a <<
-        ","%char <<
-        show b <<
-        ")"%char
+        "("%char << show a << ","%char << show b << ")"%char
     }.
 End pair_Show.
 
@@ -130,6 +126,21 @@ Section sum_Show.
     }.
 End sum_Show.
 End hiding_notation.
+
+Fixpoint iter_show (ss : list showM) : showM :=
+  match ss with
+    | nil => empty
+    | cons s ss => cat s (iter_show ss)
+  end.
+
+Require Import ExtLib.Structures.DMonad.
+
+Global Instance DMonad_showM : DMonad showM ascii :=
+{ dzero := empty
+; dreturn := ShowNotation.__inject_char
+; djoin := cat
+}.
+
 
 (*
 Examples:
