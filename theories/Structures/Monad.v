@@ -1,6 +1,5 @@
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
-Require Import ExtLib.Structures.DMonad.
 
 Set Implicit Arguments.
 Set Strict Implicit.

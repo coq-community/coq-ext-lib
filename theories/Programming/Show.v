@@ -1,9 +1,10 @@
-Require Import Ascii.
-Require Import String.
+Require Import Ascii String List.
+
 Require Import Coq.Program.Wf.
 Require Import Omega.
 
 Require Import ExtLib.Structures.Monoid.
+Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Programming.Injection.
 Require Import ExtLib.Data.Strings.
 Require Import ExtLib.Core.RelDec.
@@ -12,7 +13,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Definition showM : Type := 
-  forall {m} {I:Injection ascii m} (M:Monoid m), m.
+  forall m, Injection ascii m -> Monoid m -> m.
 
 Class ShowScheme (T : Type) : Type :=
 { show_mon : Monoid T
@@ -107,6 +108,26 @@ Section pair_Show.
         "("%char << show a << ","%char << show b << ")"%char
     }.
 End pair_Show.
+
+Section sepBy.
+  Variable T : Type.
+  Context {F : Foldable T showM}.
+
+  Definition sepBy (sep : showM) (ls : T) : showM :=
+    match 
+      fold (fun s acc =>
+        match acc with
+          | None => Some s
+          | Some x => Some (x << sep << s)
+        end) None ls
+      with
+      | None => empty
+      | Some s => s
+    end.
+End sepBy. 
+
+Definition wrap (before after : showM) (x : showM) : showM :=
+  before << x << after.
 
 Section sum_Show.
   Context {A B} {AS:Show A} {BS:Show B}.
