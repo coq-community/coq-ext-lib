@@ -7,3 +7,4 @@ Require Export MonadState.
 Require Export MonadTrans.
 Require Export MonadFix.
 Require Export MonadExc.
+Require Export MonadCont.
