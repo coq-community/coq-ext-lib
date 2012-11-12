@@ -35,6 +35,9 @@ Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
 
 Class Show T := show : T -> showM.
 
+Definition to_string {T} {M : Show T} (v : T) : string :=
+  runShow (show v) ""%string.
+
 Definition empty : showM := 
   fun _ _ m => monoid_unit m.
 Definition cat (a b : showM) : showM :=
