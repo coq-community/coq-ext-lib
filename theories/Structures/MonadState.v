@@ -17,4 +17,7 @@ Section monadic.
   Definition modify (f : T -> T) : m T :=
     bind get (fun x => bind (put (f x)) (fun _ => ret x)).
 
+  Definition gets {U} (f : T -> U) : m U :=
+    bind get (fun x => ret (f x)).
+
 End monadic.
