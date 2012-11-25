@@ -81,14 +81,11 @@ Section StateType.
     let '(a,t,s) := x in ret (a, s)))
   }.
 
-  (** TODO: we don't want this do we? **)
-(*
   Global Instance Exc_stateT T (MR : MonadExc T m) : MonadExc T stateT :=
   { raise := fun _ e => lift (raise e)
   ; catch := fun _ body hnd => 
     mkStateT (fun s => catch (runStateT body s) (fun e => runStateT (hnd e) s))
   }.
-*)
   
 End StateType.
 
