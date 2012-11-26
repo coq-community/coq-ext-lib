@@ -64,7 +64,7 @@ Definition indent (indent : showM) (v : showM) : showM :=
   let nl := Ascii.ascii_of_nat 10 in
     fun _ inj mon => 
       v _ (fun a => if eq_dec a nl
-         then monoid_plus mon (indent _ inj mon) (inj a)
+         then monoid_plus mon (inj a) (indent _ inj mon)
          else inj a) mon.
 
 Section hiding_notation.
