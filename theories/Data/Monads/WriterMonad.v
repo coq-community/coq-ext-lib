@@ -14,6 +14,12 @@ Section WriterType.
   Variable m : Type -> Type.
   Variable M : Monad m.
 
+  Definition execWriterT {T} (c : writerT Monoid_S m T) : m S := 
+    bind (runWriterT c) (fun (x : T * S) => ret (snd x)).
+
+  Definition evalWriterT {T} (c : writerT Monoid_S m T) : m T := 
+    bind (runWriterT c) (fun (x : T * S) => ret (fst x)).
+
   Global Instance Monad_writerT : Monad (writerT Monoid_S m) :=
   { ret := fun _ x => mkWriterT _ _ _ (@ret _ M _ (x, monoid_unit Monoid_S))
   ; bind := fun _ c1 _ c2 =>
