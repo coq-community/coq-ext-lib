@@ -127,7 +127,25 @@ Section sepBy.
       | None => empty
       | Some s => s
     end.
-End sepBy. 
+End sepBy.
+
+Section sepBy_f.
+  Variable T E : Type.
+  Context {F : Foldable T E}.
+  Variable (f : E -> showM).
+
+  Definition sepBy_f (sep : showM) (ls : T) : showM :=
+    match 
+      fold (fun s acc =>
+        match acc with
+          | None => Some (f s)
+          | Some x => Some (x << sep << f s)
+        end) None ls
+      with
+      | None => empty
+      | Some s => s
+    end.
+End sepBy_f. 
 
 Definition wrap (before after : showM) (x : showM) : showM :=
   before << x << after.
@@ -149,6 +167,16 @@ Section sum_Show.
         ")"%char
     }.
 End sum_Show.
+
+Section foldable_Show.
+  Require Import ExtLib.Structures.Reducible.
+  Context {A B} {F : Foldable B A} {BS : Show A}.
+
+  Global Instance foldable_Show : Show B :=
+    { show s := sepBy_f show ", "%string s }.
+
+End foldable_Show.
+
 End hiding_notation.
 
 Fixpoint iter_show (ss : list showM) : showM :=
@@ -164,6 +192,7 @@ Global Instance DMonad_showM : DMonad showM ascii :=
 ; dreturn := ShowNotation.__inject_char
 ; djoin := cat
 }.
+
 
 
 (*
