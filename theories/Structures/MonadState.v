@@ -12,7 +12,7 @@ Section monadic.
   Variable m : Type -> Type.
   Context {M : Monad m}.
   Variable T : Type.
-  Context {MR : MonadState T m}.
+  Context {MS : MonadState T m}.
 
   Definition modify (f : T -> T) : m T :=
     bind get (fun x => bind (put (f x)) (fun _ => ret x)).
@@ -21,3 +21,16 @@ Section monadic.
     bind get (fun x => ret (f x)).
 
 End monadic.
+
+Section SubState.
+  Variable m : Type -> Type.
+  Context {M : Monad m}.
+  Variable T S : Type.
+  Context {MS : MonadState T m}.
+
+  Definition StateProd (f : T -> S) (g : S -> T -> T) 
+    : MonadState S m :=
+  {| get := @gets m M T MS S f
+   ; put := fun x => bind get (fun s => put (g x s))
+   |}.
+End SubState.
