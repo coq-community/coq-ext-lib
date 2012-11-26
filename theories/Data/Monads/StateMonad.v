@@ -93,3 +93,4 @@ Arguments evalState {S} {t} (c) (s).
 Arguments execState {S} {t} (c) (s).
 Arguments evalStateT {S} {m} {M} {t} (c) (s).
 Arguments execStateT {S} {m} {M} {t} (c) (s).
+Arguments MonadWriter_stateT {S} {m} {_} {T} {Mon} (_).

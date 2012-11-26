@@ -74,6 +74,8 @@ Section ReaderType.
 End ReaderType.
 
 Arguments mkReaderT {S} {m} {t} _.
+Arguments MonadWriter_readerT {S} {m} {T} {Mon} (_).
+
 
 Global Instance MoandReader_lift_readerT T S m (R : MonadReader T m) : MonadReader T (readerT S m) :=
 { ask := mkReaderT (fun _ => ask)

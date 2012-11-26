@@ -67,6 +67,22 @@ Section except.
   ; local := fun f T cmd => mkEitherT (local f (unEitherT cmd))
   }.
 
+  Global Instance MonadWriter_eitherT {T} (Mon : Monoid T) (MW : MonadWriter Mon m) : MonadWriter Mon eitherT :=
+  { tell := fun x => lift (tell x)
+  ; listen := fun _ c => mkEitherT (
+    x <- listen (unEitherT c) ;;
+    match x with
+      | (inl l, _) => ret (inl l)
+      | (inr a, t) => ret (inr (a, t))
+    end)
+  ; pass := fun _ c => mkEitherT (
+    x <- unEitherT c ;;
+    match x with
+      | inl s => ret (inl s)
+      | inr (a,f) => pass (ret (inr a, f))
+    end)    
+  }.
+
   Global Instance MonadPlus_eitherT : MonadPlus eitherT :=
   { mplus _A _B mA mB := mkEitherT (
       x <- unEitherT mA ;;
