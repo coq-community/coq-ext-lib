@@ -25,12 +25,12 @@ Section AllB.
 End AllB.
 
 Global Instance Foldable_list {T} : Foldable (list T) T :=
-  fun _ f x ls => fold_right (fun y x => f y x) x ls.
+  fun _ f x ls => fold_left (fun x y => f y x) ls x.
 
 Global Instance DMonad_list {T} : DMonad (list T) T :=
 { dreturn := fun x => cons x nil
 ; dzero := nil
-; djoin := @List.app _
+; djoin := fun x y => @List.app _ y x
 }.
 
 Section toList.
