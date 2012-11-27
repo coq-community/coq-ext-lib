@@ -25,7 +25,7 @@ Section AllB.
 End AllB.
 
 Global Instance Foldable_list {T} : Foldable (list T) T :=
-  fun _ f x ls => fold_left (fun x y => f y x) ls x.
+  fun _ f x ls => fold_right (fun y x => f y x) x ls.
 
 Global Instance DMonad_list {T} : DMonad (list T) T :=
 { dreturn := fun x => cons x nil
