@@ -61,3 +61,5 @@ Section WriterType.
 End WriterType.
 
 Arguments runWriterT {S} {Monoid_S} {m} {t} _.
+Arguments evalWriterT {S} {Monoid_S} {m} {M} {T} _.
+Arguments execWriterT {S} {Monoid_S} {m} {M} {T} _.
