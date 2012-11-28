@@ -3,7 +3,6 @@ Require Import List.
 Require Import String.
 
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Structures.Folds.
 Require Import ExtLib.Core.RelDec.
 Require Import Injection.
 
@@ -68,20 +67,21 @@ Definition updateMany {K V} {kRealDec:RelDec (@eq K)}
     fold_right (uncurry update) init ups.
 
 
+(*
 Section monad.
   Context {m} {mMonad:Monad m}.
 
-  Definition forEachM A {B} (xs:list A) (f:A -> m B) : m (list B) := mapM f xs.
+  Definition forEachM A {B} (xs:list A) (f:A -> m B) : m (list B) := 
+    mapM f xs.
 
   Definition firstfM {A B C} (fM:A -> m C) (xy:A*B) : m (C*B) :=
-  let (x,y) := xy in x' <- fM x ;; ret (x', y)
-  .
+    let (x,y) := xy in x' <- fM x ;; ret (x', y).
 
   Definition secondfM {A B C} (fM:B -> m C) (xy:A*B) : m (A*C) :=
-  let (x,y) := xy in y' <- fM y ;; ret (x, y')
-  .
+    let (x,y) := xy in y' <- fM y ;; ret (x, y').
 
 End monad.
+*)
 
 Section failure.
   Context {m} {mMonad:Monad m}.

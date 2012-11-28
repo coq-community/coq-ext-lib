@@ -1,6 +1,5 @@
-Require Import List.
+Require Import Coq.Lists.List.
 Require Import ExtLib.Structures.Reducible.
-Require Import ExtLib.Structures.DMonad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -27,16 +26,18 @@ End AllB.
 Global Instance Foldable_list {T} : Foldable (list T) T :=
   fun _ f x ls => fold_left (fun x y => f y x) ls x.
 
-Global Instance DMonad_list {T} : DMonad (list T) T :=
-{ dreturn := fun x => cons x nil
-; dzero := nil
-; djoin := fun x y => @List.app _ y x
+Require Import ExtLib.Structures.Traversable.
+Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.Applicative.
+
+Global Instance Traversable_list : Traversable list :=
+{ mapT := fun F _ A B f =>
+  List.fold_right (fun x acc => ap (ap (pure (@cons B)) (f x)) acc) (pure nil)
 }.
 
-Section toList.
-  Variable C E : Type.
-  Context {F : Foldable C E}.
-
-  Definition toList : C -> list E :=
-    map (fun x => x).
-End toList.
+Global Instance Monad_list : Monad list :=
+{ ret  := fun _ x => x :: nil
+; bind := fun _ _ x f =>
+  List.fold_right (fun x acc => f x ++ acc) nil x
+}.

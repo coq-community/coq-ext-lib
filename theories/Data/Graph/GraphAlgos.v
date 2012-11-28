@@ -1,8 +1,9 @@
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Structures.Folds.
+Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Data.Graph.Graph.
 Require Import ExtLib.Data.Monads.FuelMonad.
 Require Import ExtLib.Data.Monads.IdentityMonad.
+Require Import ExtLib.Data.Lists.
 Require Import ExtLib.Core.RelDec.
 Require Import List.
 
@@ -36,10 +37,10 @@ Section GraphAlgos.
           if list_in_dec from seen
           then ret seen
           else
-            foldlM (fun v acc =>
+            foldM (fun v acc =>
               if list_in_dec v acc
               then ret acc
-              else rec v acc) seen (successors g from)).
+              else rec v acc) (ret seen) (successors g from)).
 
     End monadic.
 

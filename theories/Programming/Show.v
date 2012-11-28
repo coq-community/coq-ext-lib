@@ -187,15 +187,6 @@ Fixpoint iter_show (ss : list showM) : showM :=
     | cons s ss => cat s (iter_show ss)
   end.
 
-Require Import ExtLib.Structures.DMonad.
-
-Global Instance DMonad_showM : DMonad showM ascii :=
-{ dzero := empty
-; dreturn := ShowNotation._inject_char
-; djoin := cat
-}.
-
-
 
 (*
 Examples:

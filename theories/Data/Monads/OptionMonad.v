@@ -8,7 +8,7 @@ Open Local Scope monad_scope.
 
 Global Instance Monad_option : Monad option :=
 { ret  := @Some
-; bind := fun _ c1 _ c2 => match c1 with
+; bind := fun _ _ c1 c2 => match c1 with
                              | None => None
                              | Some v => c2 v
                            end
@@ -34,7 +34,7 @@ Section Trans.
 
   Global Instance Monad_optionT : Monad optionT :=
   { ret _A := fun x => mkOptionT (ret (Some x))
-  ; bind _A aMM _B f := mkOptionT
+  ; bind _A _B aMM f := mkOptionT
       (aM <- unOptionT aMM ;;
        match aM with
        | None => ret None
@@ -55,7 +55,7 @@ Section Trans.
 
   Global Instance Reader_optionT {T} (SM : MonadReader T m) : MonadReader T optionT :=
   { ask := lift ask
-  ; local v _T cmd := mkOptionT (local v (unOptionT cmd))
+  ; local _T v cmd := mkOptionT (local v (unOptionT cmd))
   }.
 
   Instance OptionTError {mMonad:Monad m} : MonadExc unit optionT :=

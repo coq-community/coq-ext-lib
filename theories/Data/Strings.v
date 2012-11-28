@@ -3,7 +3,6 @@ Require Import EqNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
-Require Import ExtLib.Structures.DMonad.
 Require Import ExtLib.Data.Char.
 
 Set Implicit Arguments.
@@ -121,9 +120,3 @@ Global Instance Foldable_string : Foldable string ascii :=
       | String l ls =>
         go (f l acc) ls
     end.
-
-Global Instance DMonad_string : DMonad string ascii :=
-{ dreturn := fun x => String x EmptyString
-; dzero := EmptyString
-; djoin  := fun x y => String.append y x
-}.

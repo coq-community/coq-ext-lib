@@ -19,7 +19,7 @@ Section StateType.
 
   Global Instance Monad_state : Monad state :=
   { ret  := fun _ v => mkState (fun s => (v, s))
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkState (fun s =>
       let (v,s) := runState c1 s in
       runState (c2 v) s)
@@ -46,9 +46,9 @@ Section StateType.
 
   Global Instance Monad_stateT : Monad stateT :=
   { ret := fun _ x => mkStateT (fun s => @ret _ M _ (x,s))
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkStateT (fun s =>
-      @bind _ M _ (runStateT c1 s) _ (fun vs =>
+      @bind _ M _ _ (runStateT c1 s) (fun vs =>
         let (v,s) := vs in
         runStateT (c2 v) s))
   }.
@@ -69,7 +69,7 @@ Section StateType.
 
   Global Instance MonadReader_stateT T (MR : MonadReader T m) : MonadReader T stateT := 
   { ask := mkStateT (fun s => bind ask (fun t => ret (t, s)))
-  ; local := fun f _ c => mkStateT (fun s => local f (runStateT c s))
+  ; local := fun _ f c => mkStateT (fun s => local f (runStateT c s))
   }.
 
   Global Instance MonadWriter_stateT T (Mon : Monoid T) (MR : MonadWriter Mon m) : MonadWriter Mon stateT :=

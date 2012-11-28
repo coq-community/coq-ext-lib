@@ -8,7 +8,7 @@ Section Ident.
 
   Global Instance Monad_ident : Monad ident :=
   { ret  := fun _ v => mkIdent v
-  ; bind := fun _ c _ f => f (unIdent c)
+  ; bind := fun _ _ c f => f (unIdent c)
   }.
 
 End Ident.

@@ -1,6 +1,12 @@
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 
+Class PApplicative T :=
+{ AppP : Type -> Type
+; ppure : forall {A} {P : AppP A}, A -> T A
+; pap : forall {A B} {P : AppP B}, T (A -> B) -> T A -> T B
+}.
+
 Class Applicative T :=
 { pure : forall {A}, A -> T A
 ; ap : forall {A B}, T (A -> B) -> T A -> T B

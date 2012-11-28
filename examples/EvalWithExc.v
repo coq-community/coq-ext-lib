@@ -61,16 +61,16 @@ Section monadic.
       | ConstB b => ret (Bool b)
       | Plus l r =>
         (** evaluate the sub-terms to numbers **)
-        l <- eval' l ;
-        l <- asInt l ;
-        r <- eval' r ;
-        r <- asInt r ;
+        l <- eval' l ;;
+        l <- asInt l ;;
+        r <- eval' r ;;
+        r <- asInt r ;;
         (** Combine the result **)
         ret (Int (l + r))
       | If t tr fa =>
         (** evaluate the test condition to a boolean **)
-        t <- eval' t ;
-        t <- asBool t ;
+        t <- eval' t ;;
+        t <- asBool t ;;
         (** case split and perform the appropriate recursion **)
         if t then
           eval' tr
