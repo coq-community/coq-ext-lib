@@ -73,6 +73,8 @@ Section hiding_notation.
   Require Import Ascii.
   Require Import String.
 
+Global Instance unit_Show : Show unit :=
+  { show u := "tt"%string }.
 Global Instance bool_Show : Show bool :=
   { show b := if b then "true"%string else "false"%string }.
 Global Instance ascii_Show : Show ascii :=
