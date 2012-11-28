@@ -28,7 +28,7 @@ Section gfix.
 
   Global Instance Monad_GFixT : Monad GFixT :=
   { ret := fun _ v => mkGFixT (fun _ => ret (Some v))
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkGFixT (fun gas =>
       bind (runGFixT c1 gas) (fun x =>
         match x with
@@ -49,7 +49,7 @@ Section gfix.
 
   Global Instance MonadReader_GFixT {T} (RM : MonadReader T m) : MonadReader T GFixT :=
   { ask := lift ask
-  ; local := fun v _ c => mkGFixT (fun gas => local v (runGFixT c gas))
+  ; local := fun _ v c => mkGFixT (fun gas => local v (runGFixT c gas))
   }.
 
   Global Instance MonadZero_GFixT (ZM : MonadZero m) : MonadZero GFixT :=

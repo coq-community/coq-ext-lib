@@ -1,3 +1,4 @@
+Require Import ExtLib.Core.Any.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
 
@@ -6,7 +7,22 @@ Set Strict Implicit.
 
 Class Monad (m : Type -> Type) : Type :=
 { ret : forall {t}, t -> m t
-; bind : forall {t}, m t -> forall {u}, (t -> m u) -> m u
+; bind : forall {t u}, m t -> (t -> m u) -> m u
+}.
+
+Class PMonad (m : Type -> Type) : Type :=
+{ MonP : Type -> Type
+; pret : forall {t} {Pt : MonP t}, t -> m t
+; pbind : forall {t u} {Pu : MonP u}, m t -> (t -> m u) -> m u
+}.
+
+Existing Class MonP.
+Hint Extern 0 (@MonP _ _ _) => progress (simpl MonP) : typeclass_instances.
+
+Global Instance PMonad_Monad m (M : Monad m) : PMonad m :=
+{ MonP := Any 
+; pret := fun _ _ x => ret x
+; pbind := fun _ _ _ c f => bind c f
 }.
 
 Section monadic.
@@ -17,23 +33,25 @@ Section monadic.
     fun x => bind x (fun x => ret (f x)).
 
   Definition liftM2 T U V (f : T -> U -> V) : m T -> m U -> m V :=
-    fun x y => bind x (fun x => bind y (fun y => ret (f x y))).
+    Eval cbv beta iota zeta delta [ liftM ] in 
+      fun x y => bind x (fun x => liftM (f x) y).
 
-  Definition apM {A B} (fM:m (A -> B)) (aM:m A) : m B := bind fM (fun f => liftM f aM).
+  Definition liftM3 T U V W (f : T -> U -> V -> W) : m T -> m U -> m V -> m W :=
+    Eval cbv beta iota zeta delta [ liftM2 ] in 
+      fun x y z => bind x (fun x => liftM2 (f x) y z).
+
+  Definition apM {A B} (fM:m (A -> B)) (aM:m A) : m B := 
+    bind fM (fun f => liftM f aM).
 End monadic.
 
 Module MonadNotation.
 
   Delimit Scope monad_scope with monad.
 
-  Notation "c >>= f" := (@bind _ _ _ c _ f) (at level 50, left associativity) : monad_scope.
-  Notation "f =<< c" := (@bind _ _ _ c _ f) (at level 51, right associativity) : monad_scope.
+  Notation "c >>= f" := (@pbind _ _ _ _ _ c f) (at level 50, left associativity) : monad_scope.
+  Notation "f =<< c" := (@pbind _ _ _ _ _ c f) (at level 51, right associativity) : monad_scope.
 
-  (** DEPRECATED **)
-  Notation "x <- c1 ; c2" := (@bind _ _ _ c1 _ (fun x => c2))
-    (at level 100, c1 at next level, right associativity, only parsing) : monad_scope.
-
-  Notation "x <- c1 ;; c2" := (@bind _ _ _ c1 _ (fun x => c2))
+  Notation "x <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun x => c2))
     (at level 100, c1 at next level, right associativity) : monad_scope.
 
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
@@ -41,10 +59,10 @@ Module MonadNotation.
 
 End MonadNotation.
 
-Instance MonadFunctor {m} {mMonad:Monad m} : Functor m :=
+Instance Functor_Monad {m} {M:Monad m} : Functor m :=
 { fmap := @liftM _ _ }.
 
-Instance MonadApplicative {m} {M:Monad m} : Applicative m :=
+Instance Applicative_Monad {m} {M:Monad m} : Applicative m :=
 { pure := @ret _ _
 ; ap := @apM _ _
 }.

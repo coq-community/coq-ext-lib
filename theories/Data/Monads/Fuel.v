@@ -16,13 +16,14 @@ Inductive gasError := GasError.
 
 Inductive fuel (m:Type->Type) A := mkFuel { unFuel : readerT nat m A }.
 
-Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A := mkFuel <$> mkReaderT.
+Definition mkFuelReaderT {m} {A} : (nat -> m A) -> fuel m A := 
+  mkFuel <$> mkReaderT.
 
 Definition unFuelReaderT {m} {A} : fuel m A -> (nat -> m A) := runReaderT <$> unFuel.
 
 Instance FuelMonad {m} {mMonad:Monad m} : Monad (fuel m) :=
 { ret _A x := mkFuel (ret x)
-; bind _A c _B f := mkFuel (
+; bind _A _B c f := mkFuel (
     x <- unFuel c ;;
     unFuel (f x)
   )

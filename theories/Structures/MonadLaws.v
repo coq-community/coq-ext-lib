@@ -106,7 +106,7 @@ Section MonadLaws.
 
   Class MonadZeroLaws (MZ : MonadZero m) : Type :=
   { bind_zero :
-    forall A B c eB, meq eB (@bind _ M _ (@mzero _ _ A) _ c) (@mzero _ _ B)
+    forall A B c eB, meq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
   }.
 
   Class MonadFixLaws (MF : MonadFix m) : Type :=

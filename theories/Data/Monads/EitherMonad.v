@@ -12,7 +12,7 @@ Section except.
 
   Global Instance Monad_either : Monad (sum T) :=
   { ret  := fun _ v => inr v
-  ; bind := fun _ c1 _ c2 => match c1 with
+  ; bind := fun _ _ c1 c2 => match c1 with
                                | inl v => inl v
                                | inr v => c2 v
                              end
@@ -34,7 +34,7 @@ Section except.
 
   Global Instance Monad_eitherT : Monad eitherT :=
   { ret := fun _ x => mkEitherT (ret (inr x))
-  ; bind := fun _ c _ f => mkEitherT (
+  ; bind := fun _ _ c f => mkEitherT (
       xM <- unEitherT c ;;
       match xM with
       | inl x => ret (inl x)
@@ -64,7 +64,7 @@ Section except.
 
   Global Instance MonadReader_eitherT {T} (MR : MonadReader T m) : MonadReader T eitherT :=
   { ask := lift ask
-  ; local := fun f T cmd => mkEitherT (local f (unEitherT cmd))
+  ; local := fun _ f cmd => mkEitherT (local f (unEitherT cmd))
   }.
 
   Global Instance MonadWriter_eitherT {T} (Mon : Monoid T) (MW : MonadWriter Mon m) : MonadWriter Mon eitherT :=

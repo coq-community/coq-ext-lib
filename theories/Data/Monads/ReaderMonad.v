@@ -12,7 +12,7 @@ Section ReaderType.
 
   Global Instance Monad_reader : Monad reader :=
   { ret  := fun _ v => mkReader (fun _ => v)
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkReader (fun s =>
       let v := runReader c1 s in
       runReader (c2 v) s)
@@ -20,7 +20,7 @@ Section ReaderType.
 
   Global Instance MonadReader_reader : MonadReader S reader :=
   { ask := mkReader (fun x => x)
-  ; local := fun f _ cmd => mkReader (fun x => runReader cmd (f x))
+  ; local := fun _ f cmd => mkReader (fun x => runReader cmd (f x))
   }.
 
   Variable m : Type -> Type.
@@ -32,15 +32,15 @@ Section ReaderType.
 
   Global Instance Monad_readerT : Monad readerT :=
   { ret := fun _ x => mkReaderT (fun s => @ret _ M _ x)
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkReaderT (fun s =>
-      @bind _ M _ (runReaderT c1 s) _ (fun v =>
+      @bind _ M _ _ (runReaderT c1 s) (fun v =>
         runReaderT (c2 v) s))
   }.
 
   Global Instance MonadReader_readerT : MonadReader S readerT :=
   { ask := mkReaderT (fun x => ret x)
-  ; local := fun f _ cmd => mkReaderT (fun x => runReaderT cmd (f x))
+  ; local := fun _ f cmd => mkReaderT (fun x => runReaderT cmd (f x))
   }.
 
   Global Instance MonadT_readerT : MonadT readerT m :=
@@ -79,6 +79,6 @@ Arguments MonadWriter_readerT {S} {m} {T} {Mon} (_).
 
 Global Instance MonadReader_lift_readerT T S m (R : MonadReader T m) : MonadReader T (readerT S m) :=
 { ask := mkReaderT (fun _ => ask)
-; local := fun f _ c =>
+; local := fun _ f c =>
   mkReaderT (fun s => local f (runReaderT c s))
 }.

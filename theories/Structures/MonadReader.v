@@ -4,7 +4,7 @@ Set Implicit Arguments.
 Set Maximal Implicit Arguments.
 
 Class MonadReader (T : Type) (m : Type -> Type) : Type :=
-{ local : (T -> T) -> forall {t}, m t -> m t
+{ local : forall {t}, (T -> T) -> m t -> m t
 ; ask : m T
 }.
 
@@ -28,6 +28,6 @@ Section SubReader.
   Definition ReaderProd (f : T -> S) (g : S -> T -> T) 
     : MonadReader S m :=
   {| ask := @asks m M T MR S f
-   ; local := fun up _T (c : m _T)  => @local T m MR (fun s => g (up (f s)) s) _ c
+   ; local := fun _T up (c : m _T)  => @local T m MR _ (fun s => g (up (f s)) s) c
    |}.
 End SubReader.
