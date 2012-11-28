@@ -125,5 +125,5 @@ Global Instance Foldable_string : Foldable string ascii :=
 Global Instance DMonad_string : DMonad string ascii :=
 { dreturn := fun x => String x EmptyString
 ; dzero := EmptyString
-; djoin  := String.append
+; djoin  := fun x y => String.append y x
 }.
