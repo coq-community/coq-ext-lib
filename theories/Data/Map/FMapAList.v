@@ -17,7 +17,7 @@ Section keyed.
     (k, v) :: m.
 
   Definition alist_remove V (k : K) (m : alist V) : alist V :=
-    filter (fun x => negb (eq_dec k (fst x))) m.
+    List.filter (fun x => negb (eq_dec k (fst x))) m.
 
   Fixpoint alist_find V (k : K) (m : alist V) : option V :=
     match m with

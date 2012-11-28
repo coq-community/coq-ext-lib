@@ -38,6 +38,12 @@ Section Maps.
         | Some v' => add k (f k v v') acc
       end) m2 m1.
 
+  Definition filter {T} {F : Foldable (map T) (K * T)} (f : K -> T -> bool) (m : map T) : map T :=
+    fold (fun k_v acc =>
+      let '(k,v) := k_v in
+      if f k v
+        then add k v acc
+        else acc) empty m.
 (*
   Class MapMember : Type :=
   { MapsTo : forall {V}, K -> V -> map V -> Prop }.
