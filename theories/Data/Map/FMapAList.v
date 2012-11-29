@@ -13,11 +13,11 @@ Section keyed.
 
   Definition alist (T : Type) : Type := list (K * T).
 
-  Definition alist_add V (k : K) (v : V) (m : alist V) : alist V :=
-    (k, v) :: m.
-
   Definition alist_remove V (k : K) (m : alist V) : alist V :=
     List.filter (fun x => negb (eq_dec k (fst x))) m.
+
+  Definition alist_add V (k : K) (v : V) (m : alist V) : alist V :=
+    (k, v) :: alist_remove k m.
 
   Fixpoint alist_find V (k : K) (m : alist V) : option V :=
     match m with
