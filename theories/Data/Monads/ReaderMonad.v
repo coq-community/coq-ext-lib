@@ -66,9 +66,15 @@ Section ReaderType.
   ; catch := fun _ c h => mkReaderT (fun s => catch (runReaderT c s) (fun x => runReaderT (h x) s))
   }.
 
-  Global Instance MonadPlus_readerT {mMonadPlus:MonadPlus m} : MonadPlus readerT :=
+  Global Instance MonadPlus_readerT {MP:MonadPlus m} : MonadPlus readerT :=
   { mplus _A _B mA mB := mkReaderT (fun r => mplus (runReaderT mA r)
                                                    (runReaderT mB r))
+  }.
+
+
+  Global Instance MonadFix_readerT (MF : MonadFix m) : MonadFix readerT :=
+  { mfix := fun _ _ r x =>
+    mkReaderT (fun s => mfix2 _ (fun f x => runReaderT (r (fun x => mkReaderT (f x)) x)) x s)
   }.
 
 End ReaderType.
