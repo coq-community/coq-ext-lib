@@ -56,8 +56,8 @@ Module ShowNotation.
 
   Notation "x << y" := (cat x%show y%show) (at level 100) : show_scope.
   Coercion show_exact : string >-> showM.
-  Definition __inject_char : ascii -> showM := inject.
-  Coercion __inject_char : ascii >-> showM.
+  Definition _inject_char : ascii -> showM := inject.
+  Coercion _inject_char : ascii >-> showM.
 End ShowNotation.
 
 Definition indent (indent : showM) (v : showM) : showM :=
@@ -191,7 +191,7 @@ Require Import ExtLib.Structures.DMonad.
 
 Global Instance DMonad_showM : DMonad showM ascii :=
 { dzero := empty
-; dreturn := ShowNotation.__inject_char
+; dreturn := ShowNotation._inject_char
 ; djoin := cat
 }.
 
