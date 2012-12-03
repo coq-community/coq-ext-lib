@@ -1,4 +1,5 @@
 Require Import ExtLib.Structures.Monads.
+Require Import BinPos.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -12,19 +13,25 @@ Section gfix.
 
   (** This is essentially ReaderT (optionT m)) **)
   Inductive GFixT (T : Type) : Type := mkGFixT
-  { runGFixT : nat -> m (option T) }.
+  { runGFixT : N -> m (option T) }.
 
   Global Instance MonadFix_GFixT : MonadFix GFixT :=
-  { mfix := fun T U f =>
-    let F := fix rec (gas : nat) : T -> m (option U) :=
-      fun v => runGFixT (f (fun t => mkGFixT (fun _ =>
-        match gas with
-          | 0 => ret None
-          | S n => rec n t
-        end)) v) gas
-    in fun v => mkGFixT (fun g => F g v)
+  { mfix := fun T U f v => mkGFixT (fun n : N => 
+    match n with
+      | N0 => ret None
+      | Npos g => 
+        let F := fix rec (acc : T -> m (option U)) (gas : positive) (x : T) 
+          : m (option U) :=
+          match gas return m (option U) with
+            | xI p => 
+              runGFixT (f (fun x => mkGFixT (fun n => rec (fun x => rec acc p x) p x)) x) n
+            | xO p => 
+              rec (fun x => rec acc p x) p x
+            | xH => runGFixT (f (fun x => mkGFixT (fun _ => acc x)) x) n
+          end
+        in F (fun x => runGFixT (f (fun _ => mkGFixT (fun _ => ret None)) x) n) g v
+      end)
   }.
-
 
   Global Instance Monad_GFixT : Monad GFixT :=
   { ret := fun _ v => mkGFixT (fun _ => ret (Some v))
@@ -62,14 +69,14 @@ Section gfix.
 
 End gfix.
 
-(*
-Require Import IdentityMonad.
-Require Import Decidable.
+(** Demo
+Require Import ExtLib.Data.Monads.IdentityMonad.
+Definition foo : nat -> GFixT ident nat :=
+  mfix (fun recur n => 
+    match n with
+      | 0 => ret 0
+      | S n => recur n
+    end).
 
-Definition func : nat -> GFixT ident nat :=
-  mfix (fun rec n =>
-    if eq_dec n 9 then ret 100 else rec (S n)).
-
-Eval compute in runGFixT (func 0) 8.
-Eval compute in runGFixT (func 0) 9.
-*)
+Eval compute in runGFixT (foo 10) 100000000000000000000000.
+**)
