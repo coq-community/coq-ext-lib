@@ -58,6 +58,12 @@ Section WriterType.
   ; catch := fun _ c h => mkWriterT _ _ _ (catch (runWriterT c) (fun x => runWriterT (h x)))
   }.
 
+  Global Instance Writer_writerT_pass {T} {MonT : Monoid T} {_ : Monad m} {_ : MonadWriter MonT m} : MonadWriter MonT (writerT Monoid_S m) :=
+  { tell   := fun x => mkWriterT _ m _ (bind (tell x) (fun x => ret (x, monoid_unit Monoid_S)))
+  ; listen := fun _ c => mkWriterT _ m _ (bind (listen (runWriterT c)) (fun x => let '(a,t,s) := x in ret (a,s,t)))
+  ; pass   := fun _ c => mkWriterT _ m _ (pass (bind (runWriterT c) (fun x => let '(a,t,s) := x in ret (a,s,t))))
+  }.
+
 End WriterType.
 
 Arguments runWriterT {S} {Monoid_S} {m} {t} _.
