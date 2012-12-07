@@ -53,8 +53,8 @@ Global Instance DSet_weak_listset {T} (R : T -> T -> Prop)
 ; singleton := fun x => lset_add rel_dec x (lset_empty R)
 ; remove    := lset_remove rel_dec
 ; union     := lset_union rel_dec
-; intersect := lset_union rel_dec
-; difference := lset_union rel_dec
+; intersect := lset_intersect rel_dec
+; difference := lset_difference rel_dec
 ; subset     := lset_subset rel_dec
 ; filter     := @List.filter _
 }.
