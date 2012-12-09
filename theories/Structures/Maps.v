@@ -1,5 +1,6 @@
 Require Import RelationClasses.
 Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.DMonad.
 Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
@@ -30,7 +31,11 @@ Section Maps.
   Definition singleton {V} (k : K) (v : V) : map V :=
     add k v empty.
 
-  Definition combine {T} {F : Foldable (map T) (K * T)} (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
+  (* Finite Maps *)
+  Context {T : Type}.
+  Context {F : Foldable (map T) (K * T)}.
+
+  Definition combine (f : K -> T -> T -> T) (m1 m2 : map T) : map T :=
     fold (fun k_v acc =>
       let '(k,v) := k_v in
       match lookup k acc with
@@ -38,34 +43,32 @@ Section Maps.
         | Some v' => add k (f k v v') acc
       end) m2 m1.
 
-(*
-  Class MapMember : Type :=
-  { MapsTo : forall {V}, K -> V -> map V -> Prop }.
+  Definition filter (f : K -> T -> bool) (m : map T) : map T :=
+    fold (fun k_v acc =>
+      let '(k,v) := k_v in
+      if f k v
+        then add k v acc
+        else acc) empty m.
 
-  Variable MM : MapMember.
+  Definition submap_with (le : T -> T -> bool) (m1 m2 : map T) : bool :=
+    fold (fun k_v (acc : bool) => 
+      if acc then 
+        let '(k,v) := k_v in
+        match lookup k m2 with
+          | None => false
+          | Some v' => le v v'
+        end
+      else false) true m1.
 
-  Definition Empty {V} (m : map V) : Prop :=
-    forall k v, MapsTo k v m -> False.
 
-  Definition SubMap {V} (l r : map V) : Prop :=
-    forall k v, MapsTo k v l -> MapsTo k v r.
+  Definition keys (s : Type) (_ : DMonad s K) : map T -> s :=
+    fold (fun k_v (acc : s) =>
+      djoin (dreturn (fst k_v)) acc) dzero.
 
-  Global Instance Refl_SubMap V : Reflexive (@SubMap V).
-  Proof.
-    red. red. auto.
-  Qed.
+  Definition values (s : Type) (_ : DMonad s T) : map T -> s :=
+    fold (fun k_v (acc : s) =>
+      djoin (dreturn (snd k_v)) acc) dzero.
 
-  Global Instance Trans_SubMap V : Transitive (@SubMap V).
-  Proof.
-    red. red. auto.
-  Qed.
-*)
-
-(*
-  Class MapFacts (K : Type) (map : Type -> Type) (M : Map K map) : Type :=
-  { empty_is_Empty : forall {V}, exists MapsTo empty
-  }.
-*)
 End Maps.
 
 Arguments empty {_} {_} {_} {_} .
@@ -77,7 +80,7 @@ Arguments singleton {K} {map} {M} {V} _ _.
 Arguments combine {K} {map} {M} {T} {_} _ _ _.
 
 Section dmonad.
-  Require Import ExtLib.Structures.DMonad.
+
 
   Variable M : Type -> Type.
   Context {K : Type}.

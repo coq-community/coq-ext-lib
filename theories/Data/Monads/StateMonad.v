@@ -86,6 +86,11 @@ Section StateType.
   ; catch := fun _ body hnd => 
     mkStateT (fun s => catch (runStateT body s) (fun e => runStateT (hnd e) s))
   }.
+
+  Global Instance MonadFix_stateT (MF : MonadFix m) : MonadFix stateT :=
+  { mfix := fun _ _ r v => 
+    mkStateT (fun s => mfix2 _ (fun r v s => runStateT (mkStateT (r v)) s) v s)
+  }.
   
 End StateType.
 

@@ -44,8 +44,10 @@ Section GraphAlgos.
 
     End monadic.
 
+    Require Import BinPos.
     Definition dfs (from : V) : list V :=
-      let res := unIdent (runGFixT (m := ident) (dfs' from nil) (S (length (verticies g)))) in
+      let count := Npos (List.fold_left (fun acc _ => BinPos.Psucc acc) (verticies g) 1%positive) in
+      let res := unIdent (runGFixT (m := ident) (dfs' from nil) count) in
       match res with
         | None => (** This should never happen! **)
           verticies g

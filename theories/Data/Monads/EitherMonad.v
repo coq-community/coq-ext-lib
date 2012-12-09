@@ -54,6 +54,21 @@ Section except.
     )
   }.
 
+  Global Instance MonadPlus_eitherT : MonadPlus eitherT :=
+  { mplus _A _B mA mB := mkEitherT (
+      x <- unEitherT mA ;;
+      match x with
+      | inl _ =>
+          y <- unEitherT mB ;;
+          match y with
+          | inl t => ret (inl t)
+          | inr b => ret (inr (inr b))
+          end
+      | inr a => ret (inr (inl a))
+      end
+    )
+  }.
+
   Global Instance MonadT_eitherT : MonadT eitherT m :=
   { lift := fun _ c => mkEitherT (liftM ret c) }.
 
@@ -83,19 +98,9 @@ Section except.
     end)    
   }.
 
-  Global Instance MonadPlus_eitherT : MonadPlus eitherT :=
-  { mplus _A _B mA mB := mkEitherT (
-      x <- unEitherT mA ;;
-      match x with
-      | inl _ =>
-          y <- unEitherT mB ;;
-          match y with
-          | inl t => ret (inl t)
-          | inr b => ret (inr (inr b))
-          end
-      | inr a => ret (inr (inl a))
-      end
-    )
+  Global Instance MonadFix_eitherT (MF : MonadFix m) : MonadFix eitherT :=
+  { mfix := fun _ _ r v => 
+    mkEitherT (mfix (fun f x => unEitherT (r (fun x => mkEitherT (f x)) x)) v)
   }.
 
 End except.
