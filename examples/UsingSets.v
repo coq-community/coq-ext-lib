@@ -1,5 +1,6 @@
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.Functor.
 Require Import Bool.
 
 Set Implicit Arguments.
@@ -24,11 +25,10 @@ End with_set.
 
 (** Instantiate the set **)
 Require Import ExtLib.Data.Set.ListSet.
-Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.ExtLib.
 
 Eval compute in contains_both 0 1 empty.
 
 Eval compute in toList (add true (add true empty)).
 
-(** map is derived from fold **)
-Eval compute in map negb (add true empty).
+Eval compute in fmap negb (add true empty).

@@ -62,6 +62,19 @@ End MonadNotation.
 Instance Functor_Monad {m} {M:Monad m} : Functor m :=
 { fmap := @liftM _ _ }.
 
+Instance PFunctor_PMonad {m} {M : PMonad m} : PFunctor m :=
+{ FunP := MonP 
+; pfmap := fun _ _ _ f a =>
+  pbind a (fun x => pret (f x))
+}.
+
+Instance PApplicative_PMonad {m} {M:PMonad m} : PApplicative m :=
+{ AppP := MonP
+; ppure := fun _ _ x => pret x
+; pap := fun _ _ _ f x => 
+  pbind f (fun f => pbind x (fun x => pret (f x)))
+}.
+
 Instance Applicative_Monad {m} {M:Monad m} : Applicative m :=
 { pure := @ret _ _
 ; ap := @apM _ _

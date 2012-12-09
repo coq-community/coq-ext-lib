@@ -1,5 +1,5 @@
-Require Import Applicative.
-Require Import Monad.
+Require Import ExtLib.Structures.Applicative.
+Require Import ExtLib.Structures.Monad.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.

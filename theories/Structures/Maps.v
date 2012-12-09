@@ -1,6 +1,5 @@
 Require Import RelationClasses.
 Require Import ExtLib.Structures.Monad.
-Require Import ExtLib.Structures.DMonad.
 Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
@@ -60,7 +59,7 @@ Section Maps.
         end
       else false) true m1.
 
-
+(*
   Definition keys (s : Type) (_ : DMonad s K) : map T -> s :=
     fold (fun k_v (acc : s) =>
       djoin (dreturn (fst k_v)) acc) dzero.
@@ -68,6 +67,7 @@ Section Maps.
   Definition values (s : Type) (_ : DMonad s T) : map T -> s :=
     fold (fun k_v (acc : s) =>
       djoin (dreturn (snd k_v)) acc) dzero.
+*)
 
 End Maps.
 
@@ -78,17 +78,3 @@ Arguments lookup {K} {map} {DMap} {V} _ _.
 Arguments contains {K} {map} {M} {V} _ _.
 Arguments singleton {K} {map} {M} {V} _ _.
 Arguments combine {K} {map} {M} {T} {_} _ _ _.
-
-Section dmonad.
-
-
-  Variable M : Type -> Type.
-  Context {K : Type}.
-  Context {set : DMap K M}. 
-
-  Global Instance DMonda_map {V} : DMonad (M V) (K * V) :=
-  {| dzero := empty
-   ; dreturn := fun k_v => singleton (fst k_v) (snd k_v)
-   ; djoin := @union _ _ _ _
-  |}.
-End dmonad.

@@ -65,18 +65,3 @@ Section monoid.
    ; monoid_unit := empty
   |}.
 End monoid.
-
-Section dmonad.
-  Require Import ExtLib.Structures.DMonad.
-
-  Variable S : Type.
-  Context {T : Type}.
-  Variable R : T -> T -> Prop.
-  Context {set : DSet S R}. 
-
-  Global Instance DMonda_set : DMonad S T :=
-  {| dzero := empty
-   ; dreturn := singleton
-   ; djoin := union
-  |}.
-End dmonad.
