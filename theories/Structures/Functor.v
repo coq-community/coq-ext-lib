@@ -15,7 +15,6 @@ Class PFunctor (t : Type -> Type) : Type :=
 Existing Class FunP.
 Hint Extern 0 (@FunP _ _ _) => progress (simpl FunP) : typeclass_instances.
 
-
 Global Instance PFunctor_From_Functor t (F : Functor t) : PFunctor t :=
 { FunP := Any
 ; pfmap := fun _ _ _ f x => fmap f x
@@ -24,5 +23,4 @@ Global Instance PFunctor_From_Functor t (F : Functor t) : PFunctor t :=
 Module FunctorNotation.
   Notation "f <$> x" := (@pfmap _ _ _ _ _ f x) (at level 51, right associativity).
 End FunctorNotation.
-
 

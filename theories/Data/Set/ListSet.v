@@ -45,7 +45,7 @@ Section ListSet.
 End ListSet.
 
 Global Instance DSet_weak_listset {T} (R : T -> T -> Prop)
-  (R_dec : RelDec R) : DSet (@lset T) R :=
+  (R_dec : RelDec R) : DSet (@lset T) T :=
 { contains  := lset_contains rel_dec
 ; empty     := lset_empty T
 ; add       := lset_add rel_dec

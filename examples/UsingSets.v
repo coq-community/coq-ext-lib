@@ -10,7 +10,7 @@ Set Strict Implicit.
 Section with_set.
   Variable V : Type.
   Context {set : Type}.
-  Context {Set_set : DSet set (@eq V)}.
+  Context {Set_set : DSet set V}.
 
   Definition contains_both (v1 v2 : V) (s : set) : bool :=
     contains v1 s && contains v2 s.
