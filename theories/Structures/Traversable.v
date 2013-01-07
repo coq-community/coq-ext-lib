@@ -13,11 +13,3 @@ Section traversable.
   Definition sequence {A} : T (F A) -> F (T A) := mapT (@id _).
   Definition forT {A B} (aT:T A) (f:A -> F B) : F (T B) := mapT f aT.
 End traversable.
-
-Global Instance Traversable_option : Traversable option :=
-{| mapT := fun F _ _ _ f o =>
-  match o with
-    | None => pure None
-    | Some o => ap (pure (@Some _)) (f o)
-  end
-|}.

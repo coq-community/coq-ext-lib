@@ -1,4 +1,4 @@
-Require Import Ascii.
+Require Import Coq.Strings.Ascii.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 
