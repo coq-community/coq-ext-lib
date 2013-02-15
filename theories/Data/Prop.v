@@ -1,6 +1,6 @@
 Require Import ExtLib.Structures.Logic.
 
-Instance Logic_Prop : Logic Prop :=
+Global Instance Logic_Prop : Logic Prop :=
 { Tr       := True
 ; Fa       := False
 ; And  p q := p /\ q
@@ -24,7 +24,7 @@ Section MonadicLogic.
   Variables (T P : Type).
   Context {L : Logic P}.
 
-  Instance Logic_Over : Logic (T -> P) :=
+  Global Instance Logic_Over : Logic (T -> P) :=
   { Tr       := fun _ => Tr
   ; Fa       := fun _ => Fa
   ; And  p q := fun x => And (p x) (q x)
@@ -34,7 +34,7 @@ Section MonadicLogic.
   
   Context {LL : LogicLaws L}.
 
-  Instance LogicLaws_Over : LogicLaws Logic_Over.
+  Global Instance LogicLaws_Over : LogicLaws Logic_Over.
   refine (
     {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
      |}); simpl; intros; 
