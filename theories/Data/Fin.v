@@ -32,3 +32,21 @@ Proof.
   eapply List.in_map_iff in H. right. destruct H.
   exists x. intuition.
 Qed.
+
+Fixpoint pf_lt (n m : nat) : Prop :=
+  match n , m with 
+    | 0 , S _ => True
+    | S n , S m => pf_lt n m
+    | _ , _ => False
+  end.
+
+Fixpoint make (m n : nat) {struct m} : pf_lt n m -> fin m :=
+  match n as n , m as m return pf_lt n m -> fin m with
+    | 0 , 0 => @False_rec _
+    | 0 , S n => fun _ => F0
+    | S n , 0 => @False_rec _
+    | S n , S m => fun pf => FS (make m n pf)
+  end.
+
+Notation "'##' n" := (@make _ n I) (at level 0).
+  

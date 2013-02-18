@@ -47,3 +47,10 @@ Proof.
       destruct H0; subst. simpl.
       eapply IHn. congruence. } }
 Qed.
+
+Definition vector_tl {T : Type} {n : nat} (v : vector T (S n)) : vector T n :=
+  snd v.
+
+Definition vector_hd {T : Type} {n : nat} (v : vector T (S n)) : T :=
+  fst v.
+  
