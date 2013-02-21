@@ -15,12 +15,24 @@ Section Laws2.
   Variable MonadLaws_mleq : MonadLaws Monad_m mleq.
 
   Variable S : Type.
-  (** NOTE: This should be quotiented **)
+(**
+  (** NOTE: This should be quotiented, something like this:
+   **)
+  Variable Seq : S -> S -> Prop.
+  Variable Refl_Seq : Reflexive Seq.
+  Variable Trans_Seq : Transitive Seq.
+  
+  Definition r_mleq T (e : T -> T -> Prop) (a b : readerT S m T) : Prop :=
+    forall s1 s2, Seq s1 s2 -> mleq e (runReaderT a s1) (runReaderT b s2).
+  (** But you can't prove that this relation is reflexive unless you know that
+   ** the functions inside a and b respect [Seq], but that is what we are proving
+   **)
+**)
 
   Definition r_mleq T (e : T -> T -> Prop) (a b : readerT S m T) : Prop :=
     forall s, mleq e (runReaderT a s) (runReaderT b s).
 
-  Global Instance MonadOrder_omleq : MonadOrder (Monad_readerT S Monad_m) r_mleq.
+  Global Instance MonadOrder_rmleq : MonadOrder (Monad_readerT S Monad_m) r_mleq.
   Proof.
     constructor.
     { intros. red. destruct x; red; simpl. intros.
