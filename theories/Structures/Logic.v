@@ -14,15 +14,12 @@ Class Logic (P : Type) : Type :=
 ; Impl : P -> P -> P
 }.
 
-(** TODO: This doesn't handle substructural logics because of the
- **       quantification over G in all the laws.
- **)
 Class LogicLaws (P : Type) (L : Logic P) : Type :=
 { (** Entails P Q ==> P |- Q **)
   Entails : list P -> P -> Prop
-; Assumption : forall G P, In P G -> Entails G P
-; Tr_True : forall G, Entails G Tr
-; Fa_False : forall G, Entails (Fa :: nil) G
+; Assumption : forall P, Entails (P :: nil) P
+; Tr_True : Entails nil Tr
+; Fa_False : forall P, Entails (Fa :: nil) P
 
 ; ImplI : forall G P Q, Entails (P :: G) Q -> Entails G (Impl P Q)
 ; ImplE : forall G P Q, Entails (P :: Impl P Q :: G) Q
@@ -35,6 +32,36 @@ Class LogicLaws (P : Type) (L : Logic P) : Type :=
 ; OrIR : forall G P Q, Entails G Q -> Entails G (Or P Q)
 ; OrE : forall G P Q R, Entails (P :: G) R -> Entails (Q :: G) R -> Entails (Or P Q :: G) R
 }.
+
+Class LogicWeakening (P : Type) (L : Logic P) (LL : LogicLaws L) : Type :=
+{ Weaken : forall G P Q, Entails G Q -> Entails (P :: G) Q
+}.
+
+Class LogicPerm (P : Type) (L : Logic P) (LL : LogicLaws L) : Type :=
+{ Permute : forall G G' Q, Entails (G ++ G') Q -> Entails (G' ++ G) Q
+}. 
+
+Section assumptions.
+  Context {P : Type}.
+  Variable L : Logic P.
+  Variable LL : LogicLaws L.
+  Variable LW : LogicWeakening LL.
+
+  Theorem Weaken_many : forall G G' Q, Entails G Q -> Entails (G' ++ G) Q.
+  Proof.
+    induction G'; simpl; eauto using Weaken.
+  Qed.
+  
+  Variable LP : LogicPerm LL.
+
+  Theorem Assumption_In : forall P G, In P G -> Entails G P.
+  Proof.
+    intros. eapply in_split in H. do 2 destruct H; subst.
+    eapply Weaken_many.
+    change (P0 :: x0) with ((P0 :: nil) ++ x0).
+    eapply Permute. eapply Weaken_many. eapply Assumption.
+  Qed.
+End assumptions.
 
 Hint Resolve Tr_True Fa_False ImplI ImplE AndI AndEL AndER OrIL OrIR OrE : logic.
 
@@ -115,6 +142,8 @@ Section PropLogic.
     end.
 
   Variable LL : LogicLaws L.
+  Variable LW : LogicWeakening LL.
+  Variable LP : LogicPerm LL.
 
   Lemma find_In : forall p g,
     find p g = true -> In p g.
@@ -130,7 +159,7 @@ Section PropLogic.
     Entails (map pdenote g) (pdenote p).
   Proof.
     intros. eapply find_In in H.
-    eapply Assumption. clear - H.
+    eapply Assumption_In; eauto. clear - H.
     induction g; simpl in *; auto.
     destruct H. subst; auto.
     right; auto.
@@ -148,12 +177,15 @@ Section PropLogic.
     Entails (map pdenote g) (pdenote p).
   Proof.
     induction p; intros; simpl in H; intros; try solve [ congruence | simpl in *; eauto with logic | eapply find_sound; eauto ].
-    apply andb_true_iff in H. simpl. intuition.
-    apply orb_true_iff in H. simpl. intuition.
-    apply orb_true_iff in H. destruct H. eapply find_sound; auto.
-    simpl. apply ImplI. 
-    change (pdenote p1 :: map pdenote g) with (map pdenote (p1 :: g)).
-    eapply Assumption. right. apply find_In in H. eapply pdenote_In; auto.
+    { cutrewrite (map pdenote g = map pdenote g ++ nil); [ | rewrite app_nil_r; auto ].
+      eapply Weaken_many; eauto. eapply Tr_True. }
+    { apply andb_true_iff in H. simpl. intuition. }
+    { apply orb_true_iff in H. simpl. intuition. }
+    { apply orb_true_iff in H. destruct H. eapply find_sound; auto.
+      simpl. apply ImplI. 
+      change (pdenote p1 :: map pdenote g) with (map pdenote (p1 :: g)).
+      eapply Assumption_In; eauto.
+      right. apply find_In in H. eapply pdenote_In; auto. }
   Qed.
 
   Require Import ExtLib.Tactics.Reify.
@@ -186,7 +218,7 @@ Section PropLogic.
     assumption.
   Qed.
   
-  Goal Entails (Fa :: nil) Fa.
+  Goal Entails (Fa :: nil) (And Tr Fa).
   Proof.
     eapply rtauto_sound_refl. vm_compute. reflexivity.
   Qed.
