@@ -1,11 +1,11 @@
-PROJECT_NAM=coq-ext-lib
+PROJECT_NAME=coq-ext-lib
 
 all: theories examples
 
 theories:
 	$(MAKE) -C theories
 
-examples: 
+examples: theories
 	$(MAKE) -C examples
 
 clean:
