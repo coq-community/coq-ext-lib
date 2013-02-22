@@ -8,6 +8,13 @@ Section MonadLaws.
   Variable m : Type -> Type.
   Variable M : Monad m.
 
+  (** This <= relation is a computational <= relation based on the ideas
+   ** of domain theory. It generalizes the usual equivalence relation by,
+   ** enabling the relation to talk about computations that are "more defined"
+   ** than others.
+   **
+   ** This generalization is done to support the fixpoint law.
+   **)
   Variable mleq : forall {T}, (T -> T -> Prop) -> m T -> m T -> Prop.
 
   Class MonadOrder : Type :=
@@ -111,18 +118,12 @@ Section MonadLaws.
 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
   { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
+    (** This is [Proper] with the right relations **)
     (forall R R',
       (forall x, mleq (@eq _) (R x) (R' x)) ->
       forall x, mleq (@eq _) (F R x) (F R' x)) ->
     forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
   }.
-
-(*
-  Class MonadFixLaws (MF : MonadFix m) : Type :=
-  { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
-    forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
-  }.
-*)
 
 End MonadLaws.
 

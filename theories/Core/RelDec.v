@@ -7,8 +7,12 @@ Set Strict Implicit.
 Class RelDec (T : Type) (equ : T -> T -> Prop) : Type :=
 { rel_dec : T -> T -> bool }.
 
+Arguments rel_dec {_} {equ} {_} _ _.
+
 Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
 { rel_dec_correct : forall x y : T, rel_dec x y = true <-> equ x y }.
+
+Notation "a ?[ r  ]  b" := (@rel_dec _ r _ a b) (at level 30, b at next level).
 
 Definition eq_dec {T : Type} {ED : RelDec (@eq T)} := rel_dec.
 
@@ -212,7 +216,7 @@ Section ListEq.
     match ls , rs with
       | nil , nil => true
       | cons l ls , cons r rs =>
-        if rel_dec l r then list_eq ls rs else false
+        if l ?[ eq ] r then list_eq ls rs else false
       | _ , _ => false
     end.
 
