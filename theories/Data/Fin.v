@@ -58,4 +58,3 @@ Fixpoint make (m n : nat) {struct m} : pf_lt n m -> fin m :=
   end.
 
 Notation "'##' n" := (@make _ n I) (at level 0).
-  
