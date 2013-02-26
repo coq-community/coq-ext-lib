@@ -52,3 +52,37 @@ Section MonadicLogic.
   eapply List.in_map_iff. eexists. intuition.
   Qed.
 End MonadicLogic.
+
+Section MonadicLogic_dep.
+  Variable T : Type.
+  Variable P : T -> Type.
+  Context {L : forall t, Logic (P t)}.
+
+  Global Instance Logic_DOver : Logic (forall t : T, P t) :=
+  { Tr       := fun _ => Tr
+  ; Fa       := fun _ => Fa
+  ; And  p q := fun x => And (p x) (q x)
+  ; Or   p q := fun x => Or (p x) (q x)
+  ; Impl p q := fun x => Impl (p x) (q x)
+  }.
+  
+  Context {LL : forall t, LogicLaws (L t)}.
+
+  Global Instance LogicLaws_DOver : LogicLaws Logic_DOver.
+  refine (
+    {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
+     |}); simpl; intros; 
+  try solve [ apply Tr_True | apply Fa_False 
+            | eapply ImplI; eauto
+            | eapply ImplE; eauto 
+            | eapply AndI; eauto 
+            | eapply AndEL; eauto 
+            | eapply AndER; eauto 
+            | eapply OrIL; eauto
+            | eapply OrIR; eauto 
+            | eapply OrE; eauto 
+            ].
+  eapply Assumption.
+  eapply List.in_map_iff. eexists. intuition.
+  Qed.
+End MonadicLogic_dep.
