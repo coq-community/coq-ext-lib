@@ -33,6 +33,15 @@ Proof.
   exists x. intuition.
 Qed.
 
+Definition fin0_elim (f : fin 0) : forall T, T :=
+  match f in fin n return match n with
+                            | 0 => forall T, T 
+                            | _ => unit
+                          end with
+    | F0 _ => tt
+    | FS _ _ => tt
+  end.
+
 Fixpoint pf_lt (n m : nat) : Prop :=
   match n , m with 
     | 0 , S _ => True
