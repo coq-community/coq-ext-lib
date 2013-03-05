@@ -59,11 +59,6 @@ Qed.
 Class Reflect (T : bool) (P Q : Prop) := _Reflect : reflect P Q T.
 Class SemiReflect (T : bool) (P : Prop) := _SemiReflect : semi_reflect P T.
 
-Global Instance Reflect_default (T : bool) : Reflect T (T = true) (T = false) | 100.
-Proof.
-  unfold Reflect; destruct T; constructor; auto.
-Qed.
-
 Section boolean_logic.
   Ltac t :=
     repeat match goal with
