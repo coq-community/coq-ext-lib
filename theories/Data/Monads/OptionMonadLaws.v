@@ -105,14 +105,18 @@ Section Laws.
       eapply bind_of_return; eauto. }
     { intros; simpl. eapply lower_meq; simpl.
       eapply return_of_bind; eauto.
-      eauto using refl_omleq. 
-      { destruct x. specialize (H0 a).
+      eauto using refl_omleq.
+      { destruct x; compute; intros; try eapply ret_proper; eauto.
+        eapply H1. eauto. }
+      { destruct x. specialize (H2 a).
         red in H0. simpl in *. unfold o_mleq in *. eauto.
         eapply preflexive. eapply PReflexive_meq; eauto using refl_omleq.
         eapply ret_proper; eauto. exact I. } }
     { intros; simpl. eapply lower_meq; simpl.
       eapply ptransitive. eapply PTransitive_meq; eauto using trans_omleq.
-      eapply me_trans.
+      repeat eapply bind_proper; eauto. 
+      eauto using bind_proper, ret_proper.
+      eapply me_trans.XS
       eapply bind_associativity.
 
       rewrite bind_associativity; eauto with typeclass_instances.
