@@ -1,6 +1,7 @@
 Require Import RelationClasses.
 Require Import Setoid.
 Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Monads.OptionMonad.
 
@@ -11,8 +12,9 @@ Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
-  Variable MonadOrder_mleq : MonadOrder Monad_m mleq.
-  Variable MonadLaws_mleq : MonadLaws Monad_m mleq.
+  Variable mproper : forall T, Proper T -> Proper (m T).
+  Variable MonadOrder_mleq : MonadOrder m mproper mleq.
+  Variable MonadLaws_mleq : MonadLaws Monad_m mproper mleq.
 
   Definition o_mleq T (e : T -> T -> Prop) (a b : optionT m T) : Prop :=
     mleq (fun l r =>
@@ -23,16 +25,22 @@ Section Laws.
       end)
     (unOptionT a) (unOptionT b).
 
-  Global Instance MonadOrder_omleq : MonadOrder (@Monad_optionT _ _) o_mleq.
+  Global Instance Proper_optionT {T : Type} {PT : Proper T} : Proper (optionT m T) :=
+  { proper := fun o => @proper _ (mproper (fun o => match o with
+                                                      | None => True
+                                                      | Some x => proper x
+                                                    end)) (unOptionT o) }.
+
+  Global Instance MonadOrder_omleq : MonadOrder (optionT m) _ o_mleq.
   Proof.
     constructor.
-    { intros. red. destruct x; red; simpl.
-      eapply me_refl; eauto. red; intros. destruct x; auto. }
+    { intros. red. destruct x; red; simpl. unfold proper. unfold Proper_optionT. simpl.
+      intros. eapply me_refl; eauto. red; intros. destruct x; auto. }
     { intros; red; destruct x; destruct y; destruct z; red; simpl in *; try congruence; intros.
-      eapply me_trans; eauto. red; simpl in *.
+      eapply me_trans; [ | | | | | eassumption | eassumption ]; eauto.
+      red; simpl in *.
       destruct x; destruct y; destruct z; try congruence; intuition.
-      etransitivity; eassumption. }
-    { intros. unfold o_mleq. simpl. eapply me_ret; eauto. }
+      eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto. }
   Qed.
 
   Lemma lower_meq : forall (A : Type) (c c' : optionT m A)
@@ -48,9 +56,15 @@ Section Laws.
     destruct 1; split; simpl in *; auto.
   Qed.
 
-  Instance refl_omleq : forall A (eA : A -> A -> Prop),
-    Reflexive eA ->
-    Reflexive (fun l r : option A =>
+  Instance Proper_option {T : Type} (P : Proper T) : Proper (option T) :=
+  { proper := fun o => match o with
+                         | None => True
+                         | Some x => proper x
+                       end }.
+
+  Instance refl_omleq : forall A (P : Proper A) (eA : A -> A -> Prop),
+    PReflexive eA ->
+    PReflexive (fun l r : option A =>
       match l with
         | Some l0 => match r with
                        | Some r0 => eA l0 r0
@@ -65,9 +79,9 @@ Section Laws.
     intros; destruct x; simpl; auto.
   Qed.
 
-  Instance trans_omleq : forall A (eA : A -> A -> Prop),
-    Transitive eA ->
-    Transitive (fun l r : option A =>
+  Instance trans_omleq : forall A (Pa : Proper A) (eA : A -> A -> Prop),
+    PTransitive eA ->
+    PTransitive (fun l r : option A =>
       match l with
         | Some l0 => match r with
                        | Some r0 => eA l0 r0
@@ -80,21 +94,27 @@ Section Laws.
       end).
   Proof.
     intros; destruct x; destruct y; destruct z; simpl; auto; intuition.
-    etransitivity; eassumption.
+    eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto.
   Qed.
 
-  Global Instance MonadLaws_optionT : MonadLaws (@Monad_optionT _ Monad_m) o_mleq.
+  Global Instance MonadLaws_optionT : MonadLaws (@Monad_optionT _ Monad_m) _ o_mleq.
+
   Proof.
     constructor; eauto with typeclass_instances.
     { intros. simpl. eapply lower_meq; simpl.
       eapply bind_of_return; eauto. }
     { intros; simpl. eapply lower_meq; simpl.
       eapply return_of_bind; eauto.
-      eauto using refl_omleq.
+      eauto using refl_omleq. 
       { destruct x. specialize (H0 a).
         red in H0. simpl in *. unfold o_mleq in *. eauto.
-        reflexivity. } }
+        eapply preflexive. eapply PReflexive_meq; eauto using refl_omleq.
+        eapply ret_proper; eauto. exact I. } }
     { intros; simpl. eapply lower_meq; simpl.
+      eapply ptransitive. eapply PTransitive_meq; eauto using trans_omleq.
+      eapply me_trans.
+      eapply bind_associativity.
+
       rewrite bind_associativity; eauto with typeclass_instances.
       eapply bind_parametric_tl. eauto. eauto with typeclass_instances.
       destruct a. reflexivity. rewrite bind_of_return; eauto.
