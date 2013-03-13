@@ -1,6 +1,7 @@
+Require Import Coq.Relations.Relations.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
-Require Import Equivalence.
+Require Import ExtLib.Data.Fun.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -8,11 +9,6 @@ Set Strict Implicit.
 Section MonadLaws.
   Variable m : Type -> Type.
   Variable M : Monad m.
-
-  (** This states when an element is a proper element under an equivalence
-   ** relation.
-   **)
-  Variable Proper_m : forall T, Proper T -> Proper (m T).
 
   (** This <= relation is a computational <= relation based on the ideas
    ** of domain theory. It generalizes the usual equivalence relation by,
@@ -23,20 +19,73 @@ Section MonadLaws.
    **)
   Variable mleq : forall {T}, (T -> T -> Prop) -> m T -> m T -> Prop.
 
+  (** This states when an element is a proper element under an equivalence
+   ** relation.
+   **)
+  Variable Proper_m : forall T (R : T -> T -> Prop), Proper R -> Proper (mleq R).
+
   Class MonadOrder : Type :=
-  { me_refl   : forall T {P : Proper T} (e : T -> T -> Prop),
+  { me_refl   : forall T (e : T -> T -> Prop) {P : Proper e}, 
     PReflexive e -> PReflexive (mleq e)
-  ; me_trans  : forall T {P : Proper T} (e : T -> T -> Prop),
+  ; me_trans  : forall T (e : T -> T -> Prop) {P : Proper e},
     PTransitive e -> PTransitive (mleq e)
   }.
 
+  (** TODO: The real question is whether all of these [eX] relations
+   ** need to be reflexive and transitive. They don't seem to need to be
+   ** for option monad, but the proofs would be more automatable if they
+   ** were b/c I'd be able to rewrite.
+   **)
+  (** Should anything here mention meq? It seems like everything should be mleq **)
+
+  Class MonadLaws : Type :=
+  { bind_of_return : forall A B (a:A) (f:A -> m B) (eA : relation A) (eB : relation B) (Pa : Proper eA) (Pb : Proper eB),
+    PReflexive eA -> PReflexive eB -> PTransitive eB ->
+    proper a -> proper f ->
+    mleq eB (bind (ret a) f) (f a)
+  ; return_of_bind : forall A (eA : relation A) (PA : Proper eA) (aM:m A) (f:A -> m A),
+    PTransitive eA -> PReflexive eA -> proper aM -> proper f ->
+    (forall x, mleq eA (f x) (ret x)) ->
+    mleq eA (bind aM f) aM
+  ; bind_associativity :
+    forall A B C (eA : relation A) (eB : relation B) (eC : relation C) 
+      (PA : Proper eA) (Pb : Proper eB) (PC : Proper eC)
+      (aM:m A) (f:A -> m B) (g:B -> m C),
+      PReflexive eA -> PReflexive eB -> PTransitive eB -> PReflexive eC -> PTransitive eC ->
+      proper aM -> 
+      proper f -> 
+      proper g ->
+      mleq eC (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
+
+  ; ret_respectful_leq : forall A (eA : relation A) (P : Proper eA),
+    forall x y, eA x y -> mleq eA (ret x) (ret y)
+  ; bind_respectful_leq : forall A B (c c' : m A) (f g : A -> m B) 
+    (eA : relation A) (eB : relation B) (Pa : Proper eA) (Pb : Proper eB),
+    mleq eA c c' ->
+    (forall a b, proper a -> proper b -> eA a b -> mleq eB (f a) (g b)) ->
+    mleq eB (bind c f) (bind c' g)
+
+  ; ret_proper : forall T (rT : relation T) (P : Proper rT) (x : T),
+    PReflexive rT -> proper x -> proper (ret x) 
+  ; bind_proper : forall A B (rA : relation A) (rB : relation B) 
+    (Pa : Proper rA) (Pb : Proper rB) c (f : A -> m B),
+    PReflexive rA -> PReflexive rB -> PTransitive rB ->
+    proper c -> proper f -> proper (bind c f)
+  }.
+
+
+(*
+
   Section meq.
-    Context {T : Type} (leq : T -> T -> Prop) (P : Proper T).
+    Context {T : Type} (leq : T -> T -> Prop) (P : Proper leq).
 
     Definition meq (a b : m T) :  Prop :=
       mleq leq a b /\ mleq leq b a.
 
     Variable MO : MonadOrder.
+
+    Global Instance Proper_meq : Proper meq :=
+    { proper := fun r => proper r }.
 
     Global Instance PReflexive_meq {_ : PReflexive leq} : PReflexive meq.
     Proof.
@@ -55,78 +104,50 @@ Section MonadLaws.
       { eapply me_trans; [ | | | | eassumption | eassumption ]; eauto. }
     Qed.
   End meq.
-
-  Instance Proper_arrow {A B : Type} {Pa : Proper A} {Pb : Proper B} : Proper (A -> B) :=
-  { proper := fun f => forall x, proper x -> proper (f x) }.
-
-  (** TODO: The real question is whether all of these [eX] relations
-   ** need to be reflexive and transitive. They don't seem to need to be
-   ** for option monad, but the proofs would be more automatable if they
-   ** were b/c I'd be able to rewrite.
-   **)
-  (** Should anything here mention meq? It seems like everything should be mleq **)
-  Class MonadLaws : Type :=
-  { morder :> MonadOrder
-  ; bind_of_return : forall A B (a:A) (f:A -> m B) (eB : B -> B -> Prop),
-    meq eB (bind (ret a) f) (f a)
-  ; return_of_bind : forall A (PA : Proper A) (aM:m A) (f:A -> m A) (eA : A -> A -> Prop),
-    PReflexive eA -> proper aM -> proper f ->
-    (forall x, meq eA (f x) (ret x)) -> meq eA (bind aM f) aM
-  ; bind_associativity :
-    forall A B C (PA : Proper A) (Pb : Proper B) (PC : Proper C) (aM:m A) (f:A -> m B) (g:B -> m C) (eC : C -> C -> Prop),
-      PReflexive eC -> PTransitive eC -> proper aM -> proper f -> proper g ->
-      meq eC (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
-
-  ; ret_respectful : forall A (P : Proper A) (eA : A -> A -> Prop), 
-    forall x y, eA x y -> mleq eA (ret x) (ret y)
-    
-  ; bind_respectful_hd_leq : forall A B c c' (f : A -> m B) (eA : A -> A -> Prop) (eB : B -> B -> Prop),
-    mleq eA c c' ->
-    mleq eB (bind c f) (bind c' f)
-  ; bind_respectful_tl_leq : forall A B (PB : Proper B) (f g : A -> m B) (eB : B -> B -> Prop),
-    PReflexive eB ->
-    (forall a, mleq eB (f a) (g a)) ->
-    forall c, mleq eB (bind c f) (bind c g)
-
-  ; ret_proper : forall T (P : Proper T) (x : T), proper x -> proper (ret x) 
-  ; bind_proper : forall A B (Pa : Proper A) (Pb : Proper B) c (f : A -> m B),
-    proper c -> proper f -> proper (bind c f)
-  }.
-
-(**
   Section meq_respectful.
     Variable ml : MonadLaws.
 
-    Theorem ret_respectful : forall A (P : Proper A) (eA : A -> A -> Prop), 
-      PReflexive 
-      forall x y, eA x y -> meq (mleq) eA (ret x) (ret y).
+    Theorem ret_respectful : forall A (eA : relation A) (P : Proper eA),
+      PSymmetric eA ->
+      forall x y, proper x -> proper y -> eA x y -> meq eA (ret x) (ret y).
+    Proof.
+      intros. unfold meq. intuition; eapply ret_respectful_leq; eauto.
+    Qed.
 
+    Theorem bind_respectful_hd : forall A B (eA : relation A) (eB : relation B)
+      (Pa : Proper eA) (Pb : Proper eB) c c' 
+      (f : A -> m B),
+      proper c -> proper c' -> proper f ->
+      meq eA c c' ->
+      meq eB (bind c f) (bind c' f).
+    Proof.
+      intros; intuition. unfold meq in *; intuition; eapply bind_respectful_hd_leq; eauto.
+    Qed.
 
-  Theorem bind_respectful_hd : forall A B c c' (f : A -> m B)
-    (eA : A -> A -> Prop) (eB : B -> B -> Prop),
-    meq eA c c' ->
-    meq eB (bind c f) (bind c' f).
-  Proof.
-    intros; intuition. destruct H; split; eapply bind_respectful_hd_leq; eauto.
-  Qed.
-
-  Theorem bind_respectful_tl : forall A B (f g : A -> m B) (eB : B -> B -> Prop),
-    Reflexive eB ->
-    (forall a, meq eB (f a) (g a)) ->
-    forall c, meq eB (bind c f) (bind c g).
-  Proof.
-    intros; intuition. split; eapply bind_respectful_tl_leq; eauto; intros; edestruct H0; eauto.
-  Qed.
-**)
+    Theorem bind_respectful_tl : forall A B (eA : relation A) (eB : relation B)
+      (Pa : Proper eA) (Pb : Proper eB) 
+      (f g : A -> m B),
+      proper f -> proper g -> 
+      (forall a, proper a -> meq eB (f a) (g a)) ->
+      forall c, proper c -> meq eB (bind c f) (bind c g).
+    Proof.
+      intros; intuition. unfold meq in *; intuition; eapply bind_respectful_tl_leq; eauto;
+      firstorder.
+    Qed.
+  End meq_respectful.
+*)
 
 (*
-  Class MonadTLaws (n : Type -> Type) (nM : Monad n) (MT : MonadT m n) : Type :=
-  { lift_ret  : forall T (x : T) (eT : T -> T -> Prop),
-    Reflexive eT -> Transitive eT ->
-    meq eT (lift (ret x)) (ret x)
-  ; lift_bind : forall T U (c : n T) (f : T -> n U) (eU : U -> U -> Prop),
-    Reflexive eU -> Transitive eU ->
-    meq eU (lift (bind c f)) (bind (lift c) (fun x => lift (f x)))
+  Class MonadTLaws (n : Type -> Type) (Pn : forall T (R : relation T), Proper R -> Proper (n T)) (nM : Monad n) (MT : MonadT m n) : Type :=
+  { lift_ret  : forall T (x : T) (eT : T -> T -> Prop) (Pt : Proper eT),
+    PReflexive eT -> PTransitive eT ->
+    proper x ->
+    mleq eT (lift (ret x)) (ret x)
+  ; lift_bind : forall T U (c : n T) (f : T -> n U) (eT : relation T) (eU : relation U)
+    (Pu : Proper eU) (Pt : Proper eT),
+    PReflexive eU -> PTransitive eU ->
+    proper c -> proper f ->
+    mleq eU (lift (bind c f)) (bind (lift c) (fun x => lift (f x)))
   }.
 
   Class MonadStateLaws s (MS : MonadState s m) : Type :=
@@ -147,17 +168,21 @@ Section MonadLaws.
 
   Class MonadZeroLaws (MZ : MonadZero m) : Type :=
   { bind_zero :
-    forall A B c eB, meq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
+    forall A B c eB, mleq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
+  ; zero_proper : forall A (rA : relation A) (Pa : Proper rA), 
+    proper mzero
   }.
 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
-  { mfix_monotonic : forall T U (PT : Proper T) (PU : Proper U) 
+  { mfix_monotonic : forall T U (rT : relation T) (rU : relation U)
+    (PT : Proper rT) (PU : Proper rU) 
     (F : (T -> m U) -> T -> m U),
-    proper F ->
+    @proper _ _ (Proper_fun (Proper_fun _ _) (Proper_fun _ _)) F ->
     forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
   }.
 
 End MonadLaws.
+
 
 (*
 Hint Rewrite bind_of_return bind_associativity using (eauto with typeclass_instances) : monad_rw.

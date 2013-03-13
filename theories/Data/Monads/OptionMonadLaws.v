@@ -3,6 +3,7 @@ Require Import Setoid.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.MonadLaws.
+Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Monads.OptionMonad.
 
 Set Implicit Arguments.
@@ -12,57 +13,31 @@ Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
-  Variable mproper : forall T, Proper T -> Proper (m T).
-  Variable MonadOrder_mleq : MonadOrder m mproper mleq.
-  Variable MonadLaws_mleq : MonadLaws Monad_m mproper mleq.
+  Variable mproper : forall T (rT : relation T), Proper rT -> Proper (mleq rT).
+  Variable MonadOrder_mleq : MonadOrder m mleq mproper.
+  Variable MonadLaws_mleq : MonadLaws Monad_m mleq mproper.
 
   Definition o_mleq T (e : T -> T -> Prop) (a b : optionT m T) : Prop :=
-    mleq (fun l r =>
-      match l , r with
-        | None , None => True
-        | Some l , Some r => e l r
-        | _ , _ => False
-      end)
-    (unOptionT a) (unOptionT b).
+    mleq (@eqv_option _ e) (unOptionT a) (unOptionT b).
 
-  Global Instance Proper_optionT {T : Type} {PT : Proper T} : Proper (optionT m T) :=
-  { proper := fun o => @proper _ (mproper (fun o => match o with
-                                                      | None => True
-                                                      | Some x => proper x
-                                                    end)) (unOptionT o) }.
+  Global Instance Proper_optionT {T : Type} {rT : relation T} {PT : Proper rT} 
+    : Proper (o_mleq rT) :=
+  { proper := fun o => proper (unOptionT o) }.
 
-  Global Instance MonadOrder_omleq : MonadOrder (optionT m) _ o_mleq.
+  Global Instance MonadOrder_omleq : MonadOrder (optionT m) o_mleq (@Proper_optionT).
   Proof.
     constructor.
     { intros. red. destruct x; red; simpl. unfold proper. unfold Proper_optionT. simpl.
-      intros. eapply me_refl; eauto. red; intros. destruct x; auto. }
+      intros. eapply me_refl; eauto. red; intros. destruct x; auto.
+      simpl in *. compute in H1. eauto. }
     { intros; red; destruct x; destruct y; destruct z; red; simpl in *; try congruence; intros.
       eapply me_trans; [ | | | | | eassumption | eassumption ]; eauto.
       red; simpl in *.
       destruct x; destruct y; destruct z; try congruence; intuition.
-      eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto. }
+      eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto with typeclass_instances. red in H8. contradiction. }
   Qed.
 
-  Lemma lower_meq : forall (A : Type) (c c' : optionT m A)
-    (eA : A -> A -> Prop),
-    meq m mleq (fun l r =>
-      match l , r with
-        | None , None => True
-        | Some l , Some r => eA l r
-        | _ , _ => False
-      end) (unOptionT c) (unOptionT c') ->
-    meq (optionT m) o_mleq eA c c'.
-  Proof.
-    destruct 1; split; simpl in *; auto.
-  Qed.
-
-  Instance Proper_option {T : Type} (P : Proper T) : Proper (option T) :=
-  { proper := fun o => match o with
-                         | None => True
-                         | Some x => proper x
-                       end }.
-
-  Instance refl_omleq : forall A (P : Proper A) (eA : A -> A -> Prop),
+  Instance refl_omleq : forall A (eA : A -> A -> Prop) (P : Proper eA) ,
     PReflexive eA ->
     PReflexive (fun l r : option A =>
       match l with
@@ -79,7 +54,7 @@ Section Laws.
     intros; destruct x; simpl; auto.
   Qed.
 
-  Instance trans_omleq : forall A (Pa : Proper A) (eA : A -> A -> Prop),
+  Instance trans_omleq : forall A (eA : A -> A -> Prop) (Pa : Proper eA),
     PTransitive eA ->
     PTransitive (fun l r : option A =>
       match l with
@@ -97,46 +72,140 @@ Section Laws.
     eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto.
   Qed.
 
-  Global Instance MonadLaws_optionT : MonadLaws (@Monad_optionT _ Monad_m) _ o_mleq.
+  Existing Instance bind_proper. 
+  Existing Instance ret_proper.
+  Existing Instance me_trans.
+  Existing Instance me_refl.
 
+(*
+  Theorem mproper_red : forall (C : Type) (Pc : Proper C) (o : optionT m C),
+    proper o ->
+    mproper (Proper_option Pc) (unOptionT o).
+  Proof. clear. intros. apply H. Qed.
+  
+  Ltac solve_proper :=
+    match goal with
+      | [ |- proper ?X ] =>
+        is_evar X ; fail 1
+      | _ =>
+        repeat match goal with
+                 | [ H : @proper _ ?X _ |- _ ] => 
+                   let z := eval hnf in X in 
+                     match z with
+                       | X => fail 1
+                       | _ => do 2 red in H
+                     end
+                 | [ |- proper (ret _) ] => 
+                   (eapply ret_proper; [ solve [ eauto with typeclass_instances ] | ])
+                 | [ |- proper (bind _ _) ] => 
+                   eapply bind_proper; [ solve [ eauto with typeclass_instances ] | | ]
+                 | [ |- proper match ?X with _ => _ end ] => 
+                   destruct X
+                 | [ |- _ ] => red ; intros
+                 | _ => solve [ eauto with typeclass_instances ]
+               end
+    end; try match goal with
+               | [ |- mproper _ _ ] => eapply mproper_red
+             end; eauto.
+*)
+
+  Instance proper_unOptionT_app : forall (B : Type) (eB : relation B) (Pb : Proper eB) 
+    (A : Type) (a : A) (f : A -> optionT m B) (eA : relation A)
+    (Pa : Proper eA), proper a -> proper f -> proper (unOptionT (f a)).
+  Proof. intros. eapply H0; eauto. Qed.
+  Instance proper_k : forall (A : Type) (eA : relation A) (Pa : Proper eA),
+    PReflexive eA ->
+    forall (B : Type) (f : A -> optionT m B) (eB : relation B)
+      (Pb : Proper eB),
+      PReflexive eB ->
+      PTransitive eB ->
+      proper f ->
+      proper
+      (fun aM : option A =>
+        match aM with
+          | Some a => unOptionT (f a)
+          | None => ret None
+        end).
   Proof.
-    constructor; eauto with typeclass_instances.
-    { intros. simpl. eapply lower_meq; simpl.
-      eapply bind_of_return; eauto. }
-    { intros; simpl. eapply lower_meq; simpl.
-      eapply return_of_bind; eauto.
-      eauto using refl_omleq.
-      { destruct x; compute; intros; try eapply ret_proper; eauto.
-        eapply H1. eauto. }
-      { destruct x. specialize (H2 a).
-        red in H0. simpl in *. unfold o_mleq in *. eauto.
-        eapply preflexive. eapply PReflexive_meq; eauto using refl_omleq.
-        eapply ret_proper; eauto. exact I. } }
-    { intros; simpl. eapply lower_meq; simpl.
-      eapply ptransitive. eapply PTransitive_meq; eauto using trans_omleq.
-      repeat eapply bind_proper; eauto. 
-      eauto using bind_proper, ret_proper.
-      eapply me_trans.XS
-      eapply bind_associativity.
-
-      rewrite bind_associativity; eauto with typeclass_instances.
-      eapply bind_parametric_tl. eauto. eauto with typeclass_instances.
-      destruct a. reflexivity. rewrite bind_of_return; eauto.
-      reflexivity. }
-    { intros; unfold o_mleq in *; simpl in *.
-      destruct c; destruct c'; simpl in *.
-      eapply bind_parametric_hd_leq. eauto. eassumption. }
-    { intros; unfold o_mleq in *; simpl in *.
-      destruct c; simpl in *.
-      eapply bind_parametric_tl_leq; eauto with typeclass_instances.
-      destruct a; auto. eapply me_refl; eauto with typeclass_instances. }
+    intros. split; intros.
+    { destruct x. eapply H2; auto. eapply ret_proper; eauto with typeclass_instances. }
+    { red; intros. 
+      unfold eqv_option in *; destruct a; destruct b; simpl in *; try contradiction.
+      eapply H2; eauto. eapply ret_respectful_leq; eauto with typeclass_instances. }
+  Qed.
+  Lemma mret_respectful : forall (A : Type) (eA : relation A),
+    Proper eA -> forall x y : A, eA x y -> o_mleq eA (ret x) (ret y). 
+  Proof. intros. simpl. unfold o_mleq; simpl.
+    eapply ret_respectful_leq; eauto with typeclass_instances.
+  Qed.
+  Instance proper_match : forall (A : Type) (eA : relation A) (PA : Proper eA) 
+    (B : Type) (eB : relation B) (Pb : Proper eB) 
+    (x : option A),
+    PReflexive eB ->
+    proper x ->
+    forall f : A -> optionT m B,
+      proper f ->
+      proper match x with
+               | Some a => unOptionT (f a)
+               | None => ret None
+             end.
+  Proof.
+    destruct x; intros; eauto with typeclass_instances.
   Qed.
 
-  Global Instance MonadTLaws_optionT : @MonadTLaws (optionT m) (@Monad_optionT m _)
-    o_mleq m Monad_m (@MonadT_optionT _ Monad_m).
+  Global Instance MonadLaws_optionT : MonadLaws (@Monad_optionT _ Monad_m) _ (@Proper_optionT).
   Proof.
-    constructor; intros; simpl; eapply lower_meq; unfold liftM; simpl; monad_norm;
-      reflexivity.
+    constructor; eauto with typeclass_instances.
+    { red; intros; simpl.
+      eapply ptransitive; [ | | | | eapply (@bind_of_return _ _ _ _ MonadLaws_mleq) | ]; eauto with typeclass_instances. 
+      eapply bind_proper; eauto with typeclass_instances.
+      eapply H3; eauto. }
+    { red; intros; simpl. 
+      eapply return_of_bind; eauto with typeclass_instances.
+      { destruct x; simpl; intros. eapply H3. eapply ret_respectful_leq; eauto with typeclass_instances. exact I. } }
+    { red; intros; simpl.
+      eapply ptransitive; [ | | | | eapply (@bind_associativity _ _ _ _ MonadLaws_mleq) | ]; eauto with typeclass_instances.
+      { eapply bind_proper; eauto with typeclass_instances.
+        eapply bind_proper; eauto with typeclass_instances. }
+      { eapply bind_proper; eauto with typeclass_instances.
+        split; intros; eauto with typeclass_instances.
+        { eapply bind_proper; eauto with typeclass_instances. }
+        { red; intros. eapply bind_respectful_leq; eauto with typeclass_instances.
+          destruct a; destruct b; simpl in *; try contradiction; eauto with typeclass_instances.
+          eapply H5; eauto. eapply ret_respectful_leq; eauto with typeclass_instances.
+          intros. destruct a0; destruct b0; simpl in *; try contradiction; eauto with typeclass_instances. eapply H6; eauto. eapply ret_respectful_leq; eauto with typeclass_instances. } }
+      { eapply bind_proper; eauto with typeclass_instances.
+        split; intros; eauto with typeclass_instances.
+        { destruct x; eauto with typeclass_instances.
+          eapply bind_proper; eauto with typeclass_instances. }
+        { red; intros. 
+          destruct a; destruct b; simpl in *; try contradiction; eauto with typeclass_instances.
+          eapply bind_respectful_leq; eauto with typeclass_instances.
+          eapply H5; eauto.
+          intros. destruct a1; destruct b; simpl in *; try contradiction; 
+          eauto with typeclass_instances. eapply H6; eauto. 
+          eapply ret_respectful_leq; eauto with typeclass_instances.
+          eapply ret_respectful_leq; eauto with typeclass_instances.
+        } }      
+      { eapply bind_respectful_leq; eauto with typeclass_instances.
+        eapply preflexive; eauto with typeclass_instances.
+        intros. destruct a; destruct b; simpl in *; try contradiction.
+        { eapply bind_respectful_leq; eauto with typeclass_instances.
+          eapply H5; eauto.
+          intros. destruct a1; destruct b; simpl in *; try contradiction; eauto with typeclass_instances.
+          eapply H6; eauto. eapply ret_respectful_leq; eauto with typeclass_instances. }
+        { eapply ptransitive; [ | | | | eapply (@bind_of_return _ _ _ _ MonadLaws_mleq) | ]; eauto with typeclass_instances.
+          { eapply bind_proper; eauto with typeclass_instances. }
+          { eapply ret_respectful_leq; eauto with typeclass_instances. } } } }
+    { exact mret_respectful. }
+    { intros; simpl; unfold o_mleq; simpl.
+      eapply bind_respectful_leq; eauto with typeclass_instances; intros. 
+      destruct a; destruct b; simpl in *; try contradiction. 
+      eapply H0; eauto. eapply ret_respectful_leq; eauto with typeclass_instances. }
+    { simpl; intros. do 2 red; simpl. 
+      eapply ret_proper; eauto with typeclass_instances. }
+    { simpl; intros; do 2 red; simpl. 
+      eapply bind_proper; eauto with typeclass_instances. }
   Qed.
 
 End Laws.
