@@ -2,6 +2,7 @@ Require Import RelationClasses.
 Require Import Setoid.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
+Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Monads.OptionMonad.
@@ -14,7 +15,7 @@ Section Laws.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
   Variable mproper : forall T (rT : relation T), Proper rT -> Proper (mleq rT).
-  Variable MonadOrder_mleq : MonadOrder m mleq mproper.
+  Variable FunctorOrder_mleq : FunctorOrder m mleq mproper.
   Variable MonadLaws_mleq : MonadLaws Monad_m mleq mproper.
 
   Definition o_mleq T (e : T -> T -> Prop) (a b : optionT m T) : Prop :=
@@ -24,14 +25,14 @@ Section Laws.
     : Proper (o_mleq rT) :=
   { proper := fun o => proper (unOptionT o) }.
 
-  Global Instance MonadOrder_omleq : MonadOrder (optionT m) o_mleq (@Proper_optionT).
+  Global Instance FunctorOrder_omleq : FunctorOrder (optionT m) o_mleq (@Proper_optionT).
   Proof.
     constructor.
     { intros. red. destruct x; red; simpl. unfold proper. unfold Proper_optionT. simpl.
-      intros. eapply me_refl; eauto. red; intros. destruct x; auto.
+      intros. eapply fun_refl; eauto. red; intros. destruct x; auto.
       simpl in *. compute in H1. eauto. }
     { intros; red; destruct x; destruct y; destruct z; red; simpl in *; try congruence; intros.
-      eapply me_trans; [ | | | | | eassumption | eassumption ]; eauto.
+      eapply fun_trans; [ | | | | | eassumption | eassumption ]; eauto.
       red; simpl in *.
       destruct x; destruct y; destruct z; try congruence; intuition.
       eapply ptransitive; [ | | | | eassumption | eassumption ]; eauto with typeclass_instances. red in H8. contradiction. }
@@ -74,8 +75,8 @@ Section Laws.
 
   Existing Instance bind_proper. 
   Existing Instance ret_proper.
-  Existing Instance me_trans.
-  Existing Instance me_refl.
+  Existing Instance fun_trans.
+  Existing Instance fun_refl.
 
 (*
   Theorem mproper_red : forall (C : Type) (Pc : Proper C) (o : optionT m C),

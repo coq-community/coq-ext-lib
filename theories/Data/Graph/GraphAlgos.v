@@ -49,9 +49,9 @@ Section GraphAlgos.
       let count := Npos (List.fold_left (fun acc _ => BinPos.Psucc acc) (verticies g) 1%positive) in
       let res := unIdent (runGFixT (m := ident) (dfs' from nil) count) in
       match res with
-        | None => (** This should never happen! **)
+        | Diverge => (** This should never happen! **)
           verticies g
-        | Some v => v
+        | Term v => v
       end.
 
   End Traverse.

@@ -3,6 +3,7 @@ Require Import Setoid.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
+Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Monads.ReaderMonad.
 
@@ -14,7 +15,7 @@ Section Laws2.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
   Variable mproper : forall T (rT : relation T), Proper rT -> Proper (mleq rT).
-  Variable MonadOrder_mleq : MonadOrder m mleq mproper.
+  Variable FunctorOrder_mleq : FunctorOrder m mleq mproper.
   Variable MonadLaws_mleq : MonadLaws Monad_m mleq mproper.
 
   Variable S : Type.
@@ -37,7 +38,7 @@ Section Laws2.
     proper (runReaderT o).
   Proof. clear. intros. apply H. Qed.
 
-  Global Instance MonadOrder_rmleq : MonadOrder (readerT S m) r_mleq _.
+  Global Instance FunctorOrder_rmleq : FunctorOrder (readerT S m) r_mleq _.
   Proof.
     constructor.
     { intros. red. destruct x; red; simpl. intros.
@@ -46,7 +47,7 @@ Section Laws2.
     { intros; red; destruct x; destruct y; destruct z; 
       red; simpl in *; try congruence; intros. 
       red in H3. red in H4. simpl in *.
-      eapply me_trans; eauto. do 2 red in H0; simpl in *. red. eapply H0; eauto.
+      eapply fun_trans; eauto. do 2 red in H0; simpl in *. red. eapply H0; eauto.
       eapply H1; eauto. eapply H2; eauto.  }
   Qed.
 
@@ -123,8 +124,8 @@ Section Laws2.
 
   Existing Instance bind_proper. 
   Existing Instance ret_proper.
-  Existing Instance me_trans.
-  Existing Instance me_refl.
+  Existing Instance fun_trans.
+  Existing Instance fun_refl.
 
   Global Instance MonadLaws_readerT : MonadLaws (@Monad_readerT S _ Monad_m) r_mleq _.
   Proof.

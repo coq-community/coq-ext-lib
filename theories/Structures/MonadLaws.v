@@ -1,5 +1,6 @@
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Fun.
 
@@ -23,13 +24,6 @@ Section MonadLaws.
    ** relation.
    **)
   Variable Proper_m : forall T (R : T -> T -> Prop), Proper R -> Proper (mleq R).
-
-  Class MonadOrder : Type :=
-  { me_refl   : forall T (e : T -> T -> Prop) {P : Proper e}, 
-    PReflexive e -> PReflexive (mleq e)
-  ; me_trans  : forall T (e : T -> T -> Prop) {P : Proper e},
-    PTransitive e -> PTransitive (mleq e)
-  }.
 
   (** TODO: The real question is whether all of these [eX] relations
    ** need to be reflexive and transitive. They don't seem to need to be
