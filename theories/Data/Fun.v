@@ -36,6 +36,25 @@ Section proper.
     /\ (pfun_ext rB Pa f f)
   }.
 
+  Global Instance Proper_pfun (pA : Proper rA) (pB : Proper rB) : Proper (pfun_ext rB pA)%signature :=
+  { proper := fun f => 
+       (forall x, proper x -> proper (f x))
+    /\ (pfun_ext rB Pa f f)
+  }.
+
+  Global Instance PReflexive_pfun_ext : PReflexive rA -> PReflexive rB -> PReflexive (pfun_ext rB Pa).
+  Proof.
+    repeat red; intros. eapply H1; eauto.
+  Qed.
+
+  Global Instance PTransitive_pfun_ext : 
+    PReflexive rA -> PTransitive rA -> PTransitive rB -> PTransitive (pfun_ext rB Pa).
+  Proof.
+    repeat red; intros. 
+    eapply ptransitive. 5: eapply H5; eauto. eauto. eapply H2; eauto. eapply H3; eauto. eapply H4; eauto.
+    eapply H6; eauto.
+  Qed.
+
   Global Instance  proper_app : forall (f : A -> B) (a : A),
     proper f -> proper a -> proper (f a).
   Proof. compute; intuition. Qed.
