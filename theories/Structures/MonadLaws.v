@@ -57,6 +57,7 @@ Section MonadLaws.
     (eA : relation A) (eB : relation B) (Pa : Proper eA) (Pb : Proper eB),
     mleq eA c c' ->
     (forall a b, proper a -> proper b -> eA a b -> mleq eB (f a) (g b)) ->
+    proper c -> proper c' ->
     mleq eB (bind c f) (bind c' g)
 
   ; ret_proper : forall T (rT : relation T) (P : Proper rT) (x : T),

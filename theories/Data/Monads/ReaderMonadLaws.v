@@ -10,7 +10,7 @@ Require Import ExtLib.Data.Monads.ReaderMonad.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Section Laws2.
+Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
   Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
@@ -104,7 +104,7 @@ Section Laws2.
       { red; simpl; intros. eapply H3; eauto. } }
     { red; intros. eapply bind_respectful_leq; eauto.
       eapply H2; eauto.
-      intros. eapply H3; eauto. }
+      intros. eapply H3; eauto. eapply H2; auto. eapply H2; auto. }
   Qed.
   Lemma runReaderT_app_mleq : forall s2 : S,
     proper s2 ->
@@ -149,11 +149,11 @@ Section Laws2.
         split.
         { intros. eapply bind_proper; eauto with typeclass_instances. }
         { red; intros. eapply bind_respectful_leq; eauto. eapply runReaderT_app_mleq; eauto.
-          intros. eapply runReaderT_app_mleq; eauto. } }
+          intros. eapply runReaderT_app_mleq; eauto. eapply H5; eauto. eapply H5; eauto. } }
       { eapply bind_proper; eauto with typeclass_instances. 
         split.
         { intros; eauto with typeclass_instances. }
-        { red; intros; eapply bind_respectful_leq; eauto; intros; try eapply runReaderT_app_mleq; eauto. } }
+        { red; intros; eapply bind_respectful_leq; eauto; intros; try eapply runReaderT_app_mleq; eauto. eapply H5; eauto. eapply H5; eauto. } }
       eapply bind_respectful_leq; eauto with typeclass_instances.
       eapply H4; eauto.
       intros. eapply bind_respectful_leq; eauto with typeclass_instances.
@@ -164,7 +164,7 @@ Section Laws2.
     { (* bind_respectful_leq *)
       simpl; intros; red; simpl; intros.
       eapply bind_respectful_leq; eauto.
-      intros. red in H0. eauto. }
+      intros. red in H0. eauto. eapply H1; eauto. eapply H2; eauto. }
     { (* ret_proper *)      
       exact m_ret_proper. }
     { (* bind_proper *)
@@ -180,4 +180,4 @@ Section Laws2.
   Qed.
 *)
 
-End Laws2.
+End Laws.

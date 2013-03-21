@@ -47,7 +47,7 @@ Section GraphAlgos.
     Require Import BinPos.
     Definition dfs (from : V) : list V :=
       let count := Npos (List.fold_left (fun acc _ => BinPos.Psucc acc) (verticies g) 1%positive) in
-      let res := unIdent (runGFixT (m := ident) (dfs' from nil) count) in
+      let res := runGFix (dfs' from nil) count in
       match res with
         | Diverge => (** This should never happen! **)
           verticies g
