@@ -1,2 +1,0 @@
-Suggestions from David:
-  * make the GFix monad sit on top of arbitrary mzero rather than option
