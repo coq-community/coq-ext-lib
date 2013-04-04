@@ -1,4 +1,5 @@
 Require Import List.
+Require Import ExtLib.Structures.EqDep.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -28,6 +29,60 @@ Section hlist.
       | HNil => tt
       | HCons _ _ _ x => x
     end.
+
+  Fixpoint hlist_app ll lr : hlist ll -> hlist lr -> hlist (ll ++ lr) :=
+    match ll with
+      | nil => fun _ x => x
+      | _ :: _ => fun l r => HCons (hlist_hd l) (hlist_app (hlist_tl l) r)
+    end.
+
+  Lemma hlist_nil_eta (E : EquivDec.EqDec iT eq) : forall (h : hlist nil), 
+    h = HNil.
+  Proof.
+    intros.
+    change h with (match refl_equal in _ = t return hlist t with
+                     | refl_equal => h
+                   end).
+    generalize (refl_equal (@nil iT)). generalize h.
+    assert (forall k (h : hlist k) (e : k = nil),
+      match e in (_ = t) return (hlist t) with
+        | eq_refl => h
+      end = HNil).
+    destruct h0. 
+    uip_all. reflexivity.
+    congruence.
+    eauto.
+  Qed.
+
+  Lemma hlist_cons_eta (E : EquivDec.EqDec iT eq) : forall a b (h : hlist (a :: b)),
+    h = HCons (hlist_hd h) (hlist_tl h).
+  Proof.
+    intros.
+    assert (forall k (h : hlist k) (e : k = a :: b),
+      match e in (_ = t) return (hlist t) with
+        | eq_refl => h
+      end = HCons (hlist_hd match e in _ = t return hlist t with
+                              | eq_refl => h
+                            end)
+      (hlist_tl match e in _ = t return  hlist t with
+                  | eq_refl => h
+                end)).
+    destruct h0. congruence.
+    intros. inversion e. subst.
+    generalize e. uip_all. reflexivity.
+
+    specialize (H _ h (refl_equal _)). assumption.
+  Qed.
+
+  Lemma hlist_eta (E : EquivDec.EqDec iT eq) : forall ls (h : hlist ls),
+    h = match ls as ls return hlist ls -> hlist ls with
+          | nil => fun _ => HNil
+          | a :: b => fun h => HCons (hlist_hd h) (hlist_tl h)
+        end h.
+  Proof.
+    intros.
+    destruct ls; auto using hlist_nil_eta, hlist_cons_eta.
+  Qed.
 
   Inductive member (a : iT) : list iT -> Type :=
   | MZ : forall ls, member a (a :: ls)
