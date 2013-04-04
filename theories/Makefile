@@ -20,6 +20,9 @@ Makefile.coq: Makefile $(VS)
 Makefile.test.coq: Makefile $(TVS)
 	coq_makefile $(ARGS) $(TVS) -o Makefile.test.coq
 
+install: Makefile.coq coq
+	$(MAKE) -f Makefile.coq install
+
 test: coq Makefile.test.coq
 	$(MAKE) -f Makefile.test.coq
 

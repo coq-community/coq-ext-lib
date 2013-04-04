@@ -5,6 +5,9 @@ all: theories examples
 theories:
 	$(MAKE) -C theories
 
+install:
+	$(MAKE) -C theories install
+
 examples: theories
 	$(MAKE) -C examples
 
