@@ -5,7 +5,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Section hlist.
-  Variable iT : Type.
+  Context {iT : Type}.
   Variable F : iT -> Type.
 
   Inductive hlist : list iT -> Type :=
@@ -90,3 +90,6 @@ Section hlist.
     end.
 
 End hlist.
+
+Arguments HNil {_ _}.
+Arguments HCons {_ _ _ _} _ _.
