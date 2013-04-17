@@ -1,3 +1,4 @@
+Require Import ExtLib.Data.N.
 Require Import ExtLib.Structures.Monads.
 Require Import BinPos.
 
@@ -18,6 +19,8 @@ Section gfix.
   (** This is essentially ReaderT (optionT m)) **)
   Inductive GFix (T : Type) : Type := mkGFix
   { runGFix : N -> FixResult T }.
+
+
 
   Global Instance MonadFix_GFixT : MonadFix GFix :=
   { mfix := fun T U f v => mkGFix (fun n : N => 

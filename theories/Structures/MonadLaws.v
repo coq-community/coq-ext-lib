@@ -18,12 +18,12 @@ Section MonadLaws.
    **
    ** This generalization is done to support the fixpoint law.
    **)
-  Variable mleq : forall {T}, (T -> T -> Prop) -> m T -> m T -> Prop.
+  Variable meq : forall {T}, (relation T) -> relation (m T).
 
   (** This states when an element is a proper element under an equivalence
    ** relation.
    **)
-  Variable Proper_m : forall T (R : T -> T -> Prop), Proper R -> Proper (mleq R).
+  Variable Proper_m : forall T (R : relation T), Proper R -> Proper (meq R).
 
   (** TODO: The real question is whether all of these [eX] relations
    ** need to be reflexive and transitive. They don't seem to need to be
@@ -36,11 +36,11 @@ Section MonadLaws.
   { bind_of_return : forall A B (a:A) (f:A -> m B) (eA : relation A) (eB : relation B) (Pa : Proper eA) (Pb : Proper eB),
     PReflexive eA -> PReflexive eB -> PTransitive eB ->
     proper a -> proper f ->
-    mleq eB (bind (ret a) f) (f a)
+    meq eB (bind (ret a) f) (f a)
   ; return_of_bind : forall A (eA : relation A) (PA : Proper eA) (aM:m A) (f:A -> m A),
     PTransitive eA -> PReflexive eA -> proper aM -> proper f ->
-    (forall x, mleq eA (f x) (ret x)) ->
-    mleq eA (bind aM f) aM
+    (forall x, meq eA (f x) (ret x)) ->
+    meq eA (bind aM f) aM
   ; bind_associativity :
     forall A B C (eA : relation A) (eB : relation B) (eC : relation C) 
       (PA : Proper eA) (Pb : Proper eB) (PC : Proper eC)
@@ -49,16 +49,16 @@ Section MonadLaws.
       proper aM -> 
       proper f -> 
       proper g ->
-      mleq eC (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
+      meq eC (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
 
   ; ret_respectful_leq : forall A (eA : relation A) (P : Proper eA),
-    forall x y, eA x y -> mleq eA (ret x) (ret y)
+    forall x y, eA x y -> meq eA (ret x) (ret y)
   ; bind_respectful_leq : forall A B (c c' : m A) (f g : A -> m B) 
     (eA : relation A) (eB : relation B) (Pa : Proper eA) (Pb : Proper eB),
-    mleq eA c c' ->
-    (forall a b, proper a -> proper b -> eA a b -> mleq eB (f a) (g b)) ->
+    meq eA c c' ->
+    (forall a b, proper a -> proper b -> eA a b -> meq eB (f a) (g b)) ->
     proper c -> proper c' ->
-    mleq eB (bind c f) (bind c' g)
+    meq eB (bind c f) (bind c' g)
 
   ; ret_proper : forall T (rT : relation T) (P : Proper rT) (x : T),
     PReflexive rT -> proper x -> proper (ret x) 
@@ -163,10 +163,12 @@ Section MonadLaws.
 
   Class MonadZeroLaws (MZ : MonadZero m) : Type :=
   { bind_zero :
-    forall A B c eB, mleq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
+    forall A B c eB, meq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
   ; zero_proper : forall A (rA : relation A) (Pa : Proper rA), 
     proper mzero
   }.
+
+  Variable mleq : forall T, relation T -> relation (m T).
 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
   { mfix_monotonic : forall T U (rT : relation T) (rU : relation U)
@@ -174,6 +176,9 @@ Section MonadLaws.
     (F : (T -> m U) -> T -> m U),
     @proper _ _ (Proper_fun (Proper_fun _ _) (Proper_fun _ _)) F ->
     forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
+  ; mfix_proper : forall T U (rT : relation T) (rU : relation U)
+    (PT : Proper rT) (PU : Proper rU),
+    proper (@mfix _ _ T U)
   }.
 
 End MonadLaws.

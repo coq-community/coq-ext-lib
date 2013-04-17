@@ -47,6 +47,8 @@ Section Laws.
 
     Instance Proper_N : Proper BinNat.N.le :=
     { proper := fun _ => True }.
+    Instance Proper_pos : Proper Pos.le :=
+    { proper := fun _ => True }.
     
     Global Instance Proper_fix_mleq : Proper fix_mleq :=
     { proper := fun f => proper (runGFix f) }.
@@ -163,5 +165,94 @@ Section Laws.
         eapply leq_app; eauto. specialize (H2 _ H4); rewrite H7 in *; auto.
         specialize (H2 _ H5); rewrite H8 in *; auto. } }
   Qed.
+  Existing Instance bind_proper. 
+  Existing Instance ret_proper.
+  Existing Instance fun_trans.
+  Existing Instance fun_refl.
+
+
+  Ltac solve_proper :=
+    match goal with
+      | [ |- proper ?X ] =>
+        is_evar X ; fail 1
+      | _ =>
+        repeat match goal with
+                 | [ H : @proper _ ?X _ |- _ ] => 
+                   let z := eval hnf in X in 
+                     match z with
+                       | X => fail 1
+                       | _ => do 2 red in H
+                     end
+                 | [ |- proper (ret _) ] => 
+                   (eapply ret_proper; [ solve [ eauto with typeclass_instances ] | ])
+                 | [ |- proper (bind _ _) ] => 
+                   eapply bind_proper; [ solve [ eauto with typeclass_instances ] | | ]
+                 | [ |- proper match ?X with _ => _ end ] => 
+                   destruct X
+                 | [ |- _ ] => red ; intros
+                 | _ => solve [ eauto with typeclass_instances ]
+               end
+    end; eauto.
+
+
+  Theorem mfix_proper : forall T U (rT : relation T) (rU : relation U)
+    (PT : Proper rT) (PU : Proper rU),
+    proper (@mfix _ _ T U).
+  Proof.
+    intros. solve_proper. split; intros.
+    { admit. }
+    { simpl. red. intros. do 3 red in H1.
+      red; intros. red; intros; simpl.
+      destruct n1. eapply Diverge_minimal.
+      destruct n2. exfalso. admit.
+      
+     Focus 2.
+    { intros. solve_proper; split; intros.
+      { solve_proper. split.
+        { intros. solve_proper. destruct x1; auto.
+          match goal with
+            | |- match ?X _ _ _ with _ => _ end =>
+              remember X
+          end.
+          set (P := Proper_pfun (Proper_pfun PT (Proper_FixResult _)) 
+            (@Proper_pfun _ _ _ _ Proper_pos
+              
+                                                        (Proper_pfun PT 
+                                                                     (Proper_FixResult _)))).
+          assert (@proper _ _ _ f).
+          { subst. subst P. clear H1 H0 x0. split. intros.
+            split; intros. generalize dependent x0.
+            clear H1. induction x1
+            { intros. red. red; intros. split.
+              { intros. split; intros. split; intros.
+                solve_proper. eapply IHp.
+                
+            split.
+            {  intros. solve_proper.
+ c
+ unfold mfix. simpl.
+    { repeat red. intuition.
+      { repeat red. destruct x0; auto.
+        clear H2.
+        induction p.
+        match goal with
+          | |- context [ runGFix ?X _ ] =>
+            assert (proper X)
+        end; intros; simpl in *.
+        eapply H0.
+        red; red. intuition.
+        red. simpl. red. simpl.
+        SearchAbout proper.
+        do 4 red in H1.
+
+    
+  Check MonadFixLaws.
+  Global Instance MonadFixLaws_GFix : MonadFixLaws (@fix_mleq) _ _.
+  Proof.
+    constructor; intros.
+    red; intros. eapply leq_app. 
+    consider (runGFix (mfix F x) n1); intros; auto.
+    consider (runGFix (F (mfix F) x) n2); intros.
+    { unfold mfix in *; simpl in *.
 
 End Laws.
