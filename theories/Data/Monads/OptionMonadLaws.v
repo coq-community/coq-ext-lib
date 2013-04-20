@@ -112,6 +112,71 @@ Section Laws.
       eapply equal_match; eauto with typeclass_instances; type_tac. }
   Qed.
 
+  Theorem equal_match_option : forall T U (tT : type T) (tU : type U),
+    typeOk tT -> typeOk tU ->
+    forall (a b : option T) (f g : T -> U) (x y : U),
+      equal a b -> equal f g -> equal x y ->
+      equal match a with 
+              | Some a => f a
+              | None => x
+            end
+            match b with
+              | Some b => g b
+              | None => y
+            end.
+  Proof.
+    clear. destruct a; destruct b; simpl; intros; try contradiction; auto.
+  Qed.
+
+  Global Instance MonadTLaws_optionT : MonadTLaws _ _ _ _ (@MonadT_optionT _ Monad_m).
+  Proof.
+    constructor.
+    { simpl. unfold optionT_eq; simpl; intros.
+      unfold liftM. rewrite bind_of_return; eauto with typeclass_instances; type_tac. }
+    { simpl; unfold lift, optionT_eq; simpl; intros.
+      unfold liftM.
+      rewrite bind_associativity; eauto with typeclass_instances; type_tac.
+      rewrite bind_associativity; eauto with typeclass_instances; type_tac. 
+      rewrite bind_of_return; eauto with typeclass_instances; type_tac.
+      eapply equal_match_option; eauto with typeclass_instances; type_tac.
+      eapply equal_match_option; eauto with typeclass_instances; type_tac. }
+    { unfold lift, liftM; simpl; intros. unfold liftM. type_tac. }
+  Qed.
+
+  Global Instance MonadReaderLaws_optionT (s : Type) (t : type s) (tT : typeOk t) (Mr : MonadReader s m) (MLr : MonadReaderLaws Monad_m _ _ Mr) : MonadReaderLaws _ _ _ (@Reader_optionT _ _ _ Mr).
+  Proof.
+    constructor.
+    { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
+      rewrite local_bind; eauto with typeclass_instances.
+      (erewrite bind_proper; [ | | | | eapply ask_local | ]); eauto with typeclass_instances.
+      rewrite bind_associativity; eauto with typeclass_instances.
+      rewrite bind_associativity; eauto with typeclass_instances.
+      type_tac. 6: eapply preflexive.
+      repeat rewrite bind_of_return; eauto with typeclass_instances.
+      rewrite local_ret; eauto with typeclass_instances. type_tac.
+      type_tac. eapply equal_match_option; eauto with typeclass_instances; type_tac.
+      apply proper_fun; intros. repeat rewrite local_ret; eauto with typeclass_instances.
+      type_tac; eauto with typeclass_instances. type_tac.
+      type_tac. eapply equal_match_option; eauto with typeclass_instances; type_tac.
+      type_tac.
+      apply proper_fun; intros. repeat rewrite local_ret; eauto with typeclass_instances.
+      type_tac. eauto with typeclass_instances.
+      type_tac. type_tac. } 
+    { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
+      rewrite local_bind; eauto with typeclass_instances.
+      type_tac.
+      destruct x; destruct y; try solve [ inversion H4 ]; type_tac.
+      rewrite local_ret; eauto with typeclass_instances; type_tac.
+      type_tac. eapply equal_match_option; eauto with typeclass_instances; type_tac. }
+    { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
+      rewrite local_ret; eauto with typeclass_instances; type_tac. }
+    { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
+      rewrite local_local; eauto with typeclass_instances; type_tac. }
+    { unfold local; simpl; intros. type_tac. }
+    { Opaque lift. unfold ask; simpl; intros; type_tac. 
+      eapply lift_proper; eauto with typeclass_instances. Transparent lift. }
+  Qed.      
+
   Global Instance MonadZeroLaws_optionT : MonadZeroLaws (@Monad_optionT _ Monad_m) type_optionT _.
   Proof.
     constructor.

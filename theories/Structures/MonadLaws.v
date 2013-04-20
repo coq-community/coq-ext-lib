@@ -1,3 +1,4 @@
+Require Import Setoid.
 Require Import Coq.Classes.Morphisms.
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
@@ -51,12 +52,23 @@ Section MonadLaws.
       proper g ->
       equal (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
 
-  ; ret_respectful :> forall A (eA : type A), typeOk eA ->
+  ; ret_proper :> forall A (eA : type A), typeOk eA ->
     proper ret
-  ; bind_respectful :> forall A B (eA : type A) (eB : type B), 
+  ; bind_proper :> forall A B (eA : type A) (eB : type B), 
     typeOk eA -> typeOk eB ->
     proper (@bind m _ A B)
   }.
+
+  Add Parametric Morphism T U (tT : type T) (tU : type U) (tokT : typeOk tT) (tokU : typeOk tU) (ML : MonadLaws) : (@bind _ _ T U)
+    with signature (equal ==> equal ==> equal)
+      as bind_morph.
+  Proof. eapply bind_proper; auto. Qed.
+
+  Add Parametric Morphism T (tT : type T) (tokT : typeOk tT) (ML : MonadLaws) : (@ret _ _ T)
+    with signature (equal ==> equal)
+      as ret_morph.
+  Proof. eapply ret_proper; auto. Qed.
+
 
   Class MonadTLaws (n : Type -> Type) (Pn : forall T (R : type T), type (n T)) (nM : Monad n) (MT : MonadT m n) : Type :=
   { lift_ret  : forall T (eT : type T),
@@ -72,21 +84,45 @@ Section MonadLaws.
   ; lift_proper : forall T (tT : type T), typeOk tT -> proper lift
   }.
 
-  Class MonadStateLaws s (tS : type s) (tokS : typeOk tS) (MS : MonadState s m) : Type :=
-  { get_put : equal (bind get put) (ret tt)
-  ; get_proper :> proper get
-  ; put_proper :> proper put
-  }.
+  Section with_state.
+    Context {S : Type} (tS : type S) {tokS : typeOk tS}.
 
-  Class MonadReaderLaws S (tS : type S) (tokS : typeOk tS) (MS : MonadReader S m) : Type :=
-  { ask_local : forall f, proper f ->
-    equal (local f ask) (bind ask (fun x => ret (f x)))
-  ; local_local : forall T (eA : type T),
-    typeOk eA ->
-    forall (s s' : S -> S) (c : m T),
-      proper s -> proper s' -> proper c ->
-    equal (local s (local s' c)) (local (fun x => s' (s x)) c)
-  }.
+    Class MonadStateLaws  (MS : MonadState S m) : Type :=
+    { get_put : equal (bind get put) (ret tt)
+    ; put_get : forall x, equal (bind (put x) (fun _ => get)) (ret x)
+    ; put_put : forall A (tA : type A), typeOk tA ->
+      forall (x y : S) (f : unit -> m A), proper x -> proper y -> proper f ->
+      equal (bind (put x) (fun _ => bind (put y) f)) (bind (put y) f)
+    ; get_get : forall A (tA : type A), typeOk tA ->
+      forall (f : S -> S -> m A), proper f ->
+      equal (bind get (fun s => bind get (f s))) (bind get (fun s => f s s))
+    ; get_proper :> proper get
+    ; put_proper :> proper put
+    }.
+
+    Class MonadReaderLaws (MR : MonadReader S m) : Type :=
+    { ask_local : forall f, proper f ->
+      equal (local f ask) (bind ask (fun x => ret (f x)))
+    ; local_bind : forall A B (tA : type A) (tB : type B),
+        typeOk tA -> typeOk tB ->
+        forall aM f (g : A -> m B), 
+          proper aM -> proper f -> proper g ->
+          equal (local f (bind aM g)) (bind (local f aM) (fun x => local f (g x)))
+    ; local_ret : forall A (tA : type A),
+        typeOk tA ->
+        forall (x : A) f,
+          proper x -> proper f ->
+          equal (local f (ret x)) (ret x)
+    ; local_local : forall T (eA : type T),
+      typeOk eA ->
+      forall (s s' : S -> S) (c : m T),
+        proper s -> proper s' -> proper c ->
+        equal (local s (local s' c)) (local (fun x => s' (s x)) c)
+    ; local_proper :> forall T (tT : type T), typeOk tT -> proper (@local _ _ _ T)
+    ; ask_proper :> proper ask
+    }.
+
+  End with_state.
 
   Class MonadZeroLaws (MZ : MonadZero m) : Type :=
   { bind_zero : forall A B (tA : type A) (tB : type B),
@@ -97,7 +133,7 @@ Section MonadLaws.
   ; zero_proper :> forall A (rA : type A), typeOk rA ->
     proper mzero
   }.
-
+ 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
   { mleq : forall T, relation T -> relation (m T)
   ; mfix_monotonic : forall T U (rT : type T) (rU : type U),

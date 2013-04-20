@@ -1,3 +1,4 @@
+Require Import Coq.Setoids.Setoid.
 Require Import Relations.
 Require Import RelationClasses.
 Require Import ExtLib.Structures.Proper.
@@ -31,9 +32,14 @@ Section type.
   Qed.
   Global Instance proper_right :
     typeOk -> 
-    forall x y : T, equal x y -> proper x.
+    forall x y : T, equal x y -> proper y.
   Proof.
     clear. intros. eapply only_proper in H0; intuition.
   Qed.
 
 End type.
+
+Add Parametric Relation (T : Type) (tT : type T) (tokT : typeOk tT) : T (@equal _ tT) 
+  symmetry proved by (@equiv_sym _ _ _)
+  transitivity proved by (@equiv_trans _ _ _)
+  as equal_rel.
