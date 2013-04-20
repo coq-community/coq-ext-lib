@@ -4,13 +4,13 @@ Require Import RelationClasses.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Class Proper {T : Type} (R : relation T) : Type :=
+Class Proper (T : Type) : Type :=
   proper : T -> Prop.
 
 Existing Class proper.
 
 Section relations.
-  Context {T : Type} (R : relation T) {P : Proper R}.
+  Context {T : Type} {P : Proper T} (R : relation T).
 
   Class PReflexive : Prop :=
     preflexive : forall x : T, proper x -> R x x.
@@ -33,6 +33,6 @@ Section relations.
 
 End relations.
 
-Arguments PReflexive {T} R {P}.
-Arguments PSymmetric {T} R {P}.
-Arguments PTransitive {T} R {P}.
+Arguments PReflexive {T} {P} R.
+Arguments PSymmetric {T} {P} R.
+Arguments PTransitive {T} {P} R.

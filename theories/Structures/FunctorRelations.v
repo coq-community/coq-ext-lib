@@ -16,18 +16,20 @@ Section FunctorOrder.
    ** enabling the relation to talk about computations that are "more defined"
    ** than others.
    **)
-  Variable Fleq : forall {T}, (T -> T -> Prop) -> F T -> F T -> Prop.
+  Variable Fleq : forall {T}, relation T -> relation (F T).
 
   (** This states when an element is a proper element under an equivalence
    ** relation.
    **)
-  Variable Proper_m : forall T (R : T -> T -> Prop), Proper R -> Proper (Fleq R).
+  Variable Proper_m : forall T, Proper T -> Proper (F T).
 
-  Class FunctorOrder : Type :=
+(*
+  Class PreOrder : Type :=
   { fun_refl   : forall T (r : relation T) {P : Proper r}, 
     PReflexive r -> PReflexive (Fleq r)
   ; fun_trans  : forall T (r : relation T) {P : Proper r},
     PTransitive r -> PTransitive (Fleq r)
   }.
+*)
 
 End FunctorOrder.

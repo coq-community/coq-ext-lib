@@ -7,17 +7,33 @@ Require Import ExtLib.Structures.Proper.
  ** relation is reflexive.
  **)
 Class type (T : Type) : Type :=
-{ equiv : relation T }.
+{ equal : relation T }.
 
 Section type.
   Context {T : Type}.
-  Variable type_T : type T.
+  Variable tT : type T.
   
-  Instance Proper_type : Proper equiv :=
-  { proper := fun x => equiv x x }.
+  Global Instance Proper_type : Proper T :=
+  { proper := fun x => equal x x }.
 
-  Class typeOk (T : Type) (t : type T) :=
-  { equiv_sym : Symmetric equiv
-  ; equiv_trans : Transitive equiv
+  Class typeOk :=
+  { only_proper : forall x y, equal x y -> proper x /\ proper y
+  ; equiv_prefl :> PReflexive equal
+  ; equiv_sym :> Symmetric equal
+  ; equiv_trans :> Transitive equal
   }.
+
+  Global Instance proper_left :
+    typeOk -> 
+    forall x y : T, equal x y -> proper x.
+  Proof.
+    clear. intros. eapply only_proper in H0; intuition.
+  Qed.
+  Global Instance proper_right :
+    typeOk -> 
+    forall x y : T, equal x y -> proper x.
+  Proof.
+    clear. intros. eapply only_proper in H0; intuition.
+  Qed.
+
 End type.

@@ -1,5 +1,6 @@
 Require Import Morphisms.
 Require Import Coq.Relations.Relations.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.Functor.
 
@@ -8,59 +9,63 @@ Set Strict Implicit.
 
 Definition Fun A B := A -> B.
 
+Section type.
+  Variables (T U : Type) (tT : type T) (tU : type U).
+
+  Global Instance type_Fun  : type (T -> U) :=
+  { equal := fun f g => respectful equal equal f g }.
+
+  Variables (tOk : typeOk tT) (uOk : typeOk tU).
+
+  Global Instance typeOk_Fun : typeOk type_Fun.
+  Proof.
+    constructor.
+    { unfold equiv. simpl. unfold respectful.
+      destruct tOk. destruct uOk; intros.
+      split; red; simpl; red; intros.
+      { destruct (only_proper _ _ H0).
+        etransitivity. eapply H. eassumption.
+        symmetry. eapply H. symmetry. auto. }
+      { destruct (only_proper _ _ H0).
+        symmetry. etransitivity; [ | eapply H ]. 
+        symmetry. eapply H. eassumption. symmetry. eauto. } }
+    { red. intros. apply H. }
+    { compute. intuition. symmetry. eapply H. symmetry. auto. }
+    { compute. intuition. 
+      etransitivity. eapply H. eassumption.
+      eapply H0. eapply preflexive; auto.
+      eapply only_proper in H1; intuition. }
+  Qed.
+
+  Global Instance  proper_app : forall (f : T -> U) (a : T),
+    proper f -> proper a -> proper (f a).
+  Proof.
+    compute; intuition. 
+    eapply H. eauto.
+  Qed.
+
+  Theorem proper_fun : forall (f : T -> U),
+    (forall x y, equal x y -> equal (f x) (f y)) ->
+    proper f.
+  Proof. intros. do 5 red. apply H. Qed.
+
+  Theorem equal_fun : forall (f g : T -> U),
+    (forall x y, equal x y -> equal (f x) (g y)) ->
+    equal f g.
+  Proof. intros. do 3 red. apply H. Qed.
+
+  Theorem equal_app : forall (f g : T -> U) (x y : T),
+    equal f g -> equal x y ->
+    equal (f x) (g y).
+  Proof.
+    clear. intros. do 3 red in H. auto.
+  Qed.
+
+End type.
+
 Instance Functor_Fun A : Functor (Fun A) :=
 { fmap _A _B g f x := g (f x)
 }.
 
 Definition compose (A B C : Type) (f : A -> B) (g : B -> C) : A -> C :=
   fun x => g (f x).
-
-Section equiv.
-  Context {A B : Type} (rA : relation A) (rB : relation B).
-
-  Definition fun_ext (f g : A -> B) :=
-    forall a b, rA a b -> rB (f a) (g b).
-
-  Definition pfun_ext (Pa : Proper rA) (f g : A -> B) :=
-    forall a b, proper a -> proper b -> rA a b -> rB (f a) (g b).
-
-End equiv.
-
-Section proper.
-  Context {A B : Type} (rA : relation A) (rB : relation B).
-  Context {Pa : Proper rA} {Pb : Proper rB}.
-
-  Global Instance Proper_fun : Proper (fun_ext rA rB)%signature :=
-  { proper := fun f => 
-       (forall x, proper x -> proper (f x))
-    /\ (pfun_ext rB Pa f f)
-  }.
-
-  Global Instance Proper_pfun (pA : Proper rA) (pB : Proper rB) : Proper (pfun_ext rB pA)%signature :=
-  { proper := fun f => 
-       (forall x, proper x -> proper (f x))
-    /\ (pfun_ext rB Pa f f)
-  }.
-
-  Global Instance PReflexive_pfun_ext : PReflexive rA -> PReflexive rB -> PReflexive (pfun_ext rB Pa).
-  Proof.
-    repeat red; intros. eapply H1; eauto.
-  Qed.
-
-  Global Instance PTransitive_pfun_ext : 
-    PReflexive rA -> PTransitive rA -> PTransitive rB -> PTransitive (pfun_ext rB Pa).
-  Proof.
-    repeat red; intros. 
-    eapply ptransitive. 5: eapply H5; eauto. eauto. eapply H2; eauto. eapply H3; eauto. eapply H4; eauto.
-    eapply H6; eauto.
-  Qed.
-
-  Global Instance  proper_app : forall (f : A -> B) (a : A),
-    proper f -> proper a -> proper (f a).
-  Proof. compute; intuition. Qed.
-
-  Existing Instance proper_app.
-
-End proper.
-
-Arguments Proper_fun {_} {_} {_} {_} _ _ _.

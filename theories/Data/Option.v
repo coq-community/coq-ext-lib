@@ -1,9 +1,11 @@
 Require Import Coq.Relations.Relations.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Structures.Proper.
+Require Import ExtLib.Data.Fun.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -23,31 +25,42 @@ Global Instance Traversable_option : Traversable option :=
   end
 |}.
 
-Section proper.
-  Context {T : Type} {rT : relation T} {P : Proper rT}.
+Section type.
+  Variable T : Type.
+  Variable tT : type T.
 
-  Definition eqv_option (a b : option T) :=
+  Definition eqv_option rT (a b : option T) :=
     match a , b with
       | None , None => True
       | Some a , Some b => rT a b
       | _ , _ => False
     end.
-  
-  Global Instance Proper_option : Proper eqv_option :=
-  { proper := fun o => match o with
-                         | None => True
-                         | Some x => proper x
-                       end }.
 
-  Global Instance PReflexive_eqv_option (R : PReflexive rT) : PReflexive eqv_option.
-  Proof. intro; destruct x; simpl; eauto. Qed.
+  Global Instance type_option : type (option T) :=
+  { equal := eqv_option equal }.
 
-  Global Instance PSymmetric_eqv_option (R : PSymmetric rT) : PSymmetric eqv_option.
-  Proof. intro; destruct x; destruct y; simpl; eauto. Qed.
+  Variable tTOk : typeOk tT.
 
-  Global Instance PTransitive_eqv_option (R : PTransitive rT) : PTransitive eqv_option.
+  Global Instance typeOk_option : typeOk type_option.
   Proof.
-    intro; destruct x; destruct y; destruct z; simpl; eauto; intros; try contradiction. 
+    constructor.
+    { destruct x; destruct y; simpl; auto; try contradiction; intros.
+      unfold proper in *. simpl in *.
+      destruct tTOk.
+      eapply only_proper in H. intuition. }
+    { red. destruct x; simpl; auto. }
+    { red. destruct x; destruct y; simpl; auto. intros.
+      destruct tTOk. apply equiv_sym. auto. }
+    { red. destruct x; destruct y; destruct z; intros; try contradiction; auto.
+      simpl in *. destruct tTOk.
+      etransitivity; eauto. }
   Qed.
-  
-End proper.
+
+  Global Instance proper_Some : proper (@Some T).
+  Proof. compute; auto. Qed.
+
+  Global Instance proper_None : proper (@None T).
+  Proof. compute; auto. Qed.
+
+End type.
+

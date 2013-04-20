@@ -1,5 +1,6 @@
 Require Import RelationClasses.
 Require Import Setoid.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.FunctorRelations.
@@ -11,39 +12,48 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Section with_T.
-  Context {T : Type} (e : relation T) (P : Proper e).
+  Context {T : Type} (e : type T).
 
-  Definition Identity_leq (a b : ident T) : Prop :=
-    e (unIdent a) (unIdent b).
+  Definition equal_ident (a b : ident T) : Prop :=
+    equal (unIdent a) (unIdent b).
   
-  Global Instance Proper_Identity : Proper Identity_leq :=
-    { proper := fun f => proper (unIdent f) }.
+  Global Instance type_ident : type (ident T) :=
+  { equal := equal_ident }.
 
-  Global Instance PReflexive_Identity_leq (PT : PReflexive e): PReflexive Identity_leq.
+  Global Instance typeOk_ident (tT : typeOk e) : typeOk type_ident.
   Proof.
-    red; destruct x; compute; simpl in *; intros; try contradiction; eauto.
+    constructor.
+    { unfold equal, proper, type_ident, equal_ident; simpl; intros.
+      apply only_proper; auto. }
+    { red. destruct x. intro X; apply X. }
+    { red. simpl. unfold equal_ident. intros.
+      symmetry. assumption. }
+    { red; simpl. unfold equal_ident. intros.
+      etransitivity; eassumption. }
   Qed.
+  
+  Global Instance proper_unIdent : proper unIdent.
+  Proof. destruct x; compute; auto. Qed.
 
-  Global Instance PTransitive_Identity_leq (PT : PTransitive e): PTransitive Identity_leq.
-  Proof.
-    red; destruct x; destruct y; destruct z; compute; simpl in *; intros; try contradiction; eauto.
-  Qed.
-
-  Global Instance proper_unIdent : forall x,
-    proper x ->
-    proper (unIdent x).
-  Proof.
-    destruct x; compute; auto.
-  Qed.
+  Global Instance proper_mkIdent : proper mkIdent.
+  Proof. do 7 red. compute; auto. Qed.
 
 End with_T.
 
+(*
 Global Instance FunctorOrder_fmleq : FunctorOrder _ (@Identity_leq) _.
 Proof.
   constructor; eauto with typeclass_instances.
 Qed.
+*)
 
-Global Instance MonadLaws_GFix : MonadLaws Monad_ident (@Identity_leq) _.
+Require Import ExtLib.Tactics.TypeTac.
+
+Global Instance MonadLaws_GFix : MonadLaws Monad_ident (@type_ident).
 Proof.
   constructor; eauto with typeclass_instances; try solve [ compute; intuition ].
+  { unfold proper, equal; simpl. eauto with typeclass_instances. }
+  { unfold proper, equal; simpl. eauto with typeclass_instances. }
+  { simpl; intros. eapply proper_app; eauto with typeclass_instances. solve_proper. }
+  { simpl; intros. solve_proper. }
 Qed.

@@ -1,11 +1,13 @@
 Require Import RelationClasses.
 Require Import Setoid.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Monads.ReaderMonad.
+Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -13,162 +15,73 @@ Set Strict Implicit.
 Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
-  Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
-  Variable mproper : forall T (rT : relation T), Proper rT -> Proper (mleq rT).
-  Variable FunctorOrder_mleq : FunctorOrder m mleq mproper.
-  Variable MonadLaws_mleq : MonadLaws Monad_m mleq mproper.
+  Variable mtype : forall T, type T -> type (m T).
+  Variable mtypeOk : forall T (tT : type T), typeOk tT -> typeOk (mtype tT).
+  Variable ML_m : MonadLaws Monad_m mtype.
 
   Variable S : Type.
-  Variable Seq : relation S.
-  Variable PS : Proper Seq.
-  Variable Refl_Seq : PReflexive Seq.
-  Variable Trans_Seq : PTransitive Seq.
+  Variable type_S : type S.
+  Variable typeOk_S : typeOk type_S.
 
-  Definition r_mleq T (e : T -> T -> Prop) (a b : readerT S m T) : Prop :=
-    forall s1 s2, proper s1 -> proper s2 -> Seq s1 s2 ->
-      mleq e (runReaderT a s1) (runReaderT b s2).
+  Definition readerT_eq T (tT : type T) (a b : readerT S m T) : Prop :=
+    equal (runReaderT a) (runReaderT b).
 
-  Global Instance Proper_readerT {T : Type} {rT : relation T} {PT : Proper rT} 
-    : Proper (r_mleq rT) :=
-  { proper := fun r => proper (runReaderT r) }.
+  Global Instance type_readerT (T : Type) (tT : type T) : type (readerT S m T) :=
+  { equal := readerT_eq tT }.
 
-  Theorem mproper_red : forall (C : Type) (rC : relation C) (Pc : Proper rC)
-    (o : readerT S m C),
+  Global Instance typeOk_readerT (T : Type) (tT : type T) (tOkT : typeOk tT) 
+    : typeOk  (type_readerT tT).
+  Proof.
+    constructor.
+    { simpl. unfold readerT_eq. intros.
+      generalize (only_proper _ _ _ H); intros.
+      split; do 4 red; intuition. }
+    { red. intuition. }
+    { red. unfold equal; simpl. unfold readerT_eq; simpl.
+      unfold Morphisms.respectful; simpl. firstorder. }
+    { red. unfold equal; simpl. unfold readerT_eq; simpl.
+      unfold Morphisms.respectful; simpl. intros.
+      etransitivity. eapply H; eauto.
+      destruct (only_proper _ _ _ H1).
+      eapply H0. eapply preflexive; eauto with typeclass_instances. }
+  Qed.
+
+  Theorem mproper_red : forall (C : Type) (tC : type C) (o : readerT S m C),
     proper o ->
     proper (runReaderT o).
   Proof. clear. intros. apply H. Qed.
 
-  Global Instance FunctorOrder_rmleq : FunctorOrder (readerT S m) r_mleq _.
+  Global Instance proper_runReaderT T (tT : type T) : proper (@runReaderT S m T).
   Proof.
-    constructor.
-    { intros. red. destruct x; red; simpl. intros.
-      do 2 red in H0. simpl in H0. do 2 red in H0. destruct H0.
-      repeat red in H4. eauto. }
-    { intros; red; destruct x; destruct y; destruct z; 
-      red; simpl in *; try congruence; intros. 
-      red in H3. red in H4. simpl in *.
-      eapply fun_trans; eauto. do 2 red in H0; simpl in *. red. eapply H0; eauto.
-      eapply H1; eauto. eapply H2; eauto.  }
+    repeat red; intros.
+    apply H in H0. apply H0.
   Qed.
 
-  Instance proper_bind_k : forall s1 : S,
-    proper s1 ->
-    forall (B : Type) (eB : relation B) (Pb : Proper eB) 
-      (A : Type) (f : A -> readerT S m B) (eA : relation A)
-      (Pa : Proper eA),
-      proper f -> 
-      proper (fun v : A => runReaderT (f v) s1).
+  Global Instance proper_mkReaderT T (tT : type T) : proper (@mkReaderT S m T).
   Proof.
-    intros. split. 
-    { intros. eapply H0; auto. }
-    { red. intros. eapply H0; auto. }
-  Qed.
-  Instance proper_bind_k' : forall s1 : S,
-    proper s1 ->
-    forall (B : Type) (eB : relation B) (Pb : Proper eB) 
-      (A : Type) (a : A) (f : A -> readerT S m B) (eA : relation A)
-      (Pa : Proper eA) v,
-      proper a -> proper v -> proper f -> 
-      proper (runReaderT (f v) s1).
-  Proof.
-    intros. eapply H2; eauto.
-  Qed.
-  Instance proper_runReaderT : forall s1 : S,
-    proper s1 ->
-    forall (B : Type) (eB : relation B) (Pb : Proper eB) 
-      (A : Type) (aM : readerT S m A) (f : A -> readerT S m B) (eA : relation A)
-      (Pa : Proper eA),
-      proper s1 -> proper aM -> 
-      proper (runReaderT aM s1).
-  Proof.
-    intros. eapply H1; eauto.
-  Qed.
-  Instance m_ret_proper : forall (T : Type) (rT : relation T) (P : Proper rT) (x : T),
-    PReflexive rT -> proper x -> proper (ret x).
-  Proof.
-    repeat red; simpl; intros.    
-    split.
-    { intros; eapply ret_proper; eauto. }
-    { red. intros. eapply ret_respectful_leq; eauto. }
-  Qed.
-  Instance m_bind_proper : forall (A B : Type) (rA : relation A) (rB : relation B) 
-    (Pa : Proper rA) (Pb : Proper rB) (c : readerT S m A)
-    (f : A -> readerT S m B), PReflexive rA -> PReflexive rB -> PTransitive rB ->
-    proper c -> proper f -> proper (bind c f).
-  Proof.
-    simpl; intros. do 4 red. simpl.
-    split; intros.
-    { eapply bind_proper; eauto. eapply H2; eauto.
-      do 2 red. split.
-      { intros. eapply H3; eauto. }
-      { red; simpl; intros. eapply H3; eauto. } }
-    { red; intros. eapply bind_respectful_leq; eauto.
-      eapply H2; eauto.
-      intros. eapply H3; eauto. eapply H2; auto. eapply H2; auto. }
-  Qed.
-  Lemma runReaderT_app_mleq : forall s2 : S,
-    proper s2 ->
-    forall s1 : S,
-      proper s1 ->
-      Seq s1 s2 ->
-      forall (B : Type) (eB : relation B) (Pb : Proper eB),
-        forall (A : Type) (a b : A) (f : A -> readerT S m B) 
-          (eA : relation A) (Pa : Proper eA),
-          proper a -> proper b -> eA a b ->
-          proper f ->              
-          mleq eB (runReaderT (f a) s1) (runReaderT (f b) s2).
-  Proof.
-    intros. destruct H5. repeat red in H6.
-    eapply H6; eauto.
+    repeat red; intros.
+    apply H in H0. apply H0.
   Qed.
 
-  Existing Instance bind_proper. 
-  Existing Instance ret_proper.
-  Existing Instance fun_trans.
-  Existing Instance fun_refl.
+  Ltac unfold_readerT :=
+    red; simpl; intros; do 2 (red; simpl); intros.
 
-  Global Instance MonadLaws_readerT : MonadLaws (@Monad_readerT S _ Monad_m) r_mleq _.
+  Global Instance MonadLaws_readerT : MonadLaws (@Monad_readerT S _ Monad_m) _.
   Proof.
     constructor.
     { (* bind_of_return *)
-      red; simpl; intros.
-      eapply ptransitive; [ | | | | eapply (@bind_of_return _ _ _ _ MonadLaws_mleq); eauto | ];
-      eauto with typeclass_instances.
-      eapply runReaderT_app_mleq; eauto. }
+      unfold_readerT.
+      erewrite bind_of_return; eauto with typeclass_instances; type_tac. }
     { (* return_of_bind *)
-      intros. red; intros.
-      simpl. 
-      eapply ptransitive; [ | | | | eapply return_of_bind | ]; eauto with typeclass_instances.
-      intros. eapply H3; eauto.
-      eapply H1; eauto. }
+      unfold_readerT.
+      rewrite return_of_bind; intros; eauto with typeclass_instances.
+      intros. eapply H0. eassumption. }
     { (* bind_associativity *)
-      red; simpl; intros.      
-      eapply ptransitive; [ | | | | eapply (@bind_associativity _ _ _ _ MonadLaws_mleq) | ]; instantiate; eauto with typeclass_instances.
-      { eapply bind_proper; eauto with typeclass_instances. }
-      { eapply bind_proper; eauto with typeclass_instances.
-        split.
-        { intros. eapply bind_proper; eauto with typeclass_instances. }
-        { red; intros. eapply bind_respectful_leq; eauto. eapply runReaderT_app_mleq; eauto.
-          intros. eapply runReaderT_app_mleq; eauto. eapply H5; eauto. eapply H5; eauto. } }
-      { eapply bind_proper; eauto with typeclass_instances. 
-        split.
-        { intros; eauto with typeclass_instances. }
-        { red; intros; eapply bind_respectful_leq; eauto; intros; try eapply runReaderT_app_mleq; eauto. eapply H5; eauto. eapply H5; eauto. } }
-      eapply bind_respectful_leq; eauto with typeclass_instances.
-      eapply H4; eauto.
-      intros. eapply bind_respectful_leq; eauto with typeclass_instances.
-      eapply runReaderT_app_mleq; eauto. intros. eapply runReaderT_app_mleq; eauto. }
-    { (* ret_respectful_leq *)
-      simpl; intros. red; simpl. intros.
-      eapply ret_respectful_leq; eauto. }
-    { (* bind_respectful_leq *)
-      simpl; intros; red; simpl; intros.
-      eapply bind_respectful_leq; eauto.
-      intros. red in H0. eauto. eapply H1; eauto. eapply H2; eauto. }
-    { (* ret_proper *)      
-      exact m_ret_proper. }
-    { (* bind_proper *)
-      exact m_bind_proper. }
+      unfold_readerT.
+      rewrite bind_associativity; eauto with typeclass_instances; type_tac. }
+    { unfold_readerT. red; intros.
+      type_tac. }
+    { intros. unfold bind; simpl. solve_proper. }
   Qed.
 
 (*

@@ -1,4 +1,13 @@
 Require Import ExtLib.Structures.Logic.
+Require Import ExtLib.Core.Type.
+
+Global Instance type_Prop : type Prop :=
+{ equal := iff }.
+
+Global Instance typeOk_Prop : typeOk type_Prop.
+Proof.
+  constructor; compute; firstorder.
+Qed.
 
 Global Instance Logic_Prop : Logic Prop :=
 { Tr       := True
