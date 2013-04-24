@@ -1,5 +1,7 @@
 Require Coq.Logic.Eqdep_dec.
 Require Import EquivDec.
+Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -26,32 +28,15 @@ Section Classes.
 
 End Classes.
 
-Ltac notVar X :=
-  match X with
-    | _ _ => idtac
-    | _ _ _ => idtac
-    | _ _ _ _ => idtac
-    | _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ _ _ _ _ => idtac
-    | _ _ _ _ _ _ _ _ _ _ _ _ _ _ => idtac
-  end.
+Section from_rel_dec.
+  Variable T : Type.
+  Variable RD : RelDec (@eq T).
+  Variable RDC : RelDec_Correct RD.
 
-Ltac uip_all :=
-  repeat match goal with
-           | [ H : _ = _ |- _ ] => rewrite H
-           | [ |- context [ match ?X in _ = t return _ with 
-                              | refl_equal => _ 
-                            end ] ] => notVar X; generalize X
-           | [ |- context [ eq_rect_r _ _ ?X ] ] => notVar X; generalize X
-         end;
-  intros;
-    repeat match goal with
-             | [ H : ?X = ?X |- _ ] => rewrite (UIP_refl H) in *
-           end.
+  Global Instance EqDec_RelDec : EqDec T (@eq T).
+  Proof.
+    red; intros.
+    consider (x ?[ eq ] y); intros; subst; auto.
+    left. reflexivity.
+  Qed.
+End from_rel_dec.

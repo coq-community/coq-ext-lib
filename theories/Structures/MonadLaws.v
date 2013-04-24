@@ -3,7 +3,6 @@ Require Import Coq.Classes.Morphisms.
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Data.Unit.
@@ -23,6 +22,7 @@ Section MonadLaws.
    ** This generalization is done to support the fixpoint law.
    **)
   Variable meq : forall {T}, type T -> type (m T).
+  Variable meqOk : forall {T} (tT : type T), typeOk tT -> typeOk (meq tT).
 
 (*
   (** This states when an element is a proper element under an equivalence
@@ -60,9 +60,17 @@ Section MonadLaws.
   }.
 
   Add Parametric Morphism T U (tT : type T) (tU : type U) (tokT : typeOk tT) (tokU : typeOk tU) (ML : MonadLaws) : (@bind _ _ T U)
-    with signature (equal ==> equal ==> equal)
+    with signature (equal ==> (equal ==> equal) ==> equal)
       as bind_morph.
   Proof. eapply bind_proper; auto. Qed.
+
+  Add Parametric Morphism T U (tT : type T) (tU : type U) (tokT : typeOk tT) (tokU : typeOk tU) (ML : MonadLaws) (c : m T) (Pc : proper c) : (@bind _ _ T U c)
+    with signature ((equal ==> equal) ==> equal)
+      as bind_1_morph.
+  Proof.
+    eapply bind_proper; auto. eapply preflexive; [ | eapply Pc ].
+    eapply equiv_prefl; auto.
+  Qed.
 
   Add Parametric Morphism T (tT : type T) (tokT : typeOk tT) (ML : MonadLaws) : (@ret _ _ T)
     with signature (equal ==> equal)
@@ -89,13 +97,17 @@ Section MonadLaws.
 
     Class MonadStateLaws  (MS : MonadState S m) : Type :=
     { get_put : equal (bind get put) (ret tt)
-    ; put_get : forall x, equal (bind (put x) (fun _ => get)) (ret x)
+    ; put_get : forall x, proper x ->
+      equal (bind (put x) (fun _ => get)) (bind (put x) (fun _ => ret x))
     ; put_put : forall A (tA : type A), typeOk tA ->
       forall (x y : S) (f : unit -> m A), proper x -> proper y -> proper f ->
       equal (bind (put x) (fun _ => bind (put y) f)) (bind (put y) f)
     ; get_get : forall A (tA : type A), typeOk tA ->
       forall (f : S -> S -> m A), proper f ->
       equal (bind get (fun s => bind get (f s))) (bind get (fun s => f s s))
+    ; get_ignore : forall A (tA : type A), typeOk tA ->
+      forall (aM : m A), proper aM ->
+      equal (bind get (fun _ => aM)) aM
     ; get_proper :> proper get
     ; put_proper :> proper put
     }.
@@ -146,20 +158,3 @@ Section MonadLaws.
   }.
 
 End MonadLaws.
-
-
-(*
-Hint Rewrite bind_of_return bind_associativity using (eauto with typeclass_instances) : monad_rw.
-(* Hint Rewrite lift_ret lift_bind get_put ask_local local_local bind_zero : monad_rw. *)
-
-Ltac monad_norm :=
-  let tc := solve [ eauto with typeclass_instances ] in
-  let tac :=
-    repeat (eapply bind_respectful_hd; [ tc | tc | ]);
-    repeat (eapply bind_respectful_tl; [ tc | tc | intros ]);
-    repeat (rewrite return_of_bind; [ tc | tc | intros ]);
-    try (autorewrite with monad_rw; intros)
-  in
-  try ( unfold liftM, liftM2 in * ) ;
-  repeat progress tac.
-*)

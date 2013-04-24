@@ -4,7 +4,6 @@ Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.
-Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Monads.ReaderMonad.
 Require Import ExtLib.Tactics.TypeTac.
@@ -27,16 +26,15 @@ Section Laws.
     equal (runReaderT a) (runReaderT b).
 
   Global Instance type_readerT (T : Type) (tT : type T) : type (readerT S m T) :=
-  { equal := readerT_eq tT }.
+    type_from_equal (readerT_eq tT).
 
   Global Instance typeOk_readerT (T : Type) (tT : type T) (tOkT : typeOk tT) 
     : typeOk  (type_readerT tT).
   Proof.
-    constructor.
+    eapply typeOk_from_equal.
     { simpl. unfold readerT_eq. intros.
       generalize (only_proper _ _ _ H); intros.
       split; do 4 red; intuition. }
-    { red. intuition. }
     { red. unfold equal; simpl. unfold readerT_eq; simpl.
       unfold Morphisms.respectful; simpl. firstorder. }
     { red. unfold equal; simpl. unfold readerT_eq; simpl.
@@ -81,7 +79,8 @@ Section Laws.
       rewrite bind_associativity; eauto with typeclass_instances; type_tac. }
     { unfold_readerT. red; intros.
       type_tac. }
-    { intros. unfold bind; simpl. solve_proper. }
+    { intros. unfold bind; simpl. red; intros. red; intros. 
+      red; simpl. red; simpl; intros. solve_equal. }
   Qed.
 
 (*

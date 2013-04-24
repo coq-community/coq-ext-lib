@@ -67,7 +67,7 @@ Section hlist.
       | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
     end.
 
-  Fixpoint hlist_nth {ls} (hs : hlist ls) (n : nat) 
+  Fixpoint hlist_nth_error {ls} (hs : hlist ls) (n : nat) 
     : option (match nth_error ls n with
                 | None => unit
                 | Some x => F x
@@ -85,9 +85,79 @@ Section hlist.
                                     end)
           with
           | 0 => Some h
-          | S n => hlist_nth hs n
+          | S n => hlist_nth_error hs n
         end
     end.
+
+  Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+    match nth_error ls n with
+      | None => unit
+      | Some t => F t
+    end :=
+    match h in hlist ls , n as n 
+      return match nth_error ls n with
+               | None => unit
+               | Some t => F t
+             end
+      with
+      | Hnil , 0 => tt
+      | Hnil , S _ => tt
+      | Hcons _ _ x _ , 0 => x
+      | Hcons _ _ _ h , S n => hlist_nth h n
+    end.
+  
+  Require Import ExtLib.Data.ListNth.
+  Definition cast1 T (l l' : list T) n v := 
+    (fun pf : nth_error l n = Some v => eq_sym (nth_error_weaken l' l n pf)).
+  Definition cast2 T (l l' : list T) n :=
+    (fun pf : nth_error l n = None => eq_sym (@nth_error_app_R _ l l' _ (nth_error_length_ge _ _ pf))).
+
+  Require Import ExtLib.Tactics.EqDep.
+  
+
+  Theorem hlist_nth_hlist_app (e : EqDec iT (@eq iT)) : forall l l' (h : hlist l) (h' : hlist l') n,
+    hlist_nth (hlist_app h h') n = 
+    match nth_error l n as k
+      return nth_error l n = k ->
+      match nth_error (l ++ l') n with
+        | None => unit
+        | Some t => F t
+      end
+      with
+      | Some _ => fun pf => 
+        match cast1 _ _ _ pf in _ = z ,
+          eq_sym pf in _ = w 
+          return match w with
+                   | None => unit
+                   | Some t => F t
+                 end ->
+          match z with
+            | None => unit
+            | Some t => F t
+          end
+          with
+          | eq_refl , eq_refl => fun x => x
+        end (hlist_nth h n)
+      | None => fun pf => 
+        match cast2 _ _ _ pf in _ = z 
+          return match z with
+                   | Some t => F t
+                   | None => unit
+                 end
+          with 
+          | eq_refl => hlist_nth h' (n - length l)
+        end
+    end eq_refl.
+  Proof.
+    induction h; simpl; intros.
+    { destruct n; simpl. simpl in *. uip_all.
+      simpl in *. generalize (list_eq_dec e); intros.
+      uip_all. admit. 
+      admit. }
+    { destruct n; simpl.
+      admit.
+      rewrite IHh. simpl. admit. } 
+  Qed.
 
 End hlist.
 

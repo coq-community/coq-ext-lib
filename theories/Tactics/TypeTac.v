@@ -23,10 +23,10 @@ Ltac solve_proper :=
 with solve_equal :=
   repeat match goal with
            | |- _ => solve [ eauto ]
+           | |- equal ?X ?X => 
+             solve [ eapply preflexive with (wf := proper); eauto 100 with typeclass_instances ]
            | |- equal (fun x => _) _ => eapply equal_fun; intros
            | |- equal _ (fun x => _) => eapply equal_fun; intros
-           | |- equal ?X ?X => 
-             solve [ eapply preflexive; eauto 100 with typeclass_instances ]
            | |- _ => eapply equal_app
          end; eauto with typeclass_instances.
 

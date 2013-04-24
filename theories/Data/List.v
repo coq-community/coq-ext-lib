@@ -1,8 +1,22 @@
+Require EquivDec.
 Require Import Coq.Lists.List.
 Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+
+Section EqDec.
+  Variable T : Type.
+  Variable EqDec_T : EquivDec.EqDec _ (@eq T).
+
+  Global Instance EqDec_list : EquivDec.EqDec _ (@eq (list T)).
+  Proof.
+    red. unfold Equivalence.equiv, RelationClasses.complement.
+    intros.
+    change (x = y -> False) with (x <> y).
+    decide equality. eapply EqDec_T.
+  Qed.
+End EqDec.
 
 Section AllB.
   Variable T : Type.
@@ -24,7 +38,7 @@ Section AllB.
 End AllB.
 
 Global Instance Foldable_list {T} : Foldable (list T) T :=
-  fun _ f x ls => fold_left (fun x y => f y x) ls x.
+  fun _ f x ls => fold_right f x ls.
 
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Functor.
@@ -41,3 +55,5 @@ Global Instance Monad_list : Monad list :=
 ; bind := fun _ _ x f =>
   List.fold_right (fun x acc => f x ++ acc) nil x
 }.
+
+Export Lists.List.

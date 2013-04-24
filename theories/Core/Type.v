@@ -8,18 +8,32 @@ Require Import ExtLib.Structures.Proper.
  ** relation is reflexive.
  **)
 Class type (T : Type) : Type :=
-{ equal : relation T }.
+{ equal : relation T
+; proper : T -> Prop
+}.
+
+Definition type_from_equal {T} (r : relation T) : type T :=
+{| equal := r 
+ ; proper := fun x => r x x
+ |}.
+
+Definition type_libniz T : type T :=
+{| equal := @eq T
+ ; proper := fun _ => True
+ |}.
+
+Existing Class proper.
 
 Section type.
   Context {T : Type}.
   Variable tT : type T.
-  
+(*  
   Global Instance Proper_type : Proper T :=
   { proper := fun x => equal x x }.
-
+*)
   Class typeOk :=
   { only_proper : forall x y, equal x y -> proper x /\ proper y
-  ; equiv_prefl :> PReflexive equal
+  ; equiv_prefl :> PReflexive proper equal
   ; equiv_sym :> Symmetric equal
   ; equiv_trans :> Transitive equal
   }.
@@ -38,6 +52,25 @@ Section type.
   Qed.
 
 End type.
+
+Section typeOk_from_equal.
+  Context {T} (r : relation T).
+  Hypothesis p : forall x y, r x y -> r x x /\ r y y.
+  Hypothesis sym : Symmetric r.
+  Hypothesis trans : Transitive r.
+
+  Theorem typeOk_from_equal  : typeOk (type_from_equal r).
+  Proof.
+    constructor; auto.
+    { simpl. red. auto. }
+  Qed.
+End typeOk_from_equal.
+
+Theorem typeOk_libniz T : typeOk (type_libniz T).
+Proof.
+  constructor; unfold equal, type_libniz; auto with typeclass_instances.
+  { split; exact I. }
+Qed.
 
 Add Parametric Relation (T : Type) (tT : type T) (tokT : typeOk tT) : T (@equal _ tT) 
   symmetry proved by (@equiv_sym _ _ _)

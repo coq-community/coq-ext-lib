@@ -4,17 +4,17 @@ Require Import ExtLib.Core.Type.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Structures.FunctorRelations.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Monads.FuelMonad.
-Require Import BinPos.
+Require Import ExtLib.Data.N.
+Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 
 Section Laws.
-  Section with_T.
+  Section fixResult_T.
     Context {T : Type} (e : type T).
 
     Definition FixResult_eq (a b : FixResult T) : Prop :=
@@ -25,44 +25,51 @@ Section Laws.
       end.
 
     Global Instance type_FixResult : type (FixResult T) :=
-    { equal := FixResult_eq }.
+      type_from_equal FixResult_eq.
 
     Variable tokE : typeOk e.
 
     Global Instance typeOk_FixResult : typeOk type_FixResult.
     Proof.
-      constructor.
+      eapply typeOk_from_equal.
       { unfold proper; simpl.
         destruct x; destruct y; simpl; intros; auto; try contradiction.
-        apply only_proper; auto. }
-      { red; destruct x; compute; auto. }
+        apply only_proper in H; auto. intuition. }
       { red. destruct x; destruct y; simpl; auto; simpl. symmetry; auto. }
       { red. destruct x; destruct y; destruct z; simpl; intros; auto; try contradiction.
         etransitivity; eauto. }
     Qed.
+  End fixResult_T.
+  
+  Section with_T.
+    Context {T : Type} (e : type T).
+    Variable tokE : typeOk e.
 
-    Require Import ExtLib.Data.N.
-    
     Definition fix_meq (l r : GFix T) : Prop :=
       equal (runGFix l) (runGFix r).
 
     Global Instance type_GFix : type (GFix T) :=
-    { equal := fix_meq }.
+      type_from_equal fix_meq.
     
     Global Instance typeOk_GFix : typeOk type_GFix.
     Proof.
-      constructor.
+      eapply typeOk_from_equal.
       { destruct x; destruct y; simpl. 
         intros; split; intros. 
         { red; simpl.
           red in H; red. simpl FuelMonad.runGFix in *.
           eapply only_proper in H; eauto with typeclass_instances.
-          eapply preflexive; eauto with typeclass_instances; intuition. }
+          intros; subst. 
+          eapply preflexive with (wf := proper); eauto with typeclass_instances. 
+          eapply equiv_prefl; eauto with typeclass_instances. 
+          solve_proper; intuition. }
         { red; simpl.
           red in H; red; simpl FuelMonad.runGFix in *.
           eapply only_proper in H; eauto with typeclass_instances.
-          eapply preflexive; eauto with typeclass_instances; intuition. } }
-      { red. eauto. }
+          intros; subst.
+          eapply preflexive with (wf := proper); eauto with typeclass_instances. 
+          eapply equiv_prefl; eauto with typeclass_instances.
+          solve_proper. intuition. } }
       { red. destruct x; destruct y; simpl; unfold fix_meq.
         simpl FuelMonad.runGFix in *. intros.
         symmetry; auto. }
@@ -102,10 +109,15 @@ Section Laws.
       destruct (runGFix aM x); destruct (runGFix aM y); simpl in H6; try contradiction; auto.
       assert (equal (runGFix (f a) x) (runGFix (f a0) y)) by type_tac.
       destruct (runGFix (f a) x); destruct (runGFix (f a0) y); simpl in H7; try contradiction; type_tac. }
-    { unfold ret; simpl. intros; type_tac. }
-    { unfold bind; simpl; intros; type_tac.
-      assert (equal (runGFix x x1) (runGFix y y1)) by type_tac.
-      destruct (runGFix x x1); destruct (runGFix y y1); simpl in H4; try contradiction; type_tac. }
+    { unfold ret; simpl. red. red. Opaque equal. simpl. intros; type_tac. Transparent equal. }
+    { unfold bind; simpl; intros. red; intros. 
+      red; intros. red; simpl. red; intros; subst.
+      assert (equal (runGFix x y1) (runGFix y y1)) by type_tac. red in H2. 
+      destruct (runGFix x y1); destruct (runGFix y y1); simpl in H3; try contradiction.
+      2: red; auto.
+      match goal with
+        | |- FixResult_eq _ ?X ?Y => change (equal X Y)
+      end. type_tac. }
   Qed.
 
 (*

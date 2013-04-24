@@ -13,7 +13,9 @@ Section type.
   Variables (T U : Type) (tT : type T) (tU : type U).
 
   Global Instance type_Fun  : type (T -> U) :=
-  { equal := fun f g => respectful equal equal f g }.
+  { equal := fun f g => respectful equal equal f g
+  ; proper := fun x => respectful equal equal x x
+  }.
 
   Variables (tOk : typeOk tT) (uOk : typeOk tU).
 
@@ -22,7 +24,7 @@ Section type.
     constructor.
     { unfold equiv. simpl. unfold respectful.
       destruct tOk. destruct uOk; intros.
-      split; red; simpl; red; intros.
+      split; intros.
       { destruct (only_proper _ _ H0).
         etransitivity. eapply H. eassumption.
         symmetry. eapply H. symmetry. auto. }
@@ -31,23 +33,27 @@ Section type.
         symmetry. eapply H. eassumption. symmetry. eauto. } }
     { red. intros. apply H. }
     { compute. intuition. symmetry. eapply H. symmetry. auto. }
-    { compute. intuition. 
+    { simpl; intro; intros. intuition. red in H; red in H0; simpl in *. 
+      red; intros.
       etransitivity. eapply H. eassumption.
-      eapply H0. eapply preflexive; auto.
+      eapply H0. eapply preflexive with (wf := proper); auto.
       eapply only_proper in H1; intuition. }
   Qed.
 
-  Global Instance  proper_app : forall (f : T -> U) (a : T),
+  Global Instance proper_app : forall (f : T -> U) (a : T),
     proper f -> proper a -> proper (f a).
   Proof.
-    compute; intuition. 
-    eapply H. eauto.
+    simpl; intros. red in H.
+    eapply proper_left; eauto.
+    eapply H. eapply preflexive. eapply equiv_prefl; auto. auto.
   Qed.
 
   Theorem proper_fun : forall (f : T -> U),
     (forall x y, equal x y -> equal (f x) (f y)) ->
     proper f.
-  Proof. intros. do 5 red. apply H. Qed.
+  Proof. 
+    intros. do 3 red. eauto.
+  Qed.
 
   Theorem equal_fun : forall (f g : T -> U),
     (forall x y, equal x y -> equal (f x) (g y)) ->

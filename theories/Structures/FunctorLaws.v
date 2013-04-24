@@ -1,5 +1,6 @@
 Require Import Morphisms.
 Require Import Coq.Relations.Relations.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.Functor.
@@ -11,18 +12,20 @@ Section laws.
   Variable F : Type -> Type.
   Variable Functor_F : Functor F.
 
-  Variable Feq : forall T, relation T -> relation (F T).
-  Variable Proper_F : forall T, Proper T -> Proper (F T).
+  Variable Feq : forall T, type T -> type (F T).
 
   Class FunctorLaws : Type :=
-  { fmap_id : forall T (Pt : Proper T) (Teq : relation T) (f : T -> T),
-    (forall x, Teq (f x) x) ->
-    respectful (Feq Teq) (Feq Teq) (fmap f) (@id (F T))
-  ; fmap_compose : forall T (Teq : relation T) (Pt : Proper T) 
-                          U (Ueq : relation U) (Pu : Proper U)
-                          V (Veq : relation V) (Pv : Proper V)
-                          (f : T -> U) (g : U -> V),
-    respectful Teq Ueq f f -> respectful Ueq Veq g g ->
-    respectful (Feq Teq) (Feq Veq) (fmap (compose f g)) (compose (fmap f) (fmap g))
+  { fmap_id : forall T (tT : type T), 
+    typeOk tT -> forall (f : T -> T),
+    (forall x, equal (f x) x) ->
+    equal (fmap f) (@id (F T))
+  ; fmap_compose : forall T U V (tT : type T) (tU : type U) (tV : type V),
+    typeOk tT -> typeOk tU -> typeOk tV ->
+    forall (f : T -> U) (g : U -> V),
+    proper f -> proper g ->
+    equal (fmap (compose f g)) (compose (fmap f) (fmap g))
+  ; fmap_proper :> forall T U (tT : type T) (tU : type U),
+    typeOk tT -> typeOk tU ->
+    proper (@fmap _ _ T U)    
   }.
 End laws.

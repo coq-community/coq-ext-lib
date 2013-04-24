@@ -37,7 +37,11 @@ Section type.
     end.
 
   Global Instance type_option : type (option T) :=
-  { equal := eqv_option equal }.
+  { equal := eqv_option equal 
+  ; proper := fun x => match x with
+                     | None => True
+                     | Some y => proper y
+                   end }.
 
   Variable tTOk : typeOk tT.
 
@@ -48,7 +52,7 @@ Section type.
       unfold proper in *. simpl in *.
       destruct tTOk.
       eapply only_proper in H. intuition. }
-    { red. destruct x; simpl; auto. }
+    { red. destruct x; simpl; auto. intro. eapply preflexive; [ | eapply H ]. eapply equiv_prefl; auto. }
     { red. destruct x; destruct y; simpl; auto. intros.
       destruct tTOk. apply equiv_sym. auto. }
     { red. destruct x; destruct y; destruct z; intros; try contradiction; auto.

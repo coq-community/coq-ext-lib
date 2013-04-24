@@ -11,7 +11,7 @@ Section ClassReify.
   }.
 End ClassReify.
 
-Require Import List.
+Require Import Lists.List.
 
 Section ListReify.
   Variables (T U : Type) (f : T -> U).

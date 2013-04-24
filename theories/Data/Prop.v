@@ -2,7 +2,9 @@ Require Import ExtLib.Structures.Logic.
 Require Import ExtLib.Core.Type.
 
 Global Instance type_Prop : type Prop :=
-{ equal := iff }.
+{ equal := iff
+; proper := fun _ => True
+}.
 
 Global Instance typeOk_Prop : typeOk type_Prop.
 Proof.

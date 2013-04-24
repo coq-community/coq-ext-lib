@@ -3,7 +3,9 @@ Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Proper.
 
 Global Instance type_N : type N :=
-{ equal := @eq N }.
+{ equal := @eq N 
+; proper := fun _ => True
+}.
 
 Global Instance typeOk_N : typeOk type_N.
 Proof.
@@ -15,5 +17,4 @@ Proof.
 Qed.
 
 Global Instance N_proper (n : N) : proper n.
-compute. apply refl_equal.
-Qed.
+Proof. exact I. Qed.
