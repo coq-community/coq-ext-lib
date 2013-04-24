@@ -113,7 +113,7 @@ Section hlist.
     (fun pf : nth_error l n = None => eq_sym (@nth_error_app_R _ l l' _ (nth_error_length_ge _ _ pf))).
 
   Require Import ExtLib.Tactics.EqDep.
-  
+  Require Import ExtLib.Data.Option.  
 
   Theorem hlist_nth_hlist_app (e : EqDec iT (@eq iT)) : forall l l' (h : hlist l) (h' : hlist l') n,
     hlist_nth (hlist_app h h') n = 
@@ -150,13 +150,26 @@ Section hlist.
     end eq_refl.
   Proof.
     induction h; simpl; intros.
-    { destruct n; simpl. simpl in *. uip_all.
-      simpl in *. generalize (list_eq_dec e); intros.
-      uip_all. admit. 
-      admit. }
+    { destruct n; simpl in *; uip_all; simpl in *; uip_all; reflexivity. }
     { destruct n; simpl.
-      admit.
-      rewrite IHh. simpl. admit. } 
+      { uip_all. simpl in e0. unfold value in *. uip_all; reflexivity. }
+      { rewrite IHh. clear - e.
+        repeat match goal with
+                 | [ |- context [ @eq_refl _ ?X ] ] =>
+                   generalize (@eq_refl _ X)
+               end.
+        generalize (cast1 ls l' n).
+        generalize (cast1 (l :: ls) l' (S n)).
+        generalize (cast2 ls l' n).
+        generalize (cast2 (l :: ls) l' (S n)).
+        generalize (hlist_nth h n).
+        simpl in *.
+        pattern (nth_error ls n). 
+        destruct (nth_error ls n); simpl; intros.
+        { clear - e. uip_all. clear - e. 
+          rewrite (UIP_equal e0 e5). reflexivity. }
+        { uip_all. clear - e.
+          rewrite (UIP_equal e5 e6). reflexivity. } } }
   Qed.
 
 End hlist.

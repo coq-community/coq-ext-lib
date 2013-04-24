@@ -39,9 +39,9 @@ Section type.
   Global Instance type_option : type (option T) :=
   { equal := eqv_option equal 
   ; proper := fun x => match x with
-                     | None => True
-                     | Some y => proper y
-                   end }.
+                         | None => True
+                         | Some y => proper y
+                       end }.
 
   Variable tTOk : typeOk tT.
 
@@ -68,3 +68,11 @@ Section type.
 
 End type.
 
+Require EquivDec.
+
+Global Instance EqDec_option (T : Type) (EDT : EquivDec.EqDec T (@eq T)) : EquivDec.EqDec (option T) (@eq _).
+Proof.
+  red. unfold Equivalence.equiv, RelationClasses.complement. intros.
+  change (x = y -> False) with (x <> y).
+  decide equality. apply EDT.
+Qed.
