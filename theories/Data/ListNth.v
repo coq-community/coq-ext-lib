@@ -59,4 +59,13 @@ Section parametric.
     inversion 1. intro. apply IHls in H. omega.
   Qed.
 
+  Theorem nth_error_map : forall U (f : T -> U) ls n,
+    nth_error (map f ls) n = match nth_error ls n with
+                               | None => None
+                               | Some x => Some (f x)
+                             end.
+  Proof.
+    induction ls; destruct n; simpl; auto.
+  Qed.
+
 End parametric.
