@@ -1,5 +1,6 @@
 Require Import List.
 Require Import Relations.
+Require Import Core.Type.
 Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.EqDep.
@@ -35,15 +36,6 @@ Section hlist.
       | Hcons _ _ _ x => x
     end.
 
-  Section equiv.
-    Variable eqv : forall x, relation (F x).
-
-    Inductive equiv_hlist : forall ls, hlist ls -> hlist ls -> Prop :=
-    | hlist_eqv_nil : equiv_hlist Hnil Hnil
-    | hlist_eqv_cons : forall l ls x y h1 h2, eqv x y -> equiv_hlist h1 h2 ->
-      @equiv_hlist (l :: ls) (Hcons x h1) (Hcons y h2).
-  End equiv.
-
   Lemma hlist_eta : forall ls (h : hlist ls),
     h = match ls as ls return hlist ls -> hlist ls with
           | nil => fun _ => Hnil
@@ -52,62 +44,44 @@ Section hlist.
   Proof.
     intros. destruct h; auto.
   Qed.
-  
-  Require Import Core.Type.
-  Section type.
-    Variable eqv : forall x, type (F x).
 
-    Global Instance type_hlist (ls : list iT): type (hlist ls) :=
-    { equal := @equiv_hlist (fun x => @equal _ (eqv x)) ls 
-    ; proper := 
-      (fix recur ls (h : hlist ls) : Prop :=
-        match h with
-          | Hnil => True
-          | Hcons _ _ x y => proper x /\ recur _ y
-        end) ls
-    }.
+  Section equiv.
+    Variable eqv : forall x, relation (F x).
 
-    Variable eqvOk : forall x, typeOk (eqv x).
-    Variable ED : EqDec _ (@eq iT).    
-
-    Global Instance typeOk_hlist (ls : list iT): typeOk (type_hlist ls).
+    Inductive equiv_hlist : forall ls, hlist ls -> hlist ls -> Prop :=
+    | hlist_eqv_nil : equiv_hlist Hnil Hnil
+    | hlist_eqv_cons : forall l ls x y h1 h2, eqv x y -> equiv_hlist h1 h2 ->
+      @equiv_hlist (l :: ls) (Hcons x h1) (Hcons y h2).
+    
+    Global Instance Reflexive_equiv_hlist (R : forall t, Reflexive (@eqv t)) ls : Reflexive (@equiv_hlist ls).
     Proof.
-      constructor.
-      { induction ls; intros.
-        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          clear. compute; auto. }
-        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          simpl in H. inversion H; clear H; subst.
-          inv_all; repeat match goal with
-                            | [ H : exists x, _ |- _ ] => destruct H
-                          end; subst. simpl.
-          eapply IHls in H7. eapply only_proper in H3; auto. intuition. } }
-      { intro. induction ls; simpl.
-        { rewrite (hlist_eta x); intros; constructor. }
-        { rewrite (hlist_eta x); intros; intuition; constructor.
-          eapply preflexive; eauto with typeclass_instances.
-          eapply IHls; eauto. } }
-      { red. induction ls; intros; 
-        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *; simpl in *; intros; auto.
-        inversion H. subst. inv_all; subst.
-        constructor; auto. symmetry. eauto. }
-      { red. induction ls; intros; 
-        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *; rewrite (hlist_eta z) in *; 
-          simpl in *; intros; auto. 
-        inversion H. inversion H0. subst; inv_all; subst.
-        constructor.
-        { etransitivity; eauto. }
-        { eapply IHls; eauto. } }
+      red. induction x; constructor; auto. reflexivity.
     Qed.
-  End type.
+
+    Variable ED : EqDec _ (@eq iT).    
+    
+    Global Instance Symmetric_equiv_hlist (R : forall t, Symmetric (@eqv t)) ls : Symmetric (@equiv_hlist ls).
+    Proof.
+      red. induction x; intros; rewrite (hlist_eta y) in *; constructor; auto.
+      inversion H; subst. inv_all. subst. symmetry; auto.
+      eapply IHx. inversion H; auto. inv_all. subst. auto.
+    Qed.
+
+    Global Instance Transitive_equiv_hlist (R : forall t, Transitive (@eqv t)) ls : Transitive (@equiv_hlist ls).
+    Proof.
+      red. induction x; intros; rewrite (hlist_eta y) in *; rewrite (hlist_eta z) in *; 
+      try solve [ constructor; auto ].
+      inversion H; clear H; subst. inversion H0; clear H0; subst.
+      inv_all; subst. constructor; try etransitivity; eauto.
+    Qed.
+
+  End equiv.
 
   Fixpoint hlist_app ll lr : hlist ll -> hlist lr -> hlist (ll ++ lr) :=
     match ll with
       | nil => fun _ x => x
       | _ :: _ => fun l r => Hcons (hlist_hd l) (hlist_app (hlist_tl l) r)
     end.
-
-
 
   Lemma hlist_nil_eta : forall (h : hlist nil), h = Hnil.
   Proof.
@@ -234,6 +208,64 @@ Section hlist.
         { uip_all. clear - e.
           rewrite (UIP_equal e5 e6). reflexivity. } } }
   Qed.
+
+  Section type.
+    Variable eqv : forall x, type (F x).
+
+    Global Instance type_hlist (ls : list iT): type (hlist ls) :=
+    { equal := @equiv_hlist (fun x => @equal _ (eqv x)) ls 
+    ; proper := 
+      (fix recur ls (h : hlist ls) : Prop :=
+        match h with
+          | Hnil => True
+          | Hcons _ _ x y => proper x /\ recur _ y
+        end) ls
+    }.
+
+    Variable eqvOk : forall x, typeOk (eqv x).
+    Variable ED : EqDec _ (@eq iT).    
+
+    Global Instance typeOk_hlist (ls : list iT): typeOk (type_hlist ls).
+    Proof.
+      constructor.
+      { induction ls; intros.
+        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
+          clear. compute; auto. }
+        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
+          simpl in H. inversion H; clear H; subst.
+          inv_all; repeat match goal with
+                            | [ H : exists x, _ |- _ ] => destruct H
+                          end; subst. simpl.
+          eapply IHls in H7. eapply only_proper in H3; auto. intuition. } }
+      { intro. induction ls; simpl.
+        { rewrite (hlist_eta x); intros; constructor. }
+        { rewrite (hlist_eta x); intros; intuition; constructor.
+          eapply preflexive; eauto with typeclass_instances.
+          eapply IHls; eauto. } }
+      { red. induction ls; intros; 
+        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *; simpl in *; intros; auto.
+        inversion H. subst. inv_all; subst.
+        constructor; auto. symmetry. eauto. }
+      { red. induction ls; intros; 
+        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *; rewrite (hlist_eta z) in *; 
+          simpl in *; intros; auto. 
+        inversion H. inversion H0. subst; inv_all; subst.
+        constructor.
+        { etransitivity; eauto. }
+        { eapply IHls; eauto. } }
+    Qed.
+    
+    Global Instance proper_hlist_app l l' : proper (@hlist_app l l').
+    Proof.
+      do 6 red. induction x; intros;
+      rewrite (hlist_eta y) in *; auto.
+      { simpl in *. inversion H; subst.
+        constructor; auto.
+        { inv_all; subst; auto. }
+        eapply IHx; auto. inv_all; subst. auto. }
+    Qed.
+
+  End type.
 
 End hlist.
 
