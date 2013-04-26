@@ -45,7 +45,6 @@ Section hlist.
     intros. destruct h; auto.
   Qed.
 
-
   Lemma hlist_nil_eta : forall (h : hlist nil), h = Hnil.
   Proof.
     intros; rewrite (hlist_eta h); reflexivity.

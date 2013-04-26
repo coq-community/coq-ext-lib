@@ -68,6 +68,13 @@ Section type.
 
 End type.
 
+Require Import ExtLib.Tactics.Injection.
+
+Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
+{ result := a = b }.
+abstract (inversion 1; auto).
+Defined.
+
 Require EquivDec.
 
 Global Instance EqDec_option (T : Type) (EDT : EquivDec.EqDec T (@eq T)) : EquivDec.EqDec (option T) (@eq _).
