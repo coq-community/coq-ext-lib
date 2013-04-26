@@ -8,8 +8,9 @@ Class Injective (P : Prop) : Type :=
 
 Ltac inv_all := 
   repeat match goal with
-           | [ H : _ = _ |- _ ] =>
-             eapply injection in H; do 2 red in H
+           | [ H : ?X |- _ ] =>
+             let z := constr:(_ : Injective X) in
+             eapply (@injection X z) in H; do 2 red in H
          end.
 
 (* Example
