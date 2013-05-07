@@ -4,6 +4,7 @@ Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Data.Char.
+Require Import ExtLib.Data.Nat.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -120,3 +121,28 @@ Global Instance Foldable_string : Foldable string ascii :=
       | String l ls =>
         go (f l acc) ls
     end.
+
+Section string.
+  Require Import String.
+  Inductive R_string_len : string -> string -> Prop :=
+  | R_s_len : forall n m, length n < length m -> R_string_len n m.
+
+  Theorem wf_R_string_len : well_founded R_string_len.
+  Proof.
+    constructor. intros.
+    refine (@Fix _ _ wf_R_lt (fun n : nat => forall ls : string, n = length ls -> Acc R_string_len ls)
+      (fun x rec ls pfls => Acc_intro _ _)
+      _ _ refl_equal).
+    refine (
+      match ls as ls return x = length ls -> forall z : string, R_string_len z ls -> Acc R_string_len z with
+        | EmptyString => fun (pfls : x = 0) z pf => _
+        | String l ls => fun pfls z pf =>
+          rec _ (match pf in R_string_len xs ys return x = length ys -> R_nat_lt (length xs) x with
+                   | R_s_len n m pf' => fun pf_eq => match eq_sym pf_eq in _ = x return R_nat_lt (length n) x with
+                                                     | refl_equal => R_lt pf'
+                                                   end
+                 end pfls) _ eq_refl
+      end pfls).
+    clear - pf; abstract (inversion pf; subst; simpl in *; inversion H).
+  Defined.
+End string.
