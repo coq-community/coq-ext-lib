@@ -1,5 +1,5 @@
-Require Import List.
-Require Import Relations.
+Require Import Coq.Lists.List.
+Require Import Relations RelationClasses.
 Require Import Core.Type.
 Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Structures.Proper.

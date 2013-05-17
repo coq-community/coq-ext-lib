@@ -1,11 +1,12 @@
+Require Import Coq.Lists.List.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Data.Graph.Graph.
 Require Import ExtLib.Data.Monads.FuelMonad.
 Require Import ExtLib.Data.Monads.IdentityMonad.
-Require Import ExtLib.Data.Lists.
+Require Import ExtLib.Data.List.
 Require Import ExtLib.Core.RelDec.
-Require Import List.
+
 
 Set Implicit Arguments.
 Set Strict Implicit.

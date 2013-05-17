@@ -40,3 +40,5 @@ Section from_rel_dec.
     left. reflexivity.
   Qed.
 End from_rel_dec.
+
+Export EquivDec.
