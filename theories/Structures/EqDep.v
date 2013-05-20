@@ -24,7 +24,13 @@ Section Classes.
       existT P p x = existT P p y -> x = y.
   Proof.
     intros. eapply Coq.Logic.Eqdep_dec.inj_pair2_eq_dec; auto.
-  Qed.    
+  Qed.
+
+  Theorem equiv_dec_refl_left : forall a, @EquivDec.equiv_dec _ _ _ dec a a = left eq_refl.
+  Proof.
+    intros. destruct (EquivDec.equiv_dec a a); try congruence.
+    f_equal. apply UIP_equal.
+  Qed.
 
 End Classes.
 
