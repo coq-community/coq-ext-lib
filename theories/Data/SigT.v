@@ -1,4 +1,4 @@
-Require Import EquivDec.
+Require EquivDec.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.EqDep.
 Require Import ExtLib.Tactics.Injection.
@@ -11,7 +11,7 @@ Set Strict Implicit.
 Section type.
   Variable T : Type.
   Variable F : T -> Type.
-  Variable ED : EqDec _ (@eq T).
+  Variable ED : EquivDec.EqDec _ (@eq T).
   Variable tT : type T.
   Variable typF : forall x, type (F x).
 
@@ -64,7 +64,7 @@ End type.
 Section injective.
   Variable T : Type.
   Variable F : T -> Type.
-  Variable ED : EqDec _ (@eq T).
+  Variable ED : EquivDec.EqDec _ (@eq T).
 
   Global Instance Injective_existT a b d 
     : Injective (existT F a b = existT F a d) | 1 :=

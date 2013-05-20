@@ -7,6 +7,8 @@ Require Import ExtLib.Structures.EqDep.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 
+
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -58,7 +60,7 @@ Section hlist.
       red. induction x; constructor; auto. reflexivity.
     Qed.
 
-    Variable ED : EqDec _ (@eq iT).    
+    Variable ED : EquivDec.EqDec _ (@eq iT).    
     
     Global Instance Symmetric_equiv_hlist (R : forall t, Symmetric (@eqv t)) ls : Symmetric (@equiv_hlist ls).
     Proof.
@@ -152,7 +154,7 @@ Section hlist.
   Require Import ExtLib.Tactics.EqDep.
   Require Import ExtLib.Data.Option.  
 
-  Theorem hlist_nth_hlist_app (e : EqDec iT (@eq iT)) : forall l l' (h : hlist l) (h' : hlist l') n,
+  Theorem hlist_nth_hlist_app (e : EquivDec.EqDec iT (@eq iT)) : forall l l' (h : hlist l) (h' : hlist l') n,
     hlist_nth (hlist_app h h') n = 
     match nth_error l n as k
       return nth_error l n = k ->
@@ -223,7 +225,7 @@ Section hlist.
     }.
 
     Variable eqvOk : forall x, typeOk (eqv x).
-    Variable ED : EqDec _ (@eq iT).    
+    Variable ED : EquivDec.EqDec _ (@eq iT).    
 
     Global Instance typeOk_hlist (ls : list iT): typeOk (type_hlist ls).
     Proof.
