@@ -1,3 +1,3 @@
 ((coq-mode . ((coq-load-path . (
- (rec "PWD/theories" "ExtLib")
+ (nonrec "PWD/theories" "ExtLib")
 )))))
