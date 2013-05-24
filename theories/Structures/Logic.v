@@ -1,5 +1,5 @@
-Require Import List.
-Require Import Bool.
+Require Import Coq.Lists.List.
+Require Import Coq.Bool.Bool.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 

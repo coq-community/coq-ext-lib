@@ -4,11 +4,20 @@ Require Import ExtLib.Tactics.Consider.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+Global Instance RelDec_eq : RelDec (@eq nat) :=
+{ rel_dec := EqNat.beq_nat }.
+
 Global Instance RelDec_lt : RelDec lt :=
 { rel_dec := NPeano.ltb }.
 
 Global Instance RelDec_le : RelDec le :=
 { rel_dec := NPeano.leb }.
+
+Global Instance RelDecCorrect_eq : RelDec_Correct RelDec_eq.
+Proof.
+  constructor; simpl. intros. consider (EqNat.beq_nat x y); intros; intuition.
+  congruence.
+Qed.
 
 Global Instance RelDecCorrect_lt : RelDec_Correct RelDec_lt.
 Proof.
