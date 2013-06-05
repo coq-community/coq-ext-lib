@@ -3,22 +3,38 @@ Require Import ExtLib.Data.Fin.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Fixpoint vector (T : Type) (n : nat) : Type :=
-  match n with
-    | 0 => unit
-    | S n => prod T (vector T n)
+Inductive vector (T : Type) : nat -> Type :=
+| Vnil : vector T 0
+| Vcons : forall n, T -> vector T n -> vector T (S n).
+
+Definition vector_tl {T : Type} {n : nat} (v : vector T (S n)) : vector T n :=
+  match v in vector _ n' return match n' with
+                                  | 0 => unit
+                                  | S n => vector T n
+                                end with
+    | Vnil => tt
+    | Vcons _ _ v => v
+  end.
+
+Definition vector_hd {T : Type} {n : nat} (v : vector T (S n)) : T :=
+  match v in vector _ n' return match n' with
+                                  | 0 => unit
+                                  | S n => T 
+                                end with
+    | Vnil => tt
+    | Vcons _ x _ => x
   end.
 
 Fixpoint get {T} {n : nat} (f : fin n) : vector T n -> T :=
   match f in fin n return vector T n -> T with
-    | F0 n => fun v : T * vector T n => fst v
-    | FS n f => fun v : T * vector T n => get f (snd v)
+    | F0 n => vector_hd
+    | FS n f => fun v => get f (vector_tl v)
   end.
 
 Fixpoint put {T} {n : nat} (f : fin n) (t : T) : vector T n -> vector T n :=
   match f in fin n return vector T n -> vector T n with
-    | F0 _ => fun v => (t, snd v)
-    | FS _ f => fun v => (fst v, put f t (snd v))
+    | F0 _ => fun v => Vcons t (vector_tl v)
+    | FS _ f => fun v => Vcons (vector_hd v) (put f t (vector_tl v))
   end.
 
 Theorem get_put_eq : forall {T n} (v : vector T n) (f : fin n) val,
@@ -48,9 +64,4 @@ Proof.
       eapply IHn. congruence. } }
 Qed.
 
-Definition vector_tl {T : Type} {n : nat} (v : vector T (S n)) : vector T n :=
-  snd v.
-
-Definition vector_hd {T : Type} {n : nat} (v : vector T (S n)) : T :=
-  fst v.
   
