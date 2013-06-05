@@ -1,7 +1,7 @@
+Require Import Bool.
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.
-Require Import Bool.
 
 Set Implicit Arguments.
 Set Strict Implicit.
