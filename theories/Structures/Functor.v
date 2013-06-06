@@ -7,14 +7,10 @@ Section functor.
   Variable F : Type -> Type.
 
   Class Functor : Type :=
-  { fmap : forall A B, (A -> B) -> F A -> F B
-  }.
+  { fmap : forall A B, (A -> B) -> F A -> F B }.
 
   Definition ID {T : Type} (f : T -> T) : Prop :=
     forall x, f x = x.
-
-  Class FunctorOk (ff : Functor) : Type :=
-  { fmap_id : forall T (f : T -> T) (g : F T -> F T), ID f -> ID (fmap f) }.
 
   Class PFunctor : Type :=
   { FunP : Type -> Type
@@ -30,9 +26,6 @@ Section functor.
   }.
 End functor.
 
-Arguments FunctorOk {F} Fun : rename.
-
 Module FunctorNotation.
   Notation "f <$> x" := (@pfmap _ _ _ _ _ f x) (at level 51, right associativity).
 End FunctorNotation.
-
