@@ -16,4 +16,9 @@ Section functors.
 
 End functors.
 
+Global Instance proper_id (T : Type) {tT : type T} : proper (fun x => x).
+Proof.
+  repeat red; intros. apply H.
+Qed.
+
 Export PreFun.

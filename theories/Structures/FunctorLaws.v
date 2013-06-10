@@ -2,6 +2,7 @@ Require Import Morphisms.
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
+Require Import ExtLib.Structures.Identity.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.Functor.
 
@@ -12,12 +13,12 @@ Section laws.
   Variable F : Type -> Type.
   Variable Functor_F : Functor F.
 
-  Variable Feq : forall T, type T -> type (F T).
+  Variable Feq : type1 F.
 
   Class FunctorLaws : Type :=
   { fmap_id : forall T (tT : type T), 
     typeOk tT -> forall (f : T -> T),
-    (forall x, equal (f x) x) ->
+    IsIdent f ->
     equal (fmap f) (@id (F T))
   ; fmap_compose : forall T U V (tT : type T) (tU : type U) (tV : type V),
     typeOk tT -> typeOk tU -> typeOk tV ->
