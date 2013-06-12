@@ -159,7 +159,7 @@ Ltac consider f :=
 
 (**  Some tests *)
 Section test.
-  Require Import NPeano Bool.
+  Require Import NPeano Coq.Bool.Bool.
 
   Require Import Omega.
   Goal forall x y z,  (ltb x y && ltb y z) = true ->
