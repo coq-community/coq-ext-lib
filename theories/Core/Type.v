@@ -53,6 +53,49 @@ Section type.
 
 End type.
 
+Definition type1 (F : Type -> Type) : Type :=
+  forall {T}, type T -> type (F T).
+
+Definition type2 (F : Type -> Type -> Type) : Type :=
+  forall {T}, type T -> forall {U}, type U -> type (F T U).
+
+Definition type3 (F : Type -> Type -> Type -> Type) : Type :=
+  forall {T}, type T -> forall {U}, type U -> forall {V}, type V ->  type (F T U V).
+
+Definition typeOk1 F (tF : type1 F) : Type :=
+  forall {T} tT, @typeOk T tT -> typeOk (tF _ tT).
+
+Definition typeOk2 F (tF : type2 F) : Type :=
+  forall {T} tT, @typeOk T tT -> typeOk1 _ (tF _ tT).
+
+Definition typeOk3 F (tF : type3 F) : Type :=
+  forall {T} tT, @typeOk T tT -> typeOk2 _ (tF _ tT).
+
+Existing Class type1.
+Existing Class type2.
+Existing Class type3.
+
+Global Instance type_type1 F (tF : type1 F) T (tT : type T) : type (F T) :=
+  tF _ tT.
+
+Global Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
+  tF _ tT.
+
+Global Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
+  tF _ tT.
+
+(*
+Global Instance typeOk_typeOk1 F (tF : type1 F) T (tT : type T) : type (F T) :=
+  tF _ tT.
+
+Global Instance typeOk1_typeOk2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
+  tF _ tT.
+
+Global Instance typeOk2_typeOk3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
+  tF _ tT.
+*)
+
+
 Section typeOk_from_equal.
   Context {T} (r : relation T).
   Hypothesis p : forall x y, r x y -> r x x /\ r y y.
