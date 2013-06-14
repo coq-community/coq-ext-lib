@@ -19,7 +19,7 @@ Section gfix.
   Inductive GFix (T : Type) : Type := mkGFix
   { runGFix : N -> FixResult T }.
 
-  Global Instance MonadFix_GFixT : MonadFix GFix :=
+  Global Instance MonadFix_GFix : MonadFix GFix :=
   { mfix := fun T U f v => mkGFix (fun n : N => 
     match n with
       | N0 => Diverge
@@ -51,12 +51,12 @@ End gfix.
 
 (** Demo
 Require Import ExtLib.Data.Monads.IdentityMonad.
-Definition foo : nat -> GFixT ident nat :=
+Definition foo : nat -> GFix ident nat :=
   mfix (fun recur n => 
     match n with
       | 0 => ret 0
       | S n => recur n
     end).
 
-Eval compute in runGFixT (foo 10) 100000000000000000000000.
+Eval compute in runGFix (foo 10) 100000000000000000000000.
 **)

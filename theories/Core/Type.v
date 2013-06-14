@@ -84,6 +84,13 @@ Global Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
 Global Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
   tF _ tT.
 
+Class Oktype T : Type := 
+{ the_type :> type T
+; the_proof :> typeOk the_type
+}.
+
+Coercion the_type : Oktype >-> type.
+
 (*
 Global Instance typeOk_typeOk1 F (tF : type1 F) T (tT : type T) : type (F T) :=
   tF _ tT.
