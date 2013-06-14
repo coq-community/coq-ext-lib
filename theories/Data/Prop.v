@@ -11,12 +11,12 @@ Global Instance Logic_Prop : Logic Prop :=
 Definition LogicLaws_Prop : LogicLaws Logic_Prop.
 refine (
 {| Entails g p := List.fold_right Basics.impl p g
-|}); try solve [ unfold Basics.impl; simpl in *; firstorder; try (induction G; simpl in *; firstorder) ].
+|}); try abstract solve [ unfold Basics.impl; simpl in *; firstorder; try (induction G; simpl in *; firstorder) ].
 induction G; simpl in *; intros; auto. contradiction.
 destruct H. subst. red. clear. intros. induction G; simpl in *; auto.
 red. auto.
 red. eauto.
-Qed.
+Defined.
 
 Existing Instance LogicLaws_Prop.
 
@@ -38,7 +38,7 @@ Section MonadicLogic.
   refine (
     {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
      |}); simpl; intros; 
-  try solve [ apply Tr_True | apply Fa_False 
+  try (abstract solve [ apply Tr_True | apply Fa_False 
             | eapply ImplI; eauto
             | eapply ImplE; eauto 
             | eapply AndI; eauto 
@@ -47,10 +47,10 @@ Section MonadicLogic.
             | eapply OrIL; eauto
             | eapply OrIR; eauto 
             | eapply OrE; eauto 
-            ].
+            ]).
   eapply Assumption.
   eapply List.in_map_iff. eexists. intuition.
-  Qed.
+  Defined.
 End MonadicLogic.
 
 Section MonadicLogic_dep.
@@ -72,7 +72,7 @@ Section MonadicLogic_dep.
   refine (
     {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
      |}); simpl; intros; 
-  try solve [ apply Tr_True | apply Fa_False 
+  try abstract (solve [ apply Tr_True | apply Fa_False 
             | eapply ImplI; eauto
             | eapply ImplE; eauto 
             | eapply AndI; eauto 
@@ -81,8 +81,8 @@ Section MonadicLogic_dep.
             | eapply OrIL; eauto
             | eapply OrIR; eauto 
             | eapply OrE; eauto 
-            ].
+            ]).
   eapply Assumption.
   eapply List.in_map_iff. eexists. intuition.
-  Qed.
+  Defined.
 End MonadicLogic_dep.
