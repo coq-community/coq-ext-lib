@@ -7,7 +7,9 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Class Logic (P : Type) : Type :=
-{ Tr : P
+{ (** Entails P Q ==> P |- Q **)
+  Entails : list P -> P -> Prop
+; Tr : P
 ; Fa : P
 ; And : P -> P -> P
 ; Or : P -> P -> P
@@ -18,9 +20,7 @@ Class Logic (P : Type) : Type :=
  **       quantification over G in all the laws.
  **)
 Class LogicLaws (P : Type) (L : Logic P) : Type :=
-{ (** Entails P Q ==> P |- Q **)
-  Entails : list P -> P -> Prop
-; Assumption : forall G P, In P G -> Entails G P
+{ Assumption : forall G P, In P G -> Entails G P
 ; Tr_True : forall G, Entails G Tr
 ; Fa_False : forall G, Entails (Fa :: nil) G
 
@@ -46,9 +46,10 @@ Class Quant (P : Type) : Type :=
 Class QuantLaws P (Q: Quant P) (L : Logic P) (LL : LogicLaws L) : Type :=
 { AllI : forall T G (Pr : T -> P), Entails G (All Pr) -> forall x, Entails G (Pr x)
 ; AllE : forall T G (Pr : T -> P), (forall x, Entails G (Pr x)) -> Entails G (All Pr)
-
-; ExI : forall T G (Pr : T -> P), Entails G (All Pr) -> exists x, Entails G (Pr x)
-; ExE : forall T G (Pr : T -> P), (exists x, Entails G (Pr x)) -> Entails G (All Pr)
+(*
+; ExI : forall T G (Pr : T -> P), Entails G (Ex Pr) -> exists x, Entails G (Pr x)
+; ExE : forall T G (Pr : T -> P), (exists x, Entails G (Pr x)) -> Entails G (Ex Pr)
+*)
 }.
 
 (** Automation **)
@@ -158,19 +159,19 @@ Section PropLogic.
 
   Require Import ExtLib.Tactics.Reify.
 
-  Global Instance  Reflect_Tr : ClassReify pdenote Tr := { reify := PTr ; reify_sound := refl_equal }.
-  Global Instance  Reflect_Fa : ClassReify pdenote Fa := { reify := PFa ; reify_sound := refl_equal }.
-  Global Instance  Reflect_And p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (And p q) := 
+  Instance  Reflect_Tr : ClassReify pdenote Tr := { reify := PTr ; reify_sound := refl_equal }.
+  Instance  Reflect_Fa : ClassReify pdenote Fa := { reify := PFa ; reify_sound := refl_equal }.
+  Instance  Reflect_And p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (And p q) := 
   { reify := PAnd (@reify _ _ _ _ Rp) (@reify _ _ _ _ Rq)
   ; reify_sound := _ }.
   simpl. f_equal; eapply reify_sound.
   Defined.
-  Global Instance  Reflect_Or p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (Or p q) := 
+  Instance  Reflect_Or p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (Or p q) := 
   { reify := POr (@reify _ _ _ _ Rp) (@reify _ _ _ _ Rq)
   ; reify_sound := _ }.
   simpl. f_equal; eapply reify_sound.
   Defined.
-  Global Instance  Reflect_Impl p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (Impl p q) := 
+  Instance  Reflect_Impl p q (Rp : ClassReify pdenote p) (Rq : ClassReify pdenote q) : ClassReify pdenote (Impl p q) := 
   { reify := PImpl (@reify _ _ _ _ Rp) (@reify _ _ _ _ Rq)
   ; reify_sound := _ }.
   simpl. f_equal; eapply reify_sound.

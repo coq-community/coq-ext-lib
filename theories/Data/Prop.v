@@ -1,88 +1,38 @@
 Require Import ExtLib.Structures.Logic.
 
+Set Implicit Arguments.
+Set Strict Implicit.
+
 Global Instance Logic_Prop : Logic Prop :=
-{ Tr       := True
+{ Entails g p := List.fold_right Basics.impl p g
+; Tr       := True
 ; Fa       := False
 ; And  p q := p /\ q
 ; Or   p q := p \/ q
 ; Impl p q := p -> q
 }.
 
-Definition LogicLaws_Prop : LogicLaws Logic_Prop.
-refine (
-{| Entails g p := List.fold_right Basics.impl p g
-|}); try abstract solve [ unfold Basics.impl; simpl in *; firstorder; try (induction G; simpl in *; firstorder) ].
+Global Instance LogicLaws_Prop : LogicLaws Logic_Prop.
+constructor; try solve [ unfold Basics.impl; simpl in *; firstorder; try (induction G; simpl in *; firstorder) ].
 induction G; simpl in *; intros; auto. contradiction.
 destruct H. subst. red. clear. intros. induction G; simpl in *; auto.
 red. auto.
 red. eauto.
-Defined.
+Qed.
+
+Instance Quant_Prop : Quant Prop :=
+{ All := fun V (P : V -> Prop) => forall x : V, P x
+; Ex  := fun V (P : V -> Prop) => exists x : V, P x
+}.
+
+Instance QuantLaws_Prop : QuantLaws Quant_Prop _.
+Proof.
+  constructor.
+  { induction G; simpl; intros; auto.
+    intro. eapply IHG. eapply H. auto. }
+  { induction G; simpl; intros; auto.
+    intro. apply IHG. intro. eapply H. auto. }
+Qed.
 
 Existing Instance LogicLaws_Prop.
 
-Section MonadicLogic.
-  Variables (T P : Type).
-  Context {L : Logic P}.
-
-  Global Instance Logic_Over : Logic (T -> P) :=
-  { Tr       := fun _ => Tr
-  ; Fa       := fun _ => Fa
-  ; And  p q := fun x => And (p x) (q x)
-  ; Or   p q := fun x => Or (p x) (q x)
-  ; Impl p q := fun x => Impl (p x) (q x)
-  }.
-  
-  Context {LL : LogicLaws L}.
-
-  Global Instance LogicLaws_Over : LogicLaws Logic_Over.
-  refine (
-    {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
-     |}); simpl; intros; 
-  try (abstract solve [ apply Tr_True | apply Fa_False 
-            | eapply ImplI; eauto
-            | eapply ImplE; eauto 
-            | eapply AndI; eauto 
-            | eapply AndEL; eauto 
-            | eapply AndER; eauto 
-            | eapply OrIL; eauto
-            | eapply OrIR; eauto 
-            | eapply OrE; eauto 
-            ]).
-  eapply Assumption.
-  eapply List.in_map_iff. eexists. intuition.
-  Defined.
-End MonadicLogic.
-
-Section MonadicLogic_dep.
-  Variable T : Type.
-  Variable P : T -> Type.
-  Context {L : forall t, Logic (P t)}.
-
-  Global Instance Logic_DOver : Logic (forall t : T, P t) :=
-  { Tr       := fun _ => Tr
-  ; Fa       := fun _ => Fa
-  ; And  p q := fun x => And (p x) (q x)
-  ; Or   p q := fun x => Or (p x) (q x)
-  ; Impl p q := fun x => Impl (p x) (q x)
-  }.
-  
-  Context {LL : forall t, LogicLaws (L t)}.
-
-  Global Instance LogicLaws_DOver : LogicLaws Logic_DOver.
-  refine (
-    {| Entails g p := forall x, Entails (List.map (fun p => p x) g) (p x)
-     |}); simpl; intros; 
-  try abstract (solve [ apply Tr_True | apply Fa_False 
-            | eapply ImplI; eauto
-            | eapply ImplE; eauto 
-            | eapply AndI; eauto 
-            | eapply AndEL; eauto 
-            | eapply AndER; eauto 
-            | eapply OrIL; eauto
-            | eapply OrIR; eauto 
-            | eapply OrE; eauto 
-            ]).
-  eapply Assumption.
-  eapply List.in_map_iff. eexists. intuition.
-  Defined.
-End MonadicLogic_dep.
