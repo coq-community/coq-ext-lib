@@ -51,4 +51,21 @@ Section parametric.
     rewrite Plus.plus_0_r. auto.
     cutrewrite (n + S (length ls) = S n + length ls); [ | omega ]. simpl. auto.
   Qed.
+
+  Theorem nth_error_length_ge : forall T (ls : list T) n,
+    nth_error ls n = None -> length ls <= n.
+  Proof.
+    induction ls; destruct n; simpl in *; auto; simpl in *; try omega.
+    inversion 1. intro. apply IHls in H. omega.
+  Qed.
+
+  Theorem nth_error_map : forall U (f : T -> U) ls n,
+    nth_error (map f ls) n = match nth_error ls n with
+                               | None => None
+                               | Some x => Some (f x)
+                             end.
+  Proof.
+    induction ls; destruct n; simpl; auto.
+  Qed.
+
 End parametric.

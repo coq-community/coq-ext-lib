@@ -1,7 +1,7 @@
 Require Import List.
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Core.RelDec.
-Require Import ExtLib.Data.Lists.
+Require Import ExtLib.Data.List.
 Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.

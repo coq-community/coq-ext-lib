@@ -1,24 +1,29 @@
-Require Import Eqdep_dec.
 Require Import Coq.Classes.EquivDec.
+Require Import ExtLib.Structures.EqDep.
+
+Set Implicit Arguments.
+Set Strict Implicit.
 
 Section Classes.
   Context {A : Type}.
   Context {dec : EqDec A (@eq A)}.
 
+  Require Eqdep_dec.
+
   Theorem UIP_refl : forall {x : A} (p1 : x = x), p1 = refl_equal _.
     intros.
-    eapply UIP_dec. apply equiv_dec.
+    eapply Eqdep_dec.UIP_dec. apply equiv_dec.
   Qed.
 
   Theorem UIP_equal : forall {x y : A} (p1 p2 : x = y), p1 = p2.
-    eapply UIP_dec. apply equiv_dec.
+    eapply Eqdep_dec.UIP_dec. apply equiv_dec.
   Qed.
 
   Lemma inj_pair2 :
     forall (P:A -> Type) (p:A) (x y:P p),
       existT P p x = existT P p y -> x = y.
   Proof.
-    intros. eapply inj_pair2_eq_dec; auto.
+    intros. eapply Eqdep_dec.inj_pair2_eq_dec; auto.
   Qed.    
 
 End Classes.

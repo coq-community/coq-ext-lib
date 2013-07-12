@@ -1,5 +1,11 @@
+Require Import Setoid.
+Require Import Coq.Classes.Morphisms.
+Require Import Coq.Relations.Relations.
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monads.
-Require Import Equivalence.
+Require Import ExtLib.Structures.Proper.
+Require Import ExtLib.Data.Fun.
+Require Import ExtLib.Data.Unit.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -15,128 +21,140 @@ Section MonadLaws.
    **
    ** This generalization is done to support the fixpoint law.
    **)
-  Variable mleq : forall {T}, (T -> T -> Prop) -> m T -> m T -> Prop.
+  Variable meq : forall {T}, type T -> type (m T).
+  Variable meqOk : forall {T} (tT : type T), typeOk tT -> typeOk (meq tT).
 
-  Class MonadOrder : Type :=
-  { me_refl   : forall T (e : T -> T -> Prop),
-    Reflexive e -> Reflexive (mleq e)
-  ; me_trans  : forall T (e : T -> T -> Prop),
-    Transitive e -> Transitive (mleq e)
-  ; me_ret    : forall T (e : T -> T -> Prop) x y,
-    e x y -> mleq e (ret x) (ret y)
-  }.
-
-  Definition meq {T} (leq : T -> T -> Prop) (a b : m T) :  Prop :=
-    mleq leq a b /\ mleq leq b a.
-
-  Global Instance Reflexive_meq {T} (leq : T -> T -> Prop) {_ : Reflexive leq}
-    (_ : MonadOrder) : Reflexive (meq leq).
-  Proof.
-    split; eapply me_refl; eauto.
-  Qed.
-
-  Global Instance Symmetric_meq {T} (leq : T -> T -> Prop)
-    (_ : MonadOrder) : Symmetric (meq leq).
-  Proof.
-    unfold meq; split; intuition; intuition.
-  Qed.
-
-  Global Instance Transitive_meq {T} (leq : T -> T -> Prop) {_ : Transitive leq}
-    (_ : MonadOrder) : Transitive (meq leq).
-  Proof.
-    split; unfold meq in *; intuition; eapply me_trans; try eassumption.
-  Qed.
-
-  (** TODO: The real question is whether all of these [eX] relations
-   ** need to be reflexive and transitive. They don't seem to need to be
-   ** for option monad, but the proofs would be more automatable if they
-   ** were b/c I'd be able to rewrite.
+(*
+  (** This states when an element is a proper element under an equivalence
+   ** relation.
    **)
+  Variable Proper_m : forall T, Proper T -> Proper (m T).
+*)
+
   Class MonadLaws : Type :=
-  { morder :> MonadOrder
-  ; bind_of_return : forall A B (a:A) (f:A -> m B) (eB : B -> B -> Prop),
-    meq eB (bind (ret a) f) (f a)
-  ; return_of_bind : forall A (aM:m A) (f:A -> m A) (eA : A -> A -> Prop),
-    Reflexive eA ->
-    (forall x, meq eA (f x) (ret x)) -> meq eA (bind aM f) aM
+  { bind_of_return : forall A B (eA : type A) (eB : type B),
+    typeOk eA -> typeOk eB ->
+    forall (a:A) (f:A -> m B),
+    proper a -> proper f ->
+    equal (bind (ret a) f) (f a)
+  ; return_of_bind : forall A (eA : type A), 
+    typeOk eA ->
+    forall (aM:m A) (f:A -> m A),
+    (forall x, equal (f x) (ret x)) ->
+    proper aM ->
+    equal (bind aM f) aM
   ; bind_associativity :
-    forall A B C (aM:m A) (f:A -> m B) (g:B -> m C) (eC : C -> C -> Prop),
-      Reflexive eC -> Transitive eC ->
-      meq eC (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
+    forall A B C (eA : type A) (eB : type B) (eC : type C),
+      typeOk eA -> typeOk eB -> typeOk eC ->
+      forall (aM:m A) (f:A -> m B) (g:B -> m C),
+      proper aM -> 
+      proper f -> 
+      proper g ->
+      equal (bind (bind aM f) g) (bind aM (fun a => bind (f a) g))
 
-  ; bind_parametric_hd_leq : forall A B c c' (f : A -> m B) (eA : A -> A -> Prop) (eB : B -> B -> Prop),
-    mleq eA c c' ->
-    mleq eB (bind c f) (bind c' f)
-  ; bind_parametric_tl_leq : forall A B (f g : A -> m B) (eB : B -> B -> Prop),
-    Reflexive eB ->
-    (forall a, mleq eB (f a) (g a)) ->
-    forall c, mleq eB (bind c f) (bind c g)
-
+  ; ret_proper :> forall A (eA : type A), typeOk eA ->
+    proper ret
+  ; bind_proper :> forall A B (eA : type A) (eB : type B), 
+    typeOk eA -> typeOk eB ->
+    proper (@bind m _ A B)
   }.
 
-  Theorem bind_parametric_hd (ml : MonadLaws) : forall A B c c' (f : A -> m B)
-    (eA : A -> A -> Prop) (eB : B -> B -> Prop),
-    meq eA c c' ->
-    meq eB (bind c f) (bind c' f).
+  Add Parametric Morphism T U (tT : type T) (tU : type U) (tokT : typeOk tT) (tokU : typeOk tU) (ML : MonadLaws) : (@bind _ _ T U)
+    with signature (equal ==> (equal ==> equal) ==> equal)
+      as bind_morph.
+  Proof. eapply bind_proper; auto. Qed.
+
+  Add Parametric Morphism T U (tT : type T) (tU : type U) (tokT : typeOk tT) (tokU : typeOk tU) (ML : MonadLaws) (c : m T) (Pc : proper c) : (@bind _ _ T U c)
+    with signature ((equal ==> equal) ==> equal)
+      as bind_1_morph.
   Proof.
-    intros; intuition. destruct H; split; eapply bind_parametric_hd_leq; eauto.
+    eapply bind_proper; auto. eapply preflexive; [ | eapply Pc ].
+    eapply equiv_prefl; auto.
   Qed.
 
-  Theorem bind_parametric_tl (ml : MonadLaws) : forall A B (f g : A -> m B) (eB : B -> B -> Prop),
-    Reflexive eB ->
-    (forall a, meq eB (f a) (g a)) ->
-    forall c, meq eB (bind c f) (bind c g).
-  Proof.
-    intros; intuition. split; eapply bind_parametric_tl_leq; eauto; intros; edestruct H0; eauto.
-  Qed.
+  Add Parametric Morphism T (tT : type T) (tokT : typeOk tT) (ML : MonadLaws) : (@ret _ _ T)
+    with signature (equal ==> equal)
+      as ret_morph.
+  Proof. eapply ret_proper; auto. Qed.
 
-  Class MonadTLaws (n : Type -> Type) (nM : Monad n) (MT : MonadT m n) : Type :=
-  { lift_ret  : forall T (x : T) (eT : T -> T -> Prop),
-    Reflexive eT -> Transitive eT ->
-    meq eT (lift (ret x)) (ret x)
-  ; lift_bind : forall T U (c : n T) (f : T -> n U) (eU : U -> U -> Prop),
-    Reflexive eU -> Transitive eU ->
-    meq eU (lift (bind c f)) (bind (lift c) (fun x => lift (f x)))
+
+  Class MonadTLaws (n : Type -> Type) (Pn : forall T (R : type T), type (n T)) (nM : Monad n) (MT : MonadT m n) : Type :=
+  { lift_ret  : forall T (eT : type T),
+    typeOk eT ->
+    forall x : T,
+    proper x ->
+    equal (lift (ret x)) (ret x)
+  ; lift_bind : forall T U (eT : type T) (eU : type U),
+    typeOk eT -> typeOk eU ->
+    forall (c : n T) (f : T -> n U),
+    proper c -> proper f ->
+    equal (lift (bind c f)) (bind (lift c) (fun x => lift (f x)))
+  ; lift_proper : forall T (tT : type T), typeOk tT -> proper lift
   }.
 
-  Class MonadStateLaws s (MS : MonadState s m) : Type :=
-  { get_put : forall eA,
-    meq eA (bind get put) (ret tt)
-  }.
+  Section with_state.
+    Context {S : Type} (tS : type S) {tokS : typeOk tS}.
 
-  Class MonadReaderLaws S (MS : MonadReader S m) : Type :=
-  { ask_local : forall f eA,
-    meq eA (local f ask) (bind ask (fun x => ret (f x)))
-  ; local_local : forall T (s s' : S -> S) (c : m T) eA,
-    meq eA (local s (local s' c)) (local (fun x => s' (s x)) c)
-  }.
+    Class MonadStateLaws  (MS : MonadState S m) : Type :=
+    { get_put : equal (bind get put) (ret tt)
+    ; put_get : forall x, proper x ->
+      equal (bind (put x) (fun _ => get)) (bind (put x) (fun _ => ret x))
+    ; put_put : forall A (tA : type A), typeOk tA ->
+      forall (x y : S) (f : unit -> m A), proper x -> proper y -> proper f ->
+      equal (bind (put x) (fun _ => bind (put y) f)) (bind (put y) f)
+    ; get_get : forall A (tA : type A), typeOk tA ->
+      forall (f : S -> S -> m A), proper f ->
+      equal (bind get (fun s => bind get (f s))) (bind get (fun s => f s s))
+    ; get_ignore : forall A (tA : type A), typeOk tA ->
+      forall (aM : m A), proper aM ->
+      equal (bind get (fun _ => aM)) aM
+    ; get_proper :> proper get
+    ; put_proper :> proper put
+    }.
+
+    Class MonadReaderLaws (MR : MonadReader S m) : Type :=
+    { ask_local : forall f, proper f ->
+      equal (local f ask) (bind ask (fun x => ret (f x)))
+    ; local_bind : forall A B (tA : type A) (tB : type B),
+        typeOk tA -> typeOk tB ->
+        forall aM f (g : A -> m B), 
+          proper aM -> proper f -> proper g ->
+          equal (local f (bind aM g)) (bind (local f aM) (fun x => local f (g x)))
+    ; local_ret : forall A (tA : type A),
+        typeOk tA ->
+        forall (x : A) f,
+          proper x -> proper f ->
+          equal (local f (ret x)) (ret x)
+    ; local_local : forall T (eA : type T),
+      typeOk eA ->
+      forall (s s' : S -> S) (c : m T),
+        proper s -> proper s' -> proper c ->
+        equal (local s (local s' c)) (local (fun x => s' (s x)) c)
+    ; local_proper :> forall T (tT : type T), typeOk tT -> proper (@local _ _ _ T)
+    ; ask_proper :> proper ask
+    }.
+
+  End with_state.
 
   Class MonadZeroLaws (MZ : MonadZero m) : Type :=
-  { bind_zero :
-    forall A B c eB, meq eB (@bind _ M _ _ (@mzero _ _ A) c) (@mzero _ _ B)
+  { bind_zero : forall A B (tA : type A) (tB : type B),
+    typeOk tA -> typeOk tB ->
+    forall (f : A -> m B),
+    proper f ->
+    equal (bind mzero f) mzero
+  ; zero_proper :> forall A (rA : type A), typeOk rA ->
+    proper mzero
   }.
-
+ 
   Class MonadFixLaws (MF : MonadFix m) : Type :=
-  { mfix_monotonic : forall T U (F : (T -> m U) -> T -> m U),
-    (** This is [Proper] with the right relations **)
-    (forall R R',
-      (forall x, mleq (@eq _) (R x) (R' x)) ->
-      forall x, mleq (@eq _) (F R x) (F R' x)) ->
-    forall x, mleq (@eq _) (mfix F x) (F (mfix F) x)
+  { mleq : forall T, relation T -> relation (m T)
+  ; mfix_monotonic : forall T U (rT : type T) (rU : type U),
+    typeOk rT -> typeOk rU ->
+    forall (F : (T -> m U) -> T -> m U),
+    respectful equal (mleq equal) (mfix F) (F (mfix F))
+  ; mfix_proper :> forall T U (rT : type T) (rU : type U),
+    typeOk rT -> typeOk rU ->
+    proper (@mfix _ _ T U)
   }.
 
 End MonadLaws.
-
-Hint Rewrite bind_of_return bind_associativity using (eauto with typeclass_instances) : monad_rw.
-(* Hint Rewrite lift_ret lift_bind get_put ask_local local_local bind_zero : monad_rw. *)
-
-Ltac monad_norm :=
-  let tc := solve [ eauto with typeclass_instances ] in
-  let tac :=
-    repeat (eapply bind_parametric_hd; [ tc | tc | ]);
-    repeat (eapply bind_parametric_tl; [ tc | tc | intros ]);
-    repeat (rewrite return_of_bind; [ tc | tc | intros ]);
-    try (autorewrite with monad_rw; intros)
-  in
-  try ( unfold liftM, liftM2 in * ) ;
-  repeat progress tac.

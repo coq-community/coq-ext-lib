@@ -1,5 +1,5 @@
-Require Import Tactics.Consider.
-Require Import Bool.
+Require Import Coq.Bool.Bool.
+Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -68,27 +68,6 @@ Proof.
 Qed.
 
 (** Base Instances **)
-Global Instance RelDec_eq_unit : RelDec (@eq unit) :=
-{ rel_dec := fun _ _ => true }.
-Global Instance RelDec_Correct_eq_unit : RelDec_Correct RelDec_eq_unit.
-  constructor. destruct x; destruct y; auto; simpl. intuition.
-Qed.
-
-Global Instance RelDec_eq_bool : RelDec (@eq bool) :=
-{ rel_dec := fun x y => match x , y with
-                          | true , true
-                          | false , false => true
-                          | _ , _=> false
-                        end }.
-Global Instance RelDec_Correct_eq_bool : RelDec_Correct RelDec_eq_bool.
-  constructor. destruct x; destruct y; auto; simpl; intuition.
-Qed.
-
-Require Import Arith.
-Global Instance RelDec_eq_nat : RelDec (@eq nat) :=
-{ rel_dec := EqNat.beq_nat }.
-
-
 Section PairParam.
   Variable T : Type.
   Variable eqT : T -> T -> Prop.

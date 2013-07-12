@@ -4,7 +4,7 @@ Require Import String.
 
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Core.RelDec.
-Require Import Injection.
+(*Require Import Injection. *)
 
 Open Scope string_scope.
 Import MonadNotation.
@@ -83,6 +83,7 @@ Section monad.
 End monad.
 *)
 
+(*
 Section failure.
   Context {m} {mMonad:Monad m}.
   Context {e} {mMonadExc:MonadExc e m} {eInjection:Injection string e}.
@@ -108,4 +109,4 @@ Section failure.
   end.
 
 End failure.
-
+*)

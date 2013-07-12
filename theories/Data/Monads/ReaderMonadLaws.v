@@ -1,83 +1,95 @@
 Require Import RelationClasses.
 Require Import Setoid.
+Require Import ExtLib.Core.Type.
+Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Monads.ReaderMonad.
+Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Section Laws2.
+Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
-  Variable mleq : forall T, (T -> T -> Prop) -> m T -> m T -> Prop.
-  Variable MonadOrder_mleq : MonadOrder Monad_m mleq.
-  Variable MonadLaws_mleq : MonadLaws Monad_m mleq.
+  Variable mtype : forall T, type T -> type (m T).
+  Variable mtypeOk : forall T (tT : type T), typeOk tT -> typeOk (mtype tT).
+  Variable ML_m : MonadLaws Monad_m mtype.
 
   Variable S : Type.
-(**
-  (** NOTE: This should be quotiented, something like this:
-   **)
-  Variable Seq : S -> S -> Prop.
-  Variable Refl_Seq : Reflexive Seq.
-  Variable Trans_Seq : Transitive Seq.
-  
-  Definition r_mleq T (e : T -> T -> Prop) (a b : readerT S m T) : Prop :=
-    forall s1 s2, Seq s1 s2 -> mleq e (runReaderT a s1) (runReaderT b s2).
-  (** But you can't prove that this relation is reflexive unless you know that
-   ** the functions inside a and b respect [Seq], but that is what we are proving
-   **)
-**)
+  Variable type_S : type S.
+  Variable typeOk_S : typeOk type_S.
 
-  Definition r_mleq T (e : T -> T -> Prop) (a b : readerT S m T) : Prop :=
-    forall s, mleq e (runReaderT a s) (runReaderT b s).
+  Definition readerT_eq T (tT : type T) (a b : readerT S m T) : Prop :=
+    equal (runReaderT a) (runReaderT b).
 
-  Global Instance MonadOrder_rmleq : MonadOrder (Monad_readerT S Monad_m) r_mleq.
+  Global Instance type_readerT (T : Type) (tT : type T) : type (readerT S m T) :=
+    type_from_equal (readerT_eq tT).
+
+  Global Instance typeOk_readerT (T : Type) (tT : type T) (tOkT : typeOk tT) 
+    : typeOk  (type_readerT tT).
+  Proof.
+    eapply typeOk_from_equal.
+    { simpl. unfold readerT_eq. intros.
+      generalize (only_proper _ _ _ H); intros.
+      split; do 4 red; intuition. }
+    { red. unfold equal; simpl. unfold readerT_eq; simpl.
+      unfold Morphisms.respectful; simpl. firstorder. }
+    { red. unfold equal; simpl. unfold readerT_eq; simpl.
+      unfold Morphisms.respectful; simpl. intros.
+      etransitivity. eapply H; eauto.
+      destruct (only_proper _ _ _ H1).
+      eapply H0. eapply preflexive; eauto with typeclass_instances. }
+  Qed.
+
+  Theorem mproper_red : forall (C : Type) (tC : type C) (o : readerT S m C),
+    proper o ->
+    proper (runReaderT o).
+  Proof. clear. intros. apply H. Qed.
+
+  Global Instance proper_runReaderT T (tT : type T) : proper (@runReaderT S m T).
+  Proof.
+    repeat red; intros.
+    apply H in H0. apply H0.
+  Qed.
+
+  Global Instance proper_mkReaderT T (tT : type T) : proper (@mkReaderT S m T).
+  Proof.
+    repeat red; intros.
+    apply H in H0. apply H0.
+  Qed.
+
+  Ltac unfold_readerT :=
+    red; simpl; intros; do 2 (red; simpl); intros.
+
+  Global Instance MonadLaws_readerT : MonadLaws (@Monad_readerT S _ Monad_m) _.
   Proof.
     constructor.
-    { intros. red. destruct x; red; simpl. intros.
-      eapply me_refl; eauto. }
-    { intros; red; destruct x; destruct y; destruct z; red; simpl in *; try congruence; intros.
-      eapply me_trans; eauto. }
-    { unfold r_mleq; simpl; intros.
-      apply me_ret; eauto. }
+    { (* bind_of_return *)
+      unfold_readerT.
+      erewrite bind_of_return; eauto with typeclass_instances; type_tac. }
+    { (* return_of_bind *)
+      unfold_readerT.
+      rewrite return_of_bind; intros; eauto with typeclass_instances.
+      intros. eapply H0. eassumption. }
+    { (* bind_associativity *)
+      unfold_readerT.
+      rewrite bind_associativity; eauto with typeclass_instances; type_tac. }
+    { unfold_readerT. red; intros.
+      type_tac. }
+    { intros. unfold bind; simpl. red; intros. red; intros. 
+      red; simpl. red; simpl; intros. solve_equal. }
   Qed.
 
-  Lemma lower_meq : forall (A : Type) (c c' : readerT S m A)
-    (eA : A -> A -> Prop),
-    (forall s, meq _ mleq eA (runReaderT c s) (runReaderT c' s)) ->
-    meq (readerT S m) r_mleq eA c c'.
-  Proof.
-    intros. split; unfold r_mleq; intro s; destruct (H s); auto.
-  Qed.
-
-  Global Instance MonadLaws_readerT : MonadLaws (@Monad_readerT S _ Monad_m) r_mleq.
-  Proof.
-    constructor; eauto with typeclass_instances.
-    { intros. simpl. eapply lower_meq; simpl.
-      intros. apply bind_of_return; eauto. }
-    { intros; simpl. eapply lower_meq; simpl.
-      intro. eapply return_of_bind; eauto.
-      intro. specialize (H0 x). destruct H0. unfold r_mleq in *.
-      specialize (H0 s); specialize (H1 s). split; auto. }
-    { intros; simpl. eapply lower_meq; simpl.
-      intro.
-      rewrite bind_associativity; eauto with typeclass_instances.
-      eapply bind_parametric_tl; eauto with typeclass_instances.
-      intro. reflexivity. }
-    { intros; unfold r_mleq in *; simpl in *.
-      destruct c; destruct c'; simpl in *.
-      intro; eapply bind_parametric_hd_leq. eauto. eapply H. }
-    { intros; unfold r_mleq in *; simpl in *.
-      destruct c; simpl in *.
-      intro; eapply bind_parametric_tl_leq; eauto with typeclass_instances. }
-  Qed.
-
+(*
   Global Instance MonadTLaws_readerT : @MonadTLaws (readerT S m) (@Monad_readerT S m _)
     r_mleq m Monad_m (@MonadT_readerT _ m).
   Proof.
     constructor; intros; simpl; eapply lower_meq; unfold liftM; simpl; monad_norm;
       reflexivity.
   Qed.
+*)
 
-End Laws2.
+End Laws.

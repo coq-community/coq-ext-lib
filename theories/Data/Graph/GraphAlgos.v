@@ -1,11 +1,12 @@
+Require Import Coq.Lists.List.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Data.Graph.Graph.
 Require Import ExtLib.Data.Monads.FuelMonad.
 Require Import ExtLib.Data.Monads.IdentityMonad.
-Require Import ExtLib.Data.Lists.
+Require Import ExtLib.Data.List.
 Require Import ExtLib.Core.RelDec.
-Require Import List.
+
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -47,11 +48,11 @@ Section GraphAlgos.
     Require Import BinPos.
     Definition dfs (from : V) : list V :=
       let count := Npos (List.fold_left (fun acc _ => BinPos.Psucc acc) (verticies g) 1%positive) in
-      let res := unIdent (runGFixT (m := ident) (dfs' from nil) count) in
+      let res := runGFix (dfs' from nil) count in
       match res with
-        | None => (** This should never happen! **)
+        | Diverge => (** This should never happen! **)
           verticies g
-        | Some v => v
+        | Term v => v
       end.
 
   End Traverse.
