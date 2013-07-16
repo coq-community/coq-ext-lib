@@ -56,3 +56,5 @@ Proof.
   rewrite <- Pos.leb_antisym. rewrite Pos.leb_le.
   intuition; [ apply Pos.le_ge | apply Pos.ge_le ]; auto.
 Qed.
+
+Export BinPos.
