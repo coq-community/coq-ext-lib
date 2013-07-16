@@ -14,13 +14,12 @@ Set Strict Implicit.
 
 Section GraphImpl.
   Variable V : Type.
-  Variable map : Type -> Type.
-  Variable Map : DMap V map.
-  Variable FMap : forall T, Foldable (map T) (V * T).
+  Variable map : Type.
+  Variable Map : Map V (list V) map.
+  Variable FMap : Foldable map (V * (list V)).
   Variable RelDec_V : RelDec (@eq V).
 
-  Definition adj_graph : Type :=
-    map (list V).
+  Definition adj_graph : Type := map.
 
   Definition verts (g : adj_graph) : list V :=
     let c := foldM (m := writerT (Monoid_list_app) ident) 

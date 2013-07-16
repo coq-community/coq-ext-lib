@@ -142,14 +142,13 @@ Section keyed.
   Definition twothree_union {V} (m1 m2 : twothree V) : twothree V :=
     twothree_fold twothree_add m2 m1.
 
-  Global Instance Map_twothree : DMap K twothree :=
-  { empty  := @Leaf
-  ; add    := @twothree_add
-  ; remove := @twothree_remove
-  ; lookup := @twothree_find
-  ; union  := @twothree_union
+  Global Instance Map_twothree V : Map K V (twothree V) :=
+  { empty  := Leaf
+  ; add    := twothree_add
+  ; remove := twothree_remove
+  ; lookup := twothree_find
+  ; union  := twothree_union
   }.
-
 
   Require Import ExtLib.Structures.Reducible.
 
