@@ -1,5 +1,5 @@
-Require Import Ascii.
-Require Import String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.

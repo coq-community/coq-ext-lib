@@ -6,6 +6,7 @@ Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Logic.
 Require Import ExtLib.Structures.CoFunctor.
+Require Import ExtLib.Structures.Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -114,5 +115,10 @@ Instance Quant_Fun (T U : Type) (Q : Quant U) : Quant (T -> U) :=
 {| All := fun V P => fun (t : T) => All (fun x : V => P x t)
  ; Ex  := fun V P => fun (t : T) => Ex (fun x : V => P x t)
  |}.
+
+Definition Monoid_compose T : Monoid (T -> T) :=
+{| monoid_plus g f x := g (f x)
+ ; monoid_unit x := x
+|}.
 
 Export PreFun.

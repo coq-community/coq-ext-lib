@@ -1,5 +1,6 @@
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Core.Type.
+Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
@@ -50,8 +51,6 @@ Proof.
   congruence.
 Qed.
 
-Set Implicit Arguments.
-Set Strict Implicit.
 
 Inductive R_nat_S : nat -> nat -> Prop :=
 | R_S : forall n, R_nat_S n (S n).
@@ -73,3 +72,13 @@ Proof.
   { inversion H; clear H; subst. inversion H0; clear H0; subst; auto.
     inversion IHa. eapply H. constructor. eapply H1. }
 Defined.
+
+Definition Monoid_nat_plus : Monoid nat :=
+{| monoid_plus := plus
+ ; monoid_unit := 0
+ |}.
+
+Definition Monoid_nat_mult : Monoid nat :=
+{| monoid_plus := mult
+ ; monoid_unit := 1
+ |}.

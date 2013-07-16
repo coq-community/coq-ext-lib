@@ -1,12 +1,13 @@
-Require Import Ascii String List.
-
+Require Import Coq.Strings.String.
 Require Import Coq.Program.Wf.
 Require Import Omega.
 
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Programming.Injection.
-Require Import ExtLib.Data.Strings.
+Require Import ExtLib.Data.Char.
+Require Import ExtLib.Data.String.
+Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Core.RelDec.
 
 Set Implicit Arguments.
@@ -26,7 +27,7 @@ Global Instance ShowScheme_string : ShowScheme string :=
 }.
 
 Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
-{ show_mon := Monoid_string_append_compose
+{ show_mon := Monoid_compose string
 ; show_inj := String 
 }.
 

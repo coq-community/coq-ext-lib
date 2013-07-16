@@ -1,8 +1,9 @@
-Require Import String.
+Require Import Coq.Strings.String.
 Require Import EqNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Data.Char.
 Require Import ExtLib.Data.Nat.
 
@@ -84,7 +85,7 @@ Section Program_Scope.
       | true => fun _ => String (digit2ascii n) EmptyString
       | false => fun pf =>
         let m := NPeano.div n mod in
-        String.append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
+        append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
     end eq_refl.
   Next Obligation.
     (* assert (NPeano.div n mod < n); eauto. *) eapply NPeano.Nat.div_lt; auto.
@@ -123,7 +124,6 @@ Global Instance Foldable_string : Foldable string ascii :=
     end.
 
 Section string.
-  Require Import String.
   Inductive R_string_len : string -> string -> Prop :=
   | R_s_len : forall n m, length n < length m -> R_string_len n m.
 
@@ -146,3 +146,9 @@ Section string.
     clear - pf; abstract (inversion pf; subst; simpl in *; inversion H).
   Defined.
 End string.
+
+
+Definition Monoid_string_append : Monoid string :=
+{| monoid_plus := append
+ ; monoid_unit := EmptyString
+|}.

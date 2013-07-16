@@ -1,6 +1,6 @@
-Require EquivDec.
 Require Import Coq.Lists.List.
 Require Import ExtLib.Core.Type.
+Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
@@ -41,18 +41,18 @@ Section type.
   Qed.
 End type.
 
-Section EqDec.
-  Variable T : Type.
-  Variable EqDec_T : EquivDec.EqDec _ (@eq T).
+(* Section EqDec. *)
+(*   Variable T : Type. *)
+(*   Variable EqDec_T : EquivDec.EqDec _ (@eq T). *)
 
-  Global Instance EqDec_list : EquivDec.EqDec _ (@eq (list T)).
-  Proof.
-    red. unfold Equivalence.equiv, RelationClasses.complement.
-    intros.
-    change (x = y -> False) with (x <> y).
-    decide equality. eapply EqDec_T.
-  Qed.
-End EqDec.
+(*   Global Instance EqDec_list : EquivDec.EqDec _ (@eq (list T)). *)
+(*   Proof. *)
+(*     red. unfold Equivalence.equiv, RelationClasses.complement. *)
+(*     intros. *)
+(*     change (x = y -> False) with (x <> y). *)
+(*     decide equality. eapply EqDec_T. *)
+(*   Qed. *)
+(* End EqDec. *)
 
 Section AllB.
   Variable T : Type.
@@ -117,5 +117,13 @@ Section list.
     clear - pf; abstract (inversion pf; subst; simpl in *; inversion H).
   Defined.
 End list.
+
+
+
+Definition Monoid_list_app {T} : Monoid (list T) :=
+{| monoid_plus := @List.app _
+ ; monoid_unit := @nil _
+ |}.
+
 
 Export List.

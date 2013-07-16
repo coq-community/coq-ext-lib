@@ -2,6 +2,9 @@ Require Import Coq.Strings.Ascii.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 
+Set Implicit Arguments.
+Set Strict Implicit.
+
 Definition ascii_dec (l r : Ascii.ascii) : bool :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
