@@ -9,9 +9,4 @@ Section Monoid.
   ; monoid_unit : S
   }.
 
-  (* Variable M : Monoid. *)
-
-  (* Definition monoid_sum (ls : list S) : S := *)
-  (*   fold_left (monoid_plus M) ls (monoid_unit M). *)
-
 End Monoid.

@@ -25,6 +25,15 @@ Global Instance Traversable_option : Traversable option :=
   end
 |}.
 
+Global Instance Applicative_option : Applicative option :=
+{| pure := Some
+ ; ap := fun _ _ f x => 
+           match f , x with
+             | Some f , Some x => Some (f x)
+             | _ , _ => None
+           end
+|}.
+
 Section type.
   Variable T : Type.
   Variable tT : type T.
