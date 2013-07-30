@@ -36,6 +36,34 @@ Class LogicLaws (P : Type) (L : Logic P) : Type :=
 ; OrE : forall G P Q R, Entails (P :: G) R -> Entails (Q :: G) R -> Entails (Or P Q :: G) R
 }.
 
+Section LogicFacts.
+  Variable P : Type.
+  Variable LP : Logic P.
+  Variable LLP : LogicLaws LP.
+
+  Fixpoint Impls (ps : list P) (p : P) : P :=
+    match ps with
+      | nil => p
+      | p' :: ps => Impl p' (Impls ps p)
+    end.
+
+  Fixpoint Ands (ps : list P) : P :=
+    match ps with
+      | nil => Tr
+      | p :: ps => And p (Ands ps)
+    end.
+
+  Fixpoint Ors (ps : list P) : P :=
+    match ps with
+      | nil => Fa
+      | p :: ps => Or p (Ands ps)
+    end.
+
+  Definition Eq (a b : P) : P :=
+    And (Impl a b) (Impl b a).
+
+End LogicFacts.
+
 Hint Resolve Tr_True Fa_False ImplI ImplE AndI AndEL AndER OrIL OrIR OrE : logic.
 
 Class Quant (P : Type) : Type :=
