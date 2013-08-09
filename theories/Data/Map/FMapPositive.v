@@ -7,7 +7,7 @@ Set Strict Implicit.
 Section pmap.
   Variable T : Type.
   Inductive pmap : Type :=
-  | Empty 
+  | Empty
   | Branch : option T -> pmap -> pmap -> pmap.
 
   Definition pmap_here (m : pmap) : option T :=
@@ -42,8 +42,10 @@ Section pmap.
   Fixpoint pmap_insert (p : positive) (v : T) (m : pmap) : pmap :=
     match p with
       | xH => Branch (Some v) (pmap_left m) (pmap_right m)
-      | xO p => Branch (pmap_here m) (pmap_insert p v (pmap_left m)) (pmap_right m)
-      | xI p => Branch (pmap_here m) (pmap_left m) (pmap_insert p v (pmap_right m)) 
+      | xO p =>
+        Branch (pmap_here m) (pmap_insert p v (pmap_left m)) (pmap_right m)
+      | xI p =>
+        Branch (pmap_here m) (pmap_left m) (pmap_insert p v (pmap_right m))
     end.
 
   Definition branch (o : option T) (l r : pmap) : pmap :=
@@ -67,9 +69,8 @@ Section pmap.
 
   Fixpoint pmap_union (f m : pmap) : pmap :=
     match f with
-      | Empty => m 
+      | Empty => m
       | Branch d l r =>
-        
         Branch (match d with
                   | Some x => Some x
                   | None => pmap_here m
