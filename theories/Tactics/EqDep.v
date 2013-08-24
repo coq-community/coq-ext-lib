@@ -24,7 +24,7 @@ Section Classes.
       existT P p x = existT P p y -> x = y.
   Proof.
     intros. eapply Eqdep_dec.inj_pair2_eq_dec; auto.
-  Qed.    
+  Qed.
 
 End Classes.
 
@@ -45,11 +45,19 @@ Ltac notVar X :=
     | _ _ _ _ _ _ _ _ _ _ _ _ _ _ => idtac
   end.
 
+Ltac gen_refl :=
+  repeat match goal with
+           | H : context [ @eq_refl ?X ?Y ] |- _ =>
+             generalize dependent (@eq_refl X Y)
+           | |- context [ @eq_refl ?X ?Y ] =>
+             generalize dependent (@eq_refl X Y)
+         end.
+
 Ltac uip_all :=
   repeat match goal with
            | [ H : _ = _ |- _ ] => rewrite H
-           | [ |- context [ match ?X in _ = t return _ with 
-                              | refl_equal => _ 
+           | [ |- context [ match ?X in _ = t return _ with
+                              | refl_equal => _
                             end ] ] => notVar X; generalize X
            | [ |- context [ eq_rect_r _ _ ?X ] ] => notVar X; generalize X
          end;
