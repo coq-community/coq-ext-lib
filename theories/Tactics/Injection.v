@@ -6,11 +6,21 @@ Class Injective (P : Prop) : Type :=
 ; injection : P -> result
 }.
 
-Ltac inv_all := 
+Ltac destruct_ands H :=
+  match type of H with
+    | _ /\ _ =>
+      let H1 := fresh in
+      let H2 := fresh in
+      destruct H as [ H1 H2 ] ;
+        destruct_ands H1 ; destruct_ands H2
+    | _ => idtac
+  end.
+
+Ltac inv_all :=
   repeat match goal with
            | [ H : ?X |- _ ] =>
              let z := constr:(_ : Injective X) in
-             eapply (@injection X z) in H; do 2 red in H
+             eapply (@injection X z) in H; do 2 red in H ; destruct_ands H
          end.
 
 (* Example
