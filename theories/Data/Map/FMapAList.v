@@ -4,6 +4,7 @@ Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.Functor.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -12,7 +13,7 @@ Section keyed.
   Variable K : Type.
   Variable R : K -> K -> Prop.
   Variable RD_K : RelDec R.
-  
+
   Variable V : Type.
 
   Definition alist : Type := list (K * V).
@@ -73,11 +74,11 @@ Section keyed.
 
     Lemma mapsto_alist_cons : forall k v m k' v',
                                 mapsto_alist ((k',v') :: m) k v <->
-                                (   (mapsto_alist m k v /\ ~R k k') 
+                                (   (mapsto_alist m k v /\ ~R k k')
                                  \/ (R k k' /\ v = v')).
     Proof.
       unfold mapsto_alist; intuition; simpl in *.
-      { consider (k ?[ R ] k'); intros. 
+      { consider (k ?[ R ] k'); intros.
         { right. inversion H0; auto. }
         { left. auto. } }
       { consider (k ?[ R ] k'); intros; intuition. }
@@ -90,7 +91,7 @@ Section keyed.
       reflexivity.
     Qed.
 
-    Theorem mapsto_remove_eq_alist : forall (m : list (K * V)) (k : K) (v : V), 
+    Theorem mapsto_remove_eq_alist : forall (m : list (K * V)) (k : K) (v : V),
                                        ~mapsto_alist (remove k m) k v.
     Proof.
       unfold mapsto_alist, remove, alist_remove; simpl. intros.
@@ -98,7 +99,7 @@ Section keyed.
       { congruence. }
       { destruct a; simpl in *.
         consider (k ?[ R ] k0); auto; intros.
-        simpl. consider (k ?[ R ] k0); auto. } 
+        simpl. consider (k ?[ R ] k0); auto. }
     Qed.
 
     Theorem mapsto_remove_neq_alist : forall (m : list (K * V)) (k : K),
@@ -113,7 +114,7 @@ Section keyed.
           { exfalso. eauto. }
           { simpl. consider (k' ?[ R ] k0); intros.
             { intuition. }
-            { exfalso; auto. } } } 
+            { exfalso; auto. } } }
         { rewrite IHm.
           consider (k ?[ R ] k0); simpl; intros.
           { intuition. }
@@ -122,7 +123,7 @@ Section keyed.
             { intuition. } } } }
     Qed.
 
-    Theorem mapsto_add_eq_alist : forall (m : list (K * V)) (k : K) (v : V), 
+    Theorem mapsto_add_eq_alist : forall (m : list (K * V)) (k : K) (v : V),
                                  mapsto_alist (add k v m) k v.
     Proof.
       unfold mapsto_alist, add, alist_add; simpl. intros.
@@ -135,12 +136,12 @@ Section keyed.
     Proof.
       unfold mapsto_alist, add; simpl. intros.
       consider (k' ?[ R ] k); try solve [ intros; exfalso; auto ].
-      intros. eapply mapsto_remove_neq_alist in H. eapply H. 
+      intros. eapply mapsto_remove_neq_alist in H. eapply H.
     Qed.
 
     Global Instance MapLaws_alist : MapOk R Map_alist.
     Proof.
-      refine {| mapsto := fun k v m => mapsto_alist m k v |}; 
+      refine {| mapsto := fun k v m => mapsto_alist m k v |};
       eauto using mapsto_lookup_alist, mapsto_add_eq_alist, mapsto_add_neq_alist.
       { intros; intro. inversion H. }
     Qed.
@@ -151,6 +152,9 @@ Section keyed.
     fun _ f b => fold_alist (fun k v => f (k,v)) b.
 
 End keyed.
+
+Global Instance Functor_alist K : Functor (alist K) :=
+{ fmap := fun T U f => map (fun x => (fst x, f (snd x))) }.
 
 (** Performance Test **)
 (*
