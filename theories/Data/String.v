@@ -73,12 +73,20 @@ Fixpoint string_cmp (l r : string) : comparison :=
 
 Require Import Ascii.
 
-
 Section Program_Scope.
   Require Import Program.
   Import Arith Div2.
   Variable mod : nat.
   Hypothesis one_lt_mod : 1 < mod.
+
+  Lemma _xxx : forall m n,
+                 1 < m -> ~ n < m -> 0 < n.
+  Proof.
+    destruct n; destruct m; intros.
+    inversion H. exfalso. apply H0. etransitivity. 2: eassumption. repeat constructor.
+    inversion H.
+    eapply neq_0_lt. congruence.
+  Qed.
 
   Program Fixpoint nat2string (n:nat) {measure n}: string :=
     match NPeano.ltb n mod as x return NPeano.ltb n mod = x -> string with
@@ -88,8 +96,9 @@ Section Program_Scope.
         append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
     end eq_refl.
   Next Obligation.
-    (* assert (NPeano.div n mod < n); eauto. *) eapply NPeano.Nat.div_lt; auto.
-    consider (NPeano.ltb n mod); try congruence. intros. omega.
+    eapply NPeano.Nat.div_lt; auto.
+    consider (NPeano.ltb n mod); try congruence. intros.
+    eapply _xxx; eassumption.
   Defined.
 
 End Program_Scope.

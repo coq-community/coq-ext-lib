@@ -1,7 +1,9 @@
 Require Import Coq.Lists.List.
 Require Import ExtLib.Core.Type.
+Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -41,18 +43,19 @@ Section type.
   Qed.
 End type.
 
-(* Section EqDec. *)
-(*   Variable T : Type. *)
-(*   Variable EqDec_T : EquivDec.EqDec _ (@eq T). *)
+Section EqDec.
+  Require EquivDec.
+  Variable T : Type.
+  Variable EqDec_T : EquivDec.EqDec _ (@eq T).
 
-(*   Global Instance EqDec_list : EquivDec.EqDec _ (@eq (list T)). *)
-(*   Proof. *)
-(*     red. unfold Equivalence.equiv, RelationClasses.complement. *)
-(*     intros. *)
-(*     change (x = y -> False) with (x <> y). *)
-(*     decide equality. eapply EqDec_T. *)
-(*   Qed. *)
-(* End EqDec. *)
+  Global Instance EqDec_list : EquivDec.EqDec _ (@eq (list T)).
+  Proof.
+    red. unfold Equivalence.equiv, RelationClasses.complement.
+    intros.
+    change (x = y -> False) with (x <> y).
+    decide equality. eapply EqDec_T.
+  Qed.
+End EqDec.
 
 Section AllB.
   Variable T : Type.
@@ -118,12 +121,41 @@ Section list.
   Defined.
 End list.
 
-
-
 Definition Monoid_list_app {T} : Monoid (list T) :=
 {| monoid_plus := @List.app _
  ; monoid_unit := @nil _
  |}.
 
+Section ListEq.
+  Variable T : Type.
+  Variable EDT : RelDec (@eq T).
+
+  Fixpoint list_eqb (ls rs : list T) : bool :=
+    match ls , rs with
+      | nil , nil => true
+      | cons l ls , cons r rs =>
+        if l ?[ eq ] r then list_eqb ls rs else false
+      | _ , _ => false
+    end.
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_list : RelDec (@eq (list T)) :=
+  { rel_dec := list_eqb }.
+
+  Variable EDCT : RelDec_Correct EDT.
+
+  Global Instance RelDec_Correct_eq_list : RelDec_Correct RelDec_eq_list.
+  Proof.
+    constructor; induction x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; intuition; try congruence.
+    eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
+  Qed.
+
+End ListEq.
 
 Export List.

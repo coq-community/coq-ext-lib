@@ -1,5 +1,4 @@
 Require Import Coq.Bool.Bool.
-Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -48,113 +47,22 @@ Section rel_dec_p.
   Proof. destruct (rel_dec_p x y) ; [ right | left ] ; auto. Qed.
 End rel_dec_p.
 
-Global Instance Reflect_RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) {_ : RelDec_Correct ED} x y : Reflect (rel_dec x y) (equ x y) (~equ x y).
-Proof.
-  apply iff_to_reflect.
-  apply rel_dec_correct.
-Qed.
-
 Theorem rel_dec_eq_true : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
   eqt x y -> rel_dec x y = true.
 Proof.
-  intros. consider (rel_dec x y); auto.
+  intros. eapply rel_dec_correct in H. assumption.
 Qed.
 
 Theorem rel_dec_neq_false : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
   ~eqt x y -> rel_dec x y = false.
 Proof.
-  intros. consider (rel_dec x y); auto.
-  intros; exfalso; auto.
+  intros. remember (x ?[ eqt ] y).
+  symmetry in Heqb.
+  destruct b; try reflexivity.
+  exfalso. eapply (@rel_dec_correct _ _ _ rc) in Heqb. auto.
 Qed.
 
-(** Base Instances **)
-Section PairParam.
-  Variable T : Type.
-  Variable eqT : T -> T -> Prop.
-  Variable U : Type.
-  Variable eqU : U -> U -> Prop.
-
-  Variable EDT : RelDec eqT.
-  Variable EDU : RelDec eqU.
-
-  Global Instance RelDec_equ_pair : RelDec (fun x y => eqT (fst x) (fst y) /\ eqU (snd x) (snd y)) :=
-  { rel_dec := fun x y =>
-    if rel_dec (fst x) (fst y) then
-      rel_dec (snd x) (snd y)
-    else false }.
-
-  Variable EDCT : RelDec_Correct EDT.
-  Variable EDCU : RelDec_Correct EDU.
-
-  Global Instance RelDec_Correct_equ_pair : RelDec_Correct RelDec_equ_pair.
-  Proof.
-    constructor; destruct x; destruct y; split; simpl in *; intros;
-      repeat match goal with
-               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
-                 consider (rel_dec X Y); intros; subst
-               | [ |- context [ rel_dec ?X ?Y ] ] =>
-                 consider (rel_dec X Y); intros; subst
-             end; intuition.
-  Qed.
-End PairParam.
-
-Section PairEq.
-  Variable T : Type.
-  Variable U : Type.
-
-  Variable EDT : RelDec (@eq T).
-  Variable EDU : RelDec (@eq U).
-
-  (** Specialization for equality **)
-  Global Instance RelDec_eq_pair : RelDec (@eq (T * U)) :=
-  { rel_dec := fun x y =>
-    if rel_dec (fst x) (fst y) then
-      rel_dec (snd x) (snd y)
-    else false }.
-
-  Variable EDCT : RelDec_Correct EDT.
-  Variable EDCU : RelDec_Correct EDU.
-
-  Global Instance RelDec_Correct_eq_pair : RelDec_Correct RelDec_eq_pair.
-  Proof.
-    constructor; destruct x; destruct y; split; simpl in *; intros;
-      repeat match goal with
-               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
-                 consider (rel_dec X Y); intros; subst
-               | [ |- context [ rel_dec ?X ?Y ] ] =>
-                 consider (rel_dec X Y); intros; subst
-             end; congruence.
-  Qed.
-End PairEq.
-
-Section OptionEq.
-  Variable T : Type.
-  Variable EDT : RelDec (@eq T).
-
-  (** Specialization for equality **)
-  Global Instance RelDec_eq_option : RelDec (@eq (option T)) :=
-  { rel_dec := fun x y =>
-    match x , y with
-      | None , None => true
-      | Some x , Some y => eq_dec x y
-      | _ , _ => false
-    end }.
-
-  Variable EDCT : RelDec_Correct EDT.
-
-  Global Instance RelDec_Correct_eq_option : RelDec_Correct RelDec_eq_option.
-  Proof.
-    constructor; destruct x; destruct y; split; simpl in *; intros; try congruence;
-      f_equal; try match goal with
-                     | [ H : context [ eq_dec ?X ?Y ] |- _ ] =>
-                       consider (eq_dec X Y)
-                     | [ |- context [ eq_dec ?X ?Y ] ] =>
-                       consider (eq_dec X Y)
-                   end; auto; congruence.
-  Qed.
-
-End OptionEq.
-
+(*
 Section SumEq.
   Variable T : Type.
   Variable U : Type.
@@ -186,35 +94,4 @@ Section SumEq.
   Qed.
 
 End SumEq.
-
-Section ListEq.
-  Variable T : Type.
-  Variable EDT : RelDec (@eq T).
-
-  Fixpoint list_eq (ls rs : list T) : bool :=
-    match ls , rs with
-      | nil , nil => true
-      | cons l ls , cons r rs =>
-        if l ?[ eq ] r then list_eq ls rs else false
-      | _ , _ => false
-    end.
-
-  (** Specialization for equality **)
-  Global Instance RelDec_eq_list : RelDec (@eq (list T)) :=
-  { rel_dec := list_eq }.
-
-  Variable EDCT : RelDec_Correct EDT.
-
-  Global Instance RelDec_Correct_eq_list : RelDec_Correct RelDec_eq_list.
-  Proof.
-    constructor; induction x; destruct y; split; simpl in *; intros;
-      repeat match goal with
-               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
-                 consider (rel_dec X Y); intros; subst
-               | [ |- context [ rel_dec ?X ?Y ] ] =>
-                 consider (rel_dec X Y); intros; subst
-             end; intuition; try congruence.
-    eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
-  Qed.
-
-End ListEq.
+*)

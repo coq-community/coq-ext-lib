@@ -1,17 +1,20 @@
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
+Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Fun.
+Require Import ExtLib.Tactics.Injection.
+Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 
 Global Instance Foldable_option {T} : Foldable (option T) T :=
-  fun _ f d v => 
+  fun _ f d v =>
     match v with
       | None => d
       | Some x => f x d
@@ -27,7 +30,7 @@ Global Instance Traversable_option : Traversable option :=
 
 Global Instance Applicative_option : Applicative option :=
 {| pure := Some
- ; ap := fun _ _ f x => 
+ ; ap := fun _ _ f x =>
            match f , x with
              | Some f , Some x => Some (f x)
              | _ , _ => None
@@ -46,7 +49,7 @@ Section type.
     end.
 
   Global Instance type_option : type (option T) :=
-  { equal := eqv_option equal 
+  { equal := eqv_option equal
   ; proper := fun x => match x with
                          | None => True
                          | Some y => proper y
@@ -77,8 +80,6 @@ Section type.
 
 End type.
 
-Require Import ExtLib.Tactics.Injection.
-
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
 { result := a = b }.
 abstract (inversion 1; auto).
@@ -92,3 +93,31 @@ Proof.
   change (x = y -> False) with (x <> y).
   decide equality. apply EDT.
 Qed.
+
+Section OptionEq.
+  Variable T : Type.
+  Variable EDT : RelDec (@eq T).
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_option : RelDec (@eq (option T)) :=
+  { rel_dec := fun x y =>
+    match x , y with
+      | None , None => true
+      | Some x , Some y => eq_dec x y
+      | _ , _ => false
+    end }.
+
+  Variable EDCT : RelDec_Correct EDT.
+
+  Global Instance RelDec_Correct_eq_option : RelDec_Correct RelDec_eq_option.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros; try congruence;
+      f_equal; try match goal with
+                     | [ H : context [ eq_dec ?X ?Y ] |- _ ] =>
+                       consider (eq_dec X Y)
+                     | [ |- context [ eq_dec ?X ?Y ] ] =>
+                       consider (eq_dec X Y)
+                   end; auto; congruence.
+  Qed.
+
+End OptionEq.

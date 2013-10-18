@@ -3,7 +3,7 @@
  **
  ** Implementation by Thomas Braibant (thomas.braibant@gmail.com)
  **)
-Require Setoid.
+(*Require Setoid. *)
 
 (** This file defines some inductives, type-classes and tactics to
 perform reflection on a small scale *)
@@ -22,8 +22,8 @@ Lemma iff_to_reflect {A B} (P : A -> B -> Prop) (T : A -> B -> bool)  :
   (forall x y, reflect (P x y) (~P x y) (T x y)).
 Proof.
   intros. case_eq (T x y); intros Hxy; constructor.
-  rewrite <- H; auto.
-  intros Hf;   rewrite <- H, Hxy in Hf; discriminate.
+  apply H. assumption.
+  intros Hf. apply H in Hf. congruence.
 Qed.
 
 Lemma impl_to_semireflect {A B} (P : A -> B -> Prop) (T : A -> B -> bool)  :
@@ -85,38 +85,24 @@ Section boolean_logic.
 
 End boolean_logic.
 
-Require Arith.
-Section reflect_peano.
+Require Import ExtLib.Core.RelDec.
 
-  Global Instance Reflect_eqb_nat x y : Reflect (EqNat.beq_nat x y) (x = y) (x <> y).
+Section from_rel_dec.
+  Variable T : Type.
+  Variable eqt : T -> T -> Prop.
+  Variable rd : RelDec eqt.
+  Variable rdc : RelDec_Correct rd.
+
+  Global Instance Reflect_RelDecCorrect (a b : T)
+  : Reflect (rel_dec a b) (eqt a b) (~(eqt a b)).
   Proof.
-    apply iff_to_reflect.
-    apply EqNat.beq_nat_true_iff.
+    eapply iff_to_reflect.
+    eapply rel_dec_correct.
   Qed.
+End from_rel_dec.
 
-  Global Instance Reflect_leb_nat x y : Reflect (NPeano.leb x y) (x <= y) (y < x).
-  Proof.
-    intros. case_eq (NPeano.leb x y); intros; constructor.
-    apply NPeano.leb_le in H; auto.
-    destruct (Compare_dec.le_lt_dec x y); auto.
-    exfalso.
-    apply NPeano.leb_le in l; auto. congruence.
-  Qed.
-
-  Global Instance Reflect_ltb_nat x y : Reflect (NPeano.ltb x y) (x < y) (y <= x).
-  Proof.
-    intros. case_eq (NPeano.ltb x y); intros; constructor.
-    apply NPeano.ltb_lt in H; auto.
-    destruct (Compare_dec.le_lt_dec y x); auto.
-    exfalso.
-    apply NPeano.ltb_lt in l; auto. congruence.
-  Qed.
-End reflect_peano.
-
-Global Instance Reflect_bool_dec a b : Reflect (Bool.eqb a b) (a = b) (a <> b).
-Proof.
-  apply iff_to_reflect; auto using Bool.eqb_true_iff.
-Qed.
+Hint Extern 10 (@Reflect (?f ?a ?b) _ _) =>
+  eapply (@Reflect_RelDecCorrect _ _ (@Build_RelDec _ _ f) _) : typeclass_instances.
 
 (** The main tactic. [consider f] will perform case-analysis (using
 [case]) on the function symbol [f] using a reflection-lemma that is
@@ -156,26 +142,3 @@ Ltac consider f :=
           case_eq f
       end
   end ; clean.
-
-(**  Some tests *)
-Section test.
-  Require Import NPeano Coq.Bool.Bool.
-
-  Require Import Omega.
-  Goal forall x y z,  (ltb x y && ltb y z) = true ->
-                 ltb x z = true.
-  intros x y z.
-  consider (ltb x y && ltb y z).
-  consider (ltb x z); auto. intros. exfalso. omega.
-  Qed.
-
-  Goal forall x y z,
-    ltb x y = true ->
-    ltb y z = true ->
-    ltb x z = true.
-  Proof.
-    intros. consider (ltb x y); consider (ltb y z); consider (ltb x z); intros; auto.
-    exfalso; omega.
-  Qed.
-
-End test.

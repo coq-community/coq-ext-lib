@@ -1,3 +1,6 @@
+Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Tactics.Consider.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -28,3 +31,62 @@ Section PairWF.
     inversion H4; inversion H3; clear H4 H3; subst; eauto.
   Defined.
 End PairWF.
+
+Section PairParam.
+  Variable T : Type.
+  Variable eqT : T -> T -> Prop.
+  Variable U : Type.
+  Variable eqU : U -> U -> Prop.
+
+  Variable EDT : RelDec eqT.
+  Variable EDU : RelDec eqU.
+
+  Global Instance RelDec_equ_pair : RelDec (fun x y => eqT (fst x) (fst y) /\ eqU (snd x) (snd y)) :=
+  { rel_dec := fun x y =>
+    if rel_dec (fst x) (fst y) then
+      rel_dec (snd x) (snd y)
+    else false }.
+
+  Variable EDCT : RelDec_Correct EDT.
+  Variable EDCU : RelDec_Correct EDU.
+
+  Global Instance RelDec_Correct_equ_pair : RelDec_Correct RelDec_equ_pair.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; intuition.
+  Qed.
+End PairParam.
+
+Section PairEq.
+  Variable T : Type.
+  Variable U : Type.
+
+  Variable EDT : RelDec (@eq T).
+  Variable EDU : RelDec (@eq U).
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_pair : RelDec (@eq (T * U)) :=
+  { rel_dec := fun x y =>
+    if rel_dec (fst x) (fst y) then
+      rel_dec (snd x) (snd y)
+    else false }.
+
+  Variable EDCT : RelDec_Correct EDT.
+  Variable EDCU : RelDec_Correct EDU.
+
+  Global Instance RelDec_Correct_eq_pair : RelDec_Correct RelDec_eq_pair.
+  Proof.
+    constructor; destruct x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; congruence.
+  Qed.
+End PairEq.

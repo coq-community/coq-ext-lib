@@ -12,7 +12,7 @@ Section Monoid.
   ; monoid_unit : S
   }.
 
-  Context {Type_S : type S}.  Check @equal.
+  Context {Type_S : type S}.
 
   Class MonoidLaws (M : Monoid) : Type :=
   { monoid_assoc :> Associative M.(monoid_plus) equal
