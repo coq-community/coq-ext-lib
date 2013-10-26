@@ -46,6 +46,7 @@ Qed.
 Global Instance RelDec_Correct_pgt : RelDec_Correct RelDec_pgt.
 Proof.
   constructor; simpl; intros.
+  unfold rel_dec; simpl.
   rewrite <- Pos.ltb_antisym. rewrite Pos.ltb_lt.
   intuition; [ apply Pos.lt_gt | apply Pos.gt_lt ]; auto.
 Qed.
@@ -53,6 +54,7 @@ Qed.
 Global Instance RelDec_Correct_pge : RelDec_Correct RelDec_pge.
 Proof.
   constructor; simpl. intros.
+  unfold rel_dec; simpl.
   rewrite <- Pos.leb_antisym. rewrite Pos.leb_le.
   intuition; [ apply Pos.le_ge | apply Pos.ge_le ]; auto.
 Qed.

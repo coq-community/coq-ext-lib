@@ -21,21 +21,23 @@ Global Instance RelDec_zge : RelDec (Z.ge) :=
 
 Global Instance RelDec_Correct_zeq : RelDec_Correct RelDec_zeq.
 Proof.
-  constructor; simpl. intros. 
+  constructor; simpl. intros.
   apply Z.eqb_eq.
 Qed.
 
 Global Instance RelDec_Correct_zlt : RelDec_Correct RelDec_zlt.
 Proof.
-  constructor; simpl. intros. 
+  constructor; simpl. intros.
   generalize (Zlt_cases x y).
-  destruct ((x <? y)%Z); intros; intuition; try congruence. 
+  unfold rel_dec. simpl.
+  destruct ((x <? y)%Z); intros; intuition; try congruence.
 Qed.
 
 Global Instance RelDec_Correct_zle : RelDec_Correct RelDec_zle.
 Proof.
   constructor; simpl. intros.
   generalize (Zle_cases x y).
+  unfold rel_dec; simpl.
   destruct ((x <=? y)%Z); intros; intuition; congruence.
 Qed.
 
@@ -43,6 +45,7 @@ Global Instance RelDec_Correct_zgt : RelDec_Correct RelDec_zgt.
 Proof.
   constructor; simpl. intros.
   generalize (Zgt_cases x y).
+  unfold rel_dec; simpl.
   destruct ((x >? y)%Z); intros; intuition; congruence.
 Qed.
 
@@ -50,5 +53,6 @@ Global Instance RelDec_Correct_zge : RelDec_Correct RelDec_zge.
 Proof.
   constructor; simpl. intros.
   generalize (Zge_cases x y).
+  unfold rel_dec; simpl.
   destruct ((x >=? y)%Z); intros; intuition; congruence.
 Qed.

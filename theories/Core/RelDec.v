@@ -7,6 +7,7 @@ Class RelDec (T : Type) (equ : T -> T -> Prop) : Type :=
 { rel_dec : T -> T -> bool }.
 
 Arguments rel_dec {_} {equ} {_} _ _.
+Arguments rel_dec _ _ _ !x !y.
 
 Class RelDec_Correct T (equ : T -> T -> Prop) (ED : RelDec equ) : Prop :=
 { rel_dec_correct : forall x y : T, rel_dec x y = true <-> equ x y }.
@@ -47,20 +48,48 @@ Section rel_dec_p.
   Proof. destruct (rel_dec_p x y) ; [ right | left ] ; auto. Qed.
 End rel_dec_p.
 
-Theorem rel_dec_eq_true : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
-  eqt x y -> rel_dec x y = true.
-Proof.
-  intros. eapply rel_dec_correct in H. assumption.
-Qed.
+Section lemmas.
+  Variable T : Type.
+  Variable eqt : T -> T -> Prop.
+  Variable r : RelDec eqt.
+  Variable rc : RelDec_Correct r.
 
-Theorem rel_dec_neq_false : forall T (eqt : T -> T -> Prop) (r : RelDec eqt) (rc : RelDec_Correct r) x y,
-  ~eqt x y -> rel_dec x y = false.
-Proof.
-  intros. remember (x ?[ eqt ] y).
-  symmetry in Heqb.
-  destruct b; try reflexivity.
-  exfalso. eapply (@rel_dec_correct _ _ _ rc) in Heqb. auto.
-Qed.
+  Theorem rel_dec_eq_true : forall x y,
+    eqt x y -> rel_dec x y = true.
+  Proof.
+    intros. eapply rel_dec_correct in H. assumption.
+  Qed.
+
+  Theorem rel_dec_neq_false : forall x y,
+    ~eqt x y -> rel_dec x y = false.
+  Proof.
+    intros. remember (x ?[ eqt ] y).
+    symmetry in Heqb.
+    destruct b; try reflexivity.
+    exfalso. eapply (@rel_dec_correct _ _ _ rc) in Heqb. auto.
+  Qed.
+
+  Require Import RelationClasses.
+
+  Theorem rel_dec_sym : Symmetric eqt -> forall x y,
+    x ?[ eqt ] y = y ?[ eqt ] x.
+  Proof.
+    intros.
+    remember (x ?[ eqt ] y); remember (y ?[ eqt ] x); intuition.
+    destruct b; destruct b0; auto.
+    { symmetry in Heqb; symmetry in Heqb0.
+      eapply (@rel_dec_correct _ _ _ rc) in Heqb.
+      symmetry in Heqb.
+      eapply (@rel_dec_correct _ _ _ rc) in Heqb.
+      congruence. }
+    { symmetry in Heqb; symmetry in Heqb0.
+      eapply (@rel_dec_correct _ _ _ rc) in Heqb0.
+      symmetry in Heqb0.
+      eapply (@rel_dec_correct _ _ _ rc) in Heqb0.
+      congruence. }
+  Qed.
+End lemmas.
+
 
 (*
 Section SumEq.
