@@ -3,7 +3,10 @@ Require Import Relations RelationClasses.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.SigT.
+Require Import ExtLib.Data.ListNth.
+Require Import ExtLib.Data.Option.
 Require Import ExtLib.Structures.Proper.
+Require Import ExtLib.Tactics.EqDep.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 
@@ -173,15 +176,12 @@ Section hlist.
       | Hcons _ _ _ h , S n => hlist_nth h n
     end.
 
-  Require Import ExtLib.Data.ListNth.
   Definition cast1 T (l l' : list T) n v :=
     (fun pf : nth_error l n = Some v => eq_sym (nth_error_weaken l' l n pf)).
   Definition cast2 T (l l' : list T) n :=
     (fun pf : nth_error l n = None =>
        eq_sym (@nth_error_app_R _ l l' _ (nth_error_length_ge _ _ pf))).
 
-  Require Import ExtLib.Tactics.EqDep.
-  Require Import ExtLib.Data.Option.
 
   Theorem hlist_nth_hlist_app (e : EquivDec.EqDec iT (@eq iT))
   : forall l l' (h : hlist l) (h' : hlist l') n,
@@ -296,6 +296,25 @@ Section hlist.
         constructor; auto.
         { inv_all; subst; auto. }
         eapply IHx; auto. inv_all; subst. auto. }
+    Qed.
+
+    Lemma hlist_app_assoc : forall ls ls' ls''
+                                 (a : hlist ls) (b : hlist ls') (c : hlist ls''),
+      hlist_app (hlist_app a b) c =
+      match eq_sym (app_ass ls ls' ls'') in _ = t return hlist t with
+        | eq_refl => hlist_app a (hlist_app b c)
+      end.
+    Proof.
+      intros ls ls' ls''.
+      generalize (eq_sym (app_assoc_reverse ls ls' ls'')).
+      induction ls; simpl; intros.
+      { rewrite (hlist_eta a); simpl.
+        rewrite (UIP_refl e). reflexivity. }
+      { rewrite (hlist_eta a0). simpl.
+        inversion e.
+        erewrite IHls with (e := H0).
+        generalize dependent (hlist_app (hlist_tl a0) (hlist_app b c)).
+        revert e. rewrite H0. uip_all. reflexivity. }
     Qed.
 
   End type.
