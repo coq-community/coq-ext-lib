@@ -1,5 +1,6 @@
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Data.Positive.
+Require Import ExtLib.Tactics.Cases.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -84,5 +85,80 @@ Section pmap.
   ; lookup := pmap_lookup
   ; union := pmap_union
   }.
+
+  Lemma tilde_1_inj_neg : forall k k',
+    (k~1)%positive <> (k'~1)%positive -> k <> k'.
+  Proof.
+    induction k; destruct k'; intuition;
+    try match goal with
+          | H : _ = _ |- _ => inversion H; clear H; subst
+        end; intuition eauto.
+  Qed.
+
+  Lemma tilde_0_inj_neg : forall k k',
+    (k~0)%positive <> (k'~0)%positive -> k <> k'.
+  Proof.
+    induction k; destruct k'; intuition;
+    try match goal with
+          | H : _ = _ |- _ => inversion H; clear H; subst
+        end; intuition eauto.
+  Qed.
+
+  Lemma pmap_lookup_insert_empty : forall k k' v,
+    k <> k' ->
+    pmap_lookup k' (pmap_insert k v Empty) = None.
+  Proof.
+    induction k; destruct k'; simpl; intros;
+    eauto using tilde_0_inj_neg, tilde_1_inj_neg.
+    destruct k'; simpl; auto.
+    destruct k'; simpl; auto.
+    destruct k'; simpl; auto.
+    destruct k'; simpl; auto.
+    congruence.
+  Qed.
+
+  Lemma lookup_empty : forall k, pmap_lookup k Empty = None.
+  Proof.
+    destruct k; reflexivity.
+  Qed.
+
+  Hint Rewrite lookup_empty pmap_lookup_insert_empty
+       using (eauto using tilde_1_inj_neg, tilde_1_inj_neg) : pmap_rw.
+
+  Lemma pmap_lookup_insert_eq
+  : forall (m : pmap) (k : positive) (v : T),
+      pmap_lookup k (pmap_insert k v m) = Some v.
+  Proof.
+    intros m k; revert m.
+    induction k; simpl; intros; forward; Cases.rewrite_all; eauto.
+  Qed.
+
+  Lemma pmap_lookup_insert_neq
+  : forall (m : pmap) (k : positive) (v : T) (k' : positive),
+      k <> k' ->
+      forall v' : T,
+        pmap_lookup k' m = Some v' <-> pmap_lookup k' (pmap_insert k v m) = Some v'.
+  Proof.
+    intros m k; revert m.
+    induction k; simpl; intros; forward; Cases.rewrite_all;
+    autorewrite with pmap_rw; eauto.
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity.
+      erewrite IHk; eauto using tilde_1_inj_neg. reflexivity. }
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity; try congruence.
+      erewrite IHk. reflexivity. eauto using tilde_0_inj_neg. }
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity; try congruence. }
+  Qed.
+
+  Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap :=
+  { mapsto := fun k v m => pmap_lookup k m = Some v }.
+  Proof.
+    { abstract (induction k; simpl; congruence). }
+    { abstract (induction k; simpl; intros; forward). }
+    { eauto using pmap_lookup_insert_eq. }
+    { eauto using pmap_lookup_insert_neq. }
+  Defined.
 
 End pmap.
