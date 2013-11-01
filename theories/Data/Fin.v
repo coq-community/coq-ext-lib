@@ -1,6 +1,5 @@
 Require Coq.Lists.List.
 Require Import ExtLib.Core.RelDec.
-Require Import ExtLib.Data.Nat.
 Require Import ExtLib.Tactics.EqDep.
 Require Import ExtLib.Tactics.Injection.
 

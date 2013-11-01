@@ -1,5 +1,4 @@
 Require Import Coq.Bool.Bool.
-Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
 Set Strict Implicit.

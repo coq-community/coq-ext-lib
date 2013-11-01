@@ -1,6 +1,5 @@
 Require Import Setoid.
 Require Import Coq.Classes.Morphisms.
-Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Proper.

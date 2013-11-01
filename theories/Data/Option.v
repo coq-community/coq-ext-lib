@@ -1,8 +1,6 @@
-Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
-Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Structures.Proper.

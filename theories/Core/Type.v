@@ -1,6 +1,4 @@
 Require Import Coq.Setoids.Setoid.
-Require Import Relations.
-Require Import RelationClasses.
 Require Import ExtLib.Structures.Proper.
 
 (** Types are defined by their equivalence relations

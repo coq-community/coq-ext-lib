@@ -1,8 +1,5 @@
-Require Import Morphisms.
-Require Import Coq.Relations.Relations.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.PreFun.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Logic.
 Require Import ExtLib.Structures.CoFunctor.

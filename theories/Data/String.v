@@ -1,5 +1,4 @@
 Require Import Coq.Strings.String.
-Require Import EqNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
@@ -70,8 +69,6 @@ Fixpoint string_cmp (l r : string) : comparison :=
     | String l ls , String r rs =>
       ascii_cmp l r >> string_cmp ls rs
   end.
-
-Require Import Ascii.
 
 Section Program_Scope.
   Require Import Program.

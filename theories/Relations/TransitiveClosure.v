@@ -1,4 +1,3 @@
-Require Import RelationClasses.
 Require Import Setoid.
 
 Set Implicit Arguments.

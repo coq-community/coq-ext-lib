@@ -4,7 +4,6 @@ Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Structures.Proper.
-Require Import ExtLib.Structures.EqDep.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 
