@@ -317,6 +317,33 @@ Section hlist.
         revert e. rewrite H0. uip_all. reflexivity. }
     Qed.
 
+    Fixpoint hlist_split ls ls' : hlist (ls ++ ls') -> hlist ls * hlist ls' :=
+      match ls as ls return hlist (ls ++ ls') -> hlist ls * hlist ls' with
+        | nil => fun h => (Hnil, h)
+        | l :: ls => fun h =>
+                       let (a,b) := @hlist_split ls ls' (hlist_tl h) in
+                       (Hcons (hlist_hd h) a, b)
+      end.
+
+    Lemma hlist_app_hlist_split : forall ls' ls (h : hlist (ls ++ ls')),
+      hlist_app (fst (hlist_split ls ls' h)) (snd (hlist_split ls ls' h)) = h.
+    Proof.
+      induction ls; simpl; intros; auto.
+      rewrite (hlist_eta h); simpl.
+      specialize (IHls (hlist_tl h)).
+      destruct (hlist_split ls ls' (hlist_tl h)); simpl in *; auto.
+      f_equal. auto.
+    Qed.
+
+    Lemma hlist_split_hlist_app : forall ls' ls (h : hlist ls) (h' : hlist ls'),
+      hlist_split _ _ (hlist_app h h') = (h,h').
+    Proof.
+      induction ls; simpl; intros.
+      { rewrite (hlist_eta h); simpl; auto. }
+      { rewrite (hlist_eta h); simpl.
+        rewrite IHls. reflexivity. }
+    Qed.
+
   End type.
 
 End hlist.
