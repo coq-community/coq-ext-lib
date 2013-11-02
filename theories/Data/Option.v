@@ -3,6 +3,8 @@ Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Applicative.
+Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Structures.FunctorLaws.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Tactics.Injection.
@@ -34,6 +36,12 @@ Global Instance Applicative_option : Applicative option :=
              | _ , _ => None
            end
 |}.
+
+Global Instance Functor_option : Functor option :=
+{| fmap := fun _ _ f x => match x with
+                            | None => None
+                            | Some x => Some (f x)
+                          end |}.
 
 Section type.
   Variable T : Type.
@@ -77,6 +85,20 @@ Section type.
   Proof. compute; auto. Qed.
 
 End type.
+
+Global Instance FunctorLaws_option : FunctorLaws Functor_option type_option.
+Proof.
+  constructor.
+  { simpl. red. destruct x; destruct y; simpl; auto.
+    red in H0. intros. etransitivity. eapply H0. 2: eauto.
+    eapply proper_left; eauto. }
+  { red; simpl. red; simpl. red; simpl; intros.
+    destruct x; destruct y; simpl in *; auto.
+    unfold compose. eauto using equal_app. }
+  { red; simpl. red; simpl. red; simpl; intros.
+    destruct x0; destruct y0; eauto.
+    red in H2. simpl. eauto using equal_app. }
+Qed.
 
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
 { result := a = b }.

@@ -162,3 +162,23 @@ Section pmap.
   Defined.
 
 End pmap.
+
+Arguments Empty {_}.
+Arguments Branch {_} _ _ _.
+
+Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Data.Option.
+
+Section fmap.
+  Variables T U : Type.
+  Variable f : T -> U.
+
+  Fixpoint fmap_pmap (m : pmap T) : pmap U :=
+    match m with
+      | Empty => Empty
+      | Branch h l r => Branch (fmap f h) (fmap_pmap l) (fmap_pmap r)
+    end.
+End fmap.
+
+Global Instance Functor_pmap : Functor pmap :=
+{ fmap := fmap_pmap }.
