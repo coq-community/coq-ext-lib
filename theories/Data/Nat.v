@@ -34,6 +34,12 @@ Global Instance RelDec_lt : RelDec lt :=
 Global Instance RelDec_le : RelDec le :=
 { rel_dec := NPeano.leb }.
 
+Global Instance RelDec_gt : RelDec gt :=
+{ rel_dec := fun x y => NPeano.ltb y x }.
+
+Global Instance RelDec_ge : RelDec ge :=
+{ rel_dec := fun x y => NPeano.leb y x }.
+
 Global Instance RelDecCorrect_eq : RelDec_Correct RelDec_eq.
 Proof.
   constructor; simpl. apply EqNat.beq_nat_true_iff.
@@ -49,6 +55,17 @@ Proof.
   constructor; simpl. eapply NPeano.leb_le.
 Qed.
 
+Global Instance RelDecCorrect_gt : RelDec_Correct RelDec_gt.
+Proof.
+  constructor; simpl. unfold rel_dec; simpl.
+  intros. eapply NPeano.ltb_lt.
+Qed.
+
+Global Instance RelDecCorrect_ge : RelDec_Correct RelDec_ge.
+Proof.
+  constructor; simpl. unfold rel_dec; simpl.
+  intros. eapply NPeano.leb_le.
+Qed.
 
 Inductive R_nat_S : nat -> nat -> Prop :=
 | R_S : forall n, R_nat_S n (S n).
