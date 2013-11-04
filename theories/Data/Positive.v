@@ -1,13 +1,8 @@
 Require Import BinPos.
-Require Import ExtLib.Programming.Show.
 Require Import ExtLib.Core.RelDec.
 
 Set Implicit Arguments.
 Set Strict Implicit.
-
-Global Instance Show_positive : Show positive :=
-{ show p := show (Pos.to_nat p) }.
-
 
 (* Decidable Instances *)
 Global Instance RelDec_peq : RelDec (@eq positive) :=
