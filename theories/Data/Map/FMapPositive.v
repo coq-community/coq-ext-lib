@@ -1,4 +1,7 @@
 Require Import ExtLib.Structures.Maps.
+Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Structures.FunctorLaws.
+Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Positive.
 Require Import ExtLib.Tactics.Cases.
 
@@ -166,9 +169,6 @@ End pmap.
 Arguments Empty {_}.
 Arguments Branch {_} _ _ _.
 
-Require Import ExtLib.Structures.Functor.
-Require Import ExtLib.Data.Option.
-
 Section fmap.
   Variables T U : Type.
   Variable f : T -> U.
@@ -178,7 +178,43 @@ Section fmap.
       | Empty => Empty
       | Branch h l r => Branch (fmap f h) (fmap_pmap l) (fmap_pmap r)
     end.
+
+  Theorem fmap_lookup : forall a b m,
+    mapsto a b m ->
+    mapsto a (f b) (fmap_pmap m).
+  Proof.
+    induction a; destruct m; simpl; intros; try congruence.
+    { eapply IHa. eapply H. }
+    { eapply IHa; eapply H. }
+    { subst. auto. }
+  Qed.
+
+  Theorem fmap_lookup_bk : forall a b m,
+    mapsto a b (fmap_pmap m) ->
+    exists b', mapsto a b' m /\ f b' = b.
+  Proof.
+    induction a; destruct m; simpl; intros; try congruence.
+    { eapply IHa. eapply H. }
+    { eapply IHa. eapply H. }
+    { destruct o; try congruence. eexists; split; eauto. inversion H; auto. }
+  Qed.
+
 End fmap.
+
+Section type.
+  Require Import ExtLib.Core.Type.
+  Variable T : Type.
+  Variable tT : type T.
+
+  Instance type_pmap : type (pmap T) :=
+    type_from_equal
+      (fun l r =>
+            (forall k v,
+               mapsto k v l -> exists v', mapsto k v' r /\ equal v v')
+         /\ (forall k v,
+               mapsto k v r -> exists v', mapsto k v' l /\ equal v v')).
+
+End type.
 
 Global Instance Functor_pmap : Functor pmap :=
 { fmap := fmap_pmap }.
