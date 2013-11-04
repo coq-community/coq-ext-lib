@@ -317,6 +317,25 @@ Section hlist.
         revert e. rewrite H0. uip_all. reflexivity. }
     Qed.
 
+    Lemma hlist_app_assoc' : forall ls ls' ls''
+                                 (a : hlist ls) (b : hlist ls') (c : hlist ls''),
+      hlist_app a (hlist_app b c) =
+      match app_ass ls ls' ls'' in _ = t return hlist t with
+        | eq_refl => hlist_app (hlist_app a b) c
+      end.
+    Proof.
+      intros ls ls' ls''.
+      generalize (app_assoc_reverse ls ls' ls'').
+      induction ls; simpl; intros.
+      { rewrite (hlist_eta a); simpl.
+        rewrite (UIP_refl e). reflexivity. }
+      { rewrite (hlist_eta a0). simpl.
+        inversion e.
+        erewrite IHls with (e := H0).
+        generalize dependent (hlist_app (hlist_app (hlist_tl a0) b) c).
+        revert e. rewrite H0. uip_all. reflexivity. }
+    Qed.
+
     Fixpoint hlist_split ls ls' : hlist (ls ++ ls') -> hlist ls * hlist ls' :=
       match ls as ls return hlist (ls ++ ls') -> hlist ls * hlist ls' with
         | nil => fun h => (Hnil, h)
