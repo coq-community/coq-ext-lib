@@ -13,6 +13,10 @@ Ltac destruct_ands H :=
       let H2 := fresh in
       destruct H as [ H1 H2 ] ;
         destruct_ands H1 ; destruct_ands H2
+    | exists x , _ =>
+      let H1 := fresh in
+      destruct H as [ ? H1 ] ;
+        destruct_ands H1
     | _ => idtac
   end.
 
