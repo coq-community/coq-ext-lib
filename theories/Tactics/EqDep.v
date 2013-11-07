@@ -64,6 +64,27 @@ Ltac uip_all :=
   intros;
     repeat match goal with
              | [ H : ?X = ?X |- _ ] => rewrite (UIP_refl H) in *
+             | [ _ : context [ ?H ] |- _ ] =>
+               rewrite (UIP_refl H) in *
+             | [ |- context [ ?H ] ] =>
+               rewrite (UIP_refl H) in *
+           end.
+
+Ltac uip_all' :=
+  repeat match goal with
+           | [ H : _ = _ |- _ ] => rewrite H
+           | [ |- context [ match ?X in _ = t return _ with
+                              | refl_equal => _
+                            end ] ] => notVar X; generalize X
+           | [ |- context [ eq_rect_r _ _ ?X ] ] => notVar X; generalize X
+         end;
+  intros;
+    repeat match goal with
+             | [ H : ?X = ?X |- _ ] =>
+               generalize dependent H;
+                 let pf := fresh in
+                 intro pf; rewrite (UIP_refl pf) in * ;
+                 try clear pf
            end.
 
 Export EquivDec.
