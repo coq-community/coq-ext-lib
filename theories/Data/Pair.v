@@ -1,5 +1,6 @@
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
+Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -90,3 +91,7 @@ Section PairEq.
              end; congruence.
   Qed.
 End PairEq.
+
+Global Instance Injective_pair T U (a :T) (b:U) c d : Injective ((a,b) = (c,d)) :=
+{| result := a = c /\ b = d |}.
+Proof. abstract (inversion 1; intuition). Defined.
