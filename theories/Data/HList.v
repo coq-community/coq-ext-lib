@@ -39,12 +39,6 @@ Section hlist.
       | Hcons _ _ _ x => x
     end.
 
-  Fixpoint hlist_app ll lr (h : hlist ll) : hlist lr -> hlist (ll ++ lr) :=
-    match h in hlist ll return hlist lr -> hlist (ll ++ lr) with
-      | Hnil => fun x => x
-      | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
-    end.
-
   Lemma hlist_eta : forall ls (h : hlist ls),
     h = match ls as ls return hlist ls -> hlist ls with
           | nil => fun _ => Hnil
@@ -53,6 +47,48 @@ Section hlist.
   Proof.
     intros. destruct h; auto.
   Qed.
+
+  Fixpoint hlist_app ll lr (h : hlist ll) : hlist lr -> hlist (ll ++ lr) :=
+    match h in hlist ll return hlist lr -> hlist (ll ++ lr) with
+      | Hnil => fun x => x
+      | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
+    end.
+
+  Lemma app_ass_trans : forall {T} (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
+  Proof.
+    induction a; simpl.
+    reflexivity.
+    intros. f_equal. apply IHa.
+  Defined.
+
+  Lemma app_nil_r_trans : forall {T} (a : list T), a ++ nil = a.
+  Proof.
+    induction a; simpl.
+    reflexivity.
+    f_equal. apply IHa.
+  Defined.
+
+  Fixpoint hlist_rev' ls ls' (h : hlist ls) : hlist ls' -> hlist (rev ls ++ ls') :=
+    match h in hlist ls return hlist ls' -> hlist (rev ls ++ ls') with
+      | Hnil => fun h => h
+      | Hcons l ls0 x h' => fun hacc =>
+        match app_ass_trans (rev ls0) (l :: nil) ls' in _ = t return hlist t -> hlist _ with
+          | eq_refl => fun x => x
+        end (@hlist_rev' _ (l :: ls') h' (Hcons x hacc))
+    end.
+
+  Definition hlist_rev ls (h : hlist ls) : hlist (rev ls) :=
+    match app_nil_r_trans (rev ls) in _ = t return hlist t with
+      | eq_refl => hlist_rev' h Hnil
+    end.
+
+  Lemma hlist_rev_nil : hlist_rev Hnil = Hnil.
+  Proof.
+    reflexivity.
+  Qed.
+
+  (** TODO: I need hlist_rev_cons **)
+
 
   Section equiv.
     Variable eqv : forall x, relation (F x).
@@ -301,7 +337,7 @@ Section hlist.
     Lemma hlist_app_assoc : forall ls ls' ls''
                                  (a : hlist ls) (b : hlist ls') (c : hlist ls''),
       hlist_app (hlist_app a b) c =
-      match eq_sym (app_ass ls ls' ls'') in _ = t return hlist t with
+      match eq_sym (app_ass_trans ls ls' ls'') in _ = t return hlist t with
         | eq_refl => hlist_app a (hlist_app b c)
       end.
     Proof.
@@ -309,31 +345,32 @@ Section hlist.
       generalize (eq_sym (app_assoc_reverse ls ls' ls'')).
       induction ls; simpl; intros.
       { rewrite (hlist_eta a); simpl.
-        rewrite (UIP_refl e). reflexivity. }
+        reflexivity. }
       { rewrite (hlist_eta a0). simpl.
-        inversion e.
-        erewrite IHls with (e := H0).
-        generalize dependent (hlist_app (hlist_tl a0) (hlist_app b c)).
-        revert e. rewrite H0. uip_all. reflexivity. }
+        inversion H.
+        erewrite (IHls H1).
+        unfold f_equal. unfold eq_trans. unfold eq_sym.
+        generalize (app_ass_trans ls ls' ls'').
+        rewrite <- H1. uip_all. reflexivity. }
     Qed.
 
     Lemma hlist_app_assoc' : forall ls ls' ls''
                                  (a : hlist ls) (b : hlist ls') (c : hlist ls''),
       hlist_app a (hlist_app b c) =
-      match app_ass ls ls' ls'' in _ = t return hlist t with
+      match app_ass_trans ls ls' ls'' in _ = t return hlist t with
         | eq_refl => hlist_app (hlist_app a b) c
       end.
     Proof.
       intros ls ls' ls''.
       generalize (app_assoc_reverse ls ls' ls'').
       induction ls; simpl; intros.
-      { rewrite (hlist_eta a); simpl.
-        rewrite (UIP_refl e). reflexivity. }
+      { rewrite (hlist_eta a); simpl. reflexivity. }
       { rewrite (hlist_eta a0). simpl.
-        inversion e.
-        erewrite IHls with (e := H0).
-        generalize dependent (hlist_app (hlist_app (hlist_tl a0) b) c).
-        revert e. rewrite H0. uip_all. reflexivity. }
+        inversion H.
+        erewrite (IHls H1).
+        unfold eq_trans, f_equal.
+        generalize (app_ass_trans ls ls' ls'').
+        rewrite <- H1. uip_all. reflexivity. }
     Qed.
 
     Fixpoint hlist_split ls ls' : hlist (ls ++ ls') -> hlist ls * hlist ls' :=
