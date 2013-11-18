@@ -100,6 +100,13 @@ Section parametric.
     intros. rewrite makeTrans_leftTrans. apply leftTrans_rightTrans.
   Qed.
 
+  Definition RTStep_left : forall x y z : T, R x y -> rightTrans y z -> rightTrans x z.
+    intros. revert H. revert x.
+    induction H0.
+    { intros. eapply RTStep. eapply RTFin. eassumption. eassumption. }
+    { intros. eapply RTStep. eapply IHrightTrans. eassumption. eassumption. }
+  Defined.
+
 End parametric.
 
 Section param.
@@ -133,4 +140,3 @@ Section param.
   Qed.
 
 End param.
-
