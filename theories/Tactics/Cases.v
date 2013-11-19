@@ -66,5 +66,5 @@ Ltac forward_unsafe :=
 Ltac rewrite_all :=
   repeat match goal with
            | [ H : _ |- _ ] =>
-             erewrite H by eauto with typeclass_instances
+             erewrite H in * by eauto with typeclass_instances
          end.
