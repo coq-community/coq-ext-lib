@@ -1,4 +1,3 @@
-Require Import ExtLib.Structures.Logic.
 Require Import ExtLib.Core.Type.
 
 Global Instance type_Prop : type Prop :=
@@ -11,6 +10,7 @@ Proof.
   constructor; compute; firstorder.
 Qed.
 
+(*
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -46,4 +46,4 @@ Proof.
 Qed.
 
 Existing Instance LogicLaws_Prop.
-
+*)
