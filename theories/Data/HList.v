@@ -212,6 +212,34 @@ Section hlist.
       | Hcons _ _ _ h , S n => hlist_nth h n
     end.
 
+  Fixpoint nth_error_hlist_nth ls (n : nat)
+  : option (hlist ls -> match nth_error ls n with
+                          | None => Empty_set
+                          | Some x => F x
+                        end) :=
+    match ls as ls
+          return option (hlist ls -> match nth_error ls n with
+                                       | None => Empty_set
+                                       | Some x => F x
+                                     end)
+    with
+      | nil => None
+      | l :: ls =>
+        match n as n
+              return option (hlist (l :: ls) -> match nth_error (l :: ls) n with
+                                                  | None => Empty_set
+                                                  | Some x => F x
+                                                end)
+        with
+          | 0 => Some hlist_hd
+          | S n =>
+            match nth_error_hlist_nth ls n with
+              | None => None
+              | Some f => Some (fun h => f (hlist_tl h))
+            end
+        end
+    end.
+
   Definition cast1 T (l l' : list T) n v :=
     (fun pf : nth_error l n = Some v => eq_sym (nth_error_weaken l' l n pf)).
   Definition cast2 T (l l' : list T) n :=

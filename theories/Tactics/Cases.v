@@ -66,19 +66,19 @@ Ltac forward_unsafe :=
 Ltac rewrite_all_goal :=
   repeat match goal with
            | [ H : _ |- _ ] =>
-             erewrite H by eauto with typeclass_instances
+             progress (erewrite H by eauto with typeclass_instances)
          end.
 
 Ltac rewrite_all_in H' :=
   repeat match goal with
            | [ H : _ |- _ ] =>
-             erewrite H in H' by eauto with typeclass_instances
+             progress (erewrite H in H' by eauto with typeclass_instances)
          end.
 
 Ltac rewrite_all_star :=
   repeat match goal with
            | [ H : _ |- _ ] =>
-             erewrite H in * by eauto with typeclass_instances
+             progress (erewrite H in * by eauto with typeclass_instances)
          end.
 
-Ltac rewrite_all := rewrite_all_star.
+Ltac rewrite_all := rewrite_all_goal.
