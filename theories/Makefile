@@ -15,7 +15,7 @@ coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
 
 Makefile.coq: Makefile $(VS)
-	coq_makefile $(ARGS) $(VS) -o Makefile.coq
+	@ coq_makefile $(ARGS) $(VS) -o Makefile.coq
 
 Makefile.test.coq: Makefile $(TVS)
 	coq_makefile $(ARGS) $(TVS) -o Makefile.test.coq
@@ -24,7 +24,10 @@ install: Makefile.coq coq
 	$(MAKE) -f Makefile.coq install
 
 uninstall: Makefile.coq
-	$(MAKE) -f Makefile.coq uninstall
+	@ for i in $(VS:%.v=%.vo); do \
+         rm -f $(shell coqc -where)/user-contrib/ExtLib/$$i; \
+        done
+
 
 test: coq Makefile.test.coq
 	$(MAKE) -f Makefile.test.coq
