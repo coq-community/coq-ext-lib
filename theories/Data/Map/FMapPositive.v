@@ -164,6 +164,14 @@ Section pmap.
     { eauto using pmap_lookup_insert_neq. }
   Defined.
 
+  Definition from_list : list T -> pmap :=
+    (fix from_list acc i ls {struct ls} :=
+       match ls with
+         | nil => acc
+         | List.cons l ls =>
+           from_list (pmap_insert i l acc) (Pos.succ i) ls
+       end) Empty 1%positive.
+
 End pmap.
 
 Arguments Empty {_}.

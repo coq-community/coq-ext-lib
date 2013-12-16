@@ -1,4 +1,4 @@
-Require Import Bool.
+Require Import Coq.Bool.Bool.
 Require Import ExtLib.Structures.Sets.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.

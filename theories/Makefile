@@ -23,6 +23,9 @@ Makefile.test.coq: Makefile $(TVS)
 install: Makefile.coq coq
 	$(MAKE) -f Makefile.coq install
 
+uninstall: Makefile.coq
+	$(MAKE) -f Makefile.coq uninstall
+
 test: coq Makefile.test.coq
 	$(MAKE) -f Makefile.test.coq
 

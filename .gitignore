@@ -2,6 +2,7 @@
 *.glob
 *.v.d
 Makefile.coq
+Makefile.opam.coq
 *~
 \#*
 .#*

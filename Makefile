@@ -15,6 +15,10 @@ clean:
 	$(MAKE) -C theories clean
 	$(MAKE) -C examples clean
 
+uninstall:
+	$(MAKE) -C theories uninstall
+
+
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
