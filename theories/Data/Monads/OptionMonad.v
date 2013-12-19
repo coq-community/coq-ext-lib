@@ -53,6 +53,36 @@ Section Trans.
   ; put v := lift (put v)
   }.
 
+  Instance Plus_optionT_right : MonadPlus optionT :=
+  { mplus _A _B a b :=
+      mkOptionT (bind (unOptionT b) (fun b =>
+        match b with
+          | None =>
+            bind (unOptionT a) (fun a =>
+                                  match a with
+                                    | None => ret None
+                                    | Some a => ret (Some (inl a))
+                                  end)
+          | Some b => ret (Some (inr b))
+        end))
+  }.
+
+  Instance Plus_optionT_left : MonadPlus optionT :=
+  { mplus _A _B a b :=
+      mkOptionT (bind (unOptionT a) (fun a =>
+        match a with
+          | None =>
+            bind (unOptionT b) (fun b =>
+                                  match b with
+                                    | None => ret None
+                                    | Some b => ret (Some (inr b))
+                                  end)
+          | Some a => ret (Some (inl a))
+        end))
+  }.
+
+  Global Instance Plus_optionT : MonadPlus optionT := Plus_optionT_left.
+
   Global Instance Reader_optionT {T} (SM : MonadReader T m) : MonadReader T optionT :=
   { ask := lift ask
   ; local _T v cmd := mkOptionT (local v (unOptionT cmd))

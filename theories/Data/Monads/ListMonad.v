@@ -15,3 +15,7 @@ Global Instance Monad_list : Monad list :=
 
 Global Instance MonadZero_list : MonadZero list :=
 { mzero := @nil }.
+
+Global Instance MonadPlus_list : MonadPlus list :=
+{ mplus _A _B a b := List.map inl a ++ List.map inr b
+}.

@@ -67,7 +67,7 @@ Section StateType.
   ; put := fun x => lift (put x)
   }.
 
-  Global Instance MonadReader_stateT T (MR : MonadReader T m) : MonadReader T stateT := 
+  Global Instance MonadReader_stateT T (MR : MonadReader T m) : MonadReader T stateT :=
   { ask := mkStateT (fun s => bind ask (fun t => ret (t, s)))
   ; local := fun _ f c => mkStateT (fun s => local f (runStateT c s))
   }.
@@ -83,15 +83,28 @@ Section StateType.
 
   Global Instance Exc_stateT T (MR : MonadExc T m) : MonadExc T stateT :=
   { raise := fun _ e => lift (raise e)
-  ; catch := fun _ body hnd => 
+  ; catch := fun _ body hnd =>
     mkStateT (fun s => catch (runStateT body s) (fun e => runStateT (hnd e) s))
   }.
 
+  Global Instance MonadZero_stateT (MR : MonadZero m) : MonadZero stateT :=
+  { mzero _A := lift mzero
+  }.
+
   Global Instance MonadFix_stateT (MF : MonadFix m) : MonadFix stateT :=
-  { mfix := fun _ _ r v => 
+  { mfix := fun _ _ r v =>
     mkStateT (fun s => mfix2 _ (fun r v s => runStateT (mkStateT (r v)) s) v s)
   }.
-  
+
+  Global Instance MonadPlus_stateT (MP : MonadPlus m) : MonadPlus stateT :=
+  { mplus _A _B a b :=
+      mkStateT (fun s => bind (mplus (runStateT a s) (runStateT b s))
+               (fun res => match res with
+                             | inl (a,s) => ret (inl a, s)
+                             | inr (b,s) => ret (inr b, s)
+                           end))
+  }.
+
 End StateType.
 
 Arguments evalState {S} {t} (c) (s).
