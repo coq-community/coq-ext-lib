@@ -20,7 +20,7 @@ Existing Class MonP.
 Hint Extern 0 (@MonP _ _ _) => progress (simpl MonP) : typeclass_instances.
 
 Global Instance PMonad_Monad m (M : Monad m) : PMonad m :=
-{ MonP := Any 
+{ MonP := Any
 ; pret := fun _ _ x => ret x
 ; pbind := fun _ _ _ c f => bind c f
 }.
@@ -33,14 +33,14 @@ Section monadic.
     fun x => bind x (fun x => ret (f x)).
 
   Definition liftM2 T U V (f : T -> U -> V) : m T -> m U -> m V :=
-    Eval cbv beta iota zeta delta [ liftM ] in 
+    Eval cbv beta iota zeta delta [ liftM ] in
       fun x y => bind x (fun x => liftM (f x) y).
 
   Definition liftM3 T U V W (f : T -> U -> V -> W) : m T -> m U -> m V -> m W :=
-    Eval cbv beta iota zeta delta [ liftM2 ] in 
+    Eval cbv beta iota zeta delta [ liftM2 ] in
       fun x y z => bind x (fun x => liftM2 (f x) y z).
 
-  Definition apM {A B} (fM:m (A -> B)) (aM:m A) : m B := 
+  Definition apM {A B} (fM:m (A -> B)) (aM:m A) : m B :=
     bind fM (fun f => liftM f aM).
 End monadic.
 
@@ -63,7 +63,7 @@ Instance Functor_Monad {m} {M:Monad m} : Functor m :=
 { fmap := @liftM _ _ }.
 
 Instance PFunctor_PMonad {m} {M : PMonad m} : PFunctor m :=
-{ FunP := MonP 
+{ FunP := MonP
 ; pfmap := fun _ _ _ f a =>
   pbind a (fun x => pret (f x))
 }.
@@ -71,7 +71,7 @@ Instance PFunctor_PMonad {m} {M : PMonad m} : PFunctor m :=
 Instance PApplicative_PMonad {m} {M:PMonad m} : PApplicative m :=
 { AppP := MonP
 ; ppure := fun _ _ x => pret x
-; pap := fun _ _ _ f x => 
+; pap := fun _ _ _ f x =>
   pbind f (fun f => pbind x (fun x => pret (f x)))
 }.
 
