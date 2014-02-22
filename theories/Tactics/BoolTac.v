@@ -15,7 +15,7 @@ Proof.
   destruct a; auto.
 Qed.
 
-Ltac do_bool' run :=
+Ltac do_bool' runner :=
   ( autorewrite with bool_rw in * );
   repeat match goal with
            | [ H : negb _ = true |- _ ] => apply negb_true in H
@@ -29,13 +29,13 @@ Ltac do_bool' run :=
            | [ H : false = orb _ _ |- _ ] =>
              symmetry in H; apply orb_false_iff in H; destruct H
            | [ H : andb _ _ = false |- _ ] =>
-             apply andb_false_iff in H; run H
+             apply andb_false_iff in H; runner H
            | [ H : orb _ _ = true |- _ ] =>
-             apply orb_true_iff in H; run H
+             apply orb_true_iff in H; runner H
            | [ H : false = andb _ _ |- _ ] =>
-             symmetry in H; apply andb_false_iff in H; run H
+             symmetry in H; apply andb_false_iff in H; runner H
            | [ H : true = orb _ _ |- _ ] =>
-             symmetry in H; apply orb_true_iff in H; run H
+             symmetry in H; apply orb_true_iff in H; runner H
          end.
 
 Ltac do_bool_case :=
