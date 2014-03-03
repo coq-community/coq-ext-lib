@@ -24,7 +24,7 @@ Section laws.
     typeOk tT -> typeOk tU -> typeOk tV ->
     forall (f : T -> U) (g : U -> V),
     proper f -> proper g ->
-    equal (fmap (compose f g)) (compose (fmap f) (fmap g))
+    equal (fmap (compose g f)) (compose (fmap g) (fmap f))
   ; fmap_proper :> forall T U (tT : type T) (tU : type U),
     typeOk tT -> typeOk tU ->
     proper (@fmap _ _ T U)    

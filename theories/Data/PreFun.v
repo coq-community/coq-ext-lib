@@ -68,5 +68,5 @@ Section type.
 
 End type.
 
-Definition compose {A B C : Type} (f : A -> B) (g : B -> C) : A -> C :=
+Definition compose {A B C : Type} (g : B -> C) (f : A -> B) : A -> C :=
   fun x => g (f x).
