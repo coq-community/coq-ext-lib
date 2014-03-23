@@ -6,7 +6,6 @@ Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Structures.Proper.
-Require Import ExtLib.Tactics.EqDep.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 
@@ -104,23 +103,46 @@ Section hlist.
       red. induction x; constructor; auto. reflexivity.
     Qed.
 
+(*
     Variable ED : EquivDec.EqDec _ (@eq iT).
+*)
 
     Global Instance Symmetric_equiv_hlist (R : forall t, Symmetric (@eqv t)) ls
     : Symmetric (@equiv_hlist ls).
     Proof.
-      red. induction x; intros; rewrite (hlist_eta y) in *; constructor; auto.
-      inversion H; subst. inv_all. subst. symmetry; auto.
-      eapply IHx. inversion H; auto. inv_all. subst. auto.
+      red. induction 1.
+      { constructor. }
+      { constructor. symmetry. assumption. auto. }
     Qed.
 
     Global Instance Transitive_equiv_hlist (R : forall t, Transitive (@eqv t)) ls
     : Transitive (@equiv_hlist ls).
     Proof.
-      red. induction x; intros; rewrite (hlist_eta y) in *;
-           rewrite (hlist_eta z) in *; try solve [ constructor; auto ].
-      inversion H; clear H; subst. inversion H0; clear H0; subst.
-      inv_all; subst. constructor; try etransitivity; eauto.
+      red. induction 1.
+      { intro; assumption. }
+      { rewrite (hlist_eta z).
+        refine
+          (fun H' =>
+             match H' in @equiv_hlist ls X Y
+                   return
+                   match ls as ls return hlist ls -> hlist ls -> Prop with
+                     | nil => fun _ _ : hlist nil => True
+                     | l :: ls => fun (X Y : hlist (l :: ls)) =>
+                                    forall Z x xs,
+                                      eqv (hlist_hd Z) (hlist_hd X) ->
+                                      equiv_hlist xs (hlist_tl X) ->
+                                      (forall z : hlist ls,
+                                         equiv_hlist (hlist_tl X) z ->
+                                         equiv_hlist (hlist_tl Z) z) ->
+                                      @equiv_hlist (l :: ls) Z Y
+                   end X Y
+             with
+               | hlist_eqv_nil => I
+               | hlist_eqv_cons l ls x y h1 h2 pf pf' => _
+             end (Hcons x h1) x _ H H0 (@IHequiv_hlist)).
+        intros. rewrite (hlist_eta Z).
+        constructor. simpl in *. etransitivity. eassumption. eassumption.
+        eapply H3. simpl in *. eassumption. }
     Qed.
 
   End equiv.
