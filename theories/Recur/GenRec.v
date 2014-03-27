@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+Require Import Coq.Classes.RelationClasses.
 
 Set Implicit Arguments.
 Set Strict Implicit.
