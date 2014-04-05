@@ -1,4 +1,4 @@
-Require Import List String. 
+Require Import List String.
 Require Import ExtLib.Structures.CoMonad.
 
 Set Implicit Arguments.
@@ -13,7 +13,7 @@ Definition variant := list product.
 
 Section denote.
   Variable M : Type.
-  
+
   Definition typeD (t : type) : Type :=
     match t with
       | Self => M
@@ -21,19 +21,19 @@ Section denote.
     end.
 
   Definition func (T : Type) (v : product) : Type :=
-    fold_right (fun x acc => typeD x -> acc) T v.  
+    fold_right (fun x acc => typeD x -> acc) T v.
 
   Definition data (v : product) : Type :=
-    fold_right (fun x acc => typeD x * acc)%type unit v.  
+    fold_right (fun x acc => typeD x * acc)%type unit v.
 
   Definition matchD (T : Type) (v : variant) : Type :=
     fold_right (fun x acc => func T x -> acc)%type T v.
 
   Definition dataD (v : variant) : Type :=
     fold_right (fun x acc => data x + acc)%type Empty_set v.
-  
+
   Definition recD (T : Type) (c : Type -> Type) (v : variant) : Type :=
-    fold_right (fun x acc => 
+    fold_right (fun x acc =>
       fold_right (fun x acc =>
         match x with
           | Inj t => t
@@ -55,17 +55,17 @@ Global Instance Data_nat : Data nat :=
 { repr := nil :: (Self :: nil) :: nil
 ; outof := fun x _ z s =>
   match x with
-    | 0 => z 
+    | 0 => z
     | S n => s n
-  end 
-; into := fun d => 
+  end
+; into := fun d =>
   match d with
     | inl tt => 0
     | inr (inl (n, tt)) => n
     | inr (inr x) => match x with end
   end
 ; rec := fun c _ A z s d =>
-  coret ((fix recur (d : nat) {struct d} : c A := 
+  coret ((fix recur (d : nat) {struct d} : c A :=
     match d with
       | 0 => z
       | S n => s (recur n)
@@ -73,7 +73,7 @@ Global Instance Data_nat : Data nat :=
 }.
 
 Global Instance Data_list {A} : Data (list A) :=
-{ repr := (nil) :: (Inj A :: Self :: nil) :: nil 
+{ repr := (nil) :: (Inj A :: Self :: nil) :: nil
 ; outof := fun x _ n c =>
   match x with
     | nil => n
@@ -86,9 +86,9 @@ Global Instance Data_list {A} : Data (list A) :=
     | inr (inr x) => match x with end
   end
 ; rec := fun c _ T n co d =>
-  coret ((fix recur (ds : list A) {struct ds} : c T := 
+  coret ((fix recur (ds : list A) {struct ds} : c T :=
     match ds with
-      | nil => n 
+      | nil => n
       | d :: ds => co d (recur ds)
     end) d)
 }.
@@ -136,12 +136,12 @@ Hint Extern 0 (ProductResolve _ _) => all_resolve : typeclass_instances.
 Hint Extern 0 (VariantResolve _ _) => all_resolve : typeclass_instances.
 
 Definition comma_before (b : bool) (s : showM) : showM :=
-  if b then 
+  if b then
     cat (show_exact ",") s
   else
     s.
 
-Fixpoint show_product (first : bool) (r : list type) {struct r} : 
+Fixpoint show_product (first : bool) (r : list type) {struct r} :
   ProductResolve Show r ->
   (showM -> showM) ->
   (fold_right
@@ -151,8 +151,8 @@ Fixpoint show_product (first : bool) (r : list type) {struct r} :
       | Inj t => t
       end -> acc) (showM) r).
 refine (
-     match r as r 
-       return 
+     match r as r
+       return
        ProductResolve Show r ->
        (showM -> showM) ->
        (fold_right
@@ -163,24 +163,24 @@ refine (
            end -> acc) (showM) r)
        with
        | nil => fun _ f => f empty
-       | Self :: rs => fun a f s => 
+       | Self :: rs => fun a f s =>
          @show_product false rs a (fun s' => f (cat s (comma_before first s')))
        | Inj t :: rs => fun a f x => @show_product false rs (snd a) (fun s' => f (cat ((fst a) x) (comma_before first s')))
      end); simpl in *.
 Defined.
 
 Global Instance Show_data (T : Type) (d : Data T) (AS : VariantResolve Show repr) : Show T :=
-{ show := 
+{ show :=
   (fix recur (repr : variant) : VariantResolve Show repr -> recD T showM id repr -> T -> showM :=
-    match repr as repr return 
+    match repr as repr return
       VariantResolve Show repr -> recD T showM id repr -> T -> showM
       with
       | nil => fun _ x => x
-      | r :: rs => fun a k' => 
-        recur rs (snd a) (k' (show_product true _ (fst a) 
+      | r :: rs => fun a k' =>
+        recur rs (snd a) (k' (show_product true _ (fst a)
           (fun s' => cat (show_exact "-") (cat (show_exact "(") (cat s' (show_exact ")"))))))
     end) repr AS (rec (c := id) showM)
 }.
 
-Eval compute in 
+Eval compute in
   to_string (M := Show_data _ _) (5 :: 6 :: 7 :: nil).
