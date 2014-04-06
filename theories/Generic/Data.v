@@ -6,29 +6,71 @@ Require Import ExtLib.Generic.Func.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+Fixpoint hlist_to_tuple ps (h : hlist (fun x : Type => x) ps) : asTuple ps :=
+  match h in hlist _ ps return asTuple ps with
+    | Hnil => tt
+    | Hcons _ _ x h => (x,hlist_to_tuple h)
+  end.
+
 Inductive itype (ps : list Type) : Type :=
 | Inj : Type -> itype ps
 | Rec : hlist (fun x => x) ps -> itype ps
 | Sum : itype ps -> itype ps -> itype ps
 | Prod : itype ps -> itype ps -> itype ps
 | Sig : forall T : Type, (T -> itype ps) -> itype ps
-| Get : forall T : Type, member T ps -> (T -> itype ps) -> itype ps.
+| Get : forall T : Type, member T ps -> (T -> itype ps) -> itype ps
+| Unf : forall T : Type, member T ps -> T -> itype ps -> itype ps.
 
-Fixpoint itypeD (ps : list Type) (i : itype ps) {struct i}
-: (asFunc ps Type) -> asFunc ps Type :=
-  match i return (asFunc ps Type) -> asFunc ps Type with
-    | Get T pf f => fun F => @get ps _ _ pf (fun x => itypeD (f x) F)
-    | Inj T => fun _ => const T
-    | Rec h => fun F => F
-    | Sig t f => fun F =>
-                   @under _ _ (fun App => @sigT t (fun x' => App _ (itypeD (f x') F)))
-    | Sum a b => fun F => combine sum ps (itypeD a F) (itypeD b F)
-    | Prod a b => fun F => combine prod ps (itypeD a F) (itypeD b F)
-  end%type.
+Definition Unit {ps} := @Inj ps unit.
+
+Section denote.
+  Variable (ps : list Type).
+
+  Fixpoint itypeD (i : itype ps) {struct i}
+  : asFunc ps Type -> asFunc ps Type :=
+    match i return asFunc ps Type -> asFunc ps Type with
+      | Get T pf f => fun F => @get ps _ _ pf (fun x => itypeD (f x) F)
+      | Inj T => fun _ => const T
+      | Rec h => fun F => const (applyF F (hlist_to_tuple h))
+      | Sig t f => fun F =>
+                     @under _ _ (fun App => @sigT t (fun x' => App _ (itypeD (f x') F)))
+      | Sum a b => fun F => combine sum ps (itypeD a F) (itypeD b F)
+      | Prod a b => fun F => combine prod ps (itypeD a F) (itypeD b F)
+      | Unf T pf v i => fun F =>
+                          @get ps _ _ pf (fun x => combine prod _ (const (x = v : Type)) (replace pf v (itypeD i F)))
+    end%type.
+End denote.
+
+Section _match.
+  Variable ps : list Type.
+  Variable RecT : asFunc ps Type.
+
+  (** NOTE: Non-dependent **)
+  Fixpoint cases (i : itype ps) (k : asFunc ps Type -> asFunc ps Type)
+           {struct i} : asFunc ps Type :=
+    match i with
+      | Inj T => k (const T)
+      | Sum a b => combine prod ps (cases a k) (cases b k)
+      | Prod a b =>
+        cases a (fun A => cases b (fun B =>
+                                       under _ _ (fun App => App _ A -> App _ (k B))))
+      | Rec ps => k (const (applyF RecT (hlist_to_tuple ps)))
+      | Get T m f => @get _ _ _ m (fun x => cases (f x) k)
+      | Sig t f => @under _ _ (fun App => forall x' : t, (App _ (cases (f x') k)))
+      | Unf T pf v i => replace pf v (cases i k)
+    end.
+
+  Fixpoint Fmatch (i : itype ps) (Ret : asFunc ps Type)
+    (brs : asPi ps (fun App => App _ (cases i (fun x => combine (fun x y => x -> y) _ x Ret))))
+    {struct i}
+  : asPi ps (fun App => App _ (itypeD i RecT) -> App _ Ret).
+  Abort.
+
+End _match.
 
 (** Some Examples **)
-(*
 (** Vectors **)
+(*
 Definition rfvec T : itype ((nat : Type) :: nil) :=
   @Get ((nat : Type) :: @nil Type) nat (MZ _ _)
        (fun x =>
@@ -42,11 +84,30 @@ Definition rfvec' T : itype ((nat : Type) :: nil) :=
             (fun x => Inj _ (x = 0)))
       (@Get ((nat : Type) :: @nil Type) nat (MZ _ _)
             (fun x => Sig (fun n : nat => Prod (Inj _ T) (Prod (Rec (Hcons n Hnil)) (Inj _ (x = S n)))))).
+
+Definition rfvec'' T : itype ((nat : Type) :: nil) :=
+  Sum (Unf (MZ _ _) 0 Unit)
+      (Sig (fun n : nat =>
+              (Unf (MZ _ _) (S n) (Prod (Inj _ T) (Rec (Hcons n Hnil)))))).
+
+Eval simpl in fun T => itypeD (rfvec T).
 Eval simpl in fun T => itypeD (rfvec' T).
+Eval simpl in fun T => itypeD (rfvec'' T).
+Eval simpl in fun T Result Rec =>
+                @cases _ Rec (rfvec T) (fun x => combine (fun x y => x -> y) _ x Result).
+
+Eval simpl in fun T Result Rec =>
+                @cases _ Rec (rfvec' T) (fun x => combine (fun x y => x -> y) _ x Result).
+
+Eval simpl in fun T Result Rec =>
+                @cases _ Rec (rfvec'' T) (fun x => combine (fun x y => x -> y) _ x Result).
 
 
 (** Nats **)
 Definition rfnat := Sum (Inj nil unit) (Rec Hnil).
+
+Eval simpl in fun Result Rec =>
+                @Tmatch _ Rec rfnat (fun x => combine (fun x y => x -> y) _ x Result).
 
 Definition inat :=
   Eval simpl in itypeD rfnat.

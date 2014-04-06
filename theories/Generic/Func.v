@@ -6,6 +6,13 @@ Fixpoint asFunc (domain : list Type) (range : Type) : Type :=
     | d :: ds => d -> asFunc ds range
   end.
 
+Fixpoint asPi (ps : list Type) {struct ps} :
+         ((forall U, asFunc ps U -> U) -> Type) -> Type :=
+  match ps as ps return ((forall U, asFunc ps U -> U) -> Type) -> Type with
+    | nil => fun f => f (fun _ x => x)
+    | p :: ps => fun f => forall x : p, asPi ps (fun App => f (fun _ f' => App _ (f' x)))
+  end.
+
 Fixpoint asTuple (domain : list Type) : Type :=
   match domain with
     | nil => unit
@@ -76,3 +83,10 @@ Fixpoint under (domain : list Type) (range : Type)
     | d :: ds => fun F x =>
                    under ds range (fun App => F (fun U f => App U (f x)))
   end%type.
+
+Fixpoint replace {ps} {T U : Type} (m : member T ps) (v : T) {struct m}
+: asFunc ps U -> asFunc ps U :=
+  match m in member _ ps return asFunc ps U -> asFunc ps U with
+    | MZ _ => fun f _ => f v
+    | MN _ _ m => fun f x => replace m v (f x)
+  end.
