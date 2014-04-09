@@ -2,6 +2,7 @@ Require Import ExtLib.Data.Fin.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Asymmetric Patterns.
 
 Section parametric.
   Variable T : Type.

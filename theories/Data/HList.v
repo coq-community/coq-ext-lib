@@ -11,6 +11,7 @@ Require Import ExtLib.Tactics.EqDep.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Asymmetric Patterns.
 
 Section hlist.
   Context {iT : Type}.

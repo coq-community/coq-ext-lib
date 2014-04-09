@@ -1,7 +1,8 @@
-Require Import Setoid.
+Require Import Coq.Classes.RelationClasses.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Asymmetric Patterns.
 
 Section parametric.
   Variable T : Type.
@@ -97,7 +98,7 @@ Section parametric.
   Theorem makeTrans_rightTrans : forall s s',
     makeTrans s s' <-> rightTrans s s'.
   Proof.
-    intros. rewrite makeTrans_leftTrans. apply leftTrans_rightTrans.
+    intros. etransitivity. apply makeTrans_leftTrans. apply leftTrans_rightTrans.
   Qed.
 
   Definition RTStep_left : forall x y z : T, R x y -> rightTrans y z -> rightTrans x z.

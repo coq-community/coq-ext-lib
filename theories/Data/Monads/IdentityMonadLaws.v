@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+Require Import Coq.Classes.RelationClasses.
 Require Import Setoid.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
@@ -15,9 +15,9 @@ Section with_T.
 
   Definition equal_ident (a b : ident T) : Prop :=
     equal (unIdent a) (unIdent b).
-  
+
   Global Instance type_ident : type (ident T) :=
-  { equal := equal_ident 
+  { equal := equal_ident
   ; proper := fun x => proper (unIdent x)
   }.
 
@@ -34,9 +34,9 @@ Section with_T.
     { red; simpl. unfold equal_ident. intros.
       etransitivity; eassumption. }
   Qed.
-  
+
   Global Instance proper_unIdent : proper unIdent.
-  Proof. destruct x; compute; auto. Qed.
+  Proof. red; simpl; red; simpl. destruct x; compute; auto. Qed.
 
   Global Instance proper_mkIdent : proper mkIdent.
   Proof. do 7 red. compute; auto. Qed.

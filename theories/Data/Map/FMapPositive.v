@@ -133,7 +133,7 @@ Section pmap.
       pmap_lookup k (pmap_insert k v m) = Some v.
   Proof.
     intros m k; revert m.
-    induction k; simpl; intros; forward; Cases.rewrite_all; eauto.
+    induction k; simpl; intros; forward; Cases.rewrite_all_goal; eauto.
   Qed.
 
   Lemma pmap_lookup_insert_neq
@@ -143,16 +143,16 @@ Section pmap.
         pmap_lookup k' m = Some v' <-> pmap_lookup k' (pmap_insert k v m) = Some v'.
   Proof.
     intros m k; revert m.
-    induction k; simpl; intros; forward; Cases.rewrite_all;
+    induction k; simpl; intros; forward; Cases.rewrite_all_goal;
     autorewrite with pmap_rw; eauto.
     { destruct k'; simpl; destruct m; simpl;
-      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity.
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity.
       erewrite IHk; eauto using tilde_1_inj_neg. reflexivity. }
     { destruct k'; simpl; destruct m; simpl;
-      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity; try congruence.
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence.
       erewrite IHk. reflexivity. eauto using tilde_0_inj_neg. }
     { destruct k'; simpl; destruct m; simpl;
-      autorewrite with pmap_rw; Cases.rewrite_all; try reflexivity; try congruence. }
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence. }
   Qed.
 
   Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap :=

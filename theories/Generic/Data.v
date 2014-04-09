@@ -18,6 +18,7 @@ Inductive itype (ps : list Type) : Type :=
 | Sum : itype ps -> itype ps -> itype ps
 | Prod : itype ps -> itype ps -> itype ps
 | Sig : forall T : Type, (T -> itype ps) -> itype ps
+| Pi : forall T : Type, (T -> itype ps) -> itype ps
 | Get : forall T : Type, member T ps -> (T -> itype ps) -> itype ps
 | Unf : forall T : Type, member T ps -> T -> itype ps -> itype ps.
 
@@ -34,6 +35,8 @@ Section denote.
       | Rec h => fun F => const (applyF F (hlist_to_tuple h))
       | Sig t f => fun F =>
                      @under _ _ (fun App => @sigT t (fun x' => App _ (itypeD (f x') F)))
+      | Pi t f => fun F =>
+                     @under _ _ (fun App => forall x' : t, App _ (itypeD (f x') F))
       | Sum a b => fun F => combine sum ps (itypeD a F) (itypeD b F)
       | Prod a b => fun F => combine prod ps (itypeD a F) (itypeD b F)
       | Unf T pf v i => fun F =>
@@ -57,16 +60,58 @@ Section _match.
       | Rec ps => k (const (applyF RecT (hlist_to_tuple ps)))
       | Get T m f => @get _ _ _ m (fun x => cases (f x) k)
       | Sig t f => @under _ _ (fun App => forall x' : t, (App _ (cases (f x') k)))
+      | Pi t f => @under _ _ (fun App => @sigT t (fun x' => App _ (cases (f x') k)))
       | Unf T pf v i => replace pf v (cases i k)
     end.
 
+End _match.
+
+Fixpoint asPiE ps {struct ps}
+: forall (F : _)
+         (G : forall x : (forall U, asFunc ps U -> U), F x),
+         asPi ps F :=
+  match ps as ps
+        return forall F : (forall U : Type, asFunc ps U -> U) -> Type,
+                 (forall x : forall U : Type, asFunc ps U -> U, F x) -> asPi ps F
+  with
+    | nil => fun _ G => G _
+    | p :: ps => fun _ G => fun x => asPiE _ _ (fun x' => G _)
+  end.
+
+Fixpoint asPi_combine ps {struct ps}
+: forall (F G : _),
+    asPi ps (fun App => F App -> G App) ->
+    asPi ps F -> asPi ps G :=
+  match ps as ps
+        return forall F G : (forall U : Type, asFunc ps U -> U) -> Type,
+                 asPi ps (fun App : forall U : Type, asFunc ps U -> U => F App -> G App) ->
+                 asPi ps F -> asPi ps G
+  with
+    | nil => fun _ _ a b => a b
+    | p :: ps => fun _ _ a b x => asPi_combine _ _ _ (a x) (b x)
+  end.
+
+(*
+Section _mmatch.
+  Variable ps : list Type.
+  Variable RecT : asFunc ps Type.
+
   Fixpoint Fmatch (i : itype ps) (Ret : asFunc ps Type)
-    (brs : asPi ps (fun App => App _ (cases i (fun x => combine (fun x y => x -> y) _ x Ret))))
+    (brs : asPi ps (fun App => App _ (cases RecT i (fun x => combine (fun x y => x -> y) _ x Ret))))
     {struct i}
   : asPi ps (fun App => App _ (itypeD i RecT) -> App _ Ret).
-  Abort.
+  destruct i.
+  { simpl in *. revert brs.
+    unfold combine.
+    apply asPi_combine.
+    apply asPiE.
+  intro. intro.
+  destruct i.
+  { simpl in *.
+  
 
-End _match.
+  Abort.
+*)
 
 (** Some Examples **)
 (** Vectors **)

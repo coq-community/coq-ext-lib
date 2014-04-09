@@ -1,4 +1,6 @@
-Require Import List.
+Require Import Coq.Lists.List.
+
+Set Asymmetric Patterns.
 
 Fixpoint Ctor {T : Type} (ls : list {x : Type & T -> x}) : Type :=
   match ls with

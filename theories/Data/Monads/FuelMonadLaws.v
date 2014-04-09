@@ -34,13 +34,14 @@ Section Laws.
       eapply typeOk_from_equal.
       { unfold proper; simpl.
         destruct x; destruct y; simpl; intros; auto; try contradiction.
-        apply only_proper in H; auto. intuition. }
+        apply only_proper in H; auto.
+        destruct H; split; apply tokE; assumption. }
       { red. destruct x; destruct y; simpl; auto; simpl. symmetry; auto. }
       { red. destruct x; destruct y; destruct z; simpl; intros; auto; try contradiction.
         etransitivity; eauto. }
     Qed.
   End fixResult_T.
-  
+
   Section with_T.
     Context {T : Type} (e : type T).
     Variable tokE : typeOk e.
@@ -50,24 +51,24 @@ Section Laws.
 
     Global Instance type_GFix : type (GFix T) :=
       type_from_equal fix_meq.
-    
+
     Global Instance typeOk_GFix : typeOk type_GFix.
     Proof.
       eapply typeOk_from_equal.
-      { destruct x; destruct y; simpl. 
-        intros; split; intros. 
+      { destruct x; destruct y; simpl.
+        intros; split; intros.
         { red; simpl.
           red in H; red. simpl FuelMonad.runGFix in *.
           eapply only_proper in H; eauto with typeclass_instances.
-          intros; subst. 
-          eapply preflexive with (wf := proper); eauto with typeclass_instances. 
-          eapply equiv_prefl; eauto with typeclass_instances. 
+          intros; subst.
+          eapply preflexive with (wf := proper); eauto with typeclass_instances.
+          eapply equiv_prefl; eauto with typeclass_instances.
           solve_proper; intuition. }
         { red; simpl.
           red in H; red; simpl FuelMonad.runGFix in *.
           eapply only_proper in H; eauto with typeclass_instances.
           intros; subst.
-          eapply preflexive with (wf := proper); eauto with typeclass_instances. 
+          eapply preflexive with (wf := proper); eauto with typeclass_instances.
           eapply equiv_prefl; eauto with typeclass_instances.
           solve_proper. intuition. } }
       { red. destruct x; destruct y; simpl; unfold fix_meq.
@@ -76,8 +77,8 @@ Section Laws.
       { red; destruct x; destruct y; destruct z; simpl; unfold fix_meq;
         simpl FuelMonad.runGFix in *. intros.
         etransitivity; eauto. }
-    Qed.      
-    
+    Qed.
+
     Global Instance proper_runGFix : proper (@runGFix T).
     Proof.
       repeat red; simpl; intros. eapply H. subst. reflexivity.
@@ -100,7 +101,7 @@ Section Laws.
       red; simpl; intros. red. simpl runGFix. type_tac.
       assert (equal (runGFix aM x) (runGFix aM y)) by type_tac.
       destruct (runGFix aM x); destruct (runGFix aM y); simpl in *; try contradiction; auto.
-      specialize (H0 a x y H2). 
+      specialize (H0 a x y H2).
       red. destruct (runGFix (f a) x); simpl in *; auto. etransitivity; eauto. }
     { (* bind associativity *)
       red; simpl; intros.
@@ -110,9 +111,9 @@ Section Laws.
       assert (equal (runGFix (f a) x) (runGFix (f a0) y)) by type_tac.
       destruct (runGFix (f a) x); destruct (runGFix (f a0) y); simpl in H7; try contradiction; type_tac. }
     { unfold ret; simpl. red. red. Opaque equal. simpl. intros; type_tac. Transparent equal. }
-    { unfold bind; simpl; intros. red; intros. 
+    { unfold bind; simpl; intros. red; intros.
       red; intros. red; simpl. red; intros; subst.
-      assert (equal (runGFix x y1) (runGFix y y1)) by type_tac. red in H2. 
+      assert (equal (runGFix x y1) (runGFix y y1)) by type_tac. red in H2.
       destruct (runGFix x y1); destruct (runGFix y y1); simpl in H3; try contradiction.
       2: red; auto.
       match goal with

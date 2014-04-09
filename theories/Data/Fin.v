@@ -5,6 +5,7 @@ Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Asymmetric Patterns.
 
 Inductive fin : nat -> Type :=
 | F0 : forall {n}, fin (S n)

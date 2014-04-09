@@ -2,6 +2,7 @@ Require Import ExtLib.Data.Fin.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Asymmetric Patterns.
 
 Fixpoint vector (T : Type) (n : nat) : Type :=
   match n with
@@ -37,11 +38,11 @@ Theorem get_put_neq : forall {T n} (v : vector T n) (f f' : fin n) val,
 Proof.
   induction n.
   { inversion f. }
-  { remember (S n); destruct f. 
-    { inversion Heqn0; clear Heqn0; subst; intros. 
+  { remember (S n); destruct f.
+    { inversion Heqn0; clear Heqn0; subst; intros.
       destruct (fin_case f'); try congruence.
       destruct H0; subst. auto. }
-    { inversion Heqn0; clear Heqn0; subst; intros. 
+    { inversion Heqn0; clear Heqn0; subst; intros.
       destruct (fin_case f').
       subst; auto.
       destruct H0; subst. simpl.
@@ -53,4 +54,3 @@ Definition vector_tl {T : Type} {n : nat} (v : vector T (S n)) : vector T n :=
 
 Definition vector_hd {T : Type} {n : nat} (v : vector T (S n)) : T :=
   fst v.
-  

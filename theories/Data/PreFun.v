@@ -28,15 +28,17 @@ Section type.
         etransitivity. eapply H. eassumption.
         symmetry. eapply H. symmetry. auto. }
       { destruct (only_proper _ _ H0).
-        symmetry. etransitivity; [ | eapply H ]. 
+        symmetry. etransitivity; [ | eapply H ].
         symmetry. eapply H. eassumption. symmetry. eauto. } }
     { red. intros. apply H. }
     { compute. intuition. symmetry. eapply H. symmetry. auto. }
-    { simpl; intro; intros. intuition. red in H; red in H0; simpl in *. 
+    { simpl; intro; intros. intuition. red in H; red in H0; simpl in *.
       red; intros.
       etransitivity. eapply H. eassumption.
-      eapply H0. eapply preflexive with (wf := proper); auto.
-      eapply only_proper in H1; intuition. }
+      eapply H0.
+      eapply only_proper in H1; intuition.
+      (* eapply preflexive with (wf := proper); auto.
+      apply tOk. *) }
   Qed.
 
   Global Instance proper_app : forall (f : T -> U) (a : T),
@@ -50,7 +52,7 @@ Section type.
   Theorem proper_fun : forall (f : T -> U),
     (forall x y, equal x y -> equal (f x) (f y)) ->
     proper f.
-  Proof. 
+  Proof.
     intros. do 3 red. eauto.
   Qed.
 

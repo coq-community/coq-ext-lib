@@ -57,20 +57,6 @@ Fixpoint get (domain : list Type) (range : Type) T (m : member T domain)
     | MN _ _ m => fun F x => @get _ _ _ m (fun y => F y x)
   end.
 
-Section combine.
-  Context {T U V : Type}.
-  Variable (join : T -> U -> V).
-
-  Fixpoint combine (domain : list Type) {struct domain}
-  : asFunc domain T -> asFunc domain U -> asFunc domain V :=
-    match domain as domain
-          return asFunc domain T -> asFunc domain U -> asFunc domain V
-    with
-      | nil => fun A B => join A B
-      | d :: ds => fun A B => fun x => @combine ds (A x) (B x)
-    end.
-End combine.
-
 Fixpoint under (domain : list Type) (range : Type)
          {struct domain}
 : ((forall U, asFunc domain U -> U) -> range)
@@ -90,3 +76,14 @@ Fixpoint replace {ps} {T U : Type} (m : member T ps) (v : T) {struct m}
     | MZ _ => fun f _ => f v
     | MN _ _ m => fun f x => replace m v (f x)
   end.
+
+Section combine.
+  Context {T U V : Type}.
+  Variable (join : T -> U -> V).
+
+  Definition combine (domain : list Type)
+             (a : asFunc domain T) (b : asFunc domain U)
+  : asFunc domain V :=
+    under domain _ (fun App => join (App _ a) (App _ b)).
+
+End combine.

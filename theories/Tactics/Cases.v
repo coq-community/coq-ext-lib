@@ -81,4 +81,6 @@ Ltac rewrite_all_star :=
              progress (erewrite H in * by eauto with typeclass_instances)
          end.
 
+(*
 Ltac rewrite_all := rewrite_all_goal.
+*)
