@@ -104,10 +104,6 @@ Section hlist.
       red. induction x; constructor; auto. reflexivity.
     Qed.
 
-(*
-    Variable ED : EquivDec.EqDec _ (@eq iT).
-*)
-
     Global Instance Symmetric_equiv_hlist (R : forall t, Symmetric (@eqv t)) ls
     : Symmetric (@equiv_hlist ls).
     Proof.
