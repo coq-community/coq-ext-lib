@@ -338,7 +338,6 @@ Section hlist.
     }.
 
     Variable eqvOk : forall x, typeOk (eqv x).
-    Variable ED : EquivDec.EqDec _ (@eq iT).
 
     Global Instance typeOk_hlist (ls : list iT): typeOk (type_hlist ls).
     Proof.
@@ -351,34 +350,29 @@ Section hlist.
           inv_all; repeat match goal with
                             | [ H : exists x, _ |- _ ] => destruct H
                           end; subst. simpl.
-          eapply IHls in H7. eapply only_proper in H3; auto. intuition. } }
+          eapply IHls in H7. eapply only_proper in H3; auto.
+          destruct x3. destruct x4. destruct x2. destruct x1.
+          intuition. } }
       { intro. induction ls; simpl.
         { rewrite (hlist_eta x); intros; constructor. }
         { rewrite (hlist_eta x); intros; intuition; constructor.
           eapply preflexive; eauto with typeclass_instances.
           eapply IHls; eauto. } }
-      { red. induction ls; intros;
-        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *; simpl in *;
-        intros; auto.
-        inversion H. subst. inv_all; subst.
-        constructor; auto. symmetry. eauto. }
-      { red. induction ls; intros;
-        rewrite (hlist_eta x) in *; rewrite (hlist_eta y) in *;
-        rewrite (hlist_eta z) in *; simpl in *; intros; auto.
-        inversion H. inversion H0. subst; inv_all; subst.
-        constructor.
-        { etransitivity; eauto. }
-        { eapply IHls; eauto. } }
+      { red. induction 1.
+        { constructor. }
+        { constructor. symmetry. assumption. assumption. } }
+      { red. induction 1.
+        { auto. }
+        { intro H1.
+          etransitivity; [ | eassumption ].
+          constructor; eauto. } }
     Qed.
 
     Global Instance proper_hlist_app l l' : proper (@hlist_app l l').
     Proof.
-      do 6 red. induction x; intros;
-      rewrite (hlist_eta y) in *; auto.
-      { simpl in *. inversion H; subst.
-        constructor; auto.
-        { inv_all; subst; auto. }
-        eapply IHx; auto. inv_all; subst. auto. }
+      do 6 red. induction 1; simpl; auto.
+      { intros. constructor; eauto.
+        eapply IHequiv_hlist. exact H1. }
     Qed.
 
     Lemma hlist_app_assoc : forall ls ls' ls''
@@ -398,7 +392,10 @@ Section hlist.
         erewrite (IHls H1).
         unfold f_equal. unfold eq_trans. unfold eq_sym.
         generalize (app_ass_trans ls ls' ls'').
-        rewrite <- H1. uip_all. reflexivity. }
+        rewrite <- H1.
+        clear. intro.
+        generalize dependent (hlist_app (hlist_tl a0) (hlist_app b c)).
+        destruct e. reflexivity. }
     Qed.
 
     Lemma hlist_app_assoc' : forall ls ls' ls''
@@ -417,7 +414,9 @@ Section hlist.
         erewrite (IHls H1).
         unfold eq_trans, f_equal.
         generalize (app_ass_trans ls ls' ls'').
-        rewrite <- H1. uip_all. reflexivity. }
+        rewrite <- H1. clear; intro.
+        generalize dependent (hlist_app (hlist_app (hlist_tl a0) b) c).
+        destruct e. reflexivity. }
     Qed.
 
     Fixpoint hlist_split ls ls' : hlist (ls ++ ls') -> hlist ls * hlist ls' :=
