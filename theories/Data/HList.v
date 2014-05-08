@@ -70,16 +70,16 @@ Section hlist.
 
   Lemma hlist_app_nil_r
   : forall ls (h : hlist ls),
-      h = match app_nil_r_trans ls in _ = t return hlist t with
-            | eq_refl => hlist_app h Hnil
-          end.
+      hlist_app h Hnil = match eq_sym (app_nil_r_trans ls) in _ = t return hlist t with
+                           | eq_refl => h
+                         end.
   Proof.
     induction h; simpl; intros; auto.
     rewrite IHh at 1.
-    unfold eq_trans. unfold f_equal.
-    clear.
-    generalize dependent (hlist_app h Hnil).
-    destruct (app_nil_r_trans ls). reflexivity.
+    unfold eq_trans. unfold f_equal. unfold eq_sym.
+    clear. revert h.
+    generalize dependent (app_nil_r_trans ls). 
+    destruct e. reflexivity.
   Qed.
 
   Fixpoint hlist_rev' ls ls' (h : hlist ls) : hlist ls' -> hlist (rev ls ++ ls') :=
