@@ -68,6 +68,20 @@ Section hlist.
     f_equal. apply IHa.
   Defined.
 
+  Lemma hlist_app_nil_r
+  : forall ls (h : hlist ls),
+      h = match app_nil_r_trans ls in _ = t return hlist t with
+            | eq_refl => hlist_app h Hnil
+          end.
+  Proof.
+    induction h; simpl; intros; auto.
+    rewrite IHh at 1.
+    unfold eq_trans. unfold f_equal.
+    clear.
+    generalize dependent (hlist_app h Hnil).
+    destruct (app_nil_r_trans ls). reflexivity.
+  Qed.
+
   Fixpoint hlist_rev' ls ls' (h : hlist ls) : hlist ls' -> hlist (rev ls ++ ls') :=
     match h in hlist ls return hlist ls' -> hlist (rev ls ++ ls') with
       | Hnil => fun h => h
