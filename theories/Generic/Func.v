@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import ExtLib.Data.Member.
 
 Fixpoint asFunc (domain : list Type) (range : Type) : Type :=
   match domain with
@@ -45,8 +46,6 @@ Fixpoint curry {D R} {struct D} : asFunc D R -> (asTuple D -> R) :=
     | nil => fun x _ => x
     | d :: D => fun f x => curry (f (fst x)) (snd x)
   end.
-
-Require Import ExtLib.Data.HList.
 
 Fixpoint get (domain : list Type) (range : Type) T (m : member T domain)
 : (T -> asFunc domain range) -> asFunc domain range :=

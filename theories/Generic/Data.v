@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.HList.
 Require Import ExtLib.Generic.Func.
 (** This module gives a representation of inductive types **)

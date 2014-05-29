@@ -2,10 +2,11 @@ Require Import Coq.Lists.List.
 Require Import Relations RelationClasses.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.SigT.
+Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 
@@ -195,10 +196,6 @@ Section hlist.
           reflexivity. } }
     Qed.
   End injection.
-
-  Inductive member (a : iT) : list iT -> Type :=
-  | MZ : forall ls, member a (a :: ls)
-  | MN : forall l ls, member a ls -> member a (l :: ls).
 
   Fixpoint hlist_get ls a (m : member a ls) : hlist ls -> F a :=
     match m in member _ ls return hlist ls -> F a with
