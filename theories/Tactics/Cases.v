@@ -63,6 +63,27 @@ Ltac forward_unsafe :=
     ltac:(fun x => consider x; intros)
     ltac:(intuition congruence).
 
+Ltac change_rewrite H :=
+  match type of H with
+    | ?X = _ =>
+      match goal with
+        | |- context [ ?Y ] =>
+          change Y with X ; rewrite H
+      end
+  end.
+
+Ltac change_rewrite_in H H' :=
+  match type of H with
+    | ?X = _ =>
+      match type of H' with
+        | context [ ?Y ] =>
+          change Y with X in H' ; rewrite H in H'
+      end
+  end.
+
+Tactic Notation "change_rewrite" hyp(H) := (change_rewrite H).
+Tactic Notation "change_rewrite" hyp(H) "in" hyp(H') := (change_rewrite_in H H').
+
 Ltac rewrite_all_goal :=
   repeat match goal with
            | [ H : _ |- _ ] =>
