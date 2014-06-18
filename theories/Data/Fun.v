@@ -1,6 +1,7 @@
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.PreFun.
 Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Structures.CoFunctor.
 Require Import ExtLib.Structures.Monoid.
 
@@ -37,6 +38,11 @@ Section functors.
 
   Local Instance CoFunctor_cofunctor F G (fF : CoFunctor F) (fG : CoFunctor G) : Functor (fun x => F (G x)) :=
   {| fmap := fun _ _ g => @cofmap F _ _ _ (@cofmap G _ _ _ g) |}.
+
+  Local Instance Applicative_Fun : Applicative (Fun A) :=
+  { pure := fun _ x _ => x
+  ; ap := fun _ _ f x y => (f y) (x y)
+  }.
 
 End functors.
 
