@@ -270,14 +270,27 @@ Section hlist.
         end
     end.
 
-  Definition cast1 T (l l' : list T) n v :=
-    (fun pf : nth_error l n = Some v => eq_sym (nth_error_weaken l' l n pf)).
-  Definition cast2 T (l l' : list T) n :=
-    (fun pf : nth_error l n = None =>
-       eq_sym (@nth_error_app_R _ l l' _ (nth_error_length_ge _ _ pf))).
+  Definition cast1 T l
+  : forall (l' : list T) n v,
+      nth_error l n = Some v -> Some v = nth_error (l ++ l') n.
+  Proof.
+    induction l. intros. 
+    { exfalso. destruct n; inversion H. }
+    { destruct n; simpl; intros; auto. }
+  Defined.
 
+  Definition cast2 T l
+  : forall (l' : list T) n,
+      nth_error l n = None ->
+      nth_error l' (n - length l) = nth_error (l ++ l') n.
+  Proof.
+    induction l; simpl.
+    { destruct n; simpl; auto. }
+    { destruct n; simpl; auto.
+      inversion 1. }
+  Defined.
 
-  Theorem hlist_nth_hlist_app (e : EquivDec.EqDec iT (@eq iT))
+  Theorem hlist_nth_hlist_app
   : forall l l' (h : hlist l) (h' : hlist l') n,
     hlist_nth (hlist_app h h') n =
     match nth_error l n as k
@@ -313,26 +326,10 @@ Section hlist.
     end eq_refl.
   Proof.
     induction h; simpl; intros.
-    { destruct n; simpl in *; uip_all; simpl in *; uip_all; reflexivity. }
+    { destruct n; simpl in *; reflexivity. }
     { destruct n; simpl.
-      { uip_all. simpl in e0. unfold value in *. uip_all; reflexivity. }
-      { rewrite IHh. clear - e.
-        repeat match goal with
-                 | [ |- context [ @eq_refl _ ?X ] ] =>
-                   generalize (@eq_refl _ X)
-               end.
-        generalize (cast1 ls l' n).
-        generalize (cast1 (l :: ls) l' (S n)).
-        generalize (cast2 ls l' n).
-        generalize (cast2 (l :: ls) l' (S n)).
-        generalize (hlist_nth h n).
-        simpl in *.
-        pattern (nth_error ls n).
-        destruct (nth_error ls n); simpl; intros.
-        { clear - e. uip_all. clear - e.
-          rewrite (UIP_equal e0 e5). reflexivity. }
-        { uip_all. clear - e.
-          rewrite (UIP_equal e5 e6). reflexivity. } } }
+      { reflexivity. }
+      { rewrite IHh. reflexivity. } }
   Qed.
 
   Section type.
