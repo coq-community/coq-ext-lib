@@ -30,6 +30,28 @@ Proof.
   destruct pf. reflexivity.
 Qed.
 
+Lemma match_eq_sym_eq
+: forall T (a b : T) (pf : a = b) F X,
+    match pf in _ = t return F t with
+      | eq_refl => match eq_sym pf in _ = t return F t with
+                     | eq_refl => X
+                   end
+    end = X.
+Proof.
+  destruct pf. reflexivity.
+Qed.
+
+Lemma match_eq_sym_eq'
+: forall T (a b : T) (pf : a = b) F X,
+    match eq_sym pf in _ = t return F t with
+      | eq_refl => match pf in _ = t return F t with
+                     | eq_refl => X
+                   end
+    end = X.
+Proof.
+  destruct pf. reflexivity.
+Qed.
+
 Lemma eq_Const_eq
 : forall T (a b : T) (pf : a = b) (R : Type) val,
     match pf in _ = x return R with
@@ -39,6 +61,7 @@ Proof.
   destruct pf. reflexivity.
 Qed.
 
+(** TODO: This should move to [option] **)
 Lemma eq_option_eq
 : forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
     match pf in _ = x return option (F x) with
