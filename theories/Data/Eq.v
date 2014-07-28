@@ -61,6 +61,19 @@ Proof.
   destruct pf. reflexivity.
 Qed.
 
+Lemma match_eq_match_eq
+: forall T F (a b : T) (pf : a = b) X Y,
+    X = Y ->
+    match pf in _ = T return F T with
+      | eq_refl => X
+    end =
+    match pf in _ = T return F T with
+      | eq_refl => Y
+    end.
+Proof.
+  intros. subst. auto.
+Qed.
+
 (** TODO: This should move to [option] **)
 Lemma eq_option_eq
 : forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
