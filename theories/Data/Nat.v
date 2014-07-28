@@ -1,8 +1,9 @@
-Require Arith.
+Require Coq.Arith.Arith.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Tactics.Consider.
+Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -97,3 +98,10 @@ Definition Monoid_nat_mult : Monoid nat :=
 {| monoid_plus := mult
  ; monoid_unit := 1
  |}.
+
+Global Instance Injective_S (a b : nat) : Injective (S a = S b) :=
+{ result := a = b
+; injection := _
+}.
+abstract (inversion 1; auto).
+Defined.
