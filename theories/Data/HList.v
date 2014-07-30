@@ -8,7 +8,6 @@ Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Tactics.Injection.
-Require Import ExtLib.Tactics.EqDep.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -79,7 +78,7 @@ Section hlist.
     rewrite IHh at 1.
     unfold eq_trans. unfold f_equal. unfold eq_sym.
     clear. revert h.
-    generalize dependent (app_nil_r_trans ls). 
+    generalize dependent (app_nil_r_trans ls).
     destruct e. reflexivity.
   Qed.
 
@@ -170,32 +169,86 @@ Section hlist.
     intros; rewrite (hlist_eta h); reflexivity.
   Qed.
 
-  Section injection.
-    Variable rd : RelDec (@eq iT).
-    Variable rdc : RelDec_Correct rd.
+  Lemma Hcons_inv
+  : forall l ls a b c d,
+      @eq (hlist (l :: ls)) (Hcons a b) (Hcons c d) ->
+      a = c /\ b = d.
+  Proof.
+    intros.
+    refine (
+        match H as K in _ = Z
+              return match Z in hlist LS
+                           return match LS with
+                                    | nil => Prop
+                                    | l :: ls => F l -> hlist ls -> Prop
+                                  end
+                     with
+                       | Hcons X Y x y => fun a b => a = x /\ b = y
+                       | Hnil => True
+                     end a b
+        with
+          | eq_refl => conj eq_refl eq_refl
+        end).
+  Qed.
 
-    Global Instance Injection_hlist_cons ls t (a : F t) (b : hlist ls) c d
-    : Injective (Hcons a b = Hcons c d) :=
-      { result := a = c /\ b = d }.
-    Proof.
-      abstract (inversion 1; eapply inj_pair2 in H2; eapply inj_pair2 in H1; auto).
-    Defined.
+  Global Instance Injection_hlist_cons ls t (a : F t) (b : hlist ls) c d
+  : Injective (Hcons a b = Hcons c d) :=
+    { result := a = c /\ b = d
+    ; injection := @Hcons_inv t ls a b c d
+    }.
 
-    Theorem equiv_eq_eq : forall ls (x y : hlist ls),
-                            equiv_hlist (fun x => @eq _) x y <-> x = y.
-    Proof.
-      induction x; simpl; intros.
-      { split. inversion 1. rewrite hlist_nil_eta. reflexivity.
-        intros; subst; constructor. }
-      { split.
-        { inversion 1; subst.
-          apply inj_pair2 in H2.
-          apply inj_pair2 in H5.
-          apply inj_pair2 in H4. subst. f_equal. eapply IHx. eauto. }
-        { intros; subst. constructor; auto.
-          reflexivity. } }
-    Qed.
-  End injection.
+
+  Theorem equiv_eq_eq : forall ls (x y : hlist ls),
+                          equiv_hlist (fun x => @eq _) x y <-> x = y.
+  Proof.
+    induction x; simpl; intros.
+    { split. inversion 1. rewrite hlist_nil_eta. reflexivity.
+      intros; subst; constructor. }
+    { split.
+      { intro. rewrite (hlist_eta y).
+        specialize (IHx (hlist_tl y)).
+        refine (match H in @equiv_hlist _ LS X Y
+                      return match X in hlist LS
+                                   return F match LS with
+                                              | nil => l
+                                              | l :: _ => l
+                                            end ->
+                                          hlist match LS with
+                                                  | nil => ls
+                                                  | _ :: ls => ls
+                                                end ->
+                                          Prop
+                             with
+                               | Hnil => fun _ _ => True
+                               | Hcons a b c d => fun x y =>
+                                                    (equiv_hlist (fun x0 : iT => eq) d y <-> d = y) ->
+                                                    @Hcons a b c d = Hcons x y
+                             end (match LS as LS return hlist LS -> F match LS with
+                                                                        | nil => l
+                                                                        | l :: _ => l
+                                                                      end
+                                  with
+                                    | nil => fun _ => f
+                                    | l :: ls => hlist_hd
+                                  end Y)
+                                 (match LS as LS return hlist LS -> hlist match LS with
+                                                                            | nil => ls
+                                                                            | _ :: ls => ls
+                                                                          end
+                                  with
+                                    | nil => fun _ => x
+                                    | l :: ls => hlist_tl
+                                  end Y)
+                with
+                  | hlist_eqv_nil => I
+                  | hlist_eqv_cons l ls x y h1 h2 pf1 pf2 => _
+                end IHx).
+        simpl.
+        subst. intros.
+        f_equal. apply H0. assumption. }
+      { intros; subst. constructor; auto.
+        reflexivity. } }
+  Qed.
 
   Fixpoint hlist_get ls a (m : member a ls) : hlist ls -> F a :=
     match m in member _ ls return hlist ls -> F a with
@@ -274,7 +327,7 @@ Section hlist.
   : forall (l' : list T) n v,
       nth_error l n = Some v -> Some v = nth_error (l ++ l') n.
   Proof.
-    induction l. intros. 
+    induction l. intros.
     { exfalso. destruct n; inversion H. }
     { destruct n; simpl; intros; auto. }
   Defined.
