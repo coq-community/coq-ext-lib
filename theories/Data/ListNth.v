@@ -1,5 +1,4 @@
 Require Import Coq.Lists.List.
-Require Import Coq.omega.Omega.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -11,16 +10,19 @@ Section parametric.
     n < length A ->
     nth_error (A ++ B) n = nth_error A n.
   Proof.
-    induction A; destruct n; simpl; intros; try omega; auto.
-    eapply IHA. omega.
+    induction A; destruct n; simpl; intros; auto.
+    { inversion H. }
+    { inversion H. }
+    { eapply IHA. apply Lt.lt_S_n; assumption. }
   Qed.
 
   Lemma nth_error_app_R : forall (A B : list T) n,
     length A <= n ->
     nth_error (A ++ B) n = nth_error B (n - length A).
   Proof.
-    induction A; destruct n; simpl; intros; try omega; auto.
-    apply IHA. omega.
+    induction A; destruct n; simpl; intros; auto.
+    + inversion H.
+    + apply IHA. apply Le.le_S_n; assumption.
   Qed.
 
   Lemma nth_error_weaken : forall ls' (ls : list T) n v,
@@ -41,7 +43,8 @@ Section parametric.
     nth_error ls n = None.
   Proof.
     clear. induction ls; destruct n; simpl; intros; auto.
-    exfalso; omega. rewrite IHls; auto. omega.
+    + inversion H.
+    + apply IHls. apply Le.le_S_n; assumption.
   Qed.
 
   Lemma nth_error_length : forall (ls ls' : list T) n,
@@ -49,24 +52,27 @@ Section parametric.
   Proof.
     induction ls; simpl; intros.
     rewrite Plus.plus_0_r. auto.
-    cutrewrite (n + S (length ls) = S n + length ls); [ | omega ]. simpl. auto.
+    rewrite <- Plus.plus_Snm_nSm.
+    simpl. eapply IHls.
   Qed.
 
   Theorem nth_error_length_ge : forall T (ls : list T) n,
     nth_error ls n = None -> length ls <= n.
   Proof.
-    induction ls; destruct n; simpl in *; auto; simpl in *; try omega.
-    inversion 1. intro. apply IHls in H. omega.
+    induction ls; destruct n; simpl in *; auto; simpl in *.
+    + intro. apply Le.le_0_n.
+    + inversion 1.
+    + intros. eapply Le.le_n_S. auto.
   Qed.
 
   Lemma nth_error_length_lt : forall {T} (ls : list T) n val,
     nth_error ls n = Some val -> n < length ls.
   Proof.
     induction ls; destruct n; simpl; intros; auto.
-    { inversion H. }
-    { inversion H. }
-    { omega. }
-    { apply Lt.lt_n_S. eauto. }
+    + inversion H.
+    + inversion H.
+    + apply Lt.lt_0_Sn.
+    + apply Lt.lt_n_S. eauto.
   Qed.
 
 

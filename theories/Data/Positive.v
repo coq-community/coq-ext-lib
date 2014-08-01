@@ -1,4 +1,4 @@
-Require Import BinPos.
+Require Import Coq.PArith.BinPos.
 Require Import ExtLib.Core.RelDec.
 
 Set Implicit Arguments.
@@ -54,4 +54,4 @@ Proof.
   intuition; [ apply Pos.le_ge | apply Pos.ge_le ]; auto.
 Qed.
 
-Export BinPos.
+Export Coq.PArith.BinPos.

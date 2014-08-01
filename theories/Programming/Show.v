@@ -1,7 +1,7 @@
 Require Import Coq.Strings.String.
 Require Import Coq.Program.Wf.
-Require Import Omega.
-
+Require Import Coq.PArith.BinPos.
+Require Import Coq.ZArith.ZArith.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Programming.Injection.
@@ -13,7 +13,7 @@ Require Import ExtLib.Core.RelDec.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition showM : Type := 
+Definition showM : Type :=
   forall m, Injection ascii m -> Monoid m -> m.
 
 Class ShowScheme (T : Type) : Type :=
@@ -28,7 +28,7 @@ Global Instance ShowScheme_string : ShowScheme string :=
 
 Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
 { show_mon := Monoid_compose string
-; show_inj := String 
+; show_inj := String
 }.
 
 Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
@@ -39,7 +39,7 @@ Class Show T := show : T -> showM.
 Definition to_string {T} {M : Show T} (v : T) : string :=
   runShow (show v) ""%string.
 
-Definition empty : showM := 
+Definition empty : showM :=
   fun _ _ m => monoid_unit m.
 Definition cat (a b : showM) : showM :=
   fun _ i m => monoid_plus m (a _ i m) (b _ i m).
@@ -63,7 +63,7 @@ End ShowNotation.
 
 Definition indent (indent : showM) (v : showM) : showM :=
   let nl := Ascii.ascii_of_nat 10 in
-    fun _ inj mon => 
+    fun _ inj mon =>
       v _ (fun a => if eq_dec a nl
          then monoid_plus mon (inj a) (indent _ inj mon)
          else inj a) mon.
@@ -91,15 +91,17 @@ Program Fixpoint nat_show (n:nat) {measure n} : showM :=
     (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
 Next Obligation.
   assert (NPeano.div n 10 < n) ; eauto.
-  eapply NPeano.Nat.div_lt ; omega.
+  eapply NPeano.Nat.div_lt.
+  inversion H; apply Lt.lt_O_Sn.
+  repeat constructor.
 Defined.
 Global Instance nat_Show : Show nat := { show := nat_show }.
 
-Global Instance Show_pos : Show positive :=
+Global Instance Show_positive : Show positive :=
   fun x => nat_show (Pos.to_nat x).
 
 Global Instance Show_Z : Show Z :=
-  fun x => 
+  fun x =>
     match x with
       | Z0 => "0"%char
       | Zpos p => show p
@@ -120,7 +122,7 @@ Section sepBy.
   Context {F : Foldable T showM}.
 
   Definition sepBy (sep : showM) (ls : T) : showM :=
-    match 
+    match
       fold (fun s acc =>
         match acc with
           | None => Some s
@@ -138,7 +140,7 @@ Section sepBy_f.
   Variable (f : E -> showM).
 
   Definition sepBy_f (sep : showM) (ls : T) : showM :=
-    match 
+    match
       fold (fun s acc =>
         match acc with
           | None => Some (f s)
@@ -148,7 +150,7 @@ Section sepBy_f.
       | None => empty
       | Some s => s
     end.
-End sepBy_f. 
+End sepBy_f.
 
 Definition wrap (before after : showM) (x : showM) : showM :=
   before << x << after.
@@ -192,5 +194,5 @@ Fixpoint iter_show (ss : list showM) : showM :=
 (*
 Examples:
 Eval compute in (runShow (show (42,"foo"%string)) : string).
-Eval compute in (runShow (show (inl true : bool+string)) 
+Eval compute in (runShow (show (inl true : bool+string))
 *)
