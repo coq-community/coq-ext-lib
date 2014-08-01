@@ -17,7 +17,6 @@ Lemma eq_sym_eq
 Proof.
   destruct pf. reflexivity.
 Qed.
-Hint Rewrite eq_sym_eq : eq_rw.
 
 Lemma match_eq_sym_eq
 : forall T (a b : T) (pf : a = b) F X,
