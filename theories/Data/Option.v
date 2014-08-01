@@ -141,3 +141,19 @@ Section OptionEq.
   Qed.
 
 End OptionEq.
+
+Lemma eq_option_eq
+: forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
+    match pf in _ = x return option (F x) with
+      | eq_refl => val
+    end = match val with
+            | None => None
+            | Some val => Some match pf in _ = x return F x with
+                                 | eq_refl => val
+                               end
+          end.
+Proof.
+  destruct pf. destruct val; reflexivity.
+Qed.
+
+Hint Rewrite eq_option_eq : eq_rw.

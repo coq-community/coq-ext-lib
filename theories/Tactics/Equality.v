@@ -1,11 +1,14 @@
-Require Import ExtLib.Structures.EqDep.
+Require Import ExtLib.Data.Eq.
 
-Ltac existT_inj :=
-  repeat match goal with
-           | [ H : @existT _ _ ?X ?Y = @existT _ _ ?X ?Y |- _ ] =>
-             clear H
-           | [ H : @existT _ _ ?X ?Y = @existT _ _ ?X ?Z |- _ ] =>
-             eapply inj_pair2 in H
-           | [ H : @existT _ _ ?X _ = @existT _ _ ?Y _ |- _ ] =>
-             inversion H
-         end.
+Ltac eq_rw_goal :=
+  autorewrite with eq_rw.
+
+Ltac eq_rw_hyp H :=
+  autorewrite with eq_rw in H.
+
+Ltac eq_rw_star :=
+  autorewrite with eq_rw in *.
+
+Tactic Notation "eq_rw" := eq_rw_goal.
+Tactic Notation "eq_rw" "in" hyp(H) := eq_rw_hyp H.
+Tactic Notation "eq_rw" "in" "*" := eq_rw_star.

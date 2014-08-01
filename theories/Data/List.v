@@ -22,7 +22,7 @@ Section type.
   }.
 
   Context {typeOk_T : typeOk type_T}.
-  
+
   Instance typeOk_list : typeOk type_list.
   Proof.
     constructor.
@@ -31,12 +31,12 @@ Section type.
       { apply only_proper in H; auto. intuition; constructor; intuition. } }
     { intro. induction x; intros.
       { constructor. }
-      { inversion H; clear H; subst. 
-        constructor; auto. 
+      { inversion H; clear H; subst.
+        constructor; auto.
         apply equiv_prefl; auto. apply IHx. apply H3. } }
     { intro. induction 1; constructor; auto.
       apply equiv_sym; auto. }
-    { intro. do 3 intro.  revert z. induction H. 
+    { intro. do 3 intro.  revert z. induction H.
       { remember nil. destruct 1; try congruence. constructor. }
       { remember (y :: ys). destruct 1; try congruence. inversion Heql; clear Heql; subst.
         constructor. eapply equiv_trans; eauto. eapply IHlist_eq. apply H2. } }
@@ -75,6 +75,17 @@ Section AllB.
         if p l then true else anyb ls
     end.
 End AllB.
+
+Lemma Forall_map
+: forall T U (f : T -> U) P ls,
+    Forall P (List.map f ls) <-> Forall (fun x => P (f x)) ls.
+Proof.
+  induction ls; simpl.
+  { split; intros; constructor. }
+  { split; inversion 1; intros; subst; constructor; auto.
+    apply IHls. auto. apply IHls. auto. }
+Qed.
+
 
 Global Instance Foldable_list {T} : Foldable (list T) T :=
   fun _ f x ls => fold_right f x ls.
@@ -158,4 +169,16 @@ Section ListEq.
 
 End ListEq.
 
-Export List.
+Lemma eq_list_eq
+: forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
+    match pf in _ = x return list (F x) with
+      | eq_refl => val
+    end = map (fun val => match pf in _ = x return F x with
+                            | eq_refl => val
+                          end) val.
+Proof.
+  destruct pf. intros. rewrite map_id. reflexivity.
+Qed.
+Hint Rewrite eq_list_eq : eq_rw.
+
+Export Coq.Lists.List.
