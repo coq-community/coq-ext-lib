@@ -62,7 +62,6 @@ Section member.
   Qed.
 
   Lemma to_nat_eq_member_eq
-  (** TODO(gmalecha): Is there any way around requiring [EqDec] for this? **)
   : forall {_ : EqDec T (@eq T)} x ls (a b : member x ls),
       to_nat a = to_nat b ->
       a = b.
