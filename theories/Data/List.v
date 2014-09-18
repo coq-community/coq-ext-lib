@@ -96,9 +96,9 @@ Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Applicative.
 
 Section traversable.
-  Variable F : Type -> Type.
-  Variable Applicative_F : Applicative F.
-  Variable A B : Type.
+  Context {F : Type -> Type}.
+  Context {Applicative_F : Applicative F}.
+  Context {A B : Type}.
   Variable f : A -> F B.
 
   Fixpoint mapT_list (ls : list A) : F (list B) :=
