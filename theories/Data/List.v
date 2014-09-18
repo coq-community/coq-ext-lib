@@ -95,10 +95,21 @@ Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Applicative.
 
+Section traversable.
+  Variable F : Type -> Type.
+  Variable Applicative_F : Applicative F.
+  Variable A B : Type.
+  Variable f : A -> F B.
+
+  Fixpoint mapT_list (ls : list A) : F (list B) :=
+    match ls with
+      | nil => pure nil
+      | l :: ls => ap (ap (pure (@cons B)) (f l)) (mapT_list ls)
+    end.
+End traversable.
+
 Global Instance Traversable_list : Traversable list :=
-{ mapT := fun F _ A B f =>
-  List.fold_right (fun x acc => ap (ap (pure (@cons B)) (f x)) acc) (pure nil)
-}.
+{ mapT := @mapT_list }.
 
 Global Instance Monad_list : Monad list :=
 { ret  := fun _ x => x :: nil
