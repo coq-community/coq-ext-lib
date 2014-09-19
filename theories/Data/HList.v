@@ -13,6 +13,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 Set Asymmetric Patterns.
 
+(** Core Type and Functions **)
 Section hlist.
   Context {iT : Type}.
   Variable F : iT -> Type.
@@ -103,7 +104,7 @@ Section hlist.
 
   (** TODO: I need hlist_rev_cons **)
 
-
+  (** Equivalence **)
   Section equiv.
     Variable eqv : forall x, relation (F x).
 
@@ -155,6 +156,57 @@ Section hlist.
         constructor. simpl in *. etransitivity. eassumption. eassumption.
         eapply H3. simpl in *. eassumption. }
     Qed.
+
+    Lemma equiv_hlist_Hcons
+    : forall ls i a b (c : hlist ls) d,
+        equiv_hlist (Hcons a c) (@Hcons i ls b d) ->
+        (@eqv i a b /\ equiv_hlist c d).
+    Proof.
+      clear. intros.
+      refine
+        match H in @equiv_hlist ls' l r
+              return match ls' as ls' return hlist ls' -> hlist ls' -> _ with
+                       | nil => fun _ _ => True
+                       | l :: ls => fun l r =>
+                                      eqv (hlist_hd l) (hlist_hd r) /\
+                                      equiv_hlist (hlist_tl l) (hlist_tl r)
+                     end l r
+        with
+          | hlist_eqv_nil => I
+          | hlist_eqv_cons _ _ _ _ _ _ pf pf' => conj pf pf'
+        end.
+    Defined.
+
+    Lemma equiv_hlist_app
+    : forall a b (c c' : hlist a)  (d d' : hlist b),
+        (equiv_hlist c c' /\ equiv_hlist d d')
+        <->
+        equiv_hlist (hlist_app c d) (hlist_app c' d').
+    Proof.
+      clear. split.
+      - destruct 1.
+        induction H.
+        + assumption.
+        + simpl. constructor; auto.
+      - induction c.
+        + rewrite (hlist_eta c').
+          simpl; intros; split; auto. constructor.
+        + rewrite (hlist_eta c'); simpl.
+          specialize (IHc (hlist_tl c')).
+          intro.
+          eapply equiv_hlist_Hcons in H. intuition.
+          constructor; auto.
+    Qed.
+
+    Global Instance Injection_equiv_hlist_cons ls i a b (c : hlist ls) d
+    : Injective (equiv_hlist (Hcons a c) (@Hcons i ls b d)) :=
+    { result := @eqv i a b /\ equiv_hlist c d
+    ; injection := @equiv_hlist_Hcons _ _ _ _ _ _ }.
+
+    Global Instance Injection_equiv_hlist_app a b (c c' : hlist a) (d d' : hlist b)
+    : Injective (equiv_hlist (hlist_app c d) (hlist_app c' d')) :=
+    { result := equiv_hlist c c' /\ equiv_hlist d d'
+    ; injection := fun x => proj2 (@equiv_hlist_app _ _ _ _ _ _) x }.
 
   End equiv.
 
@@ -513,6 +565,7 @@ End hlist.
 
 Arguments Hnil {_ _}.
 Arguments Hcons {_ _ _ _} _ _.
+Arguments equiv_hlist {_ F} R {_} _ _ : rename.
 
 Section hlist_map.
   Variable A : Type.
