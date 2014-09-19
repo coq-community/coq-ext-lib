@@ -105,6 +105,7 @@ Section hlist.
   (** TODO: I need hlist_rev_cons **)
 
   (** Equivalence **)
+  (** TODO: This should change to relations **)
   Section equiv.
     Variable eqv : forall x, relation (F x).
 
@@ -670,3 +671,11 @@ Section hlist_rel_map.
   Qed.
 
 End hlist_rel_map.
+
+Theorem hlist_hrel_equiv
+: forall T (F : T -> Type) (R : forall t, F t -> F t -> Prop) ls (h h' : hlist F ls),
+    hlist_hrel R h h' ->
+    equiv_hlist R h h'.
+Proof.
+  induction 1; constructor; auto.
+Qed.
