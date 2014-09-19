@@ -567,10 +567,12 @@ Arguments Hnil {_ _}.
 Arguments Hcons {_ _ _ _} _ _.
 Arguments equiv_hlist {_ F} R {_} _ _ : rename.
 
+(** Weak Map
+ ** This is weak because it does not change the key type
+ **)
 Section hlist_map.
   Variable A : Type.
-  Variable F : A -> Type.
-  Variable G : A -> Type.
+  Variables F G : A -> Type.
   Variable ff : forall x, F x -> G x.
 
   Fixpoint hlist_map (ls : list A) (hl : hlist F ls) {struct hl} : hlist G ls :=
@@ -579,6 +581,92 @@ Section hlist_map.
       | Hcons _ _ hd tl =>
         Hcons (ff hd) (hlist_map tl)
     end.
+
 End hlist_map.
 
+Lemma equiv_hlist_map
+: forall T U (F : T -> Type) (R : forall t, F t -> F t -> Prop)
+         (R' : forall t, U t -> U t -> Prop)
+         (f g : forall t, F t -> U t),
+    (forall t (x y : F t), R t x y -> R' t (f t x) (g t y)) ->
+    forall  ls (a b : hlist F ls),
+      equiv_hlist R a b ->
+      equiv_hlist R' (hlist_map _ f a) (hlist_map _ g b).
+Proof.
+  clear. induction 2; simpl; intros.
+  - constructor.
+  - constructor; eauto.
+Qed.
+
 Arguments hlist_map {_ _ _} _ {_} _.
+
+(** Heterogeneous Relations **)
+Section hlist_rel.
+  Variable A : Type.
+  Variables F G : A -> Type.
+  Variable R : forall x : A, F x -> G x -> Prop.
+
+  Inductive hlist_hrel : forall ls, hlist F ls -> hlist G ls -> Prop :=
+  | hrel_Hnil : hlist_hrel Hnil Hnil
+  | hrel_Hcons : forall t ts x y xs ys, @R t x y -> @hlist_hrel ts xs ys ->
+                                        @hlist_hrel (t :: ts) (Hcons x xs) (Hcons y ys).
+
+End hlist_rel.
+
+Section hlist_rel_map.
+  Variable A : Type.
+  Variables F G F' G' : A -> Type.
+  Variable R : forall x : A, F x -> G x -> Prop.
+  Variable R' : forall x : A, F' x -> G' x -> Prop.
+  Variable ff : forall x : A, F x -> F' x.
+  Variable gg : forall x : A, G x -> G' x.
+
+  Hypothesis R_ff_R' :
+    forall t x y, @R t x y ->
+                  @R' t (ff x) (gg y).
+
+  Theorem hlist_hrel_map
+  : forall ls xs ys,
+      @hlist_hrel A F G R ls xs ys ->
+      @hlist_hrel A F' G' R' ls (hlist_map ff xs) (hlist_map gg ys).
+  Proof.
+    induction 1; simpl; constructor; eauto.
+  Qed.
+
+  Theorem hlist_hrel_cons
+  : forall l ls x xs y ys,
+      @hlist_hrel A F G R (l :: ls) (Hcons x xs) (Hcons y ys) ->
+      @R l x y /\ @hlist_hrel A F G R ls xs ys.
+  Proof.
+    intros.
+    refine
+      match H in @hlist_hrel _ _ _ _ ls' xs' ys'
+            return
+            match ls' as ls' return hlist F ls' -> hlist G ls' -> Prop with
+              | nil => fun _ _ => True
+              | l' :: ls' => fun x y =>
+                   R (hlist_hd x) (hlist_hd y)
+                /\ hlist_hrel R (hlist_tl x) (hlist_tl y)
+            end xs' ys'
+      with
+        | hrel_Hnil => I
+        | hrel_Hcons _ _ _ _ _ _ pf pf' => conj pf pf'
+      end.
+  Qed.
+
+  Theorem hlist_hrel_app
+  : forall l ls x xs y ys,
+      @hlist_hrel A F G R (l ++ ls) (hlist_app x xs) (hlist_app y ys) ->
+      @hlist_hrel A F G R l x y /\ @hlist_hrel A F G R ls xs ys.
+  Proof.
+    induction x.
+    + intros xs y ys. rewrite (hlist_eta y).
+      simpl; intros; split; auto. constructor.
+    + intros xs y ys. rewrite (hlist_eta y).
+      intros. eapply hlist_hrel_cons in H.
+      destruct H.
+      apply IHx in H0.
+      intuition. constructor; auto.
+  Qed.
+
+End hlist_rel_map.
