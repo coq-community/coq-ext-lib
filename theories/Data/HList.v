@@ -679,3 +679,12 @@ Theorem hlist_hrel_equiv
 Proof.
   induction 1; constructor; auto.
 Qed.
+
+Theorem hlist_hrel_flip
+: forall T (F G : T -> Type) (R : forall t, F t -> G t -> Prop) ls
+         (h : hlist F ls) (h' : hlist G ls),
+    hlist_hrel R h h' ->
+    hlist_hrel (fun t a b => R t b a) h' h.
+Proof.
+  induction 1; constructor; auto.
+Qed.
