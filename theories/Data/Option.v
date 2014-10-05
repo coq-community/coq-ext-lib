@@ -1,3 +1,5 @@
+Require Import Coq.Relations.Relation_Definitions.
+Require Import Coq.Classes.RelationClasses.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
@@ -43,19 +45,36 @@ Global Instance Functor_option : Functor option :=
                             | Some x => Some (f x)
                           end |}.
 
+Section relation.
+  Context {T : Type}.
+  Variable (R : relation T).
+
+  Inductive Roption : Relation_Definitions.relation (option T) :=
+  | Roption_None : Roption None None
+  | Roption_Some : forall x y, R x y -> Roption (Some x) (Some y).
+
+  Lemma Reflexive_Roption : Reflexive R -> Reflexive Roption.
+  Proof. clear. compute. destruct x; try constructor; auto. Qed.
+
+  Lemma Symmetric_Roption : Symmetric R -> Symmetric Roption.
+  Proof. clear. compute. intros.
+         destruct H0; constructor. auto.
+  Qed.
+
+  Lemma Transitive_Roption : Transitive R -> Transitive Roption.
+  Proof.
+    clear. compute. intros.
+    destruct H0; auto.
+    inversion H1. constructor; auto. subst. eapply H; eassumption.
+  Qed.
+End relation.
+
 Section type.
   Variable T : Type.
   Variable tT : type T.
 
-  Definition eqv_option rT (a b : option T) :=
-    match a , b with
-      | None , None => True
-      | Some a , Some b => rT a b
-      | _ , _ => False
-    end.
-
   Global Instance type_option : type (option T) :=
-  { equal := eqv_option equal
+  { equal := Roption equal
   ; proper := fun x => match x with
                          | None => True
                          | Some y => proper y
@@ -66,23 +85,22 @@ Section type.
   Global Instance typeOk_option : typeOk type_option.
   Proof.
     constructor.
-    { destruct x; destruct y; simpl; auto; try contradiction; intros.
-      unfold proper in *. simpl in *.
-      destruct tTOk.
-      eapply only_proper in H. intuition. }
-    { red. destruct x; simpl; auto. intro. eapply preflexive; [ | eapply H ]. eapply equiv_prefl; auto. }
-    { red. destruct x; destruct y; simpl; auto. intros.
-      destruct tTOk. apply equiv_sym. auto. }
-    { red. destruct x; destruct y; destruct z; intros; try contradiction; auto.
-      simpl in *. destruct tTOk.
-      etransitivity; eauto. }
+    { inversion 1.
+      split; constructor.
+      split; simpl; eapply only_proper; eauto. symmetry; eauto. }
+    { red. destruct x; simpl. constructor.
+      eapply preflexive; [ | eapply H ].
+      eapply equiv_prefl; auto. constructor. }
+    { red. destruct 1. constructor. constructor. symmetry. assumption. }
+    { red. destruct 1; inversion 1; subst. assumption.
+      constructor. etransitivity; eauto. }
   Qed.
 
   Global Instance proper_Some : proper (@Some T).
-  Proof. compute; auto. Qed.
+  Proof. constructor; assumption. Qed.
 
   Global Instance proper_None : proper (@None T).
-  Proof. compute; auto. Qed.
+  Proof. constructor. Qed.
 
 End type.
 
@@ -90,14 +108,19 @@ Global Instance FunctorLaws_option : FunctorLaws Functor_option type_option.
 Proof.
   constructor.
   { simpl. red. destruct x; destruct y; simpl; auto.
-    red in H0. intros. etransitivity. eapply H0. 2: eauto.
-    eapply proper_left; eauto. }
-  { red; simpl. red; simpl. red; simpl; intros.
-    destruct x; destruct y; simpl in *; auto.
-    unfold compose. eauto using equal_app. }
-  { red; simpl. red; simpl. red; simpl; intros.
-    destruct x0; destruct y0; eauto.
-    red in H2. simpl. eauto using equal_app. }
+    inversion 1; simpl. red in H0.
+    unfold id. constructor. etransitivity. eapply H0. 2: eauto.
+    eapply proper_left; eauto.
+    inversion 1. }
+  { intros. simpl in *.
+    red. intros.
+    destruct H4; simpl.
+    - unfold compose. constructor.
+    - unfold compose. constructor.
+      eapply H3. eapply H2. assumption. }
+  { intros; simpl in *.
+    red. red. inversion 2. constructor.
+    constructor. apply H1. assumption. }
 Qed.
 
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=

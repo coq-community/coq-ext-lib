@@ -7,7 +7,7 @@ Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Monads.OptionMonad.
-Require Import ExtLib.Tactics.TypeTac. 
+Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -51,7 +51,7 @@ Section Laws.
     Proof. do 5 red; eauto. Qed.
   End parametric.
 
-  Theorem equal_match : forall (A B : Type) (eA : type A) (eB : type B), 
+  Theorem equal_match : forall (A B : Type) (eA : type A) (eB : type B),
     typeOk eA -> typeOk eB ->
     forall (x y : option A) (a b : B) (f g : A -> B),
       equal x y ->
@@ -67,11 +67,12 @@ Section Laws.
             end.
   Proof.
     destruct x; destruct y; intros; eauto with typeclass_instances; type_tac.
+    { inversion H1. assumption. }
     { inversion H1. }
     { inversion H1. }
   Qed.
 
-  Instance proper_match : forall (A B : Type) (eA : type A) (eB : type B), 
+  Instance proper_match : forall (A B : Type) (eA : type A) (eB : type B),
     typeOk eA -> typeOk eB ->
     forall (x : option A),
     proper x ->
@@ -100,14 +101,15 @@ Section Laws.
       simpl; unfold optionT_eq; simpl; intros.
       rewrite bind_associativity; eauto with typeclass_instances; intros; type_tac.
       destruct x; destruct y; try solve [ inversion H5 ]; type_tac.
+      inversion H5; assumption.
       eapply equal_match; eauto with typeclass_instances; type_tac.
       rewrite bind_of_return; eauto with typeclass_instances; type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac. }
     { simpl; unfold optionT_eq; simpl; intros. red; simpl; intros. type_tac. }
-    { simpl; unfold optionT_eq; simpl; intros. red; simpl; intros. 
-      red; simpl; intros. type_tac. 
+    { simpl; unfold optionT_eq; simpl; intros. red; simpl; intros.
+      red; simpl; intros. type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac. }
   Qed.
 
@@ -115,7 +117,7 @@ Section Laws.
     typeOk tT -> typeOk tU ->
     forall (a b : option T) (f g : T -> U) (x y : U),
       equal a b -> equal f g -> equal x y ->
-      equal match a with 
+      equal match a with
               | Some a => f a
               | None => x
             end
@@ -136,11 +138,11 @@ Section Laws.
     { simpl; unfold lift, optionT_eq; simpl; intros.
       unfold liftM.
       rewrite bind_associativity; eauto with typeclass_instances; type_tac.
-      rewrite bind_associativity; eauto with typeclass_instances; type_tac. 
+      rewrite bind_associativity; eauto with typeclass_instances; type_tac.
       rewrite bind_of_return; eauto with typeclass_instances; type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac.
       eapply equal_match; eauto with typeclass_instances; type_tac. }
-    { unfold lift, liftM; simpl; intros. unfold liftM. red; simpl; intros. 
+    { unfold lift, liftM; simpl; intros. unfold liftM. red; simpl; intros.
       unfold optionT_eq; simpl. type_tac. }
   Qed.
 
@@ -162,22 +164,23 @@ Section Laws.
       type_tac.
       apply proper_fun; intros. repeat rewrite local_ret; eauto with typeclass_instances.
       type_tac. eauto with typeclass_instances.
-      type_tac. type_tac. } 
+      type_tac. type_tac. }
     { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
       rewrite local_bind; eauto with typeclass_instances.
       type_tac.
       destruct x; destruct y; try solve [ inversion H4 ]; type_tac.
+      inversion H4; assumption.
       rewrite local_ret; eauto with typeclass_instances; type_tac.
       type_tac. eapply equal_match; eauto with typeclass_instances; type_tac. }
     { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
       rewrite local_ret; eauto with typeclass_instances; type_tac. }
     { simpl. unfold optionT_eq; simpl; intros; unfold liftM.
       rewrite local_local; eauto with typeclass_instances; type_tac. }
-    { unfold local; simpl; intros. red. red. intros. red in H0. 
+    { unfold local; simpl; intros. red. red. intros. red in H0.
       red; simpl. type_tac. }
-    { Opaque lift. unfold ask; simpl; intros. red. type_tac. 
+    { Opaque lift. unfold ask; simpl; intros. red. type_tac.
       eapply lift_proper; eauto with typeclass_instances. Transparent lift. }
-  Qed.      
+  Qed.
 
 (*
   Global Instance MonadStateLaws_optionT (s : Type) (t : type s) (tT : typeOk t) (Ms : MonadState s m) (MLs : MonadStateLaws Monad_m _ _ Ms) : MonadStateLaws _ _ _ (@State_optionT _ _ _ Ms).
@@ -195,29 +198,29 @@ Section Laws.
         instantiate (1 := fun x => ret (Some x)). simpl. type_tac.
         type_tac. type_tac. }
       { type_tac. rewrite bind_of_return; eauto with typeclass_instances.
-        type_tac. type_tac. 
+        type_tac. type_tac.
         eapply equal_match_option; eauto with typeclass_instances; type_tac. }
       { eapply equal_match_option; eauto with typeclass_instances; type_tac. } }
     { simpl; unfold optionT_eq; simpl; intros; unfold liftM; simpl.
-      repeat rewrite bind_associativity; eauto with typeclass_instances; 
+      repeat rewrite bind_associativity; eauto with typeclass_instances;
         try solve [ type_tac; eapply equal_match_option; eauto with typeclass_instances; type_tac ].
       rewrite bind_proper; eauto with typeclass_instances.
       2: eapply preflexive; eauto with typeclass_instances; type_tac.
       instantiate (1 := fun a : unit => bind get (fun x0 : s => ret (Some x0))).
       { rewrite <- bind_associativity; eauto with typeclass_instances.
         Require Import MonadTac.
-        { 
+        {
           Ltac cl := eauto with typeclass_instances.
           Ltac tcl := solve [ cl ].
 Ltac monad_rewrite t :=
           first [ t
-                | rewrite bind_rw_0; [ | tcl | tcl | tcl | t | type_tac ] 
+                | rewrite bind_rw_0; [ | tcl | tcl | tcl | t | type_tac ]
                 | rewrite bind_rw_1 ].
 monad_rewrite ltac:(eapply put_get; eauto with typeclass_instances).
 rewrite bind_associativity; cl; try solve_proper.
 rewrite bind_rw_1; [ | tcl | tcl | tcl | intros | type_tac ].
 Focus 2.
-etransitivity. eapply bind_of_return; cl; type_tac. 
+etransitivity. eapply bind_of_return; cl; type_tac.
 instantiate (1 := fun _ => ret (Some x)). simpl. type_tac.
 Add Parametric Morphism (T : Type) (tT : type T) (tokT : typeOk tT) : (@equal _ tT)
   with signature (equal ==> equal ==> iff)
@@ -248,7 +251,7 @@ assert (Morphisms.Proper (equal ==> Basics.flip Basics.impl)
 assert (Morphisms.Proper
                 (Morphisms.pointwise_relation unit equal ==> equal)
                 (bind (@put _ _ Ms x))).
-{ red. red. intros. eapply bind_proper; cl. solve_proper. 
+{ red. red. intros. eapply bind_proper; cl. solve_proper.
   red; simpl. red in H1. red.
 
 assert bind_proper.
@@ -260,7 +263,7 @@ setoid_rewrite bind_of_return.
 
         rewrite bind_rw_0
         3: instantiate (1 := (bind (put x) (fun _ : unit => get))).
-        
+
 
 
 
@@ -271,15 +274,15 @@ setoid_rewrite bind_of_return.
             proper y ->
             equal (bind x y) (bind z y).
         Proof.
-          
+
 
  }
       { type_tac. rewrite bind_of_return; eauto with typeclass_instances; type_tac.
         eapply equal_match_option; eauto with typeclass_instances; type_tac. } }
 
-      
+
       Print MonadStateLaws.
-*)      
+*)
 
   Global Instance MonadZeroLaws_optionT : MonadZeroLaws (@Monad_optionT _ Monad_m) type_optionT _.
   Proof.
