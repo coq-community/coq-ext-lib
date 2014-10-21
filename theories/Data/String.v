@@ -90,7 +90,7 @@ Section Program_Scope.
       | true => fun _ => String (digit2ascii n) EmptyString
       | false => fun pf =>
         let m := NPeano.div n mod in
-        append (nat2string m) (String (digit2ascii (n - 10 * m)) EmptyString)
+        append (nat2string m) (String (digit2ascii (n - mod * m)) EmptyString)
     end eq_refl.
   Next Obligation.
     eapply NPeano.Nat.div_lt; auto.

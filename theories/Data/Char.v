@@ -64,7 +64,7 @@ Definition digit2ascii (n:nat) : Ascii.ascii :=
     | 7 => "7"
     | 8 => "8"
     | 9 => "9"
-    | n => ascii_of_nat (n - 9 + nat_of_ascii "A")
+    | n => ascii_of_nat (n - 10 + nat_of_ascii "A")
   end%char.
 
 Definition chr_newline : ascii :=
