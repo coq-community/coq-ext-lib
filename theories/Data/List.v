@@ -4,6 +4,7 @@ Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Tactics.Consider.
+Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -179,6 +180,26 @@ Section ListEq.
   Qed.
 
 End ListEq.
+
+Global Instance Injective_cons T (a : T) b c d : Injective (a :: b = c :: d) :=
+  { result := a = c /\ b = d }.
+inversion 1; auto.
+Defined.
+
+Global Instance Injective_cons_nil T (a : T) b : Injective (a :: b = nil) :=
+  { result := False }.
+inversion 1; auto.
+Defined.
+
+Global Instance Injective_nil_cons T (a : T) b : Injective (nil = a :: b) :=
+  { result := False }.
+inversion 1; auto.
+Defined.
+
+Global Instance Injective_nil_nil T : Injective (nil = @nil T) :=
+  { result := True }.
+auto.
+Defined.
 
 Lemma eq_list_eq
 : forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
