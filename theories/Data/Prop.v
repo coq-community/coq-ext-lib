@@ -47,6 +47,25 @@ Proof. intuition. Qed.
 Lemma Or_True_iff : forall P, (P \/ True) <-> True.
 Proof. intuition. Qed.
 
+Lemma Impl_iff
+: forall P Q R S : Prop,
+    (P <-> R) ->
+    (P -> (Q <-> S)) ->
+    ((P -> Q) <-> (R -> S)).
+Proof. clear. intuition. Qed.
+
+Lemma And_iff
+: forall P Q R S : Prop,
+    (P <-> R) ->
+    (P -> (Q <-> S)) ->
+    ((P /\ Q) <-> (R /\ S)).
+Proof. clear; intuition. Qed.
+
+Lemma Impl_True_iff : forall (P : Prop), (True -> P) <-> P.
+Proof.
+  clear; intros; tauto.
+Qed.
+
 (** Forall **)
 Lemma forall_iff : forall T P Q,
                      (forall x,

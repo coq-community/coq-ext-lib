@@ -1,9 +1,35 @@
+Require Import Coq.Relations.Relation_Definitions.
+Require Import Coq.Classes.RelationClasses.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+
+Section Eqpair.
+  Context {T U} (rT : relation T) (rU : relation U).
+
+  Inductive Eqpair : relation (T * U) :=
+  | Eqpair_both : forall a b c d, rT a b -> rU c d -> Eqpair (a,c) (b,d).
+
+  Global Instance Reflexive_Eqpair {RrT : Reflexive rT} {RrU : Reflexive rU}
+  : Reflexive Eqpair.
+  Proof. red. destruct x. constructor; reflexivity. Qed.
+
+  Global Instance Symmetric_Eqpair {RrT : Symmetric rT} {RrU : Symmetric rU}
+  : Symmetric Eqpair.
+  Proof. red. inversion 1; constructor; symmetry; assumption. Qed.
+
+  Global Instance Transitive_Eqpair {RrT : Transitive rT} {RrU : Transitive rU}
+  : Transitive Eqpair.
+  Proof. red. inversion 1; inversion 1; constructor; etransitivity; eauto. Qed.
+
+  Global Instance Injective_Eqpair a b c d : Injective (Eqpair (a,b) (c,d)) :=
+  { result := rT a c /\ rU b d }.
+  abstract (inversion 1; auto).
+  Defined.
+End Eqpair.
 
 Section PairWF.
   Variables T U : Type.

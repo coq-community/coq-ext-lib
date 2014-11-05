@@ -1,5 +1,6 @@
 Require Import Coq.Relations.Relation_Definitions.
 Require Import Coq.Classes.RelationClasses.
+Require Import Coq.Classes.Morphisms.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
@@ -67,6 +68,37 @@ Section relation.
     destruct H0; auto.
     inversion H1. constructor; auto. subst. eapply H; eassumption.
   Qed.
+
+  Global Instance Injective_Roption_None
+  : Injective (Roption None None) :=
+    { result := True }.
+  auto.
+  Defined.
+
+  Global Instance Injective_Roption_None_Some a
+  : Injective (Roption None (Some a)) :=
+    { result := False }.
+  inversion 1.
+  Defined.
+
+  Global Instance Injective_Roption_Some_None a
+  : Injective (Roption (Some a) None) :=
+    { result := False }.
+  inversion 1.
+  Defined.
+
+  Global Instance Injective_Roption_Some_Some a b
+  : Injective (Roption (Some a) (Some b)) :=
+    { result := R a b }.
+  inversion 1. auto.
+  Defined.
+
+  Global Instance Injective_Proper_Roption_Some x
+  : Injective (Proper Roption (Some x)) :=
+    { result := R x x }.
+  abstract (inversion 1; assumption).
+  Defined.
+
 End relation.
 
 Section type.
