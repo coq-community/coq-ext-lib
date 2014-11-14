@@ -77,6 +77,14 @@ Proof.
    intros. setoid_rewrite H. reflexivity.
 Qed.
 
+Lemma forall_impl : forall {T} (P Q : T -> Prop),
+                      (forall x, P x -> Q x) ->
+                      (forall x, P x) -> (forall x, Q x).
+Proof.
+  clear. intuition.
+Qed.
+
+
 (** Exists **)
 Lemma exists_iff : forall T P Q,
                      (forall x,
@@ -84,4 +92,12 @@ Lemma exists_iff : forall T P Q,
                      ((exists x : T, P x) <-> (exists x : T, Q x)).
 Proof.
    intros. setoid_rewrite H. reflexivity.
+Qed.
+
+Lemma exists_impl : forall {T} (P Q : T -> Prop),
+                      (forall x, P x -> Q x) ->
+                      (exists x, P x) -> (exists x, Q x).
+Proof.
+  clear. intuition.
+  destruct H0; eauto.
 Qed.

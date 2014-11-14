@@ -201,6 +201,22 @@ Global Instance Injective_nil_nil T : Injective (nil = @nil T) :=
 auto.
 Defined.
 
+Global Instance Injective_app_cons {T} (a : list T) b c d
+: Injective (a ++ b :: nil = (c ++ d :: nil)) :=
+  { result := a = c /\ b = d }.
+Proof. eapply app_inj_tail. Defined.
+
+Global Instance Injective_app_same_L {T} (a : list T) b c
+: Injective (b ++ a = b ++ c) :=
+  { result := a = c }.
+Proof. apply app_inv_head. Defined.
+
+Global Instance Injective_app_same_R {T} (a : list T) b c
+: Injective (a ++ b = c ++ b) :=
+{ result := a = c }.
+Proof. apply app_inv_tail. Defined.
+
+
 Lemma eq_list_eq
 : forall T (a b : T) (pf : a = b) (F : _ -> Type) val,
     match pf in _ = x return list (F x) with
