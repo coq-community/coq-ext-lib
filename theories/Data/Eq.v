@@ -89,3 +89,8 @@ Proof.
   destruct pf. reflexivity.
 Qed.
 Hint Rewrite eq_Arr_eq : eq_rw.
+
+Lemma eq_sym_eq_sym : forall (T : Type) (a b : T) (pf : a = b),
+                        eq_sym (eq_sym pf) = pf.
+Proof. destruct pf. reflexivity. Qed.
+Hint Rewrite eq_sym_eq_sym : eq_rw.
