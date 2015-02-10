@@ -72,9 +72,9 @@ Fixpoint string_cmp (l r : string) : comparison :=
 
 Section Program_Scope.
   Require Import Program.
-  Import Arith Div2.
-  Variable mod : nat.
-  Hypothesis one_lt_mod : 1 < mod.
+  Import NPeano.Nat Arith.
+  Variable modulus : nat.
+  Hypothesis one_lt_mod : 1 < modulus.
 
   Lemma _xxx : forall m n,
                  1 < m -> ~ n < m -> 0 < n.
@@ -86,15 +86,15 @@ Section Program_Scope.
   Qed.
 
   Program Fixpoint nat2string (n:nat) {measure n}: string :=
-    match NPeano.ltb n mod as x return NPeano.ltb n mod = x -> string with
+    match NPeano.Nat.ltb n modulus as x return NPeano.Nat.ltb n modulus = x -> string with
       | true => fun _ => String (digit2ascii n) EmptyString
       | false => fun pf =>
-        let m := NPeano.div n mod in
-        append (nat2string m) (String (digit2ascii (n - mod * m)) EmptyString)
-    end eq_refl.
+        let m := NPeano.Nat.div n modulus in
+        append (nat2string m) (String (digit2ascii (n - modulus * m)) EmptyString)
+    end (@Logic.eq_refl _ (NPeano.Nat.ltb n modulus)).
   Next Obligation.
     eapply NPeano.Nat.div_lt; auto.
-    consider (NPeano.ltb n mod); try congruence. intros.
+    consider (NPeano.Nat.ltb n modulus); try congruence. intros.
     eapply _xxx; eassumption.
   Defined.
 

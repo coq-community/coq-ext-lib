@@ -1,4 +1,5 @@
 Require Import Coq.Bool.Bool.
+Require Coq.Setoids.Setoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.

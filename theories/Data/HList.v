@@ -15,10 +15,10 @@ Set Asymmetric Patterns.
 
 (** Core Type and Functions **)
 Section hlist.
-  Context {iT : Type}.
-  Variable F : iT -> Type.
+  Context {iT : Type@{i}}.
+  Variable F : iT -> Type@{d}.
 
-  Inductive hlist : list iT -> Type :=
+  Inductive hlist : list iT -> Type@{d} :=
   | Hnil  : hlist nil
   | Hcons : forall l ls, F l -> hlist ls -> hlist (l :: ls).
 
@@ -331,8 +331,8 @@ Section hlist.
         end
     end.
 
-  Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
-    match nth_error ls n with
+  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+    match nth_error ls n return Type@{i} with
       | None => unit
       | Some t => F t
     end :=
@@ -398,35 +398,36 @@ Section hlist.
 
   Theorem hlist_nth_hlist_app
   : forall l l' (h : hlist l) (h' : hlist l') n,
-    hlist_nth (hlist_app h h') n =
+    hlist_nth@{i} (hlist_app h h') n =
     match nth_error l n as k
       return nth_error l n = k ->
-      match nth_error (l ++ l') n with
+      match nth_error (l ++ l') n return Type@{i} with
         | None => unit
         | Some t => F t
       end
-      with
+    with
       | Some _ => fun pf =>
-        match cast1 _ _ _ pf in _ = z ,
+        match
+          cast1 _ _ _ pf in _ = z ,
           eq_sym pf in _ = w
-          return match w with
+          return match w return Type@{i} with
                    | None => unit
                    | Some t => F t
                  end ->
-          match z with
-            | None => unit
-            | Some t => F t
-          end
-          with
+                 match z return Type@{i} with
+                   | None => unit
+                   | Some t => F t
+                 end
+        with
           | eq_refl , eq_refl => fun x => x
-        end (hlist_nth h n)
+        end (hlist_nth@{i} h n)
       | None => fun pf =>
         match cast2 _ _ _ pf in _ = z
           return match z with
                    | Some t => F t
                    | None => unit
                  end
-          with
+        with
           | eq_refl => hlist_nth h' (n - length l)
         end
     end eq_refl.
