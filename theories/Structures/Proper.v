@@ -1,5 +1,6 @@
+Require Coq.Setoids.Setoid.
 Require Import Coq.Relations.Relations.
-Require Import RelationClasses.
+Require Import Coq.Classes.RelationClasses.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -17,7 +18,7 @@ Section relations.
 
   Global Instance PReflexive_Reflexive (r : Reflexive R) : PReflexive.
   Proof. red; intros; reflexivity. Qed.
-  
+
   Class PSymmetric : Prop :=
     psymmetric : forall x y, wf x -> wf y -> R x y -> R y x.
 

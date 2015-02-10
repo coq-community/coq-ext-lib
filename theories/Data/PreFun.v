@@ -6,7 +6,7 @@ Require Import ExtLib.Core.Type.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition Fun A B := A -> B.
+Polymorphic Definition Fun A B := A -> B.
 
 Section type.
   Variables (T U : Type) (tT : type T) (tU : type U).
@@ -37,8 +37,8 @@ Section type.
       etransitivity. eapply H. eassumption.
       eapply H0.
       eapply only_proper in H1; intuition.
-      (* eapply preflexive with (wf := proper); auto.
-      apply tOk. *) }
+      eapply preflexive with (wf := proper); auto.
+      apply tOk. }
   Qed.
 
   Global Instance proper_app : forall (f : T -> U) (a : T),

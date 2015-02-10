@@ -87,10 +87,10 @@ Program Fixpoint nat_show (n:nat) {measure n} : showM :=
   if Compare_dec.le_gt_dec n 9 then
     inject (Char.digit2ascii n)
   else
-    let n' := NPeano.div n 10 in
+    let n' := NPeano.Nat.div n 10 in
     (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
 Next Obligation.
-  assert (NPeano.div n 10 < n) ; eauto.
+  assert (NPeano.Nat.div n 10 < n) ; eauto.
   eapply NPeano.Nat.div_lt.
   inversion H; apply Lt.lt_O_Sn.
   repeat constructor.

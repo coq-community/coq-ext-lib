@@ -36,12 +36,12 @@ Section GraphAlgos.
       Definition dfs' : V -> list V -> m (list V) :=
         mfix_multi (V :: list V :: nil) (list V) (fun rec from seen =>
           if list_in_dec from seen
-          then ret seen
+          then ret (m:=m) seen
           else
             foldM (fun v acc =>
               if list_in_dec v acc
-              then ret acc
-              else rec v acc) (ret seen) (successors g from)).
+              then ret (m:=m) acc
+              else rec v acc) (ret (m:=m) seen) (successors g from)).
 
     End monadic.
 
@@ -57,4 +57,3 @@ Section GraphAlgos.
 
   End Traverse.
 End GraphAlgos.
-

@@ -52,8 +52,8 @@ Fixpoint get (domain : list Type) (range : Type) T (m : member T domain)
   match m in member _ domain
         return (T -> asFunc domain range) -> asFunc domain range
   with
-    | MZ _ => fun F x => F x x
-    | MN _ _ m => fun F x => @get _ _ _ m (fun y => F y x)
+    | MZ _ _ => fun F x => F x x
+    | MN _ m => fun F x => @get _ _ _ m (fun y => F y x)
   end.
 
 Fixpoint under (domain : list Type) (range : Type)
@@ -72,8 +72,8 @@ Fixpoint under (domain : list Type) (range : Type)
 Fixpoint replace {ps} {T U : Type} (m : member T ps) (v : T) {struct m}
 : asFunc ps U -> asFunc ps U :=
   match m in member _ ps return asFunc ps U -> asFunc ps U with
-    | MZ _ => fun f _ => f v
-    | MN _ _ m => fun f x => replace m v (f x)
+    | MZ _ _ => fun f _ => f v
+    | MN _ m => fun f x => replace m v (f x)
   end.
 
 Section combine.

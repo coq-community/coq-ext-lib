@@ -69,20 +69,20 @@ Global Instance Injective_FS {n : nat} (a b : fin n)
 abstract (intro ; inversion H ; eapply inj_pair2 in H1 ; assumption).
 Defined.
 
-Fixpoint fin_eq_dec {n} (x : fin n) : fin n -> bool :=
+Fixpoint fin_eq_dec {n} (x : fin n) {struct x} : fin n -> bool :=
   match x in fin n' return fin n' -> bool with
     | F0 _ => fun y => match y with
                          | F0 _ => true
                          | _ => false
                        end
     | FS n' x' => fun y : fin (S n') =>
-      match y in fin n'' return match n'' with
-                                  | 0 => unit
-                                  | S n'' => fin n''
-                                end -> bool with
+      match y in fin n'' return (match n'' with
+                                   | 0 => unit
+                                   | S n'' => fin n''
+                                 end -> bool) -> bool with
         | F0 _ => fun _ => false
-        | FS _ y' => fun x' => fin_eq_dec x' y'
-      end x'
+        | FS _ y' => fun f => f y'
+      end (fun y => fin_eq_dec x' y)
     end.
 
 Global Instance RelDec_fin_eq (n : nat) : RelDec (@eq (fin n)) :=
