@@ -94,3 +94,11 @@ Lemma eq_sym_eq_sym : forall (T : Type) (a b : T) (pf : a = b),
                         eq_sym (eq_sym pf) = pf.
 Proof. destruct pf. reflexivity. Qed.
 Hint Rewrite eq_sym_eq_sym : eq_rw.
+
+Ltac autorewrite_eq_rw :=
+  repeat progress (autorewrite with eq_rw;
+                   repeat match goal with
+                            | |- context [ match ?X return _ -> _ with
+                                             | eq_refl => _
+                                           end ] => rewrite (eq_Arr_eq X)
+                          end).
