@@ -67,6 +67,13 @@ Lemma impl_iff
     ((P -> Q) <-> (R -> S)).
 Proof. clear. intuition. Qed.
 
+Lemma impl_eq : forall (P Q : Prop), P = Q -> (P -> Q).
+Proof. clear. intros; subst; auto. Qed.
+
+Lemma uncurry : forall (P Q R : Prop),
+    (P /\ Q -> R) <-> (P -> Q -> R).
+Proof. clear. tauto. Qed.
+
 
 (** Forall **)
 Lemma forall_iff : forall T P Q,
