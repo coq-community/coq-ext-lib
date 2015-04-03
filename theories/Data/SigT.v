@@ -82,3 +82,16 @@ Section injective.
   abstract (inversion 1; subst; exists eq_refl; auto).
   Defined.
 End injective.
+
+Lemma eq_sigT_rw
+: forall T U F (a b : T) (pf : a = b) s,
+    match pf in _ = x return @sigT U (F x) with
+    | eq_refl => s
+    end =
+    @existT U (F b) (projT1 s)
+            match pf in _ = x return F x (projT1 s) with
+            | eq_refl => (projT2 s)
+            end.
+Proof. destruct pf. destruct s; reflexivity. Qed.
+
+Hint Rewrite eq_sigT_rw : eq_rw.

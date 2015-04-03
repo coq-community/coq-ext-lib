@@ -512,25 +512,22 @@ Section hlist.
         destruct e. reflexivity. }
     Qed.
 
-    Lemma hlist_app_assoc' : forall ls ls' ls''
-                                 (a : hlist ls) (b : hlist ls') (c : hlist ls''),
-      hlist_app a (hlist_app b c) =
-      match app_ass_trans ls ls' ls'' in _ = t return hlist t with
+    Lemma hlist_app_assoc'
+      : forall (ls ls' ls'' : list iT)
+               (a : hlist ls) (b : hlist ls') (c : hlist ls''),
+        hlist_app a (hlist_app b c) =
+        match
+          app_ass_trans ls ls' ls'' in (_ = t) return (hlist t)
+        with
         | eq_refl => hlist_app (hlist_app a b) c
-      end.
+        end.
     Proof.
-      intros ls ls' ls''.
-      generalize (app_assoc_reverse ls ls' ls'').
-      induction ls; simpl; intros.
-      { rewrite (hlist_eta a); simpl. reflexivity. }
-      { rewrite (hlist_eta a0). simpl.
-        inversion H.
-        erewrite (IHls H1).
-        unfold eq_trans, f_equal.
-        generalize (app_ass_trans ls ls' ls'').
-        rewrite <- H1. clear; intro.
-        generalize dependent (hlist_app (hlist_app (hlist_tl a0) b) c).
-        destruct e. reflexivity. }
+      clear. intros.
+      generalize (hlist_app_assoc a b c).
+      generalize (hlist_app (hlist_app a b) c).
+      generalize (hlist_app a (hlist_app b c)).
+      destruct (app_ass_trans ls ls' ls'').
+      simpl. auto.
     Qed.
 
     Fixpoint hlist_split ls ls' : hlist (ls ++ ls') -> hlist ls * hlist ls' :=
@@ -561,6 +558,46 @@ Section hlist.
     Qed.
 
   End type.
+
+  Lemma hlist_hd_fst_hlist_split
+  : forall t (xs ys : list _) (h : hlist (t :: xs ++ ys)),
+      hlist_hd (fst (hlist_split (t :: xs) ys h)) = hlist_hd h.
+  Proof.
+    simpl. intros.
+    match goal with
+    | |- context [ match ?X with _ => _ end ] =>
+      destruct X
+    end. reflexivity.
+  Qed.
+
+  Lemma hlist_tl_fst_hlist_split
+  : forall t (xs ys : list _) (h : hlist (t :: xs ++ ys)),
+      hlist_tl (fst (hlist_split (t :: xs) ys h)) =
+      fst (hlist_split xs ys (hlist_tl h)).
+  Proof.
+    simpl. intros.
+    match goal with
+    | |- context [ match ?X with _ => _ end ] =>
+      remember X
+    end. destruct p. simpl.
+    change h0 with (fst (h0, h1)).
+    f_equal. assumption.
+  Qed.
+
+  Lemma hlist_tl_snd_hlist_split
+  : forall t (xs ys : list _) (h : hlist (t :: xs ++ ys)),
+      snd (hlist_split xs ys (hlist_tl h)) =
+      snd (hlist_split (t :: xs) ys h).
+  Proof.
+    simpl. intros.
+    match goal with
+    | |- context [ match ?X with _ => _ end ] =>
+      remember X
+    end. destruct p.
+    simpl.
+    change h1 with (snd (h0, h1)).
+    rewrite Heqp. reflexivity.
+  Qed.
 
 End hlist.
 

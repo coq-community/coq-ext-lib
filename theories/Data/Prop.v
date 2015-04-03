@@ -101,3 +101,6 @@ Proof.
   clear. intuition.
   destruct H0; eauto.
 Qed.
+
+Lemma iff_eq : forall (P Q : Prop), P = Q -> (P <-> Q).
+Proof. clear. intros; subst; reflexivity. Qed.
