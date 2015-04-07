@@ -7,7 +7,7 @@ Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
-Require Import ExtLib.Tactics.Injection.
+Require Import ExtLib.Tactics.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -560,6 +560,7 @@ Section hlist.
 
   End type.
 
+
   Lemma hlist_hd_fst_hlist_split
   : forall t (xs ys : list _) (h : hlist (t :: xs ++ ys)),
       hlist_hd (fst (hlist_split (t :: xs) ys h)) = hlist_hd h.
@@ -582,7 +583,7 @@ Section hlist.
       remember X
     end. destruct p. simpl.
     change h0 with (fst (h0, h1)).
-    f_equal. assumption.
+    f_equal.
   Qed.
 
   Lemma hlist_tl_snd_hlist_split
@@ -598,6 +599,141 @@ Section hlist.
     simpl.
     change h1 with (snd (h0, h1)).
     rewrite Heqp. reflexivity.
+  Qed.
+
+  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
+    option {t : iT & hlist ls -> F t} :=
+    match
+      ls as ls0
+      return option {t : iT & hlist ls0 -> F t}
+    with
+      | nil => None
+      | l :: ls0 =>
+        match
+          n as n0
+          return option {t : iT & hlist (l :: ls0) -> F t}
+        with
+          | 0 =>
+            Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
+                          l (@hlist_hd _ _))
+          | S n0 =>
+            match nth_error_get_hlist_nth ls0 n0 with
+              | Some (existT x f) =>
+                Some (@existT _ (fun t => hlist _ -> F t)
+                              x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
+              | None => None
+            end
+        end
+    end.
+
+  Theorem nth_error_get_hlist_nth_Some
+    : forall ls n s,
+      nth_error_get_hlist_nth@{i} ls n = Some s ->
+      exists pf : nth_error ls n = Some (projT1 s),
+      forall h, projT2 s h = match pf in _ = t
+                                   return match t return Type@{i} with
+                                            | Some t => F t
+                                            | None => unit
+                                          end
+                             with
+                               | eq_refl => hlist_nth h n
+                             end.
+  Proof.
+    induction ls; simpl; intros; try congruence.
+    { destruct n.
+      { inv_all; subst; simpl.
+        exists (eq_refl).
+        intros. rewrite (hlist_eta h). reflexivity. }
+      { forward. inv_all; subst.
+        destruct (IHls _ _ H0); clear IHls.
+        simpl in *. exists x0.
+        intros.
+        rewrite (hlist_eta h). simpl. auto. } }
+  Qed.
+
+  Theorem nth_error_get_hlist_nth_None
+  : forall ls n,
+      nth_error_get_hlist_nth ls n = None <->
+      nth_error ls n = None.
+  Proof.
+    induction ls; simpl; intros; try congruence.
+    { destruct n; intuition. }
+    { destruct n; simpl; try solve [ intuition congruence ].
+      { unfold value. intuition congruence. }
+      { specialize (IHls n).
+        forward. } }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_weaken
+  : forall ls ls' n x,
+      nth_error_get_hlist_nth ls n = Some x ->
+      exists z,
+        nth_error_get_hlist_nth (ls ++ ls') n =
+        Some (@existT iT (fun t => hlist (ls ++ ls') -> F t) (projT1 x) z)
+        /\ forall h h', projT2 x h = z (hlist_app h h').
+  Proof.
+    intros ls ls'. revert ls.
+    induction ls; simpl; intros; try congruence.
+    { destruct n; inv_all; subst.
+      { simpl. eexists; split; eauto.
+        intros. rewrite (hlist_eta h). reflexivity. }
+      { forward. inv_all; subst. simpl.
+        apply IHls in H0. forward_reason.
+        rewrite H. eexists; split; eauto.
+        intros. rewrite (hlist_eta h). simpl in *.
+        auto. } }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_appL
+  : forall tvs' tvs n,
+      n < length tvs ->
+      exists x,
+        nth_error_get_hlist_nth (tvs ++ tvs') n = Some x /\
+        exists y,
+          nth_error_get_hlist_nth tvs n = Some (@existT _ _ (projT1 x) y) /\
+          forall vs vs',
+            (projT2 x) (hlist_app vs vs') = y vs.
+  Proof.
+    clear. induction tvs; simpl; intros.
+    { exfalso; inversion H. }
+    { destruct n.
+      { clear H IHtvs.
+        eexists; split; eauto. eexists; split; eauto.
+        simpl. intros. rewrite (hlist_eta vs). reflexivity. }
+      { apply Lt.lt_S_n in H.
+        { specialize (IHtvs _ H).
+          forward_reason.
+          rewrite H0. rewrite H1.
+          forward. subst. simpl in *.
+          eexists; split; eauto.
+          eexists; split; eauto. simpl.
+          intros. rewrite (hlist_eta vs). simpl. auto. } } }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_appR
+  : forall tvs' tvs n x,
+      n >= length tvs ->
+      nth_error_get_hlist_nth (tvs ++ tvs') n = Some x ->
+      exists y,
+        nth_error_get_hlist_nth tvs' (n - length tvs) = Some (@existT _ _ (projT1 x) y) /\
+        forall vs vs',
+          (projT2 x) (hlist_app vs vs') = y vs'.
+  Proof.
+    clear. induction tvs; simpl; intros.
+    { rewrite <- Minus.minus_n_O.
+      rewrite H0. destruct x. simpl.
+      eexists; split; eauto. intros.
+      rewrite (hlist_eta vs). reflexivity. }
+    { destruct n.
+      { inversion H. }
+      { assert (n >= length tvs) by (eapply le_S_n; eassumption). clear H.
+        { forward. inv_all; subst. simpl in *.
+          specialize (IHtvs _ _ H1 H0).
+          simpl in *.
+          forward_reason.
+          rewrite H.
+          eexists; split; eauto.
+          intros. rewrite (hlist_eta vs). simpl. auto. } } }
   Qed.
 
 End hlist.
