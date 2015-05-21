@@ -757,6 +757,15 @@ Section hlist_map.
         Hcons (ff hd) (hlist_map tl)
     end.
 
+  Theorem hlist_app_hlist_map
+    : forall ls ls' (a : hlist F ls) (b : hlist F ls'),
+      hlist_map (hlist_app a b) =
+      hlist_app (hlist_map a) (hlist_map b).
+  Proof.
+    induction a. simpl; auto.
+    simpl. intros. f_equal. auto.
+  Qed.
+
 End hlist_map.
 
 Lemma equiv_hlist_map
