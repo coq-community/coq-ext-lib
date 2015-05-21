@@ -1,6 +1,5 @@
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Functor.
-Require Import ExtLib.Structures.FunctorLaws.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Positive.
 Require Import ExtLib.Tactics.Cases.

@@ -1,6 +1,7 @@
 DATA       := Monads Set Map Graph
 PACKAGES   := Core Tactics Structures Data $(DATA:%=Data/%) Generic Relations Programming Recur
 EXCLUDES   := Generic/DerivingData Structures/PMonad $(patsubst %.v,%,$(wildcard Data/Monads/*Laws.v))
+#  Structures/MonadLaws
 MODULES    := $(foreach pkg,$(PACKAGES),$(patsubst %.v,%,$(wildcard $(pkg)/*.v))) ExtLib Tactics
 MODULES    := $(filter-out $(EXCLUDES),$(MODULES))
 TESTS      :=

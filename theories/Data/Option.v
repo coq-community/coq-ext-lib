@@ -136,6 +136,7 @@ Section type.
 
 End type.
 
+(*
 Global Instance FunctorLaws_option : FunctorLaws Functor_option type_option.
 Proof.
   constructor.
@@ -154,13 +155,14 @@ Proof.
     red. red. inversion 2. constructor.
     constructor. apply H1. assumption. }
 Qed.
+*)
 
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
 { result := a = b }.
 abstract (inversion 1; auto).
 Defined.
 
-Require EquivDec.
+Require ExtLib.Core.EquivDec.
 
 Global Instance EqDec_option (T : Type) (EDT : EquivDec.EqDec T (@eq T)) : EquivDec.EqDec (option T) (@eq _).
 Proof.

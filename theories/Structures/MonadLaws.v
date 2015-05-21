@@ -100,10 +100,14 @@ Section MonadLaws.
   Section with_state.
     Context {S : Type} (tS : type S) {tokS : typeOk tS}.
 
-    Class MonadStateLaws  (MS : MonadState S m) : Type :=
-    { get_put : equal (bind get put) (ret tt)
+(*
+    Polymorphic Definition promote {A : Type@{a}} : Type@{b} := A.
+
+    Polymorphic Class MonadStateLaws  (MS : MonadState S m) : Type :=
+    { get_put : @equal (m unit) (meq type_unit) (bind get put) (ret tt) }.
     ; put_get : forall x, proper x ->
       equal (bind (put x) (fun _ => get)) (bind (put x) (fun _ => ret x))
+    }.
     ; put_put : forall {A:Type@{d}} (tA : type A), typeOk tA ->
       forall (x y : S) (f : unit -> m A), proper x -> proper y -> proper f ->
       equal (bind (put x) (fun _ => bind (put y) f)) (bind (put y) f)
@@ -116,6 +120,7 @@ Section MonadLaws.
     ; get_proper :> proper get
     ; put_proper :> proper put
     }.
+*)
 
     Class MonadReaderLaws (MR : MonadReader S m) : Type :=
     { ask_local : forall f, proper f ->
