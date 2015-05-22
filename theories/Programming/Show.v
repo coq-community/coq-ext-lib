@@ -13,10 +13,12 @@ Require Import ExtLib.Core.RelDec.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition showM : Type :=
-  forall m, Injection ascii m -> Monoid m -> m.
+Set Printing Universes.
 
-Class ShowScheme (T : Type) : Type :=
+Polymorphic Definition showM : Type :=
+  forall m : Type, Injection ascii m -> Monoid m -> m.
+
+Polymorphic Class ShowScheme (T : Type) : Type :=
 { show_mon : Monoid T
 ; show_inj : Injection ascii T
 }.
@@ -31,22 +33,22 @@ Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
 ; show_inj := String
 }.
 
-Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
+Polymorphic Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
   m _ show_inj show_mon.
 
-Class Show T := show : T -> showM.
+Polymorphic Class Show T := show : T -> showM.
 
-Definition to_string {T} {M : Show T} (v : T) : string :=
+Polymorphic Definition to_string {T} {M : Show T} (v : T) : string :=
   runShow (show v) ""%string.
 
-Definition empty : showM :=
+Polymorphic Definition empty : showM :=
   fun _ _ m => monoid_unit m.
-Definition cat (a b : showM) : showM :=
+Polymorphic Definition cat (a b : showM) : showM :=
   fun _ i m => monoid_plus m (a _ i m) (b _ i m).
-Global Instance Injection_ascii_showM : Injection ascii showM :=
+Global Polymorphic Instance Injection_ascii_showM : Injection ascii showM :=
   fun v => fun _ i _ => i v.
 
-Fixpoint show_exact (s : string) : showM :=
+Polymorphic Fixpoint show_exact (s : string) : showM :=
   match s with
     | EmptyString => empty
     | String a s' => cat (inject a) (show_exact s')
@@ -61,12 +63,89 @@ Module ShowNotation.
   Coercion _inject_char : ascii >-> showM.
 End ShowNotation.
 
-Definition indent (indent : showM) (v : showM) : showM :=
+Polymorphic Definition indent (indent : showM) (v : showM) : showM :=
   let nl := Ascii.ascii_of_nat 10 in
     fun _ inj mon =>
       v _ (fun a => if eq_dec a nl
          then monoid_plus mon (inj a) (indent _ inj mon)
          else inj a) mon.
+
+Section sepBy.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Polymorphic Variable T : Type.
+  Context {F : Foldable T showM}.
+
+  Polymorphic Definition sepBy (sep : showM) (ls : T) : showM :=
+    match
+      fold (fun s acc =>
+        match acc with
+          | None => Some s
+          | Some x => Some (x << sep << s)
+        end) None ls
+      with
+      | None => empty
+      | Some s => s
+    end.
+End sepBy.
+
+Section sepBy_f.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Polymorphic Variables (T : Type) (E : Type).
+  Polymorphic Context {F : Foldable T E}.
+  Polymorphic Variable (f : E -> showM).
+
+  Polymorphic Definition sepBy_f (sep : showM) (ls : T) : showM :=
+    match
+      fold (fun s acc =>
+        match acc with
+          | None => Some (f s)
+          | Some x => Some (x << sep << f s)
+        end) None ls
+      with
+      | None => empty
+      | Some s => s
+    end.
+End sepBy_f.
+
+Polymorphic Definition wrap (before after : showM) (x : showM) : showM :=
+  cat before (cat x after).
+
+Section sum_Show.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Polymorphic Context {A : Type@{a}} {B : Type@{b}} {AS:Show A} {BS:Show B}.
+  Global Polymorphic Instance sum_Show : Show (A+B) :=
+    { show s :=
+        let (tag, payload) :=
+          match s with
+          | inl a => (show_exact "inl"%string, show a)
+          | inr b => (show_exact "inr"%string, show b)
+          end
+        in
+        "("%char <<
+        tag <<
+        " "%char <<
+        payload <<
+        ")"%char
+    }.
+End sum_Show.
+
+Section foldable_Show.
+  Require Import ExtLib.Structures.Reducible.
+  Polymorphic Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
+
+  Global Polymorphic  Instance foldable_Show : Show B :=
+    { show s := sepBy_f show (show_exact ", "%string) s }.
+
+End foldable_Show.
+
+Polymorphic Fixpoint iter_show (ss : list showM) : showM :=
+  match ss with
+    | nil => empty
+    | cons s ss => cat s (iter_show ss)
+  end.
 
 Section hiding_notation.
   Import ShowNotation.
@@ -109,90 +188,19 @@ Global Instance Show_Z : Show Z :=
     end.
 
 Section pair_Show.
-  Context {A B} {AS:Show A} {BS:Show B}.
-  Global Instance pair_Show : Show (A*B) :=
+  Polymorphic Context {A : Type@{a}} {B : Type@{b}} {AS:Show A} {BS:Show B}.
+  Global Polymorphic Instance pair_Show : Show (A*B) :=
     { show p :=
         let (a,b) := p in
         "("%char << show a << ","%char << show b << ")"%char
     }.
 End pair_Show.
-
-Section sepBy.
-  Variable T : Type.
-  Context {F : Foldable T showM}.
-
-  Definition sepBy (sep : showM) (ls : T) : showM :=
-    match
-      fold (fun s acc =>
-        match acc with
-          | None => Some s
-          | Some x => Some (x << sep << s)
-        end) None ls
-      with
-      | None => empty
-      | Some s => s
-    end.
-End sepBy.
-
-Section sepBy_f.
-  Variable T E : Type.
-  Context {F : Foldable T E}.
-  Variable (f : E -> showM).
-
-  Definition sepBy_f (sep : showM) (ls : T) : showM :=
-    match
-      fold (fun s acc =>
-        match acc with
-          | None => Some (f s)
-          | Some x => Some (x << sep << f s)
-        end) None ls
-      with
-      | None => empty
-      | Some s => s
-    end.
-End sepBy_f.
-
-Definition wrap (before after : showM) (x : showM) : showM :=
-  before << x << after.
-
-Section sum_Show.
-  Context {A B} {AS:Show A} {BS:Show B}.
-  Global Instance sum_Show : Show (A+B) :=
-    { show s :=
-        let (tag, payload) :=
-          match s with
-          | inl a => (show_exact "inl"%string, show a)
-          | inr b => (show_exact "inr"%string, show b)
-          end
-        in
-        "("%char <<
-        tag <<
-        " "%char <<
-        payload <<
-        ")"%char
-    }.
-End sum_Show.
-
-Section foldable_Show.
-  Require Import ExtLib.Structures.Reducible.
-  Context {A B} {F : Foldable B A} {BS : Show A}.
-
-  Global Instance foldable_Show : Show B :=
-    { show s := sepBy_f show ", "%string s }.
-
-End foldable_Show.
-
 End hiding_notation.
 
-Fixpoint iter_show (ss : list showM) : showM :=
-  match ss with
-    | nil => empty
-    | cons s ss => cat s (iter_show ss)
-  end.
 
 
 (*
 Examples:
 Eval compute in (runShow (show (42,"foo"%string)) : string).
-Eval compute in (runShow (show (inl true : bool+string))
+Eval compute in (runShow (show (inl true : bool+string))).
 *)
