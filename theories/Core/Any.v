@@ -2,12 +2,11 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 (** This class should be used when no requirements are needed **)
-Class Any (T : Type) : Type.
+Polymorphic Class Any (T : Type) : Type.
 
-Global Instance Any_a (T : Type) : Any T.
+Global Polymorphic Instance Any_a (T : Type) : Any T.
 
-
-Definition RESOLVE (T : Type) : Type := T.
+Polymorphic Definition RESOLVE (T : Type) : Type := T.
 
 Existing Class RESOLVE.
 
