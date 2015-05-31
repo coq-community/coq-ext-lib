@@ -1,4 +1,4 @@
-Require Import List.
+Require Import ExtLib.Data.List.
 Require Import ExtLib.Data.Graph.Graph.
 Require Import ExtLib.Data.Graph.BuildGraph.
 Require Import ExtLib.Structures.Maps.

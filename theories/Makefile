@@ -15,8 +15,8 @@ ARGS :=-R . ExtLib
 coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
 
-Makefile.coq: Makefile $(VS)
-	@ coq_makefile $(ARGS) $(VS) -o Makefile.coq
+Makefile.coq: Makefile _CoqProject $(VS)
+	@ coq_makefile -f _CoqProject $(VS) -o Makefile.coq
 
 Makefile.test.coq: Makefile $(TVS)
 	coq_makefile $(ARGS) $(TVS) -o Makefile.test.coq

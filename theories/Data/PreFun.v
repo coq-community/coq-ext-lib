@@ -1,4 +1,4 @@
-Require Import Morphisms.
+Require Import Coq.Classes.Morphisms.
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Core.Type.

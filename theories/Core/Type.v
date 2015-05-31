@@ -40,13 +40,19 @@ Section type.
     typeOk ->
     forall x y : T, equal x y -> proper x.
   Proof.
-    clear. intros. eapply only_proper in H0; intuition.
+    clear. intros.
+    match goal with
+    | H : equal _ _ |- _ => eapply only_proper in H
+    end; intuition.
   Qed.
   Global Polymorphic Instance proper_right :
     typeOk ->
     forall x y : T, equal x y -> proper y.
   Proof.
-    clear. intros. eapply only_proper in H0; intuition.
+    clear. intros.
+    match goal with
+    | H : equal _ _ |- _ => eapply only_proper in H
+    end; intuition.
   Qed.
 
 End type.
