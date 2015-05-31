@@ -10,10 +10,8 @@ ARGS :=-R ../theories ExtLib
 coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
 
-Makefile.coq: Makefile $(VS)
-	coq_makefile $(ARGS) $(VS) \
-          | sed -re 's/-R ([^ ]+) ExtLib/-I \1 -as ExtLib/g' \
-          > Makefile.coq
+Makefile.coq: Makefile _CoqProject $(VS)
+	coq_makefile -f _CoqProject $(VS) -o Makefile.coq
 
 Makefile.test.coq: Makefile $(TVS)
 	coq_makefile $(ARGS) $(TVS) \

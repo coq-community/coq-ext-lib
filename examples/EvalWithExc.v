@@ -1,9 +1,10 @@
+Require Import Coq.Strings.String.
 (** Require the monad definitions **)
 Require Import ExtLib.Structures.Monads.
 (** Use the instances for exceptions **)
 Require Import ExtLib.Data.Monads.EitherMonad.
 (** Strings will be used for error messages **)
-Require Import String.
+Require Import ExtLib.Data.String.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -27,16 +28,16 @@ Section monadic.
   Variable m : Type -> Type.
   Context {Monad_m : Monad m}.
   Context {MonadExc_m : MonadExc string m}.
-  
+
   (** Use the notation for monads **)
   Import MonadNotation.
   Local Open Scope monad_scope.
-  
+
   (** Functions that get [nat] or [bool] values from a [value] **)
   Definition asInt (v : value) : m nat :=
     match v with
-      | Int n => ret n 
-      | _ => 
+      | Int n => ret n
+      | _ =>
         (** if we don't have an integer, signal an error using
          ** [raise] from the MoandExc instance
          **)
@@ -54,7 +55,7 @@ Section monadic.
    **)
   Fixpoint eval' (e : exp) : m value :=
     match e with
-        (** when there is no error, we can just return (i.e. [ret]) 
+        (** when there is no error, we can just return (i.e. [ret])
          ** the answer
          **)
       | ConstI i => ret (Int i)
@@ -72,7 +73,7 @@ Section monadic.
         t <- eval' t ;;
         t <- asBool t ;;
         (** case split and perform the appropriate recursion **)
-        if t then
+        if (t : bool) then
           eval' tr
         else
           eval' fa
@@ -83,7 +84,7 @@ End monadic.
 (** Wrap the [eval] function up with the monad instance that we
  ** want to use
  **)
-Definition eval : exp -> string + value := 
+Definition eval : exp -> string + value :=
   eval' (m := sum string).
 
 (** Some tests **)

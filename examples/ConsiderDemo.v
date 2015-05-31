@@ -1,3 +1,5 @@
+Require NPeano.
+Import NPeano.Nat.
 Require Import ExtLib.Tactics.Consider.
 
 Set Implicit Arguments.
