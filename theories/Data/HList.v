@@ -15,10 +15,10 @@ Set Asymmetric Patterns.
 
 (** Core Type and Functions **)
 Section hlist.
-  Context {iT : Type@{i}}.
-  Variable F : iT -> Type@{d}.
+  Context {iT : Type}.
+  Variable F : iT -> Type.
 
-  Inductive hlist : list iT -> Type@{d} :=
+  Inductive hlist : list iT -> Type :=
   | Hnil  : hlist nil
   | Hcons : forall l ls, F l -> hlist ls -> hlist (l :: ls).
 
@@ -331,7 +331,7 @@ Section hlist.
         end
     end.
 
-  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+  Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
     match nth_error ls n return Type@{i} with
       | None => unit
       | Some t => F t
@@ -398,7 +398,7 @@ Section hlist.
 
   Theorem hlist_nth_hlist_app
   : forall l l' (h : hlist l) (h' : hlist l') n,
-    hlist_nth@{i} (hlist_app h h') n =
+    hlist_nth (hlist_app h h') n =
     match nth_error l n as k
       return nth_error l n = k ->
       match nth_error (l ++ l') n return Type@{i} with
@@ -420,7 +420,7 @@ Section hlist.
                  end
         with
           | eq_refl , eq_refl => fun x => x
-        end (hlist_nth@{i} h n)
+        end (hlist_nth h n)
       | None => fun pf =>
         match cast2 _ _ _ pf in _ = z
           return match z with
@@ -601,7 +601,7 @@ Section hlist.
     rewrite Heqp. reflexivity.
   Qed.
 
-  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
+  Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
     option {t : iT & hlist ls -> F t} :=
     match
       ls as ls0
@@ -628,7 +628,7 @@ Section hlist.
 
   Theorem nth_error_get_hlist_nth_Some
     : forall ls n s,
-      nth_error_get_hlist_nth@{i} ls n = Some s ->
+      nth_error_get_hlist_nth ls n = Some s ->
       exists pf : nth_error ls n = Some (projT1 s),
       forall h, projT2 s h = match pf in _ = t
                                    return match t return Type@{i} with

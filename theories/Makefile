@@ -10,6 +10,9 @@ TVS        := $(TESTS:%=%.v)
 
 ARGS :=-R . ExtLib
 
+files:
+	echo $(VS)
+
 .PHONY: coq clean admit depgraph toplevel whitespace
 
 coq: Makefile.coq

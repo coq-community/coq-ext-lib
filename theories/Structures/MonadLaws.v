@@ -101,9 +101,9 @@ Section MonadLaws.
     Context {S : Type} (tS : type S) {tokS : typeOk tS}.
 
 (*
-    Polymorphic Definition promote {A : Type@{a}} : Type@{b} := A.
+    Definition promote {A : Type@{a}} : Type@{b} := A.
 
-    Polymorphic Class MonadStateLaws  (MS : MonadState S m) : Type :=
+    Class MonadStateLaws  (MS : MonadState S m) : Type :=
     { get_put : @equal (m unit) (meq type_unit) (bind get put) (ret tt) }.
     ; put_get : forall x, proper x ->
       equal (bind (put x) (fun _ => get)) (bind (put x) (fun _ => ret x))

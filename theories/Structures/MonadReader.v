@@ -3,29 +3,29 @@ Require Import ExtLib.Structures.Monad.
 Set Implicit Arguments.
 Set Maximal Implicit Arguments.
 
-Polymorphic Class MonadReader (T : Type) (m : Type@{d} -> Type) : Type :=
+Class MonadReader (T : Type) (m : Type@{d} -> Type) : Type :=
 { local : forall {t : Type@{d}}, (T -> T) -> m t -> m t
 ; ask : m T
 }.
 
 Section monadic.
-  Polymorphic Variable m : Type -> Type.
+  Variable m : Type -> Type.
   Context {M : Monad m}.
-  Polymorphic Variable T : Type.
+  Variable T : Type.
   Context {MR : MonadReader T m}.
 
-  Polymorphic Definition asks {U} (f : T -> U) : m U :=
+  Definition asks {U} (f : T -> U) : m U :=
     bind ask (fun x => ret (f x)).
 
 End monadic.
 
 Section SubReader.
-  Polymorphic Variable m : Type -> Type.
+  Variable m : Type -> Type.
   Context {M : Monad m}.
-  Polymorphic Variable T S : Type.
+  Variable T S : Type.
   Context {MR : MonadReader T m}.
 
-  Polymorphic Definition ReaderProd (f : T -> S) (g : S -> T -> T)
+  Definition ReaderProd (f : T -> S) (g : S -> T -> T)
     : MonadReader S m :=
   {| ask := @asks m M T MR S f
    ; local := fun _T up (c : m _T)  => @local T m MR _ (fun s => g (up (f s)) s) c

@@ -10,7 +10,7 @@ Set Strict Implicit.
 
 Section laws.
 
-  Polymorphic Class FunctorLaws
+  Class FunctorLaws
               (F : Type@{t} -> Type@{u})
               (Functor_F : Functor F)
               (Feq : type1 F)

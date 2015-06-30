@@ -6,12 +6,12 @@ Require Import ExtLib.Core.Type.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Polymorphic Definition Fun A B := A -> B.
+Definition Fun A B := A -> B.
 
 Section type.
-  Polymorphic Variables (T : Type@{t}) (U : Type@{u}) (tT : type T) (tU : type U).
+  Variables (T : Type@{t}) (U : Type@{u}) (tT : type T) (tU : type U).
 
-  Global Polymorphic Instance type_Fun  : type (T -> U) :=
+  Global Instance type_Fun  : type (T -> U) :=
   { equal := fun f g => respectful equal equal f g
   ; proper := fun x => respectful equal equal x x
   }.
@@ -70,5 +70,5 @@ Section type.
 
 End type.
 
-Polymorphic Definition compose {A:Type} {B:Type} {C : Type} (g : B -> C) (f : A -> B) : A -> C :=
+Definition compose {A:Type} {B:Type} {C : Type} (g : B -> C) (f : A -> B) : A -> C :=
   fun x => g (f x).

@@ -5,17 +5,17 @@ Require Import ExtLib.Structures.Proper.
  ** Proper elements are the elements for which the equivalence
  ** relation is reflexive.
  **)
-Polymorphic Class type (T : Type) : Type :=
+Class type (T : Type) : Type :=
 { equal : T -> T -> Prop
 ; proper : T -> Prop
 }.
 
-Polymorphic Definition type_from_equal {T} (r : T -> T -> Prop) : type T :=
+Definition type_from_equal {T} (r : T -> T -> Prop) : type T :=
 {| equal := r
  ; proper := fun x => r x x
  |}.
 
-Polymorphic Definition type_libniz T : type T :=
+Definition type_libniz T : type T :=
 {| equal := @eq T
  ; proper := fun _ => True
  |}.
@@ -23,20 +23,20 @@ Polymorphic Definition type_libniz T : type T :=
 Existing Class proper.
 
 Section type.
-  Polymorphic Context {T : Type}.
+  Context {T : Type}.
   Variable tT : type T.
 (*
   Global Instance Proper_type : Proper T :=
   { proper := fun x => equal x x }.
 *)
-  Polymorphic Class typeOk :=
+  Class typeOk :=
   { only_proper : forall x y, equal x y -> proper x /\ proper y
   ; equiv_prefl :> PReflexive proper equal
   ; equiv_sym :> Symmetric equal
   ; equiv_trans :> Transitive equal
   }.
 
-  Global Polymorphic Instance proper_left :
+  Global Instance proper_left :
     typeOk ->
     forall x y : T, equal x y -> proper x.
   Proof.
@@ -45,7 +45,7 @@ Section type.
     | H : equal _ _ |- _ => eapply only_proper in H
     end; intuition.
   Qed.
-  Global Polymorphic Instance proper_right :
+  Global Instance proper_right :
     typeOk ->
     forall x y : T, equal x y -> proper y.
   Proof.
@@ -58,38 +58,38 @@ Section type.
 End type.
 
 
-Polymorphic Definition type1 (F : Type@{d} -> Type@{r}) : Type :=
+Definition type1 (F : Type@{d} -> Type@{r}) : Type :=
   forall {T:Type@{d}}, type T -> type (F T).
 
-Polymorphic Definition type2 (F : Type@{t} -> Type@{u} -> Type@{v}) : Type :=
+Definition type2 (F : Type@{t} -> Type@{u} -> Type@{v}) : Type :=
   forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> type (F T U).
 
-Polymorphic Definition type3 (F : Type@{t} -> Type@{u} -> Type@{v} -> Type@{w}) : Type :=
+Definition type3 (F : Type@{t} -> Type@{u} -> Type@{v} -> Type@{w}) : Type :=
   forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> forall {V:Type@{w}}, type V ->  type (F T U V).
 
-Polymorphic Definition typeOk1 F (tF : type1 F) : Type :=
+Definition typeOk1 F (tF : type1 F) : Type :=
   forall T tT, @typeOk T tT -> typeOk (tF _ tT).
 
-Polymorphic Definition typeOk2 F (tF : type2 F) : Type :=
+Definition typeOk2 F (tF : type2 F) : Type :=
   forall T tT, @typeOk T tT -> typeOk1 _ (tF _ tT).
 
-Polymorphic Definition typeOk3 F (tF : type3 F) : Type :=
+Definition typeOk3 F (tF : type3 F) : Type :=
   forall T tT, @typeOk T tT -> typeOk2 _ (tF _ tT).
 
 Existing Class type1.
 Existing Class type2.
 Existing Class type3.
 
-Global Polymorphic Instance type_type1 F (tF : type1 F) T (tT : type T) : type (F T) :=
+Global Instance type_type1 F (tF : type1 F) T (tT : type T) : type (F T) :=
   tF _ tT.
 
-Global Polymorphic Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
+Global Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
   tF _ tT.
 
-Global Polymorphic Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
+Global Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
   tF _ tT.
 
-Polymorphic Class Oktype T : Type :=
+Class Oktype T : Type :=
 { the_type :> type T
 ; the_proof :> typeOk the_type
 }.
