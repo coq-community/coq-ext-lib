@@ -659,9 +659,7 @@ Section hlist.
     induction ls; simpl; intros; try congruence.
     { destruct n; intuition. }
     { destruct n; simpl; try solve [ intuition congruence ].
-      { unfold value. intuition congruence. }
-      { specialize (IHls n).
-        forward. } }
+      specialize (IHls n). forward. }
   Qed.
 
   Lemma nth_error_get_hlist_nth_weaken
