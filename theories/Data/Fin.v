@@ -55,9 +55,9 @@ Fixpoint pf_lt (n m : nat) : Prop :=
 
 Fixpoint make (m n : nat) {struct m} : pf_lt n m -> fin m :=
   match n as n , m as m return pf_lt n m -> fin m with
-    | 0 , 0 => @False_rec _
+    | 0 , 0 => @False_rect _
     | 0 , S n => fun _ => F0
-    | S n , 0 => @False_rec _
+    | S n , 0 => @False_rect _
     | S n , S m => fun pf => FS (make m n pf)
   end.
 
