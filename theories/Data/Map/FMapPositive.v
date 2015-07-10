@@ -135,7 +135,7 @@ Section pmap.
     induction k; simpl; intros; forward; Cases.rewrite_all_goal; eauto.
   Qed.
 
-  Lemma pmap_lookup_insert_neq
+  Lemma pmap_lookup_insert_Some_neq
   : forall (m : pmap) (k : positive) (v : T) (k' : positive),
       k <> k' ->
       forall v' : T,
@@ -153,6 +153,37 @@ Section pmap.
     { destruct k'; simpl; destruct m; simpl;
       autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence. }
   Qed.
+ 
+  Lemma pmap_lookup_insert_None_neq
+  : forall (m : pmap) (k : positive) (v : T) (k' : positive),
+      k <> k' ->
+        pmap_lookup k' m = None <-> pmap_lookup k' (pmap_insert k v m) = None.
+  Proof.
+    intros m k; revert m.
+    induction k; simpl; intros; forward; Cases.rewrite_all_goal;
+    autorewrite with pmap_rw; eauto.
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity.
+      erewrite IHk; eauto using tilde_1_inj_neg. reflexivity. }
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence.
+      erewrite IHk. reflexivity. eauto using tilde_0_inj_neg. }
+    { destruct k'; simpl; destruct m; simpl;
+      autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence. }
+  Qed.
+
+  Lemma pmap_lookup_insert_neq
+  : forall (m : pmap) (k : positive) (v : T) (k' : positive),
+      k <> k' ->
+      forall v' : T,
+        pmap_lookup k' (pmap_insert k v m) = pmap_lookup k' m.
+  Proof.
+    intros.
+    remember (pmap_lookup k' m).
+    destruct o; [
+      apply pmap_lookup_insert_Some_neq; intuition |
+      apply pmap_lookup_insert_None_neq; intuition].
+  Qed.
 
   Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap :=
   { mapsto := fun k v m => pmap_lookup k m = Some v }.
@@ -160,7 +191,7 @@ Section pmap.
     { abstract (induction k; simpl; congruence). }
     { abstract (induction k; simpl; intros; forward). }
     { eauto using pmap_lookup_insert_eq. }
-    { eauto using pmap_lookup_insert_neq. }
+    { eauto using pmap_lookup_insert_Some_neq. }
   Defined.
 
   Definition from_list : list T -> pmap :=
