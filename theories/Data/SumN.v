@@ -80,6 +80,28 @@ Section elim.
     end.
 End elim.
 
+Fixpoint pmap_lookup'_Empty (p : positive) : pmap_lookup' Empty p = None :=
+  match p with
+    | xH => eq_refl
+    | xO p => pmap_lookup'_Empty p
+    | xI p => pmap_lookup'_Empty p
+  end.
+
+Definition OneOf_Empty (f : OneOf Empty) : False.
+Proof.
+  destruct f. rewrite pmap_lookup'_Empty in *.
+  intuition congruence.
+Defined.
+
+Lemma pmap_lookup'_eq p m : pmap_lookup p m = pmap_lookup' m p.
+Proof.
+  generalize dependent m. induction p; intuition.
+  simpl. destruct m. simpl. rewrite pmap_lookup'_Empty. reflexivity.
+  simpl in *. apply IHp.
+  simpl in *. destruct m. simpl. rewrite pmap_lookup'_Empty. reflexivity.
+  simpl. apply IHp.
+Defined.
+
 (*
 Fixpoint matchOn' T {ts : pmap Type} (p : positive) {struct ts}
 : match pmap_lookup p ts with
