@@ -1,4 +1,5 @@
 Require Import ExtLib.Data.Map.FMapPositive.
+Require Import ExtLib.Tactics.Injection.
 
 Fixpoint pmap_lookup' (ts : pmap Type) (p : positive) : option Type :=
   match p with
@@ -101,6 +102,37 @@ Proof.
   simpl in *. destruct m. simpl. rewrite pmap_lookup'_Empty. reflexivity.
   simpl. apply IHp.
 Defined.
+
+Global Instance Injective_OneOf m i1 i2 v1 v2
+: Injective (@eq (OneOf m)
+                 {| index := i1 ; value := v1 |}
+                 {| index := i2 ; value := v2 |}) :=
+{ result := exists pf : i2 = i1,
+    v1 = match pf in _ = T return match pmap_lookup' m T with
+                                  | None => Empty_set
+                                  | Some T => T
+                                  end with
+         | eq_refl => v2
+         end
+; injection :=
+    fun H =>
+      match H in _ = h
+            return exists pf : index _ h = i1 ,
+          v1 = match
+            pf in (_ = T)
+            return
+            match pmap_lookup' m T with
+            | Some T0 => T0
+            | None => Empty_set
+            end
+          with
+          | eq_refl => value _ h
+          end
+      with
+      | eq_refl => @ex_intro _ _ eq_refl eq_refl
+      end
+}.
+
 
 (*
 Fixpoint matchOn' T {ts : pmap Type} (p : positive) {struct ts}
