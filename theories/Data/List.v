@@ -58,6 +58,18 @@ Section EqDec.
   Qed.
 End EqDec.
 
+Lemma list_ind_singleton
+: forall {T : Type} (P : list T -> Prop)
+         (Hnil : P nil)
+         (Hsingle : forall t, P (t :: nil))
+         (Hcons : forall t u us, P (u :: us) -> P (t :: u :: us)),
+    forall ls, P ls.
+Proof.
+  induction ls; eauto.
+  destruct ls. eauto. eauto.
+Qed.
+
+
 Section AllB.
   Variable T : Type.
   Variable p : T -> bool.
@@ -85,6 +97,19 @@ Proof.
   { split; intros; constructor. }
   { split; inversion 1; intros; subst; constructor; auto.
     apply IHls. auto. apply IHls. auto. }
+Qed.
+
+Lemma Forall_cons_iff : forall (T : Type) (P : T -> Prop) a b,
+    Forall P (a :: b) <-> (P a /\ Forall P b).
+Proof. clear. split.
+       inversion 1; auto.
+       destruct 1; constructor; auto.
+Qed.
+
+Lemma Forall_nil_iff : forall (T : Type) (P : T -> Prop),
+    Forall P nil <-> True.
+Proof.
+  clear. split; auto.
 Qed.
 
 

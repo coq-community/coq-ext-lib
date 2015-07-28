@@ -1,2 +1,10 @@
 -Q ../theories ExtLib
 -Q . ExtLibExamples
+-arg -type-in-type
+
+ConsiderDemo.v
+EvalWithExc.v
+MonadReasoning.v
+Printing.v
+UsingSets.v
+WithDemo.v
