@@ -8,7 +8,7 @@ Fixpoint pmap_lookup' (ts : pmap Type) (p : positive) : option Type :=
     | xO p => pmap_lookup' (pmap_left ts) p
   end.
 
-Record OneOf (ts : pmap Type) : Type :=
+Record OneOf (ts : pmap Type) : Type := mkOneOf
 { index : positive
 ; value : match pmap_lookup' ts index with
             | None => Empty_set
@@ -16,16 +16,15 @@ Record OneOf (ts : pmap Type) : Type :=
           end
 }.
 
-Definition Into {ts} {T : Type} (v : T) (n : positive) (pf : Some T = pmap_lookup' ts n) : OneOf ts :=
-{| index := n
-; value := match pf in _ = z return match z with
-                                      | None => Empty_set
-                                      | Some T => T
-                                    end
-           with
-             | eq_refl => v
-           end
-|}.
+Definition Into {ts} {T : Type} (n : positive) (pf : pmap_lookup' ts n = Some T)
+: T -> OneOf ts :=
+  match pf in _ = X return match X with
+                           | Some T => T
+                           | None => Empty_set
+                           end -> OneOf ts
+  with
+  | eq_refl => @mkOneOf ts n
+  end.
 
 Fixpoint asNth' {ts : pmap Type} (p p' : positive)
 : match pmap_lookup' ts p' with
@@ -132,28 +131,3 @@ Global Instance Injective_OneOf m i1 i2 v1 v2
       | eq_refl => @ex_intro _ _ eq_refl eq_refl
       end
 }.
-
-
-(*
-Fixpoint matchOn' T {ts : pmap Type} (p : positive) {struct ts}
-: match pmap_lookup p ts with
-    | None => Empty_set
-    | Some T => T
-  end -> pmap_elim (fun x => x -> T) T ts.
-  refine
-    match ts as ts
-        , p as p
-          return match pmap_lookup p ts with
-                   | None => Empty_set
-                   | Some T => T
-                 end -> pmap_elim (fun x => x -> T) T ts with
-      | Empty , xH => fun x : Empty_set => match x with end
-      | Empty , xO _ => fun x : Empty_set => match x with end
-      | Empty , xI _ => fun x : Empty_set => match x with end
-      | Branch None l r , xH => _
-      | Branch (Some T) l r , xH => _
-      | Branch b l r , xO p => _
-      | Branch b l r , xI p => _
-    end; simpl.
-  Focus 3.
-*)
