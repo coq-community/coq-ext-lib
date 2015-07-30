@@ -56,6 +56,22 @@ Definition asNth {ts : pmap Type} (p : positive) (oe : OneOf ts)
           end) :=
   @asNth' ts p oe.(index ts) oe.(value ts).
 
+Definition OutOf {ts} {T : Type} (n : positive)
+           (pf : pmap_lookup' ts n = Some T)
+: OneOf ts -> option T :=
+  match pf in _ = X return OneOf ts -> option match X with
+                                              | None => Empty_set:Type
+                                              | Some T => T
+                                              end
+  with
+  | eq_refl => @asNth ts n
+  end.
+
+Theorem OutOf_Into : forall ts T p pf v,
+    @OutOf ts T p pf (@Into ts T p pf v) = Some v.
+Proof.
+Admitted.
+
 Theorem asNth_eq
 : forall ts p oe v,
     @asNth ts p oe = Some v ->
