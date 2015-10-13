@@ -88,7 +88,7 @@ Section Trans.
   ; local _T v cmd := mkOptionT (local v (unOptionT cmd))
   }.
 
-  Instance OptionTError {mMonad:Monad m} : MonadExc unit optionT :=
+  Instance OptionTError : MonadExc unit optionT :=
   { raise _u _A := mzero
   ; catch _A aMM f := mkOptionT
       (aM <- unOptionT aMM ;;
