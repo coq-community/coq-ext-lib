@@ -32,7 +32,7 @@ Global Instance Traversable_option : Traversable option :=
 |}.
 
 Global Instance Applicative_option : Applicative option :=
-{| pure := Some
+{| pure := @Some
  ; ap := fun _ _ f x =>
            match f , x with
              | Some f , Some x => Some (f x)
