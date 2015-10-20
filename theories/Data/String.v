@@ -26,8 +26,8 @@ Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
       Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
-      bool_cmp l1 r1 >> bool_cmp l2 r2 >> bool_cmp l3 r3 >> bool_cmp l4 r4 >>
-      bool_cmp l5 r5 >> bool_cmp l6 r6 >> bool_cmp l7 r7 >> bool_cmp l8 r8
+      bool_cmp l8 r8 >> bool_cmp l7 r7 >> bool_cmp l6 r6 >> bool_cmp l5 r5 >>
+      bool_cmp l4 r4 >> bool_cmp l3 r3 >> bool_cmp l2 r2 >> bool_cmp l1 r1
   end.
 
 Fixpoint string_dec (l r : string) : bool :=
