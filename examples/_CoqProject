@@ -1,6 +1,5 @@
 -Q ../theories ExtLib
 -Q . ExtLibExamples
--arg -type-in-type
 
 ConsiderDemo.v
 EvalWithExc.v
