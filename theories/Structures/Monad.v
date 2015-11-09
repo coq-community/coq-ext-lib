@@ -5,13 +5,13 @@ Require Import ExtLib.Structures.Applicative.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Polymorphic Class Monad (m : Type@{d} -> Type) : Type :=
+Polymorphic Class Monad@{d c} (m : Type@{d} -> Type@{c}) : Type :=
 { ret : forall {t : Type@{d}}, t -> m t
 ; bind : forall {t u : Type@{d}}, m t -> (t -> m u) -> m u
 }.
 
-Polymorphic Class PMonad (m : Type@{d} -> Type) : Type :=
-{ MonP : Type -> Type
+Polymorphic Class PMonad@{d c p} (m : Type@{d} -> Type@{c}) : Type :=
+{ MonP : Type@{d} -> Type@{p}
 ; pret : forall {t : Type@{d}} {Pt : MonP t}, t -> m t
 ; pbind : forall {t u : Type@{d}} {Pu : MonP u}, m t -> (t -> m u) -> m u
 }.
@@ -26,21 +26,31 @@ Global Polymorphic Instance PMonad_Monad m (M : Monad m) : PMonad m :=
 }.
 
 Section monadic.
-  Variable m : Type@{d} -> Type.
-  Context {M : Monad m}.
 
-  Polymorphic Definition liftM {T U : Type@{d}} (f : T -> U) : m T -> m U :=
+  Polymorphic Definition liftM@{d c}
+              {m : Type@{d} -> Type@{c}}
+              {M : Monad m}
+              {T U : Type@{d}} (f : T -> U) : m T -> m U :=
     fun x => bind x (fun x => ret (f x)).
 
-  Polymorphic Definition liftM2 {T U V : Type@{d}} (f : T -> U -> V) : m T -> m U -> m V :=
+  Polymorphic Definition liftM2@{d c}
+              {m : Type@{d} -> Type@{c}}
+              {M : Monad m}
+              {T U V : Type@{d}} (f : T -> U -> V) : m T -> m U -> m V :=
     Eval cbv beta iota zeta delta [ liftM ] in
       fun x y => bind x (fun x => liftM (f x) y).
 
-  Polymorphic Definition liftM3 {T U V W : Type@{d}} (f : T -> U -> V -> W) : m T -> m U -> m V -> m W :=
+  Polymorphic Definition liftM3@{d c}
+              {m : Type@{d} -> Type@{c}}
+              {M : Monad m}
+              {T U V W : Type@{d}} (f : T -> U -> V -> W) : m T -> m U -> m V -> m W :=
     Eval cbv beta iota zeta delta [ liftM2 ] in
       fun x y z => bind x (fun x => liftM2 (f x) y z).
 
-  Polymorphic Definition apM {A B : Type@{d}} (fM:m (A -> B)) (aM:m A) : m B :=
+  Polymorphic Definition apM@{d c}
+              {m : Type@{d} -> Type@{c}}
+              {M : Monad m}
+              {A B : Type@{d}} (fM:m (A -> B)) (aM:m A) : m B :=
     bind fM (fun f => liftM f aM).
 End monadic.
 

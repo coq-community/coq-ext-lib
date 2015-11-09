@@ -5,17 +5,17 @@ Require Import ExtLib.Structures.Proper.
  ** Proper elements are the elements for which the equivalence
  ** relation is reflexive.
  **)
-Polymorphic Class type (T : Type) : Type :=
+Polymorphic Class type@{t} (T : Type@{t}) : Type :=
 { equal : T -> T -> Prop
 ; proper : T -> Prop
 }.
 
-Polymorphic Definition type_from_equal {T} (r : T -> T -> Prop) : type T :=
+Polymorphic Definition type_from_equal@{t} {T : Type@{t}} (r : T -> T -> Prop) : type@{t} T :=
 {| equal := r
  ; proper := fun x => r x x
  |}.
 
-Polymorphic Definition type_libniz T : type T :=
+Polymorphic Definition type_libniz@{t} (T : Type@{t}) : type@{t} T :=
 {| equal := @eq T
  ; proper := fun _ => True
  |}.
@@ -58,23 +58,25 @@ Section type.
 End type.
 
 
-Polymorphic Definition type1 (F : Type@{d} -> Type@{r}) : Type :=
-  forall {T:Type@{d}}, type T -> type (F T).
+Polymorphic Definition type1@{d r z} (F : Type@{d} -> Type@{r}) : Type@{z} :=
+  forall {T:Type@{d}}, type@{d} T -> type@{r} (F T).
 
-Polymorphic Definition type2 (F : Type@{t} -> Type@{u} -> Type@{v}) : Type :=
+Polymorphic Definition type2@{t u v z} (F : Type@{t} -> Type@{u} -> Type@{v}) : Type@{z} :=
   forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> type (F T U).
 
-Polymorphic Definition type3 (F : Type@{t} -> Type@{u} -> Type@{v} -> Type@{w}) : Type :=
+Polymorphic Definition type3@{t u v w z} (F : Type@{t} -> Type@{u} -> Type@{v} -> Type@{w}) : Type@{z} :=
   forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> forall {V:Type@{w}}, type V ->  type (F T U V).
 
-Polymorphic Definition typeOk1 F (tF : type1 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk (tF _ tT).
+Polymorphic Definition typeOk1@{d r z} (F : Type@{d} -> Type@{r}) (tF : type1@{d r z} F) : Type@{z} :=
+  forall (T : Type@{d}) tT, @typeOk T tT -> typeOk (tF _ tT).
 
-Polymorphic Definition typeOk2 F (tF : type2 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk1 _ (tF _ tT).
+Polymorphic Definition typeOk2@{t u v z}
+            (F : Type@{t} -> Type@{u} -> Type@{v}) (tF : type2@{t u v z} F)
+: Type@{z} :=
+  forall (T : Type@{t}) (tT : type@{t} T), @typeOk@{t} T tT -> typeOk1@{u v z} _ (tF _ tT).
 
-Polymorphic Definition typeOk3 F (tF : type3 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk2 _ (tF _ tT).
+Polymorphic Definition typeOk3@{t u v w z} F (tF : type3 F) : Type@{z} :=
+  forall (T : Type@{t}) tT, @typeOk@{t} T tT -> typeOk2@{u v w z} _ (tF _ tT).
 
 Existing Class type1.
 Existing Class type2.
