@@ -9,6 +9,7 @@ Require Import ExtLib.Data.Unit.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(*
 Section MonadLaws.
   Variable m : Type@{d} -> Type.
   Variable M : Monad m.
@@ -168,3 +169,4 @@ Section MonadLaws.
   }.
 
 End MonadLaws.
+*)

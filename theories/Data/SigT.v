@@ -7,6 +7,7 @@ Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Printing Universes.
 
 Section type.
   Variable T : Type.
@@ -32,12 +33,14 @@ Section type.
   Proof.
     constructor.
     { destruct x; destruct y; intros. simpl in *. destruct H. destruct H0. subst.
-      apply only_proper in H; eauto with typeclass_instances.
-      apply only_proper in H0; eauto with typeclass_instances. intuition. }
+      apply only_proper in H; [ | eauto with typeclass_instances ].
+      apply only_proper in H0; [ | eauto with typeclass_instances ]. intuition. }
     { red. destruct x; intros. do 2 red in H.
       do 2 red; simpl in *. intuition.
       try solve [ apply equiv_prefl; eauto ].
-      exists eq_refl. solve_equal. }
+      exists eq_refl.
+      eapply Proper.preflexive; [ | eapply H1 ].
+      eauto with typeclass_instances. }
     { red; destruct x; destruct y; intros; simpl in *.
       intuition. destruct H1; subst. exists eq_refl. symmetry; assumption. }
     { red; destruct x; destruct y; destruct z; intros; simpl in *; intuition.

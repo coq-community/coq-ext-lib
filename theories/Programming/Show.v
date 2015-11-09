@@ -15,11 +15,13 @@ Set Strict Implicit.
 
 Set Printing Universes.
 
-Polymorphic Definition showM : Type :=
-  forall m : Type, Injection ascii m -> Monoid m -> m.
+Universe Ushow.
 
-Polymorphic Class ShowScheme (T : Type) : Type :=
-{ show_mon : Monoid T
+Polymorphic Definition showM@{T} : Type@{Ushow} :=
+  forall m : Type@{T}, Injection ascii m -> Monoid m -> m.
+
+Polymorphic Class ShowScheme@{t} (T : Type@{t}) : Type :=
+{ show_mon : Monoid@{t} T
 ; show_inj : Injection ascii T
 }.
 
@@ -36,7 +38,8 @@ Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
 Polymorphic Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
   m _ show_inj show_mon.
 
-Polymorphic Class Show T := show : T -> showM.
+Polymorphic Class Show@{t m} (T : Type@{t}) : Type :=
+  show : T -> showM@{m}.
 
 Polymorphic Definition to_string {T} {M : Show T} (v : T) : string :=
   runShow (show v) ""%string.
@@ -73,10 +76,9 @@ Polymorphic Definition indent (indent : showM) (v : showM) : showM :=
 Section sepBy.
   Import ShowNotation.
   Local Open Scope show_scope.
-  Polymorphic Variable T : Type.
-  Context {F : Foldable T showM}.
 
-  Polymorphic Definition sepBy (sep : showM) (ls : T) : showM :=
+  Polymorphic Definition sepBy {T : Type}
+              {F : Foldable T showM} (sep : showM) (ls : T) : showM :=
     match
       fold (fun s acc =>
         match acc with
@@ -115,9 +117,11 @@ Polymorphic Definition wrap (before after : showM) (x : showM) : showM :=
 Section sum_Show.
   Import ShowNotation.
   Local Open Scope show_scope.
-  Polymorphic Context {A : Type@{a}} {B : Type@{b}} {AS:Show A} {BS:Show B}.
-  Global Polymorphic Instance sum_Show : Show (A+B) :=
-    { show s :=
+
+  Polymorphic Definition sum_Show@{a m}
+              {A : Type@{a}} {B : Type@{a}} {AS:Show@{a m} A} {BS:Show@{a m} B}
+  : Show@{a m} (A+B) :=
+    fun s =>
         let (tag, payload) :=
           match s with
           | inl a => (show_exact "inl"%string, show a)
@@ -128,8 +132,8 @@ Section sum_Show.
         tag <<
         " "%char <<
         payload <<
-        ")"%char
-    }.
+        ")"%char.
+        
 End sum_Show.
 
 Section foldable_Show.
@@ -188,12 +192,12 @@ Global Instance Show_Z : Show Z :=
     end.
 
 Section pair_Show.
-  Polymorphic Context {A : Type@{a}} {B : Type@{b}} {AS:Show A} {BS:Show B}.
-  Global Polymorphic Instance pair_Show : Show (A*B) :=
-    { show p :=
-        let (a,b) := p in
-        "("%char << show a << ","%char << show b << ")"%char
-    }.
+  Polymorphic Definition pair_Show@{a m}
+              {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
+  : Show (A*B) :=
+    fun p =>
+      let (a,b) := p in
+      "("%char << show a << ","%char << show b << ")"%char.
 End pair_Show.
 End hiding_notation.
 

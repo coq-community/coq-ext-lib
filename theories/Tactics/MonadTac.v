@@ -7,6 +7,7 @@ Require Import ExtLib.Tactics.TypeTac.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(*
 Section monad.
   Context {m : Type -> Type}.
   Variable meq : forall T {tT : type T}, type (m T).
@@ -33,3 +34,4 @@ Section monad.
     intros. eapply bind_proper; eauto. solve_equal.
   Qed.
 End monad.
+*)

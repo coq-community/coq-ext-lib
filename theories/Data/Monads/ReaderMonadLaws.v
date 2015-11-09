@@ -11,6 +11,7 @@ Require Import ExtLib.Tactics.TypeTac.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(*
 Section Laws.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
@@ -93,3 +94,4 @@ Section Laws.
 *)
 
 End Laws.
+*)

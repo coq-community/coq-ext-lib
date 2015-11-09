@@ -13,6 +13,7 @@ Require Import ExtLib.Tactics.TypeTac.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(*
 Section Laws.
   Section fixResult_T.
     Context {T : Type} (e : type T).
@@ -145,3 +146,4 @@ Section Laws.
 *)
 
 End Laws.
+*)
