@@ -67,6 +67,11 @@ theories/Data/Unit.v
 theories/Data/Vector.v
 theories/Data/Z.v
 
+theories/Data/POption.v
+theories/Data/PList.v
+theories/Data/PPair.v
+
+
 theories/Generic/Data.v
 theories/Generic/DerivingData.v
 theories/Generic/Func.v

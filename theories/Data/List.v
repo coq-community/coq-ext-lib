@@ -127,7 +127,7 @@ Section traversable.
   Context {A B : Type}.
   Variable f : A -> F B.
 
-  Fixpoint mapT_list (ls : list A) : F (list B) :=
+  Polymorphic Fixpoint mapT_list (ls : list A) : F (list B) :=
     match ls with
       | nil => pure nil
       | l :: ls => ap (ap (pure (@cons B)) (f l)) (mapT_list ls)
