@@ -200,8 +200,10 @@ Section ListEq.
                  consider (rel_dec X Y); intros; subst
                | [ |- context [ rel_dec ?X ?Y ] ] =>
                  consider (rel_dec X Y); intros; subst
-             end; intuition; try congruence.
-    eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
+             end; try solve [ auto | exfalso; clear - H; inversion H ].
+    - f_equal. eapply IHx. eapply H0.
+    - inversion H. subst. eapply IHx. reflexivity.
+    - inversion H. exfalso. eapply H0. assumption.
   Qed.
 
 End ListEq.
