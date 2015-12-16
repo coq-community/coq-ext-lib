@@ -91,6 +91,30 @@ Section lemmas.
   Qed.
 End lemmas.
 
+Section RelDec_from_dec.
+  Context {T} (R : T -> T -> Prop).
+  Variable (f : forall a b : T, {R a b} + {~R a b}).
+  Definition RelDec_from_dec
+  : RelDec R :=
+  {| rel_dec := fun a b =>
+                  match f a b with
+                  | left _ => true
+                  | right _ => false
+                  end |}.
+
+  Global Instance RelDec_Correct_eq_typ : RelDec_Correct RelDec_from_dec.
+  Proof.
+    constructor.
+    intros.
+    unfold rel_dec; simpl.
+    destruct (f x y).
+    - tauto.
+    - split.
+      + inversion 1.
+      + intro. apply n in H. tauto.
+  Qed.
+End RelDec_from_dec.
+
 
 (*
 Section SumEq.

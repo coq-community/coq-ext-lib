@@ -461,13 +461,10 @@ Section hlist.
         { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
           clear. compute; auto. }
         { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          simpl in H. inversion H; clear H; subst.
-          inv_all; repeat match goal with
-                            | [ H : exists x, _ |- _ ] => destruct H
-                          end; subst. simpl.
-          eapply IHls in H7. eapply only_proper in H3; auto.
-          destruct x3. destruct x4. destruct x2. destruct x1.
-          intuition. } }
+          simpl in H.
+          inv_all. eapply IHls in H1.
+          eapply only_proper in H0; eauto.
+          simpl; tauto. } }
       { intro. induction ls; simpl.
         { rewrite (hlist_eta x); intros; constructor. }
         { rewrite (hlist_eta x); intros; intuition; constructor.
@@ -560,7 +557,6 @@ Section hlist.
     Qed.
 
   End type.
-
 
   Lemma hlist_hd_fst_hlist_split
   : forall t (xs ys : list _) (h : hlist (t :: xs ++ ys)),
