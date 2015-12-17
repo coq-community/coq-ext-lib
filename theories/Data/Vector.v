@@ -148,6 +148,23 @@ Section parametric.
       end.
   End vector_dec.
 
+  Section vector_in.
+    Variable a : T.
+    Inductive vector_In : forall {n}, vector n -> Prop :=
+    | vHere : forall n rst, @vector_In (S n) (Vcons a rst)
+    | vNext : forall n rst b, @vector_In n rst ->
+                              @vector_In (S n) (Vcons b rst).
+  End vector_in.
+
+  Lemma ForallV_vector_In : forall {n} t (vs : vector n) P,
+      ForallV P vs ->
+      vector_In t vs -> P t.
+  Proof.
+    induction 2.
+    - eapply (ForallV_vector_hd H).
+    - eapply IHvector_In. eapply (ForallV_vector_tl H).
+  Qed.
+
 End parametric.
 
 Section vector_map.
