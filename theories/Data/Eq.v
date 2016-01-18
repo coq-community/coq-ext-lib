@@ -102,3 +102,5 @@ Ltac autorewrite_eq_rw :=
                                              | eq_refl => _
                                            end ] => rewrite (eq_Arr_eq X)
                           end).
+
+Require Export ExtLib.Data.Eq.UIP_trans.

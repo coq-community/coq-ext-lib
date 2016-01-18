@@ -41,6 +41,7 @@ theories/Data/Bool.v
 theories/Data/Char.v
 theories/Data/Checked.v
 theories/Data/Eq.v
+theories/Data/Eq/UIP_trans.v
 theories/Data/Fin.v
 theories/Data/Fun.v
 theories/Data/HList.v
