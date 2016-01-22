@@ -37,6 +37,24 @@ Section plist.
     | pcons _ ls => ls
     end.
 
+  Polymorphic Fixpoint pIn (a : T) (l : plist) {struct l} : Prop :=
+    match l with
+    | pnil => False
+    | pcons b m => b = a \/ pIn a m
+    end.
+
+  Fixpoint anyb (p : T -> bool) (ls : plist) : bool :=
+    match ls with
+    | pnil => false
+    | pcons l ls0 => if p l then true else anyb p ls0
+    end.
+
+  Fixpoint allb (p : T -> bool) (ls : plist) : bool :=
+    match ls with
+    | pnil => true
+    | pcons l ls0 => if p l then anyb p ls0 else false
+    end.
+
   Section folds.
     Polymorphic Universe j.
     Context {U : Type@{j}}.
