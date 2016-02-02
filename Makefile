@@ -7,6 +7,7 @@ theories:
 
 install:
 	$(MAKE) -C theories install
+	$(MAKE) -C theories install-doc
 
 examples: theories
 	$(MAKE) -C examples
