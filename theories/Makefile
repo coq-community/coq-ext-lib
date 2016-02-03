@@ -28,6 +28,9 @@ uninstall: Makefile.coq
          rm -f $(shell coqc -where)/user-contrib/ExtLib/$$i; \
         done
 
+install-doc: Makefile.coq
+	$(MAKE) -f Makefile.coq html
+	$(MAKE) -f Makefile.coq install-doc
 
 test: coq Makefile.test.coq
 	$(MAKE) -f Makefile.test.coq

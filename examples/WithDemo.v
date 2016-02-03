@@ -1,4 +1,4 @@
-Require Import List.
+Require Import Coq.Lists.List.
 Require Import ExtLib.Programming.With.
 
 Record RTest : Set := mkRTest {

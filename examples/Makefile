@@ -10,14 +10,21 @@ ARGS :=-R ../theories ExtLib
 coq: Makefile.coq
 	$(MAKE) -f Makefile.coq
 
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	SEDFLAGS:=-Ee
+else
+	SEDFLAGS:=-re
+endif
+
 Makefile.coq: Makefile $(VS)
 	coq_makefile $(ARGS) $(VS) \
-          | sed -re 's/-R ([^ ]+) ExtLib/-I \1 -as ExtLib/g' \
+          | sed $(SEDFLAGS) 's/-R ([^ ]+) ExtLib/-I \1 -as ExtLib/g' \
           > Makefile.coq
 
 Makefile.test.coq: Makefile $(TVS)
 	coq_makefile $(ARGS) $(TVS) \
-          | sed -re 's/-R ([^ ]+) ExtLib/-I \1 -as ExtLib/g' \
+          | sed $(SEDFLAGS) 's/-R ([^ ]+) ExtLib/-I \1 -as ExtLib/g' \
           > Makefile.coq
 
 test: coq Makefile.test.coq
