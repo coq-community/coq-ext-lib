@@ -17,7 +17,7 @@ Require Import Coq.ZArith.ZArith_base Coq.Strings.String.
 Require Import ExtLib.Data.Monads.StateMonad ExtLib.Structures.Monads.
 
 Section StateGame.
-
+  
   Import MonadNotation.
   Local Open Scope Z_scope.
   Local Open Scope char_scope.
@@ -30,7 +30,7 @@ Section StateGame.
   Context {Monad_m: Monad m}.
   Context {State_m: MonadState GameState m}.
 
-  Fixpoint playGame (s: string) {struct s}: state GameState GameValue :=
+  Fixpoint playGame (s: string) {struct s}: m GameValue :=
     match s with
     |  EmptyString =>
        v <- get ;;
@@ -48,13 +48,11 @@ Section StateGame.
 
   Definition startState: GameState := (false, 0).
 
-  Definition main : GameValue :=
-    (@evalState GameState GameValue (playGame "abcaaacbbcabbab") startState).
-
-  Compute main.
-
 End StateGame.
 
-  
+Definition main : GameValue :=
+  (@evalState GameState GameValue (playGame (state GameState) "abcaaacbbcabbab") startState).
 
+(* The following should return '2%Z' *)
+Compute main.
 
