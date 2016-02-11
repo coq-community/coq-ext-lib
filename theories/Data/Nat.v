@@ -107,3 +107,9 @@ Global Instance Injective_S (a b : nat) : Injective (S a = S b) :=
 }.
 abstract (inversion 1; auto).
 Defined.
+
+Definition nat_get_eq (n m : nat) (pf : unit -> n = m) : n = m :=
+  match PeanoNat.Nat.eq_dec n m with
+  | left pf => pf
+  | right bad => match bad (pf tt) with end
+  end.

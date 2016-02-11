@@ -58,6 +58,7 @@ Section EqDec.
   Qed.
 End EqDec.
 
+(* Specialized induction rules *)
 Lemma list_ind_singleton
 : forall {T : Type} (P : list T -> Prop)
          (Hnil : P nil)
@@ -69,6 +70,17 @@ Proof.
   destruct ls. eauto. eauto.
 Qed.
 
+Lemma list_rev_ind
+  : forall T (P : list T -> Prop),
+    P nil ->
+    (forall l ls, P ls -> P (ls ++ l :: nil)) ->
+    forall ls, P ls.
+Proof.
+  clear. intros. rewrite <- rev_involutive.
+  induction (rev ls).
+  apply H.
+  simpl. auto.
+Qed.
 
 Section AllB.
   Variable T : Type.

@@ -2,7 +2,7 @@ Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Data.POption.
 
-Set Printing Universes.
+Set Universe Polymorphism.
 
 Section plist.
   Polymorphic Universe i.
@@ -23,7 +23,6 @@ Section plist.
     | pnil => ls'
     | pcons l ls => pcons l (app ls ls')
     end.
-
 
   Polymorphic Definition hd (ls : plist) : poption T :=
     match ls with
@@ -55,6 +54,13 @@ Section plist.
     | pcons l ls0 => if p l then anyb p ls0 else false
     end.
 
+  Polymorphic Fixpoint nth_error (ls : plist) (n : nat) : poption T :=
+    match n , ls with
+    | 0 , pcons l _ => pSome l
+    | S n , pcons _ ls => nth_error ls n
+    | _ , _ => pNone
+    end.
+
   Section folds.
     Polymorphic Universe j.
     Context {U : Type@{j}}.
@@ -80,6 +86,9 @@ Arguments pcons {_} _ _.
 Arguments pIn {_} _ _.
 Arguments anyb {_} _ _.
 Arguments allb {_} _ _.
+Arguments fold_left {_ _} _ _ _.
+Arguments fold_right {_ _} _ _ _.
+Arguments nth_error {_} _ _.
 
 Section pmap.
   Polymorphic Universe i j.
