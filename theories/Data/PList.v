@@ -4,6 +4,8 @@ Require Import ExtLib.Data.POption.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 
+Require Import Coq.Bool.Bool.
+
 Set Universe Polymorphism.
 
 Section plist.
@@ -44,6 +46,17 @@ Section plist.
     | pcons b m => b = a \/ pIn a m
     end.
 
+  Polymorphic Inductive pNoDup : plist -> Prop :=
+    pNoDup_nil : pNoDup pnil
+  | pNoDup_cons : forall (x : T) (l : plist),
+                 ~ pIn x l -> pNoDup l -> pNoDup (pcons x l).
+
+  Polymorphic Fixpoint inb {RelDecA : RelDec (@eq T)} (x : T) (lst : plist) :=
+    match lst with
+    | pnil => false
+    | pcons l ls => if x ?[ eq ] l then true else inb x ls
+    end.
+
   Polymorphic Fixpoint anyb (p : T -> bool) (ls : plist) : bool :=
     match ls with
     | pnil => false
@@ -54,6 +67,12 @@ Section plist.
     match ls with
     | pnil => true
     | pcons l ls0 => if p l then anyb p ls0 else false
+    end.
+
+  Polymorphic Fixpoint nodup {RelDecA : RelDec (@eq T)} (lst : plist) :=
+    match lst with
+    | pnil => true
+    | pcons l ls => andb (negb (inb l ls)) (nodup ls)
     end.
 
   Polymorphic Fixpoint nth_error (ls : plist) (n : nat) : poption T :=
@@ -86,11 +105,56 @@ End plist.
 Arguments pnil {_}.
 Arguments pcons {_} _ _.
 Arguments pIn {_} _ _.
+Arguments pNoDup {_} _.
 Arguments anyb {_} _ _.
 Arguments allb {_} _ _.
+Arguments inb {_ _} _ _.
+Arguments nodup {_ _} _.
 Arguments fold_left {_ _} _ _ _.
 Arguments fold_right {_ _} _ _ _.
 Arguments nth_error {_} _ _.
+
+
+Section plistOk.
+  Context {A : Type}.
+  Context {RelDecA : RelDec (@eq A)}.
+  Context {RelDecA_Correct : RelDec_Correct RelDecA}.
+
+  Lemma inb_sound (x : A) (lst : plist A) (H : inb x lst = true) : pIn x lst.
+  Proof.
+    induction lst; simpl in *; try congruence.
+    consider (x ?[ eq ] t); intros; subst.
+    + left; reflexivity.
+    + right; apply IHlst; assumption.
+  Qed.
+  
+  Lemma inb_complete (x : A) (lst : plist A) (H : pIn x lst) : inb x lst = true.
+  Proof.
+    induction lst; simpl in *; try intuition congruence.
+    consider (x ?[ eq ] t); intros; destruct H as [H | H]; try congruence.
+    apply IHlst; assumption.
+  Qed.
+
+  Lemma nodup_sound (lst : plist A) (H : nodup lst = true) : pNoDup lst.
+  Proof.
+    induction lst.
+    + constructor.
+    + simpl in *. rewrite andb_true_iff in H; destruct H as [H1 H2].
+      rewrite negb_true_iff in H1. constructor.
+      * intro H. apply inb_complete in H. intuition congruence.
+      * apply IHlst; assumption.
+  Qed.
+  
+  Lemma nodup_complete (lst : plist A) (H : pNoDup lst) : nodup lst = true.
+  Proof.
+    induction lst.
+    + constructor.
+    + simpl in *. rewrite andb_true_iff. inversion H; subst; split; clear H.
+      * apply eq_true_not_negb. intros H; apply H2. apply inb_sound; assumption.
+      * apply IHlst; assumption.
+  Qed.
+  
+End plistOk.
 
 Section pmap.
   Polymorphic Universe i j.
