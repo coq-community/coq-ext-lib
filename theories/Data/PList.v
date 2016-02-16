@@ -1,6 +1,8 @@
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Data.POption.
+Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Tactics.Consider.
 
 Set Universe Polymorphism.
 
@@ -125,3 +127,38 @@ Polymorphic Definition Applicative_plist@{i} : Applicative@{i i} plist@{i} :=
 {| pure := fun _ val => pcons val pnil
  ; ap := @ap_plist
  |}.
+
+Section PListEq.
+  Variable T : Type.
+  Variable EDT : RelDec (@eq T).
+
+  Fixpoint plist_eqb (ls rs : plist T) : bool :=
+    match ls , rs with
+      | pnil , pnil => true
+      | pcons l ls , pcons r rs =>
+        if l ?[ eq ] r then plist_eqb ls rs else false
+      | _ , _ => false
+    end.
+
+  (** Specialization for equality **)
+  Global Instance RelDec_eq_plist : RelDec (@eq (plist T)) :=
+  { rel_dec := plist_eqb }.
+
+  Variable EDCT : RelDec_Correct EDT.
+
+  Global Instance RelDec_Correct_eq_plist : RelDec_Correct RelDec_eq_plist.
+  Proof.
+    constructor; induction x; destruct y; split; simpl in *; intros;
+      repeat match goal with
+               | [ H : context [ rel_dec ?X ?Y ] |- _ ] =>
+                 consider (rel_dec X Y); intros; subst
+               | [ |- context [ rel_dec ?X ?Y ] ] =>
+                 consider (rel_dec X Y); intros; subst
+             end; try solve [ auto | exfalso; clear - H; inversion H ].
+    - f_equal. eapply IHx. eapply H0.
+    - inversion H. subst. eapply IHx. reflexivity.
+    - inversion H. exfalso. eapply H0. assumption.
+  Qed.
+
+End PListEq.
+
