@@ -1,6 +1,7 @@
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Data.POption.
+Require Import ExtLib.Data.PPair.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 
@@ -66,7 +67,7 @@ Section plist.
   Polymorphic Fixpoint allb (p : T -> bool) (lst : plist) : bool :=
     match lst with
     | pnil => true
-    | pcons l ls => if p l then anyb p ls else false
+    | pcons l ls => if p l then allb p ls else false
     end.
 
   Polymorphic Fixpoint nodup {RelDecA : RelDec (@eq T)} (lst : plist) :=
@@ -104,6 +105,7 @@ End plist.
 
 Arguments pnil {_}.
 Arguments pcons {_} _ _.
+Arguments app {_} _ _.
 Arguments pIn {_} _ _.
 Arguments pNoDup {_} _.
 Arguments anyb {_} _ _.
@@ -116,11 +118,43 @@ Arguments nth_error {_} _ _.
 
 
 Section plistFun.
-  Polymorphic Fixpoint split {A B : Type} (lst : plist ((A * B)%type)) :=
+  Polymorphic Fixpoint split {A B : Type} (lst : plist (ppair A B)) :=
     match lst with
     | pnil => (pnil, pnil)
-    | pcons (x, y) tl => let (left, right) := split tl in (pcons x left, pcons y right)
+    | pcons (pprod x y) tl => let (left, right) := split tl in (pcons x left, pcons y right)
     end.
+
+  Lemma pIn_split_l {A B : Type} (lst : plist (ppair A B)) (p : ppair A B) (H : pIn p lst) : 
+    (pIn (pfst p) (fst (split lst))).
+  Proof.
+    destruct p; simpl.
+    induction lst; simpl in *.
+    + destruct H.
+    + destruct t; simpl.
+      destruct (split lst); simpl.
+      destruct H as [H | H]; [
+          inversion H; left; reflexivity |
+          right; apply IHlst; apply H].
+  Qed.      
+
+  Lemma pIn_split_r {A B : Type} (lst : plist (ppair A B)) (p : ppair A B) (H : pIn p lst) : 
+    (pIn (psnd p) (snd (split lst))).
+  Proof.
+    destruct p; simpl.
+    induction lst; simpl in *.
+    + destruct H.
+    + destruct t; simpl.
+      destruct (split lst); simpl.
+      destruct H as [H | H]; [
+          inversion H; left; reflexivity |
+          right; apply IHlst; apply H].
+  Qed.
+
+  Lemma pIn_app_iff (A : Type) (l l' : plist A) (a : A) :
+    pIn a (app l l') <-> pIn a l \/ pIn a l'.
+  Proof.
+    induction l; simpl; intuition congruence.
+  Qed.
 
 End plistFun.
 
@@ -192,7 +226,7 @@ Section applicative.
     : plist@{j} U :=
     match fs with
     | pnil => pnil
-    | pcons f fs => app@{j} _ (fmap_plist@{i j} f xs) (ap_plist fs xs)
+    | pcons f fs => app@{j} (fmap_plist@{i j} f xs) (ap_plist fs xs)
     end.
 End applicative.
 
@@ -202,10 +236,11 @@ Polymorphic Definition Applicative_plist@{i} : Applicative@{i i} plist@{i} :=
  |}.
 
 Section PListEq.
-  Variable T : Type.
+  Polymorphic Universe i.
+  Variable T : Type@{i}.
   Variable EDT : RelDec (@eq T).
 
-  Fixpoint plist_eqb (ls rs : plist T) : bool :=
+  Polymorphic Fixpoint plist_eqb (ls rs : plist T) : bool :=
     match ls , rs with
       | pnil , pnil => true
       | pcons l ls , pcons r rs =>
@@ -214,12 +249,12 @@ Section PListEq.
     end.
 
   (** Specialization for equality **)
-  Global Instance RelDec_eq_plist : RelDec (@eq (plist T)) :=
+  Global Polymorphic Instance RelDec_eq_plist : RelDec (@eq (plist T)) :=
   { rel_dec := plist_eqb }.
 
   Variable EDCT : RelDec_Correct EDT.
 
-  Global Instance RelDec_Correct_eq_plist : RelDec_Correct RelDec_eq_plist.
+  Global Polymorphic Instance RelDec_Correct_eq_plist : RelDec_Correct RelDec_eq_plist.
   Proof.
     constructor; induction x; destruct y; split; simpl in *; intros;
       repeat match goal with
