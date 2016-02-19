@@ -63,10 +63,10 @@ Section plist.
     | pcons l ls0 => if p l then true else anyb p ls0
     end.
 
-  Polymorphic Fixpoint allb (p : T -> bool) (ls : plist) : bool :=
-    match ls with
+  Polymorphic Fixpoint allb (p : T -> bool) (lst : plist) : bool :=
+    match lst with
     | pnil => true
-    | pcons l ls0 => if p l then anyb p ls0 else false
+    | pcons l ls => if p l then anyb p ls else false
     end.
 
   Polymorphic Fixpoint nodup {RelDecA : RelDec (@eq T)} (lst : plist) :=
@@ -114,6 +114,15 @@ Arguments fold_left {_ _} _ _ _.
 Arguments fold_right {_ _} _ _ _.
 Arguments nth_error {_} _ _.
 
+
+Section plistFun.
+  Polymorphic Fixpoint split {A B : Type} (lst : plist ((A * B)%type)) :=
+    match lst with
+    | pnil => (pnil, pnil)
+    | pcons (x, y) tl => let (left, right) := split tl in (pcons x left, pcons y right)
+    end.
+
+End plistFun.
 
 Section plistOk.
   Context {A : Type}.
