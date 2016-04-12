@@ -5,7 +5,7 @@ Set Printing Universes.
 
 Section poption.
   Polymorphic Universe i.
-  Variable T : Type@{i}.
+  Polymorphic Variable T : Type@{i}.
 
   Polymorphic Inductive poption : Type@{i} :=
   | pSome : T -> poption
@@ -18,8 +18,8 @@ Arguments pNone {_}.
 
 Section poption_map.
   Polymorphic Universes i j.
-  Context {T : Type@{i}} {U : Type@{j}}.
-  Variable f : T -> U.
+  Polymorphic Context {T : Type@{i}} {U : Type@{j}}.
+  Polymorphic Variable f : T -> U.
 
   Polymorphic Definition fmap_poption (x : poption@{i} T) : poption@{j} U :=
     match x with

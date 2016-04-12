@@ -12,6 +12,7 @@ Require Import ExtLib.Tactics.
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Asymmetric Patterns.
+Set Universe Polymorphism.
 
 (** Core Type and Functions **)
 Section hlist.

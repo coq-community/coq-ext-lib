@@ -134,10 +134,10 @@ Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Applicative.
 
 Section traversable.
-  Context {F : Type -> Type}.
-  Context {Applicative_F : Applicative F}.
-  Context {A B : Type}.
-  Variable f : A -> F B.
+  Polymorphic Context {F : Type -> Type}.
+  Polymorphic Context {Applicative_F : Applicative F}.
+  Polymorphic Context {A B : Type}.
+  Polymorphic Variable f : A -> F B.
 
   Polymorphic Fixpoint mapT_list (ls : list A) : F (list B) :=
     match ls with

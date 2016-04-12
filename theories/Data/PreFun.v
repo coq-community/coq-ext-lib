@@ -18,7 +18,7 @@ Section type.
 
   Polymorphic Variables (tOk : typeOk tT) (uOk : typeOk tU).
 
-  Global Instance typeOk_Fun : typeOk type_Fun.
+  Global Polymorphic Instance typeOk_Fun : typeOk type_Fun.
   Proof.
     constructor.
     { unfold equiv. simpl. unfold respectful.
@@ -41,7 +41,7 @@ Section type.
       apply tOk. }
   Qed.
 
-  Global Instance proper_app : forall (f : T -> U) (a : T),
+  Global Polymorphic Instance proper_app : forall (f : T -> U) (a : T),
     proper f -> proper a -> proper (f a).
   Proof.
     simpl; intros. red in H.
@@ -49,19 +49,19 @@ Section type.
     eapply H. eapply preflexive. eapply equiv_prefl; auto. auto.
   Qed.
 
-  Theorem proper_fun : forall (f : T -> U),
+  Polymorphic Theorem proper_fun : forall (f : T -> U),
     (forall x y, equal x y -> equal (f x) (f y)) ->
     proper f.
   Proof.
     intros. do 3 red. eauto.
   Qed.
 
-  Theorem equal_fun : forall (f g : T -> U),
+  Polymorphic Theorem equal_fun : forall (f g : T -> U),
     (forall x y, equal x y -> equal (f x) (g y)) ->
     equal f g.
   Proof. intros. do 3 red. apply H. Qed.
 
-  Theorem equal_app : forall (f g : T -> U) (x y : T),
+  Polymorphic Theorem equal_app : forall (f g : T -> U) (x y : T),
     equal f g -> equal x y ->
     equal (f x) (g y).
   Proof.

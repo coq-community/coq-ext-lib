@@ -24,7 +24,7 @@ Existing Class proper.
 
 Section type.
   Polymorphic Context {T : Type}.
-  Variable tT : type T.
+  Polymorphic Variable tT : type T.
 (*
   Global Instance Proper_type : Proper T :=
   { proper := fun x => equal x x }.

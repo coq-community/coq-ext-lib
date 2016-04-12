@@ -12,7 +12,7 @@ Section Monoid.
   ; monoid_unit : S
   }.
 
-  Context {Type_S : type S}.
+  Polymorphic Context {Type_S : type S}.
 
   Polymorphic Class MonoidLaws (M : Monoid) : Type :=
   { monoid_assoc :> Associative M.(monoid_plus) equal
