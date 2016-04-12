@@ -1,4 +1,5 @@
 Require Import ExtLib.Data.Map.FMapPositive.
+Require Import ExtLib.Data.Eq.
 Require Import ExtLib.Tactics.Injection.
 
 Fixpoint pmap_lookup' (ts : pmap Type) (p : positive) : option Type :=
@@ -67,10 +68,24 @@ Definition OutOf {ts} {T : Type} (n : positive)
   | eq_refl => @asNth ts n
   end.
 
-Theorem OutOf_Into : forall ts T p pf v,
-    @OutOf ts T p pf (@Into ts T p pf v) = Some v.
+Lemma asNth'_get_lookup : forall p ts v, asNth' (ts:=ts) p p v = Some v.
 Proof.
-Admitted.
+  induction p; simpl; intros; auto.
+Qed.
+
+Theorem Outof_Into : forall ts T p pf v,
+    @OutOf ts T p pf (@Into ts T p pf v) = Some v.
+Proof using.
+  unfold OutOf, Into.
+  intros.
+  repeat rewrite (eq_Arr_eq pf).
+  repeat rewrite (eq_Const_eq pf).
+  repeat rewrite (eq_Const_eq (eq_sym pf)).
+  unfold asNth. simpl.
+  rewrite asNth'_get_lookup.
+  { generalize dependent (pmap_lookup' ts p).
+    intros. subst. reflexivity. }
+Qed.
 
 Theorem asNth_eq
 : forall ts p oe v,
