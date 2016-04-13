@@ -1,5 +1,6 @@
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
+Require Import ExtLib.Tactics.Injection.
 
 Set Printing Universes.
 
@@ -10,6 +11,45 @@ Section poption.
   Polymorphic Inductive poption : Type@{i} :=
   | pSome : T -> poption
   | pNone.
+
+  Global Polymorphic Instance Injective_pSome a b
+  : Injective (pSome a = pSome b) :=
+  { result := a = b
+  ; injection := fun pf =>
+                   match pf in _ = X
+                         return a = match X with
+                                    | pSome y => y
+                                    | _ => a
+                                    end
+                   with
+                   | eq_refl => eq_refl
+                   end }.
+
+  Global Polymorphic Instance Injective_pSome_pNone a
+  : Injective (pSome a = pNone) :=
+  { result := False
+  ; injection := fun pf =>
+                   match pf in _ = X
+                         return match X with
+                                | pSome y => True
+                                | _ => False
+                                end
+                   with
+                   | eq_refl => I
+                   end }.
+
+  Global Polymorphic Instance Injective_pNone_pSome a
+  : Injective (pNone = pSome a) :=
+  { result := False
+  ; injection := fun pf =>
+                   match pf in _ = X
+                         return match X with
+                                | pNone => True
+                                | _ => False
+                                end
+                   with
+                   | eq_refl => I
+                   end }.
 
 End poption.
 
