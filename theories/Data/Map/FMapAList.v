@@ -1,22 +1,25 @@
-Require Import List.
+Require Import Coq.Lists.List.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.
+Require Import ExtLib.Data.POption.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
 
 Section keyed.
-  Variable K : Type.
+  Universes Uk Uv.
+  Variable K : Type@{Uk}.
   Variable R : K -> K -> Prop.
   Variable RD_K : RelDec R.
 
-  Variable V : Type.
+  Variable V : Type@{Uv}.
 
-  Definition alist : Type := list (K * V).
+  Definition alist : Type@{max(Uk,Uv)} := list (K * V).
 
   Definition alist_remove (k : K) (m : alist) : alist :=
     List.filter (fun x => negb (k ?[ R ] (fst x))) m.
@@ -24,24 +27,21 @@ Section keyed.
   Definition alist_add (k : K) (v : V) (m : alist) : alist :=
     (k, v) :: alist_remove k m.
 
-  Fixpoint alist_find (k : K) (m : alist) : option V :=
+  Fixpoint alist_find (m : alist) (k : K) : poption V :=
     match m with
-      | nil => None
-      | (k',v) :: ms =>
-        if k ?[ R ] k' then
-          Some v
-        else
-          alist_find k ms
+    | nil => pNone
+    | (k',v) :: ms =>
+      if k ?[ R ] k' then
+        pSome v
+      else
+        alist_find ms k
     end.
 
   Section fold.
-    Import MonadNotation.
-    Local Open Scope monad_scope.
+    Polymorphic Variables T : Type.
+    Polymorphic Variable f : K -> V -> T -> T.
 
-    Variables T : Type.
-    Variable f : K -> V -> T -> T.
-
-    Fixpoint fold_alist (acc : T) (map : alist) : T :=
+    Polymorphic Fixpoint fold_alist (acc : T) (map : alist) : T :=
       match map with
         | nil => acc
         | (k,v) :: m =>
@@ -70,7 +70,7 @@ Section keyed.
     Hypothesis Trans : Transitive R.
 
     Definition mapsto_alist (m : alist) k v : Prop :=
-      alist_find k m = Some v.
+      alist_find m k = pSome v.
 
     Lemma mapsto_alist_cons : forall k v m k' v',
                                 mapsto_alist ((k',v') :: m) k v <->
@@ -85,8 +85,9 @@ Section keyed.
       { consider (k ?[ R ] k'); intros; intuition. congruence. }
     Qed.
 
-    Theorem mapsto_lookup_alist : forall (k : K) (v : V) (m : list (K * V)),
-                                   lookup k m = Some v <-> mapsto_alist m k v.
+    Theorem mapsto_lookup_alist
+    : forall (k : K) (v : V) (m : list (K * V)),
+        lookup m k = pSome v <-> mapsto_alist m k v.
     Proof.
       reflexivity.
     Qed.

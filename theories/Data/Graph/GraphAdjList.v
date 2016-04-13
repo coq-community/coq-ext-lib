@@ -1,4 +1,5 @@
 Require Import ExtLib.Data.List.
+Require Import ExtLib.Data.POption.
 Require Import ExtLib.Data.Graph.Graph.
 Require Import ExtLib.Data.Graph.BuildGraph.
 Require Import ExtLib.Structures.Maps.
@@ -22,15 +23,15 @@ Section GraphImpl.
   Definition adj_graph : Type := map.
 
   Definition verts (g : adj_graph) : list V :=
-    let c := foldM (m := writerT (Monoid_list_app) ident) 
+    let c := foldM (m := writerT (Monoid_list_app) ident)
       (fun k_v _ => let k := fst k_v in tell (k :: nil)) (ret tt) g
     in
     snd (unIdent (runWriterT c)).
 
   Definition succs (g : adj_graph) (v : V) : list V :=
-    match lookup v g with
-      | None => nil
-      | Some vs => vs
+    match lookup g v with
+      | pNone => nil
+      | pSome vs => vs
     end.
 
   Global Instance Graph_adj_graph : Graph V adj_graph :=
@@ -43,20 +44,20 @@ Section GraphImpl.
 
   (** TODO: Move this **)
   Fixpoint list_in_dec v (ls : list V) : bool :=
-      match ls with
-        | nil => false
-        | l :: ls =>
-          if eq_dec l v then true
-          else list_in_dec v ls
-      end.
+    match ls with
+    | nil => false
+    | l :: ls =>
+      if eq_dec l v then true
+      else list_in_dec v ls
+    end.
 
   Definition add_edge (f t : V) (g : adj_graph) : adj_graph :=
-    match lookup f g with
-      | None =>
-        add f (t :: nil) g
-      | Some vs =>
-        if list_in_dec t vs then g
-        else add f (t :: vs) g
+    match lookup g f with
+    | pNone =>
+      add f (t :: nil) g
+    | pSome vs =>
+      if list_in_dec t vs then g
+      else add f (t :: vs) g
     end.
 
   Global Instance GraphBuilder_adj_graph : BuildGraph V adj_graph :=
@@ -66,4 +67,3 @@ Section GraphImpl.
   }.
 
 End GraphImpl.
-

@@ -1,21 +1,25 @@
 Require Import RelationClasses.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Data.POption.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
 
 (** First-class maps **)
 Section Maps.
-  Variables K V : Type.
-  Variable map : Type.
+  Polymorphic Universes Uk Uv Um.
+  Variable K : Type@{Uk}.
+  Variable V : Type@{Uv}.
+  Variable map : Type@{Um}.
 
   (** General Maps **)
   Class Map : Type :=
   { empty    : map
   ; add      : K -> V -> map -> map
   ; remove   : K -> map -> map
-  ; lookup   : K -> map -> option V
+  ; lookup   : map -> K -> poption@{Uv} V
   ; union    : map -> map -> map
   }.
 
@@ -24,7 +28,7 @@ Section Maps.
   Class MapOk (M : Map) : Type :=
   { mapsto : K -> V -> map -> Prop
   ; mapsto_empty : forall k v, ~mapsto k v empty
-  ; mapsto_lookup : forall k v m, lookup k m = Some v <-> mapsto k v m
+  ; mapsto_lookup : forall k v m, lookup m k = pSome v <-> mapsto k v m
   ; mapsto_add_eq : forall m k v, mapsto k v (add k v m)
   ; mapsto_add_neq : forall m k v k',
                        ~R k k' ->
@@ -34,9 +38,9 @@ Section Maps.
   Variable M : Map.
 
   Definition contains (k : K) (m : map) : bool :=
-    match lookup k m with
-      | None => false
-      | Some _ => true
+    match lookup m k with
+    | pNone => false
+    | pSome _ => true
     end.
 
   Definition singleton (k : K) (v : V) : map :=
@@ -48,9 +52,9 @@ Section Maps.
   Definition combine (f : K -> V -> V -> V) (m1 m2 : map) : map :=
     fold (fun k_v acc =>
       let '(k,v) := k_v in
-      match lookup k acc with
-        | None => add k v acc
-        | Some v' => add k (f k v v') acc
+      match lookup acc k with
+        | pNone => add k v acc
+        | pSome v' => add k (f k v v') acc
       end) m2 m1.
 
   Definition filter (f : K -> V -> bool) (m : map) : map :=
@@ -61,12 +65,12 @@ Section Maps.
         else acc) empty m.
 
   Definition submap_with (le : V -> V -> bool) (m1 m2 : map) : bool :=
-    fold (fun k_v (acc : bool) => 
-      if acc then 
+    fold (fun k_v (acc : bool) =>
+      if acc then
         let '(k,v) := k_v in
-        match lookup k m2 with
-          | None => false
-          | Some v' => le v v'
+        match lookup m2 k with
+          | pNone => false
+          | pSome v' => le v v'
         end
       else false) true m1.
 

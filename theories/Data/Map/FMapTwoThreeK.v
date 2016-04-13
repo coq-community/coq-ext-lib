@@ -1,7 +1,8 @@
-Require Import ExtLib.Structures.Maps.
-Require Import List.
+Require Import Coq.Lists.List.
 Require Import ExtLib.Core.RelDec.
+Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Data.POption.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -94,23 +95,23 @@ Section keyed.
   Definition twothree_remove {V} (k : K) (m : twothree V) : twothree V :=
     twothree_modify k (fun _ => None) None m (fun m => m) Two.
 
-  Fixpoint twothree_find {V} (k : K) (m : twothree V) : option V :=
+  Fixpoint twothree_find {V} (m : twothree V) (k : K) : poption V :=
     match m with
-      | Leaf => None
+      | Leaf => pNone
       | Two l k' v' r =>
         match RD_K k k' with
-          | Eq => Some v'
-          | Lt => twothree_find k l
-          | Gt => twothree_find k r
+          | Eq => pSome v'
+          | Lt => twothree_find l k
+          | Gt => twothree_find r k
         end
       | Three l k1 v1 m k2 v2 r =>
         match RD_K k k1 with
-          | Eq => Some v1
-          | Lt => twothree_find k l
+          | Eq => pSome v1
+          | Lt => twothree_find l k
           | Gt => match RD_K k k2 with
-                    | Eq => Some v2
-                    | Lt => twothree_find k m
-                    | Gt => twothree_find k r
+                    | Eq => pSome v2
+                    | Lt => twothree_find m k
+                    | Gt => twothree_find r k
                   end
         end
     end.

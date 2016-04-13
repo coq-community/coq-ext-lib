@@ -1,21 +1,23 @@
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Functor.
-Require Import ExtLib.Data.Option.
+Require Import ExtLib.Data.POption.
 Require Import ExtLib.Data.Positive.
 Require Import ExtLib.Tactics.Cases.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
 
 Section pmap.
-  Variable T : Type.
-  Inductive pmap : Type :=
+  Polymorphic Universe Uv.
+  Variable T : Type@{Uv}.
+  Inductive pmap : Type@{Uv} :=
   | Empty
-  | Branch : option T -> pmap -> pmap -> pmap.
+  | Branch : poption@{Uv} T -> pmap -> pmap -> pmap.
 
-  Definition pmap_here (m : pmap) : option T :=
+  Definition pmap_here (m : pmap) : poption T :=
     match m with
-      | Empty => None
+      | Empty => pNone
       | Branch d _ _ => d
     end.
 
@@ -31,29 +33,51 @@ Section pmap.
       | Branch _ _ r => r
     end.
 
-  Fixpoint pmap_lookup (p : positive) (m : pmap) : option T :=
+  Fixpoint pmap_lookup (m : pmap) (p : positive) : poption@{Uv} T :=
     match m with
-      | Empty => None
-      | Branch d l r =>
-        match p with
-          | xH => d
-          | xO p => pmap_lookup p l
-          | xI p => pmap_lookup p r
-        end
+    | Empty => pNone
+    | Branch d l r =>
+      match p with
+      | xH => d
+      | xO p => pmap_lookup l p
+      | xI p => pmap_lookup r p
+      end
     end.
+
+  Fixpoint pmap_lookup_key (ts : pmap) (p : positive) {struct p}
+  : poption T :=
+    match p with
+    | xH => pmap_here ts
+    | xI p => pmap_lookup_key (pmap_right ts) p
+    | xO p => pmap_lookup_key (pmap_left ts) p
+    end.
+
+  Fixpoint pmap_lookup_key_Empty (p : positive) : pmap_lookup_key Empty p = pNone :=
+    match p with
+    | xH => eq_refl
+    | xO p => pmap_lookup_key_Empty p
+    | xI p => pmap_lookup_key_Empty p
+    end.
+
+  Lemma pmap_lookup'_eq (p : pmap) m : pmap_lookup p m = pmap_lookup_key p m.
+  Proof.
+    generalize dependent m. induction p; intuition.
+    { symmetry. eapply pmap_lookup_key_Empty. }
+    { destruct m; simpl; auto. }
+  Defined.
 
   Fixpoint pmap_insert (p : positive) (v : T) (m : pmap) : pmap :=
     match p with
-      | xH => Branch (Some v) (pmap_left m) (pmap_right m)
+      | xH => Branch (pSome v) (pmap_left m) (pmap_right m)
       | xO p =>
         Branch (pmap_here m) (pmap_insert p v (pmap_left m)) (pmap_right m)
       | xI p =>
         Branch (pmap_here m) (pmap_left m) (pmap_insert p v (pmap_right m))
     end.
 
-  Definition branch (o : option T) (l r : pmap) : pmap :=
+  Definition branch (o : poption T) (l r : pmap) : pmap :=
     match o , l , r with
-      | None , Empty , Empty => Empty
+      | pNone , Empty , Empty => Empty
       | _ , _ , _ => Branch o l r
     end.
 
@@ -62,7 +86,7 @@ Section pmap.
       | Empty => Empty
       | Branch d l r =>
         match p with
-          | xH => branch None l r
+          | xH => branch pNone l r
           | xO p => branch d (pmap_remove p l) r
           | xI p => branch d l (pmap_remove p r)
         end
@@ -75,8 +99,8 @@ Section pmap.
       | Empty => m
       | Branch d l r =>
         Branch (match d with
-                  | Some x => Some x
-                  | None => pmap_here m
+                  | pSome x => pSome x
+                  | pNone => pmap_here m
                 end) (pmap_union l (pmap_left m)) (pmap_union r (pmap_right m))
     end.
 
@@ -108,18 +132,14 @@ Section pmap.
 
   Lemma pmap_lookup_insert_empty : forall k k' v,
     k <> k' ->
-    pmap_lookup k' (pmap_insert k v Empty) = None.
+    pmap_lookup (pmap_insert k v Empty) k' = pNone.
   Proof.
     induction k; destruct k'; simpl; intros;
     eauto using tilde_0_inj_neg, tilde_1_inj_neg.
-    destruct k'; simpl; auto.
-    destruct k'; simpl; auto.
-    destruct k'; simpl; auto.
-    destruct k'; simpl; auto.
     congruence.
   Qed.
 
-  Lemma lookup_empty : forall k, pmap_lookup k Empty = None.
+  Lemma lookup_empty : forall k, pmap_lookup Empty k = pNone.
   Proof.
     destruct k; reflexivity.
   Qed.
@@ -129,7 +149,7 @@ Section pmap.
 
   Lemma pmap_lookup_insert_eq
   : forall (m : pmap) (k : positive) (v : T),
-      pmap_lookup k (pmap_insert k v m) = Some v.
+      pmap_lookup (pmap_insert k v m) k = pSome v.
   Proof.
     intros m k; revert m.
     induction k; simpl; intros; forward; Cases.rewrite_all_goal; eauto.
@@ -139,7 +159,8 @@ Section pmap.
   : forall (m : pmap) (k : positive) (v : T) (k' : positive),
       k <> k' ->
       forall v' : T,
-        pmap_lookup k' m = Some v' <-> pmap_lookup k' (pmap_insert k v m) = Some v'.
+        pmap_lookup m k' = pSome v' <->
+        pmap_lookup (pmap_insert k v m) k' = pSome v'.
   Proof.
     intros m k; revert m.
     induction k; simpl; intros; forward; Cases.rewrite_all_goal;
@@ -153,11 +174,11 @@ Section pmap.
     { destruct k'; simpl; destruct m; simpl;
       autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence. }
   Qed.
- 
+
   Lemma pmap_lookup_insert_None_neq
   : forall (m : pmap) (k : positive) (v : T) (k' : positive),
       k <> k' ->
-        pmap_lookup k' m = None <-> pmap_lookup k' (pmap_insert k v m) = None.
+        pmap_lookup m k' = pNone <-> pmap_lookup (pmap_insert k v m) k' = pNone.
   Proof.
     intros m k; revert m.
     induction k; simpl; intros; forward; Cases.rewrite_all_goal;
@@ -176,20 +197,20 @@ Section pmap.
   : forall (m : pmap) (k : positive) (v : T) (k' : positive),
       k <> k' ->
       forall v' : T,
-        pmap_lookup k' (pmap_insert k v m) = pmap_lookup k' m.
+        pmap_lookup (pmap_insert k v m) k' = pmap_lookup m k'.
   Proof.
     intros.
-    remember (pmap_lookup k' m).
-    destruct o; [
+    remember (pmap_lookup m k').
+    destruct p; [
       apply pmap_lookup_insert_Some_neq; intuition |
       apply pmap_lookup_insert_None_neq; intuition].
   Qed.
 
   Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap :=
-  { mapsto := fun k v m => pmap_lookup k m = Some v }.
+  { mapsto := fun k v m => pmap_lookup m k = pSome v }.
   Proof.
     { abstract (induction k; simpl; congruence). }
-    { abstract (induction k; simpl; intros; forward). }
+    { simpl. tauto. }
     { eauto using pmap_lookup_insert_eq. }
     { eauto using pmap_lookup_insert_Some_neq. }
   Defined.
@@ -198,7 +219,7 @@ Section pmap.
     (fix from_list acc i ls {struct ls} :=
        match ls with
          | nil => acc
-         | List.cons l ls =>
+         | cons l ls =>
            from_list (pmap_insert i l acc) (Pos.succ i) ls
        end) Empty 1%positive.
 
@@ -234,7 +255,9 @@ Section fmap.
     induction a; destruct m; simpl; intros; try congruence.
     { eapply IHa. eapply H. }
     { eapply IHa. eapply H. }
-    { destruct o; try congruence. eexists; split; eauto. inversion H; auto. }
+    { destruct p; try congruence.
+      { simpl in H. eexists; split; eauto. inversion H; auto. }
+      { inversion H. } }
   Qed.
 
 End fmap.
