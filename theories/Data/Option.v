@@ -158,9 +158,13 @@ Qed.
 *)
 
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
-{ result := a = b }.
-abstract (inversion 1; auto).
-Defined.
+{ result := a = b
+; injection := 
+    fun P : Some a = Some b =>
+      match P with 
+      | eq_refl => eq_refl
+      end
+}.
 
 Require ExtLib.Core.EquivDec.
 
@@ -211,6 +215,6 @@ Lemma eq_option_eq
           end.
 Proof.
   destruct pf. destruct val; reflexivity.
-Qed.
+Defined.
 
 Hint Rewrite eq_option_eq : eq_rw.
