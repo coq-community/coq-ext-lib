@@ -1,38 +1,47 @@
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Monoid.
+Require Import ExtLib.Data.PPair.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
+Set Universe Polymorphism.
+
+Set Printing Universes.
 
 Section WriterType.
-  Variable S : Type.
+  Polymorphic Universe s d c.
+  Variable S : Type@{s}.
 
-  Record writerT (Monoid_S : Monoid S) (m : Type -> Type) (t : Type) : Type := mkWriterT
-  { runWriterT : m (t * S)%type }.
+  Record writerT (Monoid_S : Monoid@{s} S) (m : Type@{d} -> Type@{c}) (t : Type@{d}) : Type := mkWriterT
+  { runWriterT : m (pprod t S)%type }.
 
   Variable Monoid_S : Monoid S.
-  Variable m : Type -> Type.
+  Variable m : Type@{d} -> Type@{c}.
   Context {M : Monad m}.
 
-  Definition execWriterT {T} (c : writerT Monoid_S m T) : m S := 
-    bind (runWriterT c) (fun (x : T * S) => ret (snd x)).
+  Definition execWriterT {T} (c : writerT Monoid_S m T) : m S :=
+    bind (runWriterT c) (fun (x : pprod T S) => ret (psnd x)).
 
-  Definition evalWriterT {T} (c : writerT Monoid_S m T) : m T := 
-    bind (runWriterT c) (fun (x : T * S) => ret (fst x)).
+  Definition evalWriterT {T} (c : writerT Monoid_S m T) : m T :=
+    bind (runWriterT c) (fun (x : pprod T S) => ret (pfst x)).
+
+  Local Notation "( x , y )" := (ppair x y).
 
   Global Instance Monad_writerT : Monad (writerT Monoid_S m) :=
   { ret := fun _ x => mkWriterT _ _ _ (@ret _ M _ (x, monoid_unit Monoid_S))
   ; bind := fun _ _ c1 c2 =>
     mkWriterT _ _ _ (
       @bind _ M _ _ (runWriterT c1) (fun v =>
-        bind (runWriterT (c2 (fst v))) (fun v' =>
-        ret (fst v', monoid_plus Monoid_S (snd v) (snd v')))))
+        bind (runWriterT (c2 (pfst v))) (fun v' =>
+        ret (pfst v', monoid_plus Monoid_S (psnd v) (psnd v')))))
   }.
 
   Global Instance Writer_writerT : MonadWriter Monoid_S (writerT Monoid_S m) :=
   { tell   := fun x => mkWriterT _ _ _ (ret (tt, x))
-  ; listen := fun _ c => mkWriterT _ _ _ (bind (runWriterT c) (fun x => ret (fst x, snd x, snd x)))
-  ; pass   := fun _ c => mkWriterT _ _ _ (bind (runWriterT c) (fun x => ret (let '(x,ss,s) := x in (x, ss s))))
+  ; listen := fun _ c => mkWriterT _ _ _ (bind (runWriterT c)
+                                               (fun x => ret (pair (pfst x) (psnd x), psnd x)))
+  ; pass   := fun _ c => mkWriterT _ _ _ (bind (runWriterT c)
+                                               (fun x => ret (let '(ppair (pair x ss) s) := x in (x, ss s))))
   }.
 
   Global Instance MonadT_writerT : MonadT (writerT Monoid_S m) m :=
@@ -58,14 +67,22 @@ Section WriterType.
   ; catch := fun _ c h => mkWriterT _ _ _ (catch (runWriterT c) (fun x => runWriterT (h x)))
   }.
 
-  Global Instance Writer_writerT_pass {T} {MonT : Monoid T} {_ : Monad m} {_ : MonadWriter MonT m} : MonadWriter MonT (writerT Monoid_S m) :=
-  { tell   := fun x => mkWriterT _ m _ (bind (tell x) (fun x => ret (x, monoid_unit Monoid_S)))
-  ; listen := fun _ c => mkWriterT _ m _ (bind (listen (runWriterT c)) (fun x => let '(a,t,s) := x in ret (a,s,t)))
-  ; pass   := fun _ c => mkWriterT _ m _ (pass (bind (runWriterT c) (fun x => let '(a,t,s) := x in ret (a,s,t))))
+  Global Instance Writer_writerT_pass {T} {MonT : Monoid T} {M : Monad m} {MW : MonadWriter MonT m}
+  : MonadWriter MonT (writerT Monoid_S m) :=
+  { tell   := fun x => mkWriterT _ m _ (bind (tell x)
+                                             (fun x => ret (x, monoid_unit Monoid_S)))
+  ; listen := fun _ c => mkWriterT _ m _ (bind (m:=m) (@listen _ _ _ MW  _ (runWriterT c))
+                                               (fun x => let '(pair (ppair a t) s) := x in
+                                                         ret (m:=m) (pair a s,t)))
+  ; pass   := fun _ c => mkWriterT _ m _ (@pass _ _ _ MW _
+                                            (bind (m:=m) (runWriterT c)
+                                                  (fun x => let '(ppair (pair a t) s) := x in
+                                                            ret (m:=m) (pair (ppair a s) t))))
   }.
 
 End WriterType.
 
+Arguments mkWriterT {_} _ {_ _} _.
 Arguments runWriterT {S} {Monoid_S} {m} {t} _.
 Arguments evalWriterT {S} {Monoid_S} {m} {M} {T} _.
 Arguments execWriterT {S} {Monoid_S} {m} {M} {T} _.

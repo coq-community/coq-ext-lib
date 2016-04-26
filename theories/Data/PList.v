@@ -4,10 +4,12 @@ Require Import ExtLib.Data.POption.
 Require Import ExtLib.Data.PPair.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
+Require Import ExtLib.Tactics.Injection.
 
 Require Import Coq.Bool.Bool.
 
 Set Universe Polymorphism.
+Set Primitive Projections.
 
 Section plist.
   Polymorphic Universe i.
@@ -118,13 +120,13 @@ Arguments nth_error {_} _ _.
 
 
 Section plistFun.
-  Polymorphic Fixpoint split {A B : Type} (lst : plist (ppair A B)) :=
+  Polymorphic Fixpoint split {A B : Type} (lst : plist (pprod A B)) :=
     match lst with
     | pnil => (pnil, pnil)
-    | pcons (pprod x y) tl => let (left, right) := split tl in (pcons x left, pcons y right)
+    | pcons (ppair x y) tl => let (left, right) := split tl in (pcons x left, pcons y right)
     end.
 
-  Lemma pIn_split_l {A B : Type} (lst : plist (ppair A B)) (p : ppair A B) (H : pIn p lst) : 
+  Lemma pIn_split_l {A B : Type} (lst : plist (pprod A B)) (p : pprod A B) (H : pIn p lst) :
     (pIn (pfst p) (fst (split lst))).
   Proof.
     destruct p; simpl.
@@ -132,12 +134,12 @@ Section plistFun.
     + destruct H.
     + destruct t; simpl.
       destruct (split lst); simpl.
-      destruct H as [H | H]; [
-          inversion H; left; reflexivity |
-          right; apply IHlst; apply H].
-  Qed.      
+      destruct H as [H | H].
+      { inv_all. tauto. }
+      { tauto. }
+  Qed.
 
-  Lemma pIn_split_r {A B : Type} (lst : plist (ppair A B)) (p : ppair A B) (H : pIn p lst) : 
+  Lemma pIn_split_r {A B : Type} (lst : plist (pprod A B)) (p : pprod A B) (H : pIn p lst) :
     (pIn (psnd p) (snd (split lst))).
   Proof.
     destruct p; simpl.
@@ -145,9 +147,9 @@ Section plistFun.
     + destruct H.
     + destruct t; simpl.
       destruct (split lst); simpl.
-      destruct H as [H | H]; [
-          inversion H; left; reflexivity |
-          right; apply IHlst; apply H].
+      destruct H.
+      { inv_all; tauto. }
+      { tauto. }
   Qed.
 
   Lemma pIn_app_iff (A : Type) (l l' : plist A) (a : A) :
@@ -170,7 +172,7 @@ Section plistOk.
     + left; reflexivity.
     + right; apply IHlst; assumption.
   Qed.
-  
+
   Lemma inb_complete (x : A) (lst : plist A) (H : pIn x lst) : inb x lst = true.
   Proof.
     induction lst; simpl in *; try intuition congruence.
@@ -187,7 +189,7 @@ Section plistOk.
       * intro H. apply inb_complete in H. intuition congruence.
       * apply IHlst; assumption.
   Qed.
-  
+
   Lemma nodup_complete (lst : plist A) (H : pNoDup lst) : nodup lst = true.
   Proof.
     induction lst.
@@ -196,7 +198,7 @@ Section plistOk.
       * apply eq_true_not_negb. intros H; apply H2. apply inb_sound; assumption.
       * apply IHlst; assumption.
   Qed.
-  
+
 End plistOk.
 
 Section pmap.
@@ -269,4 +271,3 @@ Section PListEq.
   Qed.
 
 End PListEq.
-
