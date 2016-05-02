@@ -764,6 +764,40 @@ Section hlist_map.
 
 End hlist_map.
 
+Arguments hlist_map {_ _ _} _ {_} _.
+
+
+Section hlist_map_rules.
+  Variable A : Type.
+  Variables F G G' : A -> Type.
+  Variable ff : forall x, F x -> G x.
+  Variable gg : forall x, G x -> G' x.
+
+  Theorem hlist_map_hlist_map : forall ls (hl : hlist F ls),
+      hlist_map gg (hlist_map ff hl) = hlist_map (fun _ x => gg (ff x)) hl.
+  Proof.
+    induction hl; simpl; f_equal. assumption.
+  Defined.
+
+  Theorem hlist_get_hlist_map : forall ls t (hl : hlist F ls) (m : member t ls),
+      hlist_get m (hlist_map ff hl) = ff (hlist_get m hl).
+  Proof.
+    induction m; simpl.
+    { rewrite (hlist_eta hl). reflexivity. }
+    { rewrite (hlist_eta hl). simpl. auto. }
+  Defined.
+
+  Lemma hlist_map_ext : forall (ff gg : forall x, F x -> G x),
+      (forall x t, ff x t = gg x t) ->
+      forall ls (hl : hlist F ls),
+        hlist_map ff hl = hlist_map gg hl.
+  Proof.
+    induction hl; simpl; auto.
+    intros. f_equal; auto.
+  Defined.
+
+End hlist_map_rules.
+
 Lemma equiv_hlist_map
 : forall T U (F : T -> Type) (R : forall t, F t -> F t -> Prop)
          (R' : forall t, U t -> U t -> Prop)
@@ -771,14 +805,12 @@ Lemma equiv_hlist_map
     (forall t (x y : F t), R t x y -> R' t (f t x) (g t y)) ->
     forall  ls (a b : hlist F ls),
       equiv_hlist R a b ->
-      equiv_hlist R' (hlist_map _ f a) (hlist_map _ g b).
+      equiv_hlist R' (hlist_map f a) (hlist_map g b).
 Proof.
   clear. induction 2; simpl; intros.
   - constructor.
   - constructor; eauto.
 Qed.
-
-Arguments hlist_map {_ _ _} _ {_} _.
 
 (** Heterogeneous Relations **)
 Section hlist_rel.

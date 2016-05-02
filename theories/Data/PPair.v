@@ -20,6 +20,36 @@ Arguments ppair {_ _} _ _.
 Arguments pfst {_ _} _.
 Arguments psnd {_ _} _.
 
+Section equality.
+  Polymorphic Lemma eq_pair_rw
+  : forall T U (a b : T) (c d : U) (pf : (ppair a c) = (ppair b d)),
+    exists (pf' : a = b) (pf'' : c = d),
+      pf = match pf' , pf'' with
+           | eq_refl , eq_refl => eq_refl
+           end.
+  Proof.
+    clear.
+    intros.
+    exists (f_equal pfst pf).
+    exists (f_equal psnd pf).
+    change (pf =
+            match
+              @f_equal (pprod T U) T (@pfst T U) (ppair a c) (ppair b d) pf in (_ = t)
+              return ((ppair a c) = (ppair t d))
+            with
+            | eq_refl =>
+              match
+                @f_equal (pprod T U) U (@psnd T U) (ppair a c) (ppair b d) pf in (_ = u)
+                return ((ppair a c) = (ppair (pfst (ppair a c)) u))
+              with
+              | eq_refl => @eq_refl (pprod T U) (ppair a c)
+              end
+            end).
+    generalize dependent (ppair a c).
+    intros; subst. reflexivity.
+  Defined.
+End equality.
+
 Section Injective.
   Polymorphic Universes i j.
   Context {T : Type@{i}} {U : Type@{j}}.
