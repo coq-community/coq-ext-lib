@@ -75,8 +75,9 @@ Polymorphic Definition typeOk2@{t u v z}
 : Type@{z} :=
   forall (T : Type@{t}) (tT : type@{t} T), @typeOk@{t} T tT -> typeOk1@{u v z} _ (tF _ tT).
 
-Polymorphic Definition typeOk3@{t u v w z} F (tF : type3 F) : Type@{z} :=
-  forall (T : Type@{t}) tT, @typeOk@{t} T tT -> typeOk2@{u v w z} _ (tF _ tT).
+Polymorphic Definition typeOk3@{t u v w z} F
+            (tF : type3 F) : Type@{z} :=
+  forall (T : Type@{t}) (tT : type T), @typeOk@{t} T tT -> typeOk2@{u v w z} _ (tF _ tT).
 
 Existing Class type1.
 Existing Class type2.
