@@ -4,7 +4,7 @@ theories: Makefile.coq
 	$(MAKE) -f Makefile.coq
 
 Makefile.coq:
-	coq_makefile -f _CoqProject -o Makefile.coq
+	$(COQBIN)coq_makefile -f _CoqProject -o Makefile.coq
 
 install: Makefile.coq
 	$(MAKE) -f Makefile.coq install
