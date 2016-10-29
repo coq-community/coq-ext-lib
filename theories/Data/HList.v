@@ -13,11 +13,30 @@ Set Implicit Arguments.
 Set Strict Implicit.
 Set Asymmetric Patterns.
 Set Universe Polymorphism.
+Set Printing Universes.
+
+Lemma app_ass_trans@{X} : forall {T : Type@{X} } (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
+Proof.
+  induction a; simpl.
+  reflexivity.
+  intros. destruct (IHa b c). reflexivity.
+Defined.
+
+Lemma app_nil_r_trans : forall {T : Type} (a : list T), a ++ nil = a.
+Proof.
+  induction a; simpl.
+  reflexivity.
+  refine match IHa in _ = X return _ = _ :: X with
+         | eq_refl => eq_refl
+         end.
+Defined.
 
 (** Core Type and Functions **)
 Section hlist.
-  Context {iT : Type}.
-  Variable F : iT -> Type.
+  Polymorphic Universe Ui Uv.
+
+  Context {iT : Type@{Ui}}.
+  Variable F : iT -> Type@{Uv}.
 
   Inductive hlist : list iT -> Type :=
   | Hnil  : hlist nil
@@ -25,11 +44,11 @@ Section hlist.
 
   Definition hlist_hd {a b} (hl : hlist (a :: b)) : F a :=
     match hl in hlist x return match x with
-                                 | nil => unit
-                                 | l :: _ => F l
+                               | nil => unit
+                               | l :: _ => F l
                                end with
-      | Hnil => tt
-      | Hcons _ _ x _ => x
+    | Hnil => tt
+    | Hcons _ _ x _ => x
     end.
 
   Definition hlist_tl {a b} (hl : hlist (a :: b)) : hlist b :=
@@ -55,20 +74,6 @@ Section hlist.
       | Hnil => fun x => x
       | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
     end.
-
-  Lemma app_ass_trans : forall {T} (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
-  Proof.
-    induction a; simpl.
-    reflexivity.
-    intros. f_equal. apply IHa.
-  Defined.
-
-  Lemma app_nil_r_trans : forall {T} (a : list T), a ++ nil = a.
-  Proof.
-    induction a; simpl.
-    reflexivity.
-    f_equal. apply IHa.
-  Defined.
 
   Lemma hlist_app_nil_r
   : forall ls (h : hlist ls),
