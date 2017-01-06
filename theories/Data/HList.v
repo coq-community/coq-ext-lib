@@ -302,43 +302,43 @@ Section hlist.
                   | hlist_eqv_nil => I
                   | hlist_eqv_cons l ls x y h1 h2 pf1 pf2 => _
                 end IHx).
-        simpl.
+        simpl in *.
         subst. intros.
-        f_equal. apply H0. assumption. }
+        f_equal. tauto. }
       { intros; subst. constructor; auto.
         reflexivity. } }
   Qed.
 
   Fixpoint hlist_get ls a (m : member a ls) : hlist ls -> F a :=
     match m in member _ ls return hlist ls -> F a with
-      | MZ _ => hlist_hd
-      | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
+    | MZ _ => hlist_hd
+    | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
     end.
 
   Fixpoint hlist_nth_error {ls} (hs : hlist ls) (n : nat)
-    : option (match nth_error ls n with
-                | None => unit
-                | Some x => F x
-              end) :=
-    match hs in hlist ls return option (match nth_error ls n with
-                                          | None => unit
-                                          | Some x => F x
-                                        end)
+  : option match nth_error ls n with
+           | None => unit
+           | Some x => F x
+           end :=
+    match hs in hlist ls return option match nth_error ls n with
+                                       | None => unit
+                                       | Some x => F x
+                                       end
+    with
+    | Hnil => None
+    | Hcons l ls h hs =>
+      match n as n return option match nth_error (l :: ls) n with
+                                 | None => unit
+                                 | Some x => F x
+                                 end
       with
-      | Hnil => None
-      | Hcons l ls h hs =>
-        match n as n return option (match nth_error (l :: ls) n with
-                                      | None => unit
-                                      | Some x => F x
-                                    end)
-          with
-          | 0 => Some h
-          | S n => hlist_nth_error hs n
-        end
+      | 0 => Some h
+      | S n => hlist_nth_error hs n
+      end
     end.
 
-  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
-    match nth_error ls n return Type with
+  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat)
+  : match nth_error ls n return Type with
       | None => unit
       | Some t => F t
     end :=
@@ -584,9 +584,9 @@ Section hlist.
     match goal with
     | |- context [ match ?X with _ => _ end ] =>
       remember X
-    end. destruct p. simpl.
+    end. destruct p. simpl in *.
     change h0 with (fst (h0, h1)).
-    f_equal.
+    f_equal. assumption.
   Qed.
 
   Lemma hlist_tl_snd_hlist_split
@@ -604,29 +604,29 @@ Section hlist.
     rewrite Heqp. reflexivity.
   Qed.
 
-  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
-    option {t : iT & hlist ls -> F t} :=
+  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls}
+  : option {t : iT & hlist ls -> F t} :=
     match
       ls as ls0
       return option {t : iT & hlist ls0 -> F t}
     with
-      | nil => None
-      | l :: ls0 =>
-        match
-          n as n0
-          return option {t : iT & hlist (l :: ls0) -> F t}
-        with
-          | 0 =>
-            Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
-                          l (@hlist_hd _ _))
-          | S n0 =>
-            match nth_error_get_hlist_nth ls0 n0 with
-              | Some (existT x f) =>
-                Some (@existT _ (fun t => hlist _ -> F t)
-                              x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
-              | None => None
-            end
+    | nil => None
+    | l :: ls0 =>
+      match
+        n as n0
+        return option {t : iT & hlist (l :: ls0) -> F t}
+      with
+      | 0 =>
+        Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
+                      l (@hlist_hd _ _))
+      | S n0 =>
+        match nth_error_get_hlist_nth ls0 n0 with
+        | Some (existT x f) =>
+          Some (@existT _ (fun t => hlist _ -> F t)
+                        x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
+        | None => None
         end
+      end
     end.
 
   Theorem nth_error_get_hlist_nth_Some

@@ -60,5 +60,5 @@ Delimit Scope struct_scope with record.
 
 Notation "{$ x 'with' y ':=' v $}" := (@wrapWith _ _ x y v _ _) : struct_scope.
 
-Implicit Arguments Next [ T U a b ].
-Implicit Arguments Here [ T U a b ].
+Arguments Next { T U a b }.
+Arguments Here { T U a b }.
