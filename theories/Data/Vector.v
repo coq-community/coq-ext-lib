@@ -1,4 +1,6 @@
 Require Import ExtLib.Data.Fin.
+Require Import ExtLib.Data.SigT.
+Require Import ExtLib.Tactics.Injection.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -177,6 +179,39 @@ Section vector_map.
     end.
 End vector_map.
 
+Section vector_facts.
+
+  Lemma ForallV_map {n : nat} {T U: Type} (vs : vector T n) (f : U -> Prop) (g : T -> U) :
+        ForallV f (vector_map g vs) <-> ForallV (fun c => f (g c)) vs.
+  Proof.
+    induction vs.
+    + simpl; split; intros; constructor.
+    + simpl; split; intros H; inversion H; inv_all; subst;
+        (constructor; [|apply IHvs]); assumption.
+  Qed.
+
+  Lemma ForallV_mp {n : nat} {T : Type} (vs : vector T n) (f g : T -> Prop) 
+        (H1 : ForallV f vs) (H2 : ForallV (fun c => f c -> g c) vs) :
+    ForallV g vs.
+  Proof.
+    induction vs; [constructor|].
+    inversion H1; inv_all; subst.
+    inversion H2; inv_all; subst.
+
+    constructor; tauto.
+  Qed.
+
+End vector_facts.
+
 Arguments vector T n.
 Arguments vector_hd {T n} _.
 Arguments vector_tl {T n} _.
+
+Ltac forallVE :=
+  match goal with
+  | H : ForallV ?f ?vs |- _ =>
+    match type of vs with
+    | vector ?T (S ?n) =>
+      inversion H; clear H; inv_all; subst
+    end
+  end.
