@@ -13,6 +13,7 @@ theories/Structures/Applicative.v
 theories/Structures/BinOps.v
 theories/Structures/CoFunctor.v
 theories/Structures/CoMonad.v
+theories/Structures/CoMonadLaws.v
 theories/Structures/EqDep.v
 theories/Structures/Foldable.v
 theories/Structures/FunctorLaws.v
