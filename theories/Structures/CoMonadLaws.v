@@ -7,6 +7,7 @@ Set Strict Implicit.
 Local Open Scope program_scope.
 
 Section CoMonadLaws.
+
   Variable m : Type -> Type.
   Variable C : CoMonad m.
 
