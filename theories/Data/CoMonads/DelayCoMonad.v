@@ -15,9 +15,8 @@ Section Delay.
 
   Global Instance DelayComonad:
     CoMonad (Delay) :=
-    {
-      extract A ma := (undelay ma) tt ;
-      extend A B f ma := delayed (f ma)
-    }.
+    from_extend Delay
+                (fun A ma => undelay ma tt)
+                (fun A B f ma => delayed (f ma)).
 
 End Delay.
