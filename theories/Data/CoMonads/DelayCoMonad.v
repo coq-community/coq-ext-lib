@@ -2,21 +2,20 @@ Require Import ExtLib.Structures.CoMonad.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
+Set Primitive Projections.
 
 Section Delay.
 
-  Inductive Delay (T:Type): Type :=
-    delayed (x:T) : Delay T.
-
-  Definition undelay {T:Type} (d: Delay T): (unit -> T) :=
-    match d with
-      delayed x =>  fun _ => x
-    end.
+  (** The delay comonad delays computation by hiding it behind a unit.
+   ** NOTE: This isn't the same as `lazy` because it will repeat computation.
+   **)
+  Record Delay (T:Type): Type := delayed
+  { unDelay : unit -> T }.
 
   Global Instance DelayComonad:
     CoMonad (Delay) :=
-    from_extend Delay
-                (fun A ma => undelay ma tt)
-                (fun A B f ma => delayed (f ma)).
+  {| extract := fun A ma => ma.(unDelay) tt
+   ; extend := fun A B f ma => delayed (fun _ => f ma)
+   ; duplicate := fun A ma => delayed (fun _ => ma) |}.
 
 End Delay.
