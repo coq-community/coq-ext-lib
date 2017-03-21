@@ -91,6 +91,7 @@ theories/Recur/GenRec.v
 theories/Recur/Measure.v
 theories/Recur/Relation.v
 
+theories/Relations/Equiv.v
 theories/Relations/Compose.v
 theories/Relations/TransitiveClosure.v
 
