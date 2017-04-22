@@ -15,7 +15,7 @@ Section pair.
 
 End pair.
 
-Arguments pprod _ _.
+Arguments pprod _ _ : assert.
 Arguments ppair {_ _} _ _.
 Arguments pfst {_ _} _.
 Arguments psnd {_ _} _.

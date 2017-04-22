@@ -4,7 +4,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Import MonadNotation.
-Open Local Scope monad_scope.
+Local Open Scope monad_scope.
 
 Global Instance Monad_option : Monad option :=
 { ret  := @Some
