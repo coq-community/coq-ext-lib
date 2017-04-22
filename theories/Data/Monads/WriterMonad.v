@@ -91,11 +91,11 @@ Arguments evalWriterT {S} {Monoid_S} {m} {M} {T} _.
 Arguments execWriterT {S} {Monoid_S} {m} {M} {T} _.
 
 Section MapWriterT.
-  Variable A B: Type.
   Variable W W': Type.
   Variable Monoid_W : Monoid W.
   Variable Monoid_W' : Monoid W'.
   Variable m n : Type -> Type.
+  Variable A B: Type.
 
   Open Scope program_scope.
 
@@ -110,10 +110,10 @@ Section MapWriterT.
 End MapWriterT.
 
 Section CastWriterT.
-  Variable A: Type.
   Variable W : Type.
   Variable Monoid_W Monoid_W': Monoid W.
   Variable m : Type -> Type.
+  Variable A: Type.
 
   Open Scope program_scope.
 
@@ -129,8 +129,8 @@ End CastWriterT.
 Section WriterMonad.
 
   Variable W: Type.
-  Variable A: Type.
   Variable Monoid_W : Monoid W.
+  Variable A: Type.
 
   Open Scope program_scope.
 
@@ -142,10 +142,10 @@ Section WriterMonad.
 End WriterMonad.
 
 Section MapWriter.
-  Variable A B: Type.
   Variable W W' : Type.
   Variable Monoid_W: Monoid W.
   Variable Monoid_W': Monoid W'.
+  Variable A B: Type.
 
   Open Scope program_scope.
 
@@ -155,14 +155,14 @@ Section MapWriter.
   Definition mapWriter (f: (pprod A W)%type -> (pprod B W')%type) :
     writer Monoid_W A -> writer Monoid_W' B
     :=
-      mapWriterT B Monoid_W' ident (mkIdent ∘ f ∘ unIdent).
+      mapWriterT Monoid_W' ident B (mkIdent ∘ f ∘ unIdent).
 
 End MapWriter.
 
 Section CastWriter.
-  Variable A: Type.
   Variable W : Type.
   Variable Monoid_W Monoid_W': Monoid W.
+  Variable A: Type.
 
   Open Scope program_scope.
 
