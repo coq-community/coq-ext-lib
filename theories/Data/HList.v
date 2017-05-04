@@ -904,3 +904,29 @@ Theorem hlist_hrel_flip
 Proof.
   induction 1; constructor; auto.
 Qed.
+
+Section hlist_to_list.
+  Variable A B : Type.
+
+  Fixpoint hlist_to_list ls (hl : hlist (fun (_ : A) => B) ls) : list B :=
+    match hl in (hlist _ _ls) return list B with
+    | Hnil => nil
+    | @Hcons _ _ l ls0 hd tl => cons hd (hlist_to_list tl)
+    end.
+
+End hlist_to_list.
+
+Arguments hlist_to_list {_ _ _} _.
+
+(** Maps from a heterogeneous list to a homogeneous list *)
+Section hlist_map_to_list.
+  Variable A B : Type.
+  Variables F : A -> Type.
+  Variable ff : forall x, F x -> B.
+
+  Fixpoint hlist_map_to_list ls (hl : hlist F ls) : list B :=
+    hlist_to_list (hlist_map ff hl).
+
+End hlist_map_to_list.
+
+Arguments hlist_map_to_list {_ _ _} _ {_} _.
