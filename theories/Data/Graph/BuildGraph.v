@@ -1,3 +1,6 @@
+Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Data.Monads.StateMonad.
+
 Set Implicit Arguments.
 Set Strict Implicit.
 
@@ -18,8 +21,6 @@ Arguments addEdge {_} {_} {_} _ _ _.
 
 (** A State Monad simplifies things **)
 Section Monadic.
-  Require Import ExtLib.Structures.Monads.
-  Require Import ExtLib.Data.Monads.StateMonad.
   Variable m : Type -> Type.
   Context {Monad_m : Monad m}.
 

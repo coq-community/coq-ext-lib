@@ -1,5 +1,6 @@
-Require Import RelationClasses.
+Require Import Coq.Classes.RelationClasses.
 Require Import ExtLib.Structures.BinOps.
+Require Import ExtLib.Structures.Monad.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -12,32 +13,30 @@ Class Foldable (T E : Type) : Type :=
 
 Section RedFold.
   Variables T E : Type.
-  
+
   Global Instance Reducible_from_Foldable (R : Foldable T E) : Reducible T E | 100 :=
     fun A base single join =>
       @fold _ _ R A (fun x => join (single x)) base.
 End RedFold.
 
 Section foldM.
-  Require Import ExtLib.Structures.Monad.
   Context {T E : Type}.
   Context {Foldable_te : Foldable T E}.
   Context {m : Type -> Type}.
   Context {Monad_m : Monad m}.
 
   Definition foldM {A} (add : E -> A -> m A) (base : m A) (t : T) : m A :=
-    fold (fun x acc => bind acc (add x)) base t.  
+    fold (fun x acc => bind acc (add x)) base t.
 End foldM.
 
 Section reduceM.
-  Require Import ExtLib.Structures.Monad.
   Context {T E : Type}.
   Context {Reducible_te : Reducible T E}.
   Context {m : Type -> Type}.
   Context {Monad_m : Monad m}.
 
   Definition reduceM {A} (base : m A) (single : E -> m A) (join : A -> A -> m A)  (t : T) : m A :=
-    reduce base single (fun x y => bind x (fun x => bind y (fun y => join x y))) t.  
+    reduce base single (fun x y => bind x (fun x => bind y (fun y => join x y))) t.
 End reduceM.
 
 Section iterM.
@@ -46,8 +45,8 @@ Section iterM.
 
   Context {m : Type -> Type}.
   Context {Monad_m : Monad m}.
-  Context {Red_te : Reducible T E}. 
-  
+  Context {Red_te : Reducible T E}.
+
   Variable f : E -> m unit.
 
   Definition iterM : T -> m unit :=
@@ -60,7 +59,7 @@ Section Laws.
   Context (R : Reducible T E).
 
   Class ReducibleLaw : Prop :=
-    reduce_spec : forall A 
+    reduce_spec : forall A
       (unit : A)
       (single : E -> A)
       (join : A -> A -> A)

@@ -1,8 +1,10 @@
 Require Import Coq.Lists.List.
+Require Coq.Classes.EquivDec.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
+Require ExtLib.Data.Nat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Tactics.Injection.
 
@@ -45,7 +47,6 @@ Section type.
 End type.
 
 Section EqDec.
-  Require EquivDec.
   Variable T : Type.
   Variable EqDec_T : EquivDec.EqDec _ (@eq T).
 
@@ -155,9 +156,9 @@ Global Instance Monad_list : Monad list :=
   List.fold_right (fun x acc => f x ++ acc) nil x
 }.
 
-Section list.
-  Require ExtLib.Data.Nat.
 
+
+Section list.
   Inductive R_list_len {T} : list T -> list T -> Prop :=
   | R_l_len : forall n m, length n < length m -> R_list_len n m.
 

@@ -1,4 +1,5 @@
 Require Import Coq.Bool.Bool.
+Require Import Coq.Classes.RelationClasses.
 Require Coq.Setoids.Setoid.
 
 Set Implicit Arguments.
@@ -69,8 +70,6 @@ Section lemmas.
     destruct b; try reflexivity.
     exfalso. eapply (@rel_dec_correct _ _ _ rc) in Heqb. auto.
   Qed.
-
-  Require Import RelationClasses.
 
   Theorem rel_dec_sym : Symmetric eqt -> forall x y,
     x ?[ eqt ] y = y ?[ eqt ] x.
