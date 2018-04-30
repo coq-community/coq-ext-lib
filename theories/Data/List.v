@@ -1,8 +1,10 @@
 Require Import Coq.Lists.List.
+Require Coq.Classes.EquivDec.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
+Require ExtLib.Data.Nat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Tactics.Injection.
 
@@ -45,7 +47,6 @@ Section type.
 End type.
 
 Section EqDec.
-  Require EquivDec.
   Variable T : Type.
   Variable EqDec_T : EquivDec.EqDec _ (@eq T).
 
@@ -57,6 +58,30 @@ Section EqDec.
     decide equality. eapply EqDec_T.
   Qed.
 End EqDec.
+
+(* Specialized induction rules *)
+Lemma list_ind_singleton
+: forall {T : Type} (P : list T -> Prop)
+         (Hnil : P nil)
+         (Hsingle : forall t, P (t :: nil))
+         (Hcons : forall t u us, P (u :: us) -> P (t :: u :: us)),
+    forall ls, P ls.
+Proof.
+  induction ls; eauto.
+  destruct ls. eauto. eauto.
+Qed.
+
+Lemma list_rev_ind
+  : forall T (P : list T -> Prop),
+    P nil ->
+    (forall l ls, P ls -> P (ls ++ l :: nil)) ->
+    forall ls, P ls.
+Proof.
+  clear. intros. rewrite <- rev_involutive.
+  induction (rev ls).
+  apply H.
+  simpl. auto.
+Qed.
 
 Section AllB.
   Variable T : Type.
@@ -87,6 +112,19 @@ Proof.
     apply IHls. auto. apply IHls. auto. }
 Qed.
 
+Lemma Forall_cons_iff : forall (T : Type) (P : T -> Prop) a b,
+    Forall P (a :: b) <-> (P a /\ Forall P b).
+Proof. clear. split.
+       inversion 1; auto.
+       destruct 1; constructor; auto.
+Qed.
+
+Lemma Forall_nil_iff : forall (T : Type) (P : T -> Prop),
+    Forall P nil <-> True.
+Proof.
+  clear. split; auto.
+Qed.
+
 
 Global Instance Foldable_list {T} : Foldable (list T) T :=
   fun _ f x ls => fold_right f x ls.
@@ -97,12 +135,12 @@ Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Applicative.
 
 Section traversable.
-  Context {F : Type -> Type}.
-  Context {Applicative_F : Applicative F}.
-  Context {A B : Type}.
-  Variable f : A -> F B.
+  Polymorphic Context {F : Type -> Type}.
+  Polymorphic Context {Applicative_F : Applicative F}.
+  Polymorphic Context {A B : Type}.
+  Polymorphic Variable f : A -> F B.
 
-  Fixpoint mapT_list (ls : list A) : F (list B) :=
+  Polymorphic Fixpoint mapT_list (ls : list A) : F (list B) :=
     match ls with
       | nil => pure nil
       | l :: ls => ap (ap (pure (@cons B)) (f l)) (mapT_list ls)
@@ -118,9 +156,9 @@ Global Instance Monad_list : Monad list :=
   List.fold_right (fun x acc => f x ++ acc) nil x
 }.
 
-Section list.
-  Require ExtLib.Data.Nat.
 
+
+Section list.
   Inductive R_list_len {T} : list T -> list T -> Prop :=
   | R_l_len : forall n m, length n < length m -> R_list_len n m.
 
@@ -175,8 +213,10 @@ Section ListEq.
                  consider (rel_dec X Y); intros; subst
                | [ |- context [ rel_dec ?X ?Y ] ] =>
                  consider (rel_dec X Y); intros; subst
-             end; intuition; try congruence.
-    eapply IHx in H0. subst; auto. eapply IHx. inversion H; eauto.
+             end; try solve [ auto | exfalso; clear - H; inversion H ].
+    - f_equal. eapply IHx. eapply H0.
+    - inversion H. subst. eapply IHx. reflexivity.
+    - inversion H. exfalso. eapply H0. assumption.
   Qed.
 
 End ListEq.

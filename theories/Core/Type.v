@@ -5,17 +5,17 @@ Require Import ExtLib.Structures.Proper.
  ** Proper elements are the elements for which the equivalence
  ** relation is reflexive.
  **)
-Class type (T : Type) : Type :=
-{ equal : relation T
+Polymorphic Class type@{t} (T : Type@{t}) : Type :=
+{ equal : T -> T -> Prop
 ; proper : T -> Prop
 }.
 
-Definition type_from_equal {T} (r : relation T) : type T :=
-{| equal := r 
+Polymorphic Definition type_from_equal@{t} {T : Type@{t}} (r : T -> T -> Prop) : type@{t} T :=
+{| equal := r
  ; proper := fun x => r x x
  |}.
 
-Definition type_libniz T : type T :=
+Polymorphic Definition type_libniz@{t} (T : Type@{t}) : type@{t} T :=
 {| equal := @eq T
  ; proper := fun _ => True
  |}.
@@ -23,73 +23,81 @@ Definition type_libniz T : type T :=
 Existing Class proper.
 
 Section type.
-  Context {T : Type}.
-  Variable tT : type T.
-(*  
+  Polymorphic Context {T : Type}.
+  Polymorphic Variable tT : type T.
+(*
   Global Instance Proper_type : Proper T :=
   { proper := fun x => equal x x }.
 *)
-  Class typeOk :=
+  Polymorphic Class typeOk :=
   { only_proper : forall x y, equal x y -> proper x /\ proper y
   ; equiv_prefl :> PReflexive proper equal
   ; equiv_sym :> Symmetric equal
   ; equiv_trans :> Transitive equal
   }.
 
-  Global Instance proper_left :
-    typeOk -> 
+  Global Polymorphic Instance proper_left :
+    typeOk ->
     forall x y : T, equal x y -> proper x.
   Proof.
-    clear. intros. eapply only_proper in H0; intuition.
+    clear. intros.
+    match goal with
+    | H : equal _ _ |- _ => eapply only_proper in H
+    end; intuition.
   Qed.
-  Global Instance proper_right :
-    typeOk -> 
+  Global Polymorphic Instance proper_right :
+    typeOk ->
     forall x y : T, equal x y -> proper y.
   Proof.
-    clear. intros. eapply only_proper in H0; intuition.
+    clear. intros.
+    match goal with
+    | H : equal _ _ |- _ => eapply only_proper in H
+    end; intuition.
   Qed.
 
 End type.
 
-Definition type1 (F : Type -> Type) : Type :=
-  forall T, type T -> type (F T).
 
-Definition type2 (F : Type -> Type -> Type) : Type :=
-  forall T, type T -> forall {U}, type U -> type (F T U).
+Polymorphic Definition type1@{d r z} (F : Type@{d} -> Type@{r}) : Type@{z} :=
+  forall {T:Type@{d}}, type@{d} T -> type@{r} (F T).
 
-Definition type3 (F : Type -> Type -> Type -> Type) : Type :=
-  forall T, type T -> forall {U}, type U -> forall {V}, type V ->  type (F T U V).
+Polymorphic Definition type2@{t u v z} (F : Type@{t} -> Type@{u} -> Type@{v}) : Type@{z} :=
+  forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> type (F T U).
 
-Definition typeOk1 F (tF : type1 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk (tF _ tT).
+Polymorphic Definition type3@{t u v w z} (F : Type@{t} -> Type@{u} -> Type@{v} -> Type@{w}) : Type@{z} :=
+  forall {T:Type@{t}}, type T -> forall {U:Type@{u}}, type U -> forall {V:Type@{w}}, type V ->  type (F T U V).
 
-Definition typeOk2 F (tF : type2 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk1 _ (tF _ tT).
+Polymorphic Definition typeOk1@{d r z} (F : Type@{d} -> Type@{r}) (tF : type1@{d r z} F) : Type@{z} :=
+  forall (T : Type@{d}) tT, @typeOk T tT -> typeOk (tF _ tT).
 
-Definition typeOk3 F (tF : type3 F) : Type :=
-  forall T tT, @typeOk T tT -> typeOk2 _ (tF _ tT).
+Polymorphic Definition typeOk2@{t u v z}
+            (F : Type@{t} -> Type@{u} -> Type@{v}) (tF : type2@{t u v z} F)
+: Type@{z} :=
+  forall (T : Type@{t}) (tT : type@{t} T), @typeOk@{t} T tT -> typeOk1@{u v z} _ (tF _ tT).
+
+Polymorphic Definition typeOk3@{t u v w z} F (tF : type3 F) : Type@{z} :=
+  forall (T : Type@{t}) (tT : type T), @typeOk@{t} T tT -> typeOk2@{u v w z} _ (tF _ tT).
 
 Existing Class type1.
 Existing Class type2.
 Existing Class type3.
 
-Global Instance type_type1 F (tF : type1 F) T (tT : type T) : type (F T) :=
+Global Polymorphic Instance type_type1 F (tF : type1 F) T (tT : type T) : type (F T) :=
   tF _ tT.
 
-Global Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
+Global Polymorphic Instance type1_type2 F (tF : type2 F) T (tT : type T) : type1 (F T) :=
   tF _ tT.
 
-Global Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
+Global Polymorphic Instance type2_type3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
   tF _ tT.
 
-Class Oktype T : Type := 
+Polymorphic Class Oktype T : Type :=
 { the_type :> type T
 ; the_proof :> typeOk the_type
 }.
 
 Coercion the_type : Oktype >-> type.
 
-(*
 Global Instance typeOk_typeOk1 F (tF : type1 F) T (tT : type T) : type (F T) :=
   tF _ tT.
 
@@ -98,7 +106,6 @@ Global Instance typeOk1_typeOk2 F (tF : type2 F) T (tT : type T) : type1 (F T) :
 
 Global Instance typeOk2_typeOk3 F (tF : type3 F) T (tT : type T) : type2 (F T) :=
   tF _ tT.
-*)
 
 
 Section typeOk_from_equal.
@@ -120,7 +127,9 @@ Proof.
   { split; exact I. }
 Qed.
 
-Add Parametric Relation (T : Type) (tT : type T) (tokT : typeOk tT) : T (@equal _ tT) 
+(*
+Add Parametric  Relation (T : Type) (tT : type T) (tokT : typeOk tT) : T (@equal _ tT)
   symmetry proved by (@equiv_sym _ _ _)
   transitivity proved by (@equiv_trans _ _ _)
   as equal_rel.
+*)

@@ -9,7 +9,6 @@ Set Strict Implicit.
  ** for functions
  **)
 
-Global Instance Proper_andb : Proper (@eq bool ==> @eq bool ==> @eq bool) andb.
 Theorem Proper_red : forall T U (rT : relation T) (rU : relation U) (f : T -> U),
   (forall x x', rT x x' -> rU (f x) (f x')) ->
   Proper (rT ==> rU) f.
@@ -28,46 +27,35 @@ Theorem respectful_if_bool T : forall (x x' : bool) (t t' f f' : T) eqT,
 intros; subst; auto; destruct x'; auto.
 Qed.
 
-(*
-Ltac find_inst T F F' :=
-  match goal with
-    | [ H : T F F' |- _ ] => H
-    | [ H : Proper T F |- _ ] =>
-      match F with
-        | F' => H
-      end
-    | [ |- _ ] =>
-      match F with
-        | F' =>
-          let v := constr:(_ : Proper T F) in v
-      end
-  end.
-*)
-
 Ltac derive_morph :=
-repeat (
-  (apply Proper_red; intros) ||
-  (apply respectful_red; intros) ||
-  (apply respectful_if_bool; intros) ||
-  match goal with
-    | [ H : (_ ==> ?EQ)%signature ?F ?F' |- ?EQ (?F _) (?F' _) ] =>
-      apply H
-    | [ |- ?EQ (?F _) (?F _) ] =>
-      let inst := constr:(_ : Proper (_ ==> EQ) F) in
-      apply inst
-    | [ H : (_ ==> _ ==> ?EQ)%signature ?F ?F' |- ?EQ (?F _ _) (?F' _ _) ] =>
-      apply H
-    | [ |- ?EQ (?F _ _) (?F' _ _) ] =>
-      let inst := constr:(_ : Proper (_ ==> _ ==> EQ) F) in
-      apply inst
-    | [ |- ?EQ (?F _ _ _) (?F _ _ _) ] =>
-      let inst := constr:(_ : Proper (_ ==> _ ==> _ ==> EQ) F) in
-      apply inst
-    | [ |- ?EQ (?F _) (?F _) ] => unfold F
-    | [ |- ?EQ (?F _ _) (?F _ _) ] => unfold F
-    | [ |- ?EQ (?F _ _ _) (?F _ _ _) ] => unfold F
-  end).
+repeat
+  first [ lazymatch goal with
+          | |- Proper _ _ => red; intros
+          | |- (_ ==> _)%signature _ _ => red; intros
+          end
+        | apply respectful_red; intros
+        | apply respectful_if_bool; intros
+        | match goal with
+          | [ H : (_ ==> ?EQ)%signature ?F ?F' |- ?EQ (?F _) (?F' _) ] =>
+            apply H
+          | [ |- ?EQ (?F _) (?F _) ] =>
+            let inst := constr:(_ : Proper (_ ==> EQ) F) in
+            apply inst
+          | [ H : (_ ==> _ ==> ?EQ)%signature ?F ?F' |- ?EQ (?F _ _) (?F' _ _) ] =>
+            apply H
+          | [ |- ?EQ (?F _ _) (?F' _ _) ] =>
+            let inst := constr:(_ : Proper (_ ==> _ ==> EQ) F) in
+            apply inst
+          | [ |- ?EQ (?F _ _ _) (?F _ _ _) ] =>
+            let inst := constr:(_ : Proper (_ ==> _ ==> _ ==> EQ) F) in
+            apply inst
+          | [ |- ?EQ (?F _) (?F _) ] => unfold F
+          | [ |- ?EQ (?F _ _) (?F _ _) ] => unfold F
+          | [ |- ?EQ (?F _ _ _) (?F _ _ _) ] => unfold F
+          end ].
 
+
+Global Instance Proper_andb : Proper (@eq bool ==> @eq bool ==> @eq bool) andb.
 derive_morph; auto.
 Qed.
 

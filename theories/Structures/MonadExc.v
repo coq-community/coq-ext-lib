@@ -1,9 +1,9 @@
-Require Import Monad.
+Require Import ExtLib.Structures.Monad.
 
-Set Implicit Arguments.
-Set Maximal Implicit Arguments.
-
-Class MonadExc E (m : Type -> Type) : Type :=
+Class MonadExc (E : Type) (m : Type -> Type) : Type :=
 { raise : forall {T}, E -> m T
 ; catch : forall {T}, m T -> (E -> m T) -> m T
 }.
+
+Arguments raise {E m mE} {_} _ : rename.
+Arguments catch {E m mE} {_} _ _ : rename.

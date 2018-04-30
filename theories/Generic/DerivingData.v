@@ -15,9 +15,9 @@ Fixpoint dataD (T : Type) (X : T -> Type) (d : data X) : Type :=
   match d with
     | Inj _X x => x
     | Get X i => X i
-    | Prod X l r => prod (dataD l) (dataD r)
-    | Sigma X i s => @sigT i (fun v => dataD (s v))
-    | Pi X i s => forall v : i, dataD (s v)
+    | Prod l r => prod (dataD l) (dataD r)
+    | @Sigma _ _ i s => @sigT i (fun v => dataD (s v))
+    | @Pi _ _ i s => forall v : i, dataD (s v)
   end.
 
 (** Example of lists as data **)
@@ -46,9 +46,9 @@ Fixpoint dataP (T : Type) (X : T -> Type) (d : data X) (R : Type) : Type :=
   match d with
     | Inj _X x => x -> R
     | Get X x => X x -> R
-    | Prod X l r => dataP l (dataP r R)
-    | Sigma X i s => forall i, dataP (s i) R
-    | Pi X i s => (forall i, dataD (s i)) -> R
+    | @Prod _ _ l r => dataP l (dataP r R)
+    | @Sigma _ _ i s => forall i, dataP (s i) R
+    | @Pi _ _ i s => (forall i, dataD (s i)) -> R
   end.
 
 Fixpoint dataMatch (T : Type) (X : T -> Type) (d : data X) {struct d} 
@@ -56,19 +56,20 @@ Fixpoint dataMatch (T : Type) (X : T -> Type) (d : data X) {struct d}
     match d as d return forall (R : Type), dataP d R -> dataD d -> R with
       | Inj _ _ => fun _ p => p
       | Get X x => fun _ p => p
-      | Prod X l r => fun _ p v => 
+      | @Prod _ _ l r => fun _ p v => 
         dataMatch r _ (dataMatch l _ p (fst v)) (snd v)
-      | Sigma X i d => fun _ p v => 
+      | @Sigma _ _ i d => fun _ p v => 
         match v with
-          | existT x y => dataMatch (d x) _ (p _) y
+        | existT _ x y => dataMatch (d x) _ (p _) y
         end
-      | Pi X i d => fun _ p v => p v
+      | @Pi _ _ i d => fun _ p v => p v
     end.
 
-
+(* This used to work
 (** You really need a fold! **)
-Fixpoint dataLength {x} (l : list x) : nat :=
+Fixpoint dataLength {x} (l : list x) Z {struct l} : nat :=
   dataMatch (dataList x) _ (fun tag => match tag with
-                                         | true => fun _ => 0
-                                         | false => fun h t => S (dataLength t)
+                                       | true => fun _ => 0
+                                       | false => fun h t => S (Z t) (* (dataLength t) *)
                                        end) (list_to_dataList l).
+*)

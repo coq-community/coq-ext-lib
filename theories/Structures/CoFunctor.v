@@ -4,25 +4,21 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Section functor.
-  Variable F : Type -> Type.
 
-  Class CoFunctor : Type :=
-  { cofmap : forall A B, (B -> A) -> F A -> F B }.
+  Polymorphic Class CoFunctor@{d c} (F : Type@{d} -> Type@{c}) : Type :=
+  { cofmap : forall {A B : Type@{d}}, (B -> A) -> F A -> F B }.
 
-  Definition ID {T : Type} (f : T -> T) : Prop :=
-    forall x, f x = x.
-
-  Class CoPFunctor : Type :=
-  { CoFunP : Type -> Type
-  ; copfmap : forall {A B} {P : CoFunP B}, (B -> A) -> F A -> F B
+  Polymorphic Class CoPFunctor@{d c p} (F : Type@{d} -> Type@{c}) : Type :=
+  { CoFunP : Type@{d} -> Type@{p}
+  ; copfmap : forall {A B : Type@{d}} {P : CoFunP B}, (B -> A) -> F A -> F B
   }.
 
   Existing Class CoFunP.
   Hint Extern 0 (@CoFunP _ _ _) => progress (simpl CoFunP) : typeclass_instances.
 
-  Global Instance CoPFunctor_From_CoFunctor (F : CoFunctor) : CoPFunctor :=
-  { CoFunP := Any
-  ; copfmap := fun _ _ _ f x => cofmap f x
-  }.
+  Polymorphic Definition CoPFunctor_From_CoFunctor@{d c p} (F : Type@{d} -> Type@{c}) (F_ : CoFunctor@{d c} F) : CoPFunctor@{d c p} F :=
+  {| CoFunP := Any@{p}
+   ; copfmap := fun _ _ _ f x => cofmap f x
+   |}.
+  Global Existing Instance CoPFunctor_From_CoFunctor.
 End functor.
-

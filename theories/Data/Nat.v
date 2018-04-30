@@ -29,17 +29,19 @@ Qed.
 Global Instance nat_proper (n : nat) : proper n.
 Proof. exact I. Qed.
 
+Require Coq.Numbers.Natural.Peano.NPeano.
+
 Global Instance RelDec_lt : RelDec lt :=
-{ rel_dec := NPeano.ltb }.
+{ rel_dec := NPeano.Nat.ltb }.
 
 Global Instance RelDec_le : RelDec le :=
-{ rel_dec := NPeano.leb }.
+{ rel_dec := NPeano.Nat.leb }.
 
 Global Instance RelDec_gt : RelDec gt :=
-{ rel_dec := fun x y => NPeano.ltb y x }.
+{ rel_dec := fun x y => NPeano.Nat.ltb y x }.
 
 Global Instance RelDec_ge : RelDec ge :=
-{ rel_dec := fun x y => NPeano.leb y x }.
+{ rel_dec := fun x y => NPeano.Nat.leb y x }.
 
 Global Instance RelDecCorrect_eq : RelDec_Correct RelDec_eq.
 Proof.
@@ -48,24 +50,24 @@ Qed.
 
 Global Instance RelDecCorrect_lt : RelDec_Correct RelDec_lt.
 Proof.
-  constructor; simpl. eapply NPeano.ltb_lt.
+  constructor; simpl. eapply NPeano.Nat.ltb_lt.
 Qed.
 
 Global Instance RelDecCorrect_le : RelDec_Correct RelDec_le.
 Proof.
-  constructor; simpl. eapply NPeano.leb_le.
+  constructor; simpl. eapply NPeano.Nat.leb_le.
 Qed.
 
 Global Instance RelDecCorrect_gt : RelDec_Correct RelDec_gt.
 Proof.
   constructor; simpl. unfold rel_dec; simpl.
-  intros. eapply NPeano.ltb_lt.
+  intros. eapply NPeano.Nat.ltb_lt.
 Qed.
 
 Global Instance RelDecCorrect_ge : RelDec_Correct RelDec_ge.
 Proof.
   constructor; simpl. unfold rel_dec; simpl.
-  intros. eapply NPeano.leb_le.
+  intros. eapply NPeano.Nat.leb_le.
 Qed.
 
 Inductive R_nat_S : nat -> nat -> Prop :=
@@ -105,3 +107,9 @@ Global Instance Injective_S (a b : nat) : Injective (S a = S b) :=
 }.
 abstract (inversion 1; auto).
 Defined.
+
+Definition nat_get_eq (n m : nat) (pf : unit -> n = m) : n = m :=
+  match PeanoNat.Nat.eq_dec n m with
+  | left pf => pf
+  | right bad => match bad (pf tt) with end
+  end.

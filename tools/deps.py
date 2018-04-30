@@ -19,7 +19,6 @@ def gather_deps(files):
         name = f[:-4] # ends in ".v.d"
 
         l = open(f).readlines()
-        assert len(l) == 1
         (_, d) = l[0].split(':')
         deps = [ get_name(x) for x in d.split(' ')
                  if x.strip().endswith('.vo') ]
@@ -39,4 +38,3 @@ def print_dot(deps):
 if __name__ == '__main__':
     deps = gather_deps(sys.argv[1:])
     print_dot(deps)
-    

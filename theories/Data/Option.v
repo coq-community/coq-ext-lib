@@ -32,7 +32,7 @@ Global Instance Traversable_option : Traversable option :=
 |}.
 
 Global Instance Applicative_option : Applicative option :=
-{| pure := Some
+{| pure := @Some
  ; ap := fun _ _ f x =>
            match f , x with
              | Some f , Some x => Some (f x)
@@ -136,6 +136,7 @@ Section type.
 
 End type.
 
+(*
 Global Instance FunctorLaws_option : FunctorLaws Functor_option type_option.
 Proof.
   constructor.
@@ -154,13 +155,18 @@ Proof.
     red. red. inversion 2. constructor.
     constructor. apply H1. assumption. }
 Qed.
+*)
 
 Global Instance Injective_Some (T : Type) (a b : T) : Injective (Some a = Some b) :=
-{ result := a = b }.
-abstract (inversion 1; auto).
-Defined.
+{ result := a = b
+; injection := 
+    fun P : Some a = Some b =>
+      match P with 
+      | eq_refl => eq_refl
+      end
+}.
 
-Require EquivDec.
+Require ExtLib.Core.EquivDec.
 
 Global Instance EqDec_option (T : Type) (EDT : EquivDec.EqDec T (@eq T)) : EquivDec.EqDec (option T) (@eq _).
 Proof.
@@ -209,6 +215,6 @@ Lemma eq_option_eq
           end.
 Proof.
   destruct pf. destruct val; reflexivity.
-Qed.
+Defined.
 
 Hint Rewrite eq_option_eq : eq_rw.

@@ -7,16 +7,37 @@ Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
-Require Import ExtLib.Tactics.Injection.
+Require Import ExtLib.Tactics.
 
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Asymmetric Patterns.
+Set Universe Polymorphism.
+Set Printing Universes.
+
+Lemma app_ass_trans@{X}
+: forall {T : Type@{X} } (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
+Proof.
+  induction a; simpl.
+  reflexivity.
+  intros. destruct (IHa b c). reflexivity.
+Defined.
+
+Lemma app_nil_r_trans : forall {T : Type} (a : list T), a ++ nil = a.
+Proof.
+  induction a; simpl.
+  reflexivity.
+  refine match IHa in _ = X return _ = _ :: X with
+         | eq_refl => eq_refl
+         end.
+Defined.
 
 (** Core Type and Functions **)
 Section hlist.
-  Context {iT : Type}.
-  Variable F : iT -> Type.
+  Polymorphic Universe Ui Uv.
+
+  Context {iT : Type@{Ui}}.
+  Variable F : iT -> Type@{Uv}.
 
   Inductive hlist : list iT -> Type :=
   | Hnil  : hlist nil
@@ -24,11 +45,11 @@ Section hlist.
 
   Definition hlist_hd {a b} (hl : hlist (a :: b)) : F a :=
     match hl in hlist x return match x with
-                                 | nil => unit
-                                 | l :: _ => F l
+                               | nil => unit
+                               | l :: _ => F l
                                end with
-      | Hnil => tt
-      | Hcons _ _ x _ => x
+    | Hnil => tt
+    | Hcons _ _ x _ => x
     end.
 
   Definition hlist_tl {a b} (hl : hlist (a :: b)) : hlist b :=
@@ -42,8 +63,8 @@ Section hlist.
 
   Lemma hlist_eta : forall ls (h : hlist ls),
     h = match ls as ls return hlist ls -> hlist ls with
-          | nil => fun _ => Hnil
-          | a :: b => fun h => Hcons (hlist_hd h) (hlist_tl h)
+        | nil => fun _ => Hnil
+        | a :: b => fun h => Hcons (hlist_hd h) (hlist_tl h)
         end h.
   Proof.
     intros. destruct h; auto.
@@ -51,29 +72,16 @@ Section hlist.
 
   Fixpoint hlist_app ll lr (h : hlist ll) : hlist lr -> hlist (ll ++ lr) :=
     match h in hlist ll return hlist lr -> hlist (ll ++ lr) with
-      | Hnil => fun x => x
-      | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
+    | Hnil => fun x => x
+    | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
     end.
-
-  Lemma app_ass_trans : forall {T} (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
-  Proof.
-    induction a; simpl.
-    reflexivity.
-    intros. f_equal. apply IHa.
-  Defined.
-
-  Lemma app_nil_r_trans : forall {T} (a : list T), a ++ nil = a.
-  Proof.
-    induction a; simpl.
-    reflexivity.
-    f_equal. apply IHa.
-  Defined.
 
   Lemma hlist_app_nil_r
   : forall ls (h : hlist ls),
-      hlist_app h Hnil = match eq_sym (app_nil_r_trans ls) in _ = t return hlist t with
-                           | eq_refl => h
-                         end.
+      hlist_app h Hnil =
+      match eq_sym (app_nil_r_trans ls) in _ = t return hlist t with
+      | eq_refl => h
+      end.
   Proof.
     induction h; simpl; intros; auto.
     rewrite IHh at 1.
@@ -85,11 +93,13 @@ Section hlist.
 
   Fixpoint hlist_rev' ls ls' (h : hlist ls) : hlist ls' -> hlist (rev ls ++ ls') :=
     match h in hlist ls return hlist ls' -> hlist (rev ls ++ ls') with
-      | Hnil => fun h => h
-      | Hcons l ls0 x h' => fun hacc =>
-        match app_ass_trans (rev ls0) (l :: nil) ls' in _ = t return hlist t -> hlist _ with
-          | eq_refl => fun x => x
-        end (@hlist_rev' _ (l :: ls') h' (Hcons x hacc))
+    | Hnil => fun h => h
+    | Hcons l ls0 x h' => fun hacc =>
+      match app_ass_trans (rev ls0) (l :: nil) ls' in _ = t
+            return hlist t -> hlist _
+      with
+      | eq_refl => fun x => x
+      end (@hlist_rev' _ (l :: ls') h' (Hcons x hacc))
     end.
 
   Definition hlist_rev ls (h : hlist ls) : hlist (rev ls) :=
@@ -331,8 +341,8 @@ Section hlist.
         end
     end.
 
-  Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
-    match nth_error ls n with
+  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+    match nth_error ls n return Type with
       | None => unit
       | Some t => F t
     end :=
@@ -401,23 +411,24 @@ Section hlist.
     hlist_nth (hlist_app h h') n =
     match nth_error l n as k
       return nth_error l n = k ->
-      match nth_error (l ++ l') n with
+      match nth_error (l ++ l') n return Type with
         | None => unit
         | Some t => F t
       end
-      with
+    with
       | Some _ => fun pf =>
-        match cast1 _ _ _ pf in _ = z ,
+        match
+          cast1 _ _ _ pf in _ = z ,
           eq_sym pf in _ = w
-          return match w with
+          return match w return Type with
                    | None => unit
                    | Some t => F t
                  end ->
-          match z with
-            | None => unit
-            | Some t => F t
-          end
-          with
+                 match z return Type with
+                   | None => unit
+                   | Some t => F t
+                 end
+        with
           | eq_refl , eq_refl => fun x => x
         end (hlist_nth h n)
       | None => fun pf =>
@@ -426,7 +437,7 @@ Section hlist.
                    | Some t => F t
                    | None => unit
                  end
-          with
+        with
           | eq_refl => hlist_nth h' (n - length l)
         end
     end eq_refl.
@@ -460,17 +471,15 @@ Section hlist.
         { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
           clear. compute; auto. }
         { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          simpl in H. inversion H; clear H; subst.
-          inv_all; repeat match goal with
-                            | [ H : exists x, _ |- _ ] => destruct H
-                          end; subst. simpl.
-          eapply IHls in H7. eapply only_proper in H3; auto.
-          destruct x3. destruct x4. destruct x2. destruct x1.
-          intuition. } }
+          simpl in H.
+          inv_all. eapply IHls in H1.
+          eapply only_proper in H0; eauto.
+          simpl; tauto. } }
       { intro. induction ls; simpl.
         { rewrite (hlist_eta x); intros; constructor. }
         { rewrite (hlist_eta x); intros; intuition; constructor.
-          eapply preflexive; eauto with typeclass_instances.
+          eapply preflexive; [ | eauto with typeclass_instances ].
+          eauto with typeclass_instances.
           eapply IHls; eauto. } }
       { red. induction 1.
         { constructor. }
@@ -581,7 +590,7 @@ Section hlist.
       remember X
     end. destruct p. simpl.
     change h0 with (fst (h0, h1)).
-    f_equal. assumption.
+    f_equal; trivial.
   Qed.
 
   Lemma hlist_tl_snd_hlist_split
@@ -597,6 +606,139 @@ Section hlist.
     simpl.
     change h1 with (snd (h0, h1)).
     rewrite Heqp. reflexivity.
+  Qed.
+
+  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
+    option {t : iT & hlist ls -> F t} :=
+    match
+      ls as ls0
+      return option {t : iT & hlist ls0 -> F t}
+    with
+      | nil => None
+      | l :: ls0 =>
+        match
+          n as n0
+          return option {t : iT & hlist (l :: ls0) -> F t}
+        with
+          | 0 =>
+            Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
+                          l (@hlist_hd _ _))
+          | S n0 =>
+            match nth_error_get_hlist_nth ls0 n0 with
+              | Some (existT x f) =>
+                Some (@existT _ (fun t => hlist _ -> F t)
+                              x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
+              | None => None
+            end
+        end
+    end.
+
+  Theorem nth_error_get_hlist_nth_Some
+    : forall ls n s,
+      nth_error_get_hlist_nth ls n = Some s ->
+      exists pf : nth_error ls n = Some (projT1 s),
+      forall h, projT2 s h = match pf in _ = t
+                                   return match t return Type with
+                                            | Some t => F t
+                                            | None => unit
+                                          end
+                             with
+                               | eq_refl => hlist_nth h n
+                             end.
+  Proof.
+    induction ls; simpl; intros; try congruence.
+    { destruct n.
+      { inv_all; subst; simpl.
+        exists (eq_refl).
+        intros. rewrite (hlist_eta h). reflexivity. }
+      { forward. inv_all; subst.
+        destruct (IHls _ _ H0); clear IHls.
+        simpl in *. exists x0.
+        intros.
+        rewrite (hlist_eta h). simpl. auto. } }
+  Qed.
+
+  Theorem nth_error_get_hlist_nth_None
+  : forall ls n,
+      nth_error_get_hlist_nth ls n = None <->
+      nth_error ls n = None.
+  Proof.
+    induction ls; simpl; intros; try congruence.
+    { destruct n; intuition. }
+    { destruct n; simpl; try solve [ intuition congruence ].
+      specialize (IHls n). forward. }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_weaken
+  : forall ls ls' n x,
+      nth_error_get_hlist_nth ls n = Some x ->
+      exists z,
+        nth_error_get_hlist_nth (ls ++ ls') n =
+        Some (@existT iT (fun t => hlist (ls ++ ls') -> F t) (projT1 x) z)
+        /\ forall h h', projT2 x h = z (hlist_app h h').
+  Proof.
+    intros ls ls'. revert ls.
+    induction ls; simpl; intros; try congruence.
+    { destruct n; inv_all; subst.
+      { simpl. eexists; split; eauto.
+        intros. rewrite (hlist_eta h). reflexivity. }
+      { forward. inv_all; subst. simpl.
+        apply IHls in H0. forward_reason.
+        rewrite H. eexists; split; eauto.
+        intros. rewrite (hlist_eta h). simpl in *.
+        auto. } }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_appL
+  : forall tvs' tvs n,
+      n < length tvs ->
+      exists x,
+        nth_error_get_hlist_nth (tvs ++ tvs') n = Some x /\
+        exists y,
+          nth_error_get_hlist_nth tvs n = Some (@existT _ _ (projT1 x) y) /\
+          forall vs vs',
+            (projT2 x) (hlist_app vs vs') = y vs.
+  Proof.
+    clear. induction tvs; simpl; intros.
+    { exfalso; inversion H. }
+    { destruct n.
+      { clear H IHtvs.
+        eexists; split; eauto. eexists; split; eauto.
+        simpl. intros. rewrite (hlist_eta vs). reflexivity. }
+      { apply Lt.lt_S_n in H.
+        { specialize (IHtvs _ H).
+          forward_reason.
+          rewrite H0. rewrite H1.
+          forward. subst. simpl in *.
+          eexists; split; eauto.
+          eexists; split; eauto. simpl.
+          intros. rewrite (hlist_eta vs). simpl. auto. } } }
+  Qed.
+
+  Lemma nth_error_get_hlist_nth_appR
+  : forall tvs' tvs n x,
+      n >= length tvs ->
+      nth_error_get_hlist_nth (tvs ++ tvs') n = Some x ->
+      exists y,
+        nth_error_get_hlist_nth tvs' (n - length tvs) = Some (@existT _ _ (projT1 x) y) /\
+        forall vs vs',
+          (projT2 x) (hlist_app vs vs') = y vs'.
+  Proof.
+    clear. induction tvs; simpl; intros.
+    { rewrite <- Minus.minus_n_O.
+      rewrite H0. destruct x. simpl.
+      eexists; split; eauto. intros.
+      rewrite (hlist_eta vs). reflexivity. }
+    { destruct n.
+      { inversion H. }
+      { assert (n >= length tvs) by (eapply le_S_n; eassumption). clear H.
+        { forward. inv_all; subst. simpl in *.
+          specialize (IHtvs _ _ H1 H0).
+          simpl in *.
+          forward_reason.
+          rewrite H.
+          eexists; split; eauto.
+          intros. rewrite (hlist_eta vs). simpl. auto. } } }
   Qed.
 
 End hlist.
@@ -620,7 +762,50 @@ Section hlist_map.
         Hcons (ff hd) (hlist_map tl)
     end.
 
+  Theorem hlist_app_hlist_map
+    : forall ls ls' (a : hlist F ls) (b : hlist F ls'),
+      hlist_map (hlist_app a b) =
+      hlist_app (hlist_map a) (hlist_map b).
+  Proof.
+    induction a. simpl; auto.
+    simpl. intros. f_equal. auto.
+  Qed.
+
 End hlist_map.
+
+Arguments hlist_map {_ _ _} _ {_} _.
+
+
+Section hlist_map_rules.
+  Variable A : Type.
+  Variables F G G' : A -> Type.
+  Variable ff : forall x, F x -> G x.
+  Variable gg : forall x, G x -> G' x.
+
+  Theorem hlist_map_hlist_map : forall ls (hl : hlist F ls),
+      hlist_map gg (hlist_map ff hl) = hlist_map (fun _ x => gg (ff x)) hl.
+  Proof.
+    induction hl; simpl; f_equal. assumption.
+  Defined.
+
+  Theorem hlist_get_hlist_map : forall ls t (hl : hlist F ls) (m : member t ls),
+      hlist_get m (hlist_map ff hl) = ff (hlist_get m hl).
+  Proof.
+    induction m; simpl.
+    { rewrite (hlist_eta hl). reflexivity. }
+    { rewrite (hlist_eta hl). simpl. auto. }
+  Defined.
+
+  Lemma hlist_map_ext : forall (ff gg : forall x, F x -> G x),
+      (forall x t, ff x t = gg x t) ->
+      forall ls (hl : hlist F ls),
+        hlist_map ff hl = hlist_map gg hl.
+  Proof.
+    induction hl; simpl; auto.
+    intros. f_equal; auto.
+  Defined.
+
+End hlist_map_rules.
 
 Lemma equiv_hlist_map
 : forall T U (F : T -> Type) (R : forall t, F t -> F t -> Prop)
@@ -629,14 +814,12 @@ Lemma equiv_hlist_map
     (forall t (x y : F t), R t x y -> R' t (f t x) (g t y)) ->
     forall  ls (a b : hlist F ls),
       equiv_hlist R a b ->
-      equiv_hlist R' (hlist_map _ f a) (hlist_map _ g b).
+      equiv_hlist R' (hlist_map f a) (hlist_map g b).
 Proof.
   clear. induction 2; simpl; intros.
   - constructor.
   - constructor; eauto.
 Qed.
-
-Arguments hlist_map {_ _ _} _ {_} _.
 
 (** Heterogeneous Relations **)
 Section hlist_rel.

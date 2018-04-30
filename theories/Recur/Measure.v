@@ -1,4 +1,5 @@
 Require Import Coq.Classes.RelationClasses.
+Require Coq.Arith.Wf_nat.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -25,7 +26,6 @@ End parametric.
 
 (** A well-founded relation induced by a measure to nat **)
 Section measure.
-  Require Coq.Arith.Wf_nat.
   Context {T : Type}.
   Variable m : T -> nat.
 

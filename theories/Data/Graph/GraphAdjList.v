@@ -1,13 +1,14 @@
-Require Import List.
-Require Import ExtLib.Data.Graph.Graph.
-Require Import ExtLib.Data.Graph.BuildGraph.
-Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Data.Monads.WriterMonad.
-Require Import ExtLib.Data.Monads.IdentityMonad.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
+Require Import ExtLib.Structures.Maps.
+Require Import ExtLib.Data.List.
+Require Import ExtLib.Data.PPair.
+Require Import ExtLib.Data.Monads.WriterMonad.
+Require Import ExtLib.Data.Monads.IdentityMonad.
+Require Import ExtLib.Data.Graph.Graph.
+Require Import ExtLib.Data.Graph.BuildGraph.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -22,10 +23,10 @@ Section GraphImpl.
   Definition adj_graph : Type := map.
 
   Definition verts (g : adj_graph) : list V :=
-    let c := foldM (m := writerT (Monoid_list_app) ident) 
+    let c := foldM (m := writerT (Monoid_list_app) ident)
       (fun k_v _ => let k := fst k_v in tell (k :: nil)) (ret tt) g
     in
-    snd (unIdent (runWriterT c)).
+    psnd (unIdent (runWriterT c)).
 
   Definition succs (g : adj_graph) (v : V) : list V :=
     match lookup v g with
@@ -43,12 +44,12 @@ Section GraphImpl.
 
   (** TODO: Move this **)
   Fixpoint list_in_dec v (ls : list V) : bool :=
-      match ls with
-        | nil => false
-        | l :: ls =>
-          if eq_dec l v then true
-          else list_in_dec v ls
-      end.
+    match ls with
+    | nil => false
+    | l :: ls =>
+      if eq_dec l v then true
+      else list_in_dec v ls
+    end.
 
   Definition add_edge (f t : V) (g : adj_graph) : adj_graph :=
     match lookup f g with
@@ -66,4 +67,3 @@ Section GraphImpl.
   }.
 
 End GraphImpl.
-

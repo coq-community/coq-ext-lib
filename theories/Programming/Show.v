@@ -1,3 +1,5 @@
+Require Coq.Strings.Ascii.
+Require Coq.Strings.String.
 Require Import Coq.Strings.String.
 Require Import Coq.Program.Wf.
 Require Import Coq.PArith.BinPos.
@@ -13,11 +15,15 @@ Require Import ExtLib.Core.RelDec.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition showM : Type :=
-  forall m, Injection ascii m -> Monoid m -> m.
+Set Printing Universes.
 
-Class ShowScheme (T : Type) : Type :=
-{ show_mon : Monoid T
+Universe Ushow.
+
+Polymorphic Definition showM@{T} : Type@{Ushow} :=
+  forall m : Type@{T}, Injection ascii m -> Monoid m -> m.
+
+Polymorphic Class ShowScheme@{t} (T : Type@{t}) : Type :=
+{ show_mon : Monoid@{t} T
 ; show_inj : Injection ascii T
 }.
 
@@ -31,22 +37,23 @@ Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
 ; show_inj := String
 }.
 
-Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
+Polymorphic Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
   m _ show_inj show_mon.
 
-Class Show T := show : T -> showM.
+Polymorphic Class Show@{t m} (T : Type@{t}) : Type :=
+  show : T -> showM@{m}.
 
-Definition to_string {T} {M : Show T} (v : T) : string :=
+Polymorphic Definition to_string {T} {M : Show T} (v : T) : string :=
   runShow (show v) ""%string.
 
-Definition empty : showM :=
+Polymorphic Definition empty : showM :=
   fun _ _ m => monoid_unit m.
-Definition cat (a b : showM) : showM :=
+Polymorphic Definition cat (a b : showM) : showM :=
   fun _ i m => monoid_plus m (a _ i m) (b _ i m).
-Global Instance Injection_ascii_showM : Injection ascii showM :=
+Global Polymorphic Instance Injection_ascii_showM : Injection ascii showM :=
   fun v => fun _ i _ => i v.
 
-Fixpoint show_exact (s : string) : showM :=
+Polymorphic Fixpoint show_exact (s : string) : showM :=
   match s with
     | EmptyString => empty
     | String a s' => cat (inject a) (show_exact s')
@@ -61,67 +68,19 @@ Module ShowNotation.
   Coercion _inject_char : ascii >-> showM.
 End ShowNotation.
 
-Definition indent (indent : showM) (v : showM) : showM :=
+Polymorphic Definition indent (indent : showM) (v : showM) : showM :=
   let nl := Ascii.ascii_of_nat 10 in
     fun _ inj mon =>
       v _ (fun a => if eq_dec a nl
          then monoid_plus mon (inj a) (indent _ inj mon)
          else inj a) mon.
 
-Section hiding_notation.
+Section sepBy.
   Import ShowNotation.
   Local Open Scope show_scope.
-  Require Import Ascii.
-  Require Import String.
 
-Global Instance unit_Show : Show unit :=
-  { show u := "tt"%string }.
-Global Instance bool_Show : Show bool :=
-  { show b := if b then "true"%string else "false"%string }.
-Global Instance ascii_Show : Show ascii :=
-  fun a =>  "'"%char << a << "'"%char.
-Global Instance string_Show : Show string :=
-  { show s := """"%char << s << """"%char }.
-
-Program Fixpoint nat_show (n:nat) {measure n} : showM :=
-  if Compare_dec.le_gt_dec n 9 then
-    inject (Char.digit2ascii n)
-  else
-    let n' := NPeano.div n 10 in
-    (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
-Next Obligation.
-  assert (NPeano.div n 10 < n) ; eauto.
-  eapply NPeano.Nat.div_lt.
-  inversion H; apply Lt.lt_O_Sn.
-  repeat constructor.
-Defined.
-Global Instance nat_Show : Show nat := { show := nat_show }.
-
-Global Instance Show_positive : Show positive :=
-  fun x => nat_show (Pos.to_nat x).
-
-Global Instance Show_Z : Show Z :=
-  fun x =>
-    match x with
-      | Z0 => "0"%char
-      | Zpos p => show p
-      | Zneg p => "-"%char << show p
-    end.
-
-Section pair_Show.
-  Context {A B} {AS:Show A} {BS:Show B}.
-  Global Instance pair_Show : Show (A*B) :=
-    { show p :=
-        let (a,b) := p in
-        "("%char << show a << ","%char << show b << ")"%char
-    }.
-End pair_Show.
-
-Section sepBy.
-  Variable T : Type.
-  Context {F : Foldable T showM}.
-
-  Definition sepBy (sep : showM) (ls : T) : showM :=
+  Polymorphic Definition sepBy {T : Type}
+              {F : Foldable T showM} (sep : showM) (ls : T) : showM :=
     match
       fold (fun s acc =>
         match acc with
@@ -135,11 +94,13 @@ Section sepBy.
 End sepBy.
 
 Section sepBy_f.
-  Variable T E : Type.
-  Context {F : Foldable T E}.
-  Variable (f : E -> showM).
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Polymorphic Variables (T : Type) (E : Type).
+  Polymorphic Context {F : Foldable T E}.
+  Polymorphic Variable (f : E -> showM).
 
-  Definition sepBy_f (sep : showM) (ls : T) : showM :=
+  Polymorphic Definition sepBy_f (sep : showM) (ls : T) : showM :=
     match
       fold (fun s acc =>
         match acc with
@@ -152,13 +113,17 @@ Section sepBy_f.
     end.
 End sepBy_f.
 
-Definition wrap (before after : showM) (x : showM) : showM :=
-  before << x << after.
+Polymorphic Definition wrap (before after : showM) (x : showM) : showM :=
+  cat before (cat x after).
 
 Section sum_Show.
-  Context {A B} {AS:Show A} {BS:Show B}.
-  Global Instance sum_Show : Show (A+B) :=
-    { show s :=
+  Import ShowNotation.
+  Local Open Scope show_scope.
+
+  Polymorphic Definition sum_Show@{a m}
+              {A : Type@{a}} {B : Type@{a}} {AS:Show@{a m} A} {BS:Show@{a m} B}
+  : Show@{a m} (A+B) :=
+    fun s =>
         let (tag, payload) :=
           match s with
           | inl a => (show_exact "inl"%string, show a)
@@ -169,30 +134,78 @@ Section sum_Show.
         tag <<
         " "%char <<
         payload <<
-        ")"%char
-    }.
+        ")"%char.
+
 End sum_Show.
 
 Section foldable_Show.
-  Require Import ExtLib.Structures.Reducible.
-  Context {A B} {F : Foldable B A} {BS : Show A}.
+  Polymorphic Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
 
-  Global Instance foldable_Show : Show B :=
-    { show s := sepBy_f show ", "%string s }.
+  Global Polymorphic  Instance foldable_Show : Show B :=
+    { show s := sepBy_f show (show_exact ", "%string) s }.
 
 End foldable_Show.
 
-End hiding_notation.
-
-Fixpoint iter_show (ss : list showM) : showM :=
+Polymorphic Fixpoint iter_show (ss : list showM) : showM :=
   match ss with
     | nil => empty
     | cons s ss => cat s (iter_show ss)
   end.
 
+Section hiding_notation.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Import Ascii.
+  Import String.
+
+  Global Instance unit_Show : Show unit :=
+  { show u := "tt"%string }.
+  Global Instance bool_Show : Show bool :=
+  { show b := if b then "true"%string else "false"%string }.
+  Global Instance ascii_Show : Show ascii :=
+    fun a =>  "'"%char << a << "'"%char.
+  Global Instance string_Show : Show string :=
+  { show s := """"%char << s << """"%char }.
+
+  Program Fixpoint nat_show (n:nat) {measure n} : showM :=
+    if Compare_dec.le_gt_dec n 9 then
+      inject (Char.digit2ascii n)
+    else
+      let n' := NPeano.Nat.div n 10 in
+      (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
+  Next Obligation.
+    assert (NPeano.Nat.div n 10 < n) ; eauto.
+    eapply NPeano.Nat.div_lt.
+    inversion H; apply Lt.lt_O_Sn.
+    repeat constructor.
+  Defined.
+  Global Instance nat_Show : Show nat := { show := nat_show }.
+
+  Global Instance Show_positive : Show positive :=
+    fun x => nat_show (Pos.to_nat x).
+
+  Global Instance Show_Z : Show Z :=
+    fun x =>
+      match x with
+      | Z0 => "0"%char
+      | Zpos p => show p
+      | Zneg p => "-"%char << show p
+      end.
+
+  Section pair_Show.
+    Polymorphic Definition pair_Show@{a m}
+                {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
+    : Show (A*B) :=
+      fun p =>
+        let (a,b) := p in
+        "("%char << show a << ","%char << show b << ")"%char.
+  End pair_Show.
+End hiding_notation.
+
+
 
 (*
 Examples:
 Eval compute in (runShow (show (42,"foo"%string)) : string).
-Eval compute in (runShow (show (inl true : bool+string))
+Eval compute in (runShow (show (inl true : bool+string))).
 *)

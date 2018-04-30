@@ -5,7 +5,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 Import MonadNotation.
-Open Local Scope monad_scope.
+Local Open Scope monad_scope.
 
 Section except.
   Variable T : Type.
@@ -95,11 +95,11 @@ Section except.
     match x with
       | inl s => ret (inl s)
       | inr (a,f) => pass (ret (inr a, f))
-    end)    
+    end)
   }.
 
   Global Instance MonadFix_eitherT (MF : MonadFix m) : MonadFix eitherT :=
-  { mfix := fun _ _ r v => 
+  { mfix := fun _ _ r v =>
     mkEitherT (mfix (fun f x => unEitherT (r (fun x => mkEitherT (f x)) x)) v)
   }.
 

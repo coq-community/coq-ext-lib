@@ -1,4 +1,5 @@
 Require Import Coq.Classes.RelationClasses.
+Require Import Coq.Setoids.Setoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -9,9 +10,9 @@ Section parametric.
   Variable R : T -> T -> Prop.
 
   (** Reflexivity **)
-  Inductive makeRefl : T -> T -> Prop :=
-  | RRefl : forall x, makeRefl x x
-  | RStep : forall x y, R x y -> makeRefl x y.
+  Inductive makeRefl (x : T) : T -> Prop :=
+  | RRefl : makeRefl x x
+  | RStep : forall y, R x y -> makeRefl x y.
 
   Global Instance Refl_makeRefl : Reflexive makeRefl.
   Proof.
@@ -26,9 +27,9 @@ Section parametric.
   Qed.
 
   (** Transitivity **)
-  Inductive makeTrans : T -> T -> Prop :=
-  | TStep : forall x y, R x y -> makeTrans x y
-  | TTrans : forall x y z, makeTrans x y -> makeTrans y z -> makeTrans x z.
+  Inductive makeTrans (x y : T) : Prop :=
+  | TStep : R x y -> makeTrans x y
+  | TTrans : forall z, makeTrans x z -> makeTrans z y -> makeTrans x y.
 
   Global Instance Trans_makeTrans : Transitive makeTrans.
   Proof.
@@ -40,26 +41,26 @@ Section parametric.
     intro. intro. apply TStep. reflexivity.
   Qed.
 
-  Inductive leftTrans : T -> T -> Prop :=
-  | LTFin : forall x y, R x y -> leftTrans x y
-  | LTStep : forall x y z, R x y -> leftTrans y z -> leftTrans x z.
+  Inductive leftTrans (x y : T) : Prop :=
+  | LTFin : R x y -> leftTrans x y
+  | LTStep : forall z, R x z -> leftTrans z y -> leftTrans x y.
 
-  Inductive rightTrans : T -> T -> Prop :=
-  | RTFin : forall x y, R x y -> rightTrans x y
-  | RTStep : forall x y z, rightTrans x y -> R y z -> rightTrans x z.
+  Inductive rightTrans (x y : T) : Prop :=
+  | RTFin : R x y -> rightTrans x y
+  | RTStep : forall z, rightTrans x z -> R z y -> rightTrans x y.
 
   (** Equivalence of definitions of transitivity **)
   Fixpoint leftTrans_rightTrans_acc x y (l : leftTrans y x) : forall z, rightTrans z y -> rightTrans z x :=
-    match l in leftTrans y x return forall z, rightTrans z y -> rightTrans z x with
-      | LTFin _ _ pf => fun z pfR => RTStep pfR pf
-      | LTStep _ _ _ pf pfL => fun z pfR =>
+    match l with
+      | LTFin pf => fun z pfR => RTStep pfR pf
+      | LTStep _ pf pfL => fun z pfR =>
         leftTrans_rightTrans_acc pfL (RTStep pfR pf)
     end.
 
   Fixpoint rightTrans_leftTrans_acc x y (l : rightTrans x y) : forall z, leftTrans y z -> leftTrans x z :=
-    match l in rightTrans x y return forall z, leftTrans y z -> leftTrans x z with
-      | RTFin _ _ pf => fun z pfR => LTStep pf pfR
-      | RTStep _ _ _ pf pfL => fun z pfR =>
+    match l with
+      | RTFin pf => fun z pfR => LTStep pf pfR
+      | RTStep _ pf pfL => fun z pfR =>
         rightTrans_leftTrans_acc pf (LTStep pfL pfR)
     end.
 
@@ -74,16 +75,16 @@ Section parametric.
   Qed.
 
   Fixpoint leftTrans_makeTrans_acc x y (l : leftTrans x y) : makeTrans x y :=
-    match l in leftTrans x y return makeTrans x y with
-      | LTFin _ _ pf => TStep pf
-      | LTStep _ _ _ pf pfL =>
+    match l with
+      | LTFin pf => TStep pf
+      | LTStep _ pf pfL =>
         TTrans (TStep pf) (leftTrans_makeTrans_acc pfL)
     end.
 
   Fixpoint leftTrans_trans x y (l : leftTrans x y) : forall z (r : leftTrans y z), leftTrans x z :=
-    match l in leftTrans x y return forall z (r : leftTrans y z), leftTrans x z with
-      | LTFin _ _ pf => fun _ pfL => LTStep pf pfL
-      | LTStep _ _ _ pf pfL => fun _ pfR => LTStep pf (leftTrans_trans pfL pfR)
+    match l with
+      | LTFin pf => fun _ pfL => LTStep pf pfL
+      | LTStep _ pf pfL => fun _ pfR => LTStep pf (leftTrans_trans pfL pfR)
     end.
 
   Theorem makeTrans_leftTrans : forall s s',

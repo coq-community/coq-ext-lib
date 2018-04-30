@@ -16,7 +16,7 @@ Lemma eq_sym_eq
     end val.
 Proof.
   destruct pf. reflexivity.
-Qed.
+Defined.
 
 Lemma match_eq_sym_eq
 : forall T (a b : T) (pf : a = b) F X,
@@ -27,7 +27,7 @@ Lemma match_eq_sym_eq
     end = X.
 Proof.
   destruct pf. reflexivity.
-Qed.
+Defined.
 Hint Rewrite match_eq_sym_eq : eq_rw.
 
 Lemma match_eq_sym_eq'
@@ -39,7 +39,7 @@ Lemma match_eq_sym_eq'
     end = X.
 Proof.
   destruct pf. reflexivity.
-Qed.
+Defined.
 Hint Rewrite match_eq_sym_eq' : eq_rw.
 
 
@@ -54,7 +54,7 @@ Lemma match_eq_match_eq
     end.
 Proof.
   intros. subst. auto.
-Qed.
+Defined.
 
 Lemma eq_sym_eq_trans
 : forall T (a b c : T) (pf : a = b) (pf' : b = c),
@@ -62,7 +62,7 @@ Lemma eq_sym_eq_trans
     eq_trans (eq_sym pf') (eq_sym pf).
 Proof.
   clear. destruct pf. destruct pf'. reflexivity.
-Qed.
+Defined.
 
 (** Particular Instances **)
 Lemma eq_Const_eq
@@ -72,7 +72,7 @@ Lemma eq_Const_eq
     end = val.
 Proof.
   destruct pf. reflexivity.
-Qed.
+Defined.
 Hint Rewrite eq_Const_eq : eq_rw.
 
 Lemma eq_Arr_eq
@@ -87,10 +87,20 @@ Lemma eq_Arr_eq
     end.
 Proof.
   destruct pf. reflexivity.
-Qed.
+Defined.
 Hint Rewrite eq_Arr_eq : eq_rw.
 
 Lemma eq_sym_eq_sym : forall (T : Type) (a b : T) (pf : a = b),
                         eq_sym (eq_sym pf) = pf.
-Proof. destruct pf. reflexivity. Qed.
+Proof. destruct pf. reflexivity. Defined.
 Hint Rewrite eq_sym_eq_sym : eq_rw.
+
+Ltac autorewrite_eq_rw :=
+  repeat progress (autorewrite with eq_rw;
+                   repeat match goal with
+                            | |- context [ match ?X in @eq _ _ _ return _ -> _ with
+                                             | eq_refl => _
+                                           end ] => rewrite (eq_Arr_eq X)
+                          end).
+
+Require Export ExtLib.Data.Eq.UIP_trans.

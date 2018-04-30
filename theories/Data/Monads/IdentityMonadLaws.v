@@ -10,6 +10,7 @@ Require Import ExtLib.Data.Monads.IdentityMonad.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(*
 Section with_T.
   Context {T : Type} (e : type T).
 
@@ -62,3 +63,4 @@ Proof.
   { simpl; intros. red. solve_equal. }
   { unfold bind, Monad_ident. do 6 red; intros. solve_equal. }
 Qed.
+*)

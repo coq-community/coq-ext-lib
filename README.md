@@ -5,9 +5,10 @@ A collection of theories and plugins that may be useful in other Coq development
 
 Ideas
 -----
+- Embrace new features, e.g. universe polymorphism, primitive projections, etc.
 - Use modules for controlling namespaces.
-- Avoid functors in favor of type classes since type classes are more flexible
-  b/c they are first-class.
+- Use first-class abstractions where appropriate, e.g. type classes, canonical structures, etc.
+  - The library is mostly built around type clases
 - Notations should be hidden by modules that are explicitly opened.
   - This avoids clashes between precedence.
   - TB: Actually, this does not completely avoid clashes, if we have to open two modules at the same time (for instance, I often need to open Equality, to get dependent destruction, which conflicts with the rest of my development)
@@ -19,8 +20,6 @@ Ideas
 
 File Structure
 --------------
-* plugins/
-  - Base directory to the provided plugins
 * theories/
   - Base directory to the provided theories
 

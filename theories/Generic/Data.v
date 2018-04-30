@@ -10,7 +10,7 @@ Set Strict Implicit.
 Fixpoint hlist_to_tuple ps (h : hlist (fun x : Type => x) ps) : asTuple ps :=
   match h in hlist _ ps return asTuple ps with
     | Hnil => tt
-    | Hcons _ _ x h => (x,hlist_to_tuple h)
+    | Hcons x h => (x,hlist_to_tuple h)
   end.
 
 Inductive itype (ps : list Type) : Type :=
@@ -31,16 +31,16 @@ Section denote.
   Fixpoint itypeD (i : itype ps) {struct i}
   : asFunc ps Type -> asFunc ps Type :=
     match i return asFunc ps Type -> asFunc ps Type with
-      | Get T pf f => fun F => @get ps _ _ pf (fun x => itypeD (f x) F)
-      | Inj T => fun _ => const T
+      | Get pf f => fun F => @get ps _ _ pf (fun x => itypeD (f x) F)
+      | Inj _ T => fun _ => const T
       | Rec h => fun F => const (applyF F (hlist_to_tuple h))
-      | Sig t f => fun F =>
+      | @Sig _ t f => fun F =>
                      @under _ _ (fun App => @sigT t (fun x' => App _ (itypeD (f x') F)))
-      | Pi t f => fun F =>
+      | @Pi _ t f => fun F =>
                      @under _ _ (fun App => forall x' : t, App _ (itypeD (f x') F))
       | Sum a b => fun F => combine sum ps (itypeD a F) (itypeD b F)
       | Prod a b => fun F => combine prod ps (itypeD a F) (itypeD b F)
-      | Unf T pf v i => fun F =>
+      | @Unf _ T pf v i => fun F =>
                           @get ps _ _ pf (fun x => combine prod _ (const (x = v : Type)) (replace pf v (itypeD i F)))
     end%type.
 End denote.
@@ -53,16 +53,16 @@ Section _match.
   Fixpoint cases (i : itype ps) (k : asFunc ps Type -> asFunc ps Type)
            {struct i} : asFunc ps Type :=
     match i with
-      | Inj T => k (const T)
+      | Inj _ T => k (const T)
       | Sum a b => combine prod ps (cases a k) (cases b k)
       | Prod a b =>
         cases a (fun A => cases b (fun B =>
                                        under _ _ (fun App => App _ A -> App _ (k B))))
       | Rec ps => k (const (applyF RecT (hlist_to_tuple ps)))
-      | Get T m f => @get _ _ _ m (fun x => cases (f x) k)
-      | Sig t f => @under _ _ (fun App => forall x' : t, (App _ (cases (f x') k)))
-      | Pi t f => @under _ _ (fun App => @sigT t (fun x' => App _ (cases (f x') k)))
-      | Unf T pf v i => replace pf v (cases i k)
+      | @Get _ T m f => @get _ _ _ m (fun x => cases (f x) k)
+      | @Sig _ t f => @under _ _ (fun App => forall x' : t, (App _ (cases (f x') k)))
+      | @Pi _ t f => @under _ _ (fun App => @sigT t (fun x' => App _ (cases (f x') k)))
+      | @Unf _ T pf v i => replace pf v (cases i k)
     end.
 
 End _match.
@@ -93,6 +93,7 @@ Fixpoint asPi_combine ps {struct ps}
   end.
 
 (*
+
 Section _mmatch.
   Variable ps : list Type.
   Variable RecT : asFunc ps Type.
@@ -109,8 +110,6 @@ Section _mmatch.
   intro. intro.
   destruct i.
   { simpl in *.
-  
-
   Abort.
 *)
 

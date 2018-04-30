@@ -7,6 +7,9 @@ Require Import ExtLib.Data.Fun.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(** Currently not ported due to universes *)
+
+(*
 Section with_m.
   Variable m : Type -> Type.
   Variable Monad_m : Monad m.
@@ -54,3 +57,4 @@ Section with_m.
   Qed.
 
 End with_m.
+*)

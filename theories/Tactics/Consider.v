@@ -38,21 +38,21 @@ Lemma reflect_true_inv P Q : reflect P Q true -> P.
 Proof.
   exact (fun x => match x in reflect _ _ b
                     return if b then P else ID
-                 with | reflect_true H => H | reflect_false H => (fun _ x => x) end).
+                 with | reflect_true _ _ H => H | reflect_false _ _ H => (fun _ x => x) end).
 Qed.
 
 Lemma reflect_false_inv P Q : reflect P Q false -> Q.
 Proof.
   exact (fun x => match x in reflect _ _ b
                     return if b then ID else Q
-                 with | reflect_true H => fun _ x => x | reflect_false H => H end).
+                 with | reflect_true _ _ H => fun _ x => x | reflect_false _ _ H => H end).
 Qed.
 
 Lemma semi_reflect_true_inv P : semi_reflect P true -> P.
 Proof.
   exact (fun x => match x in semi_reflect _ b
                     return if b then P else ID
-                 with | semi_reflect_true H => H | semi_reflect_false => (fun _ x => x) end).
+                 with | semi_reflect_true _ H => H | semi_reflect_false _ => (fun _ x => x) end).
 Qed.
 
 

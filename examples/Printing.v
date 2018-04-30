@@ -1,5 +1,6 @@
 Require Import Coq.Strings.String.
 Require Import ExtLib.Structures.MonadWriter.
+Require Import ExtLib.Data.PPair.
 Require Import ExtLib.Data.Monads.WriterMonad.
 Require Import ExtLib.Data.Monads.IdentityMonad.
 Require Import ExtLib.Programming.Show.
@@ -16,11 +17,14 @@ Definition printString (str : string) : PrinterMonad unit :=
                     (@show_exact str _ show_inj (@show_mon _ ShowScheme_string_compose)).
 
 Definition runPrinter {T : Type} (c : PrinterMonad T) : T * string :=
-  let '(val,str) := unIdent (runWriterT c) in
+  let '(ppair val str) := unIdent (runWriterT c) in
   (val, str ""%string).
 
 
-Eval compute in runPrinter (Monad.bind (print 1) (fun _ => print 2)).
+Eval compute in
+    runPrinter (Monad.bind (print 1) (fun _ => print 2)).
 
-Eval compute in runPrinter (Monad.bind (print "hello "%string) (fun _ => print 2)).
-Eval compute in runPrinter (Monad.bind (printString "hello "%string) (fun _ => print 2)).
+Eval compute in
+    runPrinter (Monad.bind (print "hello "%string) (fun _ => print 2)).
+Eval compute in
+    runPrinter (Monad.bind (printString "hello "%string) (fun _ => print 2)).

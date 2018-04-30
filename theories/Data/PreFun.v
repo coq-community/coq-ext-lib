@@ -1,4 +1,4 @@
-Require Import Morphisms.
+Require Import Coq.Classes.Morphisms.
 Require Import Coq.Relations.Relations.
 Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Core.Type.
@@ -6,19 +6,19 @@ Require Import ExtLib.Core.Type.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition Fun A B := A -> B.
+Polymorphic Definition Fun@{d c} (A : Type@{d}) (B : Type@{c}) := A -> B.
 
 Section type.
-  Variables (T U : Type) (tT : type T) (tU : type U).
+  Polymorphic Variables (T : Type) (U : Type) (tT : type T) (tU : type U).
 
-  Global Instance type_Fun  : type (T -> U) :=
+  Global Polymorphic Instance type_Fun  : type (T -> U) :=
   { equal := fun f g => respectful equal equal f g
   ; proper := fun x => respectful equal equal x x
   }.
 
-  Variables (tOk : typeOk tT) (uOk : typeOk tU).
+  Polymorphic Variables (tOk : typeOk tT) (uOk : typeOk tU).
 
-  Global Instance typeOk_Fun : typeOk type_Fun.
+  Global Polymorphic Instance typeOk_Fun : typeOk type_Fun.
   Proof.
     constructor.
     { unfold equiv. simpl. unfold respectful.
@@ -37,11 +37,11 @@ Section type.
       etransitivity. eapply H. eassumption.
       eapply H0.
       eapply only_proper in H1; intuition.
-      (* eapply preflexive with (wf := proper); auto.
-      apply tOk. *) }
+      eapply preflexive with (wf := proper); auto.
+      apply tOk. }
   Qed.
 
-  Global Instance proper_app : forall (f : T -> U) (a : T),
+  Global Polymorphic Instance proper_app : forall (f : T -> U) (a : T),
     proper f -> proper a -> proper (f a).
   Proof.
     simpl; intros. red in H.
@@ -49,19 +49,19 @@ Section type.
     eapply H. eapply preflexive. eapply equiv_prefl; auto. auto.
   Qed.
 
-  Theorem proper_fun : forall (f : T -> U),
+  Polymorphic Theorem proper_fun : forall (f : T -> U),
     (forall x y, equal x y -> equal (f x) (f y)) ->
     proper f.
   Proof.
     intros. do 3 red. eauto.
   Qed.
 
-  Theorem equal_fun : forall (f g : T -> U),
+  Polymorphic Theorem equal_fun : forall (f g : T -> U),
     (forall x y, equal x y -> equal (f x) (g y)) ->
     equal f g.
   Proof. intros. do 3 red. apply H. Qed.
 
-  Theorem equal_app : forall (f g : T -> U) (x y : T),
+  Polymorphic Theorem equal_app : forall (f g : T -> U) (x y : T),
     equal f g -> equal x y ->
     equal (f x) (g y).
   Proof.
@@ -70,5 +70,5 @@ Section type.
 
 End type.
 
-Definition compose {A B C : Type} (g : B -> C) (f : A -> B) : A -> C :=
+Polymorphic Definition compose {A:Type} {B:Type} {C : Type} (g : B -> C) (f : A -> B) : A -> C :=
   fun x => g (f x).

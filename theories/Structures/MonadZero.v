@@ -1,7 +1,6 @@
-Require Import Monad.
+Require Import ExtLib.Structures.Monad.
 
 Set Implicit Arguments.
-Set Maximal Implicit Arguments.
 
 Class MonadZero (m : Type -> Type) : Type :=
 { mzero : forall {T}, m T }.
