@@ -67,6 +67,9 @@ Module MonadNotation.
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
     (at level 100, right associativity) : monad_scope.
 
+  Notation "' pat <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun pat => c2))
+    (at level 100, pat pattern, c1 at next level, right associativity) : monad_scope.
+
 End MonadNotation.
 
 Polymorphic Instance Functor_Monad {m} {M:Monad m} : Functor m :=
