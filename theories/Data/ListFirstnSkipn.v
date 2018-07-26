@@ -1,5 +1,5 @@
 Require Import Coq.Lists.List.
-Require Import Coq.omega.Omega.
+Require Import Coq.ZArith.ZArith.
 
 Lemma firstn_app_L : forall T n (a b : list T),
   n <= length a ->
