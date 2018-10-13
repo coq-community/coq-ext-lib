@@ -61,6 +61,9 @@ Module MonadNotation.
   Notation "c >>= f" := (@pbind _ _ _ _ _ c f) (at level 50, left associativity) : monad_scope.
   Notation "f =<< c" := (@pbind _ _ _ _ _ c f) (at level 51, right associativity) : monad_scope.
 
+  (* Left-to-right composition of Kleisli arrows. *)
+  Notation "f >=> g" := (fun x => @pbind _ _ _ _ _ (f x) g) (at level 50, left associativity) : monad_scope.
+
   Notation "x <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun x => c2))
     (at level 100, c1 at next level, right associativity) : monad_scope.
 
