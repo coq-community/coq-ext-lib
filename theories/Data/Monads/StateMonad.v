@@ -78,7 +78,7 @@ Section StateType.
     (fun x => let '(a,s,t) := x in
     ret (a,t,s)))
   ; pass := fun _ c => mkStateT (fun s => bind (runStateT c s) (fun x =>
-    let '(a,t,s) := x in ret (a, s)))
+    let '(a,t,s) := x in pass (ret ((a,s),t))))
   }.
 
   Global Instance Exc_stateT T (MR : MonadExc T m) : MonadExc T stateT :=
