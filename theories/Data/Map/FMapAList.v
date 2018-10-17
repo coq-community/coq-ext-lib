@@ -1,4 +1,5 @@
-Require Import List.
+Require Import Coq.Lists.List.
+Require Coq.Classes.RelationClasses.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Structures.Maps.
@@ -63,7 +64,7 @@ Section keyed.
 
   Section proofs.
     Hypothesis RDC_K : RelDec_Correct RD_K.
-    Require Import RelationClasses.
+    Import RelationClasses.
 
     Hypothesis Refl : Reflexive R.
     Hypothesis Sym : Symmetric R.

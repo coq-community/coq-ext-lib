@@ -1,10 +1,13 @@
+Require Import Coq.Lists.List.
 Require Import ExtLib.Structures.Maps.
-Require Import List.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monads.
+Require Import ExtLib.Structures.Reducible.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
+Set Primitive Projections.
 
 Section keyed.
   Variable K : Type.
@@ -149,8 +152,6 @@ Section keyed.
   ; lookup := twothree_find
   ; union  := twothree_union
   }.
-
-  Require Import ExtLib.Structures.Reducible.
 
   Global Instance Foldable_twothree V : Foldable (twothree V) (K * V) :=
     fun _ f b x => twothree_fold (fun k v => f (k,v)) b x.

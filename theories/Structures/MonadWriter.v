@@ -3,6 +3,7 @@ Require Import ExtLib.Structures.Monoid.
 
 Set Universe Polymorphism.
 Set Printing Universes.
+Set Primitive Projections.
 
 Class MonadWriter@{d c s} (T : Type@{s}) (M : Monoid T)
             (m : Type@{d} -> Type@{c}) : Type :=

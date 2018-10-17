@@ -1,3 +1,4 @@
+Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Data.Option.
@@ -240,7 +241,6 @@ Section fmap.
 End fmap.
 
 Section type.
-  Require Import ExtLib.Core.Type.
   Variable T : Type.
   Variable tT : type T.
 

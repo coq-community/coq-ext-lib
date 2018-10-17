@@ -2,6 +2,7 @@ Require Import ExtLib.Structures.Monad.
 
 Set Universe Polymorphism.
 Set Printing Universes.
+Set Primitive Projections.
 
 Class MonadState@{s d c} (T : Type@{s}) (m : Type@{d} -> Type@{c}) : Type :=
 { get : m T

@@ -1,3 +1,4 @@
+.coqdeps.d
 *.vo
 *.glob
 *.v.d
@@ -9,6 +10,7 @@
 *.aux
 Makefile.coq
 Makefile.opam.coq
+Makefile.coq.conf
 *~
 \#*
 .#*

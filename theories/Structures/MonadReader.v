@@ -4,6 +4,7 @@ Require Import ExtLib.Structures.Monad.
 
 Set Universe Polymorphism.
 Set Printing Universes.
+Set Primitive Projections.
 
 Class MonadReader@{d c} (T : Type@{d}) (m : Type@{d} -> Type@{c})
 : Type :=
