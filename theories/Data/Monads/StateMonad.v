@@ -3,6 +3,8 @@ Require Import ExtLib.Structures.Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
+Set Primitive Projections.
 
 Section StateType.
   Variable S : Type.
