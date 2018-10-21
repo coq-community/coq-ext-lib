@@ -4,7 +4,7 @@ Require Import ExtLib.Tactics.Consider.
 Require Import Coq.Bool.Bool.
 Require Import ExtLib.Data.Nat.
 
-Require Import Coq.omega.Omega.
+Require Import Coq.ZArith.ZArith.
 
 Set Implicit Arguments.
 Set Strict Implicit.
