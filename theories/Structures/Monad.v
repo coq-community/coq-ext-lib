@@ -67,7 +67,8 @@ Module MonadNotation.
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
     (at level 100, right associativity) : monad_scope.
 
-  Notation "' pat <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun pat => c2))
+  Notation "' pat <- c1 ;; c2" :=
+    (@pbind _ _ _ _ _ c1 (fun x => match x with pat => c2 end))
     (at level 100, pat pattern, c1 at next level, right associativity) : monad_scope.
 
 End MonadNotation.
