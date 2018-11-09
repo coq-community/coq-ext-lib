@@ -32,6 +32,8 @@ Proof.
          end.
 Defined.
 
+Monomorphic Universe hlist_large.
+
 (** Core Type and Functions **)
 Section hlist.
   Polymorphic Universe Ui Uv.
@@ -44,7 +46,7 @@ Section hlist.
   | Hcons : forall l ls, F l -> hlist ls -> hlist (l :: ls).
 
   Definition hlist_hd {a b} (hl : hlist (a :: b)) : F a :=
-    match hl in hlist x return match x with
+    match hl in hlist x return match x return Type@{Uv} with
                                | nil => unit
                                | l :: _ => F l
                                end with
@@ -53,7 +55,7 @@ Section hlist.
     end.
 
   Definition hlist_tl {a b} (hl : hlist (a :: b)) : hlist b :=
-    match hl in hlist x return match x with
+    match hl in hlist x return match x return Type@{hlist_large} with
                                  | nil => unit
                                  | _ :: ls => hlist ls
                                end with
