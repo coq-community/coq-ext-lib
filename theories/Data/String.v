@@ -123,12 +123,12 @@ repeat constructor.
 Defined.
 
 Global Instance Foldable_string : Foldable string ascii :=
-  fun _ f =>
-    fix go acc ls :=
+  fun _ f base =>
+    fix go ls :=
     match ls with
-      | EmptyString => acc
-      | String l ls =>
-        go (f l acc) ls
+    | EmptyString => base
+    | String l ls =>
+      f l (go ls)
     end.
 
 Section string.
