@@ -17,42 +17,39 @@ Require Import Coq.ZArith.ZArith_base Coq.Strings.String.
 Require Import ExtLib.Data.Monads.StateMonad ExtLib.Structures.Monads.
 
 Section StateGame.
-  
+
   Import MonadNotation.
   Local Open Scope Z_scope.
   Local Open Scope char_scope.
   Local Open Scope monad_scope.
 
   Definition GameValue : Type := Z.
-  Definition GameState : Type := (prod bool Z).
+  Record GameState : Type := mkGameState {on:bool; score:Z}.
 
-  Variable m : Type -> Type.
+  Context {m : Type -> Type}.
   Context {Monad_m: Monad m}.
   Context {State_m: MonadState GameState m}.
 
   Fixpoint playGame (s: string) {struct s}: m GameValue :=
     match s with
     |  EmptyString =>
-       v <- get ;;
-         let '(on, score) := v in ret score
+       v <- get ;; ret (score v)
     |  String x xs =>
        v <- get ;;
-         let '(on, score) := v in
-         match x, on with
-         | "a", true =>  put (on, score + 1)
-         | "b", true => put (on, score - 1)
-         | "c", _ =>   put (negb on, score)
-         |  _, _  =>    put (on, score)
+         match x, (on v) with
+         | "a", true =>  put {| on := on v ; score := (score v) + 1 |}
+         | "b", true => put {| on := on v ; score := (score v) - 1 |}
+         | "c", _ =>   put {| on := negb (on v) ; score := score v |}
+         |  _, _  =>   put v
          end ;; playGame xs
     end.
 
-  Definition startState: GameState := (false, 0).
+  Definition startState: GameState := {| on:=false; score:=0 |}.
 
 End StateGame.
 
 Definition main : GameValue :=
-  (@evalState GameState GameValue (playGame (state GameState) "abcaaacbbcabbab") startState).
+  evalState (playGame "abcaaacbbcabbab") startState.
 
 (* The following should return '2%Z' *)
 Compute main.
-
