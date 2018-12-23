@@ -12,8 +12,9 @@ Instance lt_RelDec {T} {L:Lte T} {RD:RelDec lte} : RelDec lt :=
   { rel_dec x y := (rel_dec x y && negb (rel_dec y x))%bool }.
 
 Instance lt_RelDecCorrect {T} {L:Lte T} {RD:RelDec lte} {RDC:RelDec_Correct RD}
-  : RelDec_Correct lt_RelDec := { rel_dec_correct := _ }.
-Proof. intros ; constructor ; intros.
+  : RelDec_Correct lt_RelDec.
+Proof. constructor.
+  intros ; constructor ; intros.
   unfold rel_dec in H. simpl in H. apply andb_true_iff in H. destruct H.
     unfold lt. constructor. apply rel_dec_correct. auto.
     apply neg_rel_dec_correct. simpl in H0.

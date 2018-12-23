@@ -22,10 +22,8 @@ Section ListReify.
   }.
 
   Global Instance  Reflect_cons a b (Ra : ClassReify f a) (Rb : ClassReify (map f) b) 
-  : ClassReify (map f) (a :: b) :=
-  { reify := cons (@reify _ _ _ _ Ra) (@reify _ _ _ _ Rb)
-  ; reify_sound := _
-  }.
+  : ClassReify (map f) (a :: b).
+  refine {| reify := cons (@reify _ _ _ _ Ra) (@reify _ _ _ _ Rb) |}.
   simpl; f_equal; eapply reify_sound.
   Defined.
 End ListReify.

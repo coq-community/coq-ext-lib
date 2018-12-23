@@ -185,9 +185,9 @@ Section pmap.
       apply pmap_lookup_insert_None_neq; intuition].
   Qed.
 
-  Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap :=
-  { mapsto := fun k v m => pmap_lookup k m = Some v }.
+  Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap.
   Proof.
+  refine {| mapsto := fun k v m => pmap_lookup k m = Some v |}.
     { abstract (induction k; simpl; congruence). }
     { abstract (induction k; simpl; intros; forward). }
     { eauto using pmap_lookup_insert_eq. }

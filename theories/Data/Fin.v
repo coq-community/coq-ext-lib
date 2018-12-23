@@ -68,8 +68,8 @@ Fixpoint make (m n : nat) {struct m} : pf_lt n m -> fin m :=
 Notation "'##' n" := (@make _ n I) (at level 0).
 
 Global Instance Injective_FS {n : nat} (a b : fin n)
-  : Injective (FS a = FS b) :=
-{ result := a = b }.
+  : Injective (FS a = FS b).
+refine {| result := a = b |}.
 abstract (intro ; inversion H ; eapply inj_pair2 in H1 ; assumption).
 Defined.
 
