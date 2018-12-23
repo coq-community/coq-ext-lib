@@ -70,32 +70,32 @@ Section relation.
   Qed.
 
   Global Instance Injective_Roption_None
-  : Injective (Roption None None) :=
-    { result := True }.
+  : Injective (Roption None None).
+  refine {| result := True |}.
   auto.
   Defined.
 
   Global Instance Injective_Roption_None_Some a
-  : Injective (Roption None (Some a)) :=
-    { result := False }.
+  : Injective (Roption None (Some a)).
+  refine {| result := False |}.
   inversion 1.
   Defined.
 
   Global Instance Injective_Roption_Some_None a
-  : Injective (Roption (Some a) None) :=
-    { result := False }.
+  : Injective (Roption (Some a) None).
+  refine {| result := False |}.
   inversion 1.
   Defined.
 
   Global Instance Injective_Roption_Some_Some a b
-  : Injective (Roption (Some a) (Some b)) :=
-    { result := R a b }.
+  : Injective (Roption (Some a) (Some b)).
+  refine {| result := R a b |}.
   inversion 1. auto.
   Defined.
 
   Global Instance Injective_Proper_Roption_Some x
-  : Injective (Proper Roption (Some x)) :=
-    { result := R x x }.
+  : Injective (Proper Roption (Some x)).
+  refine {| result := R x x |}.
   abstract (inversion 1; assumption).
   Defined.
 

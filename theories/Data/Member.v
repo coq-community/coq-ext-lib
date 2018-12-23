@@ -106,9 +106,9 @@ Section member.
       | MN _ _ m => Some m
     end.
 
-  Instance Injective_MN x y ls m m' : Injective (@MN x y ls m = @MN x y ls m') :=
-  { result := m = m' }.
+  Instance Injective_MN x y ls m m' : Injective (@MN x y ls m = @MN x y ls m').
   Proof.
+  refine {| result := m = m' |}.
     intro.
     assert (get_next (MN y m) = get_next (MN y m')).
     { rewrite H. reflexivity. }
