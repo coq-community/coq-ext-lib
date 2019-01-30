@@ -8,6 +8,7 @@ Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Tactics.
+Require Import Morphisms.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -824,31 +825,31 @@ Proof.
 Qed.
 
 
-(** Links Heterogeneous Lists and Lists **)
+(** Linking Heterogeneous Lists and Lists **)
 
-Fixpoint hlist_gen A (F : A -> Type) (f : forall a, F a) (ls : list A) : hlist F ls :=
+Fixpoint hlist_gen {A} {F : A -> Type} (f : forall a, F a) (ls : list A) : hlist F ls :=
   match ls with
   | nil => Hnil
-  | cons x ls' => Hcons (f x) (hlist_gen F f ls')
+  | cons x ls' => Hcons (f x) (hlist_gen f ls')
   end.
 
-Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) ff f ls,
-  hlist_map ff (hlist_gen F f ls) = hlist_gen G (fun a => ff _ (f a)) ls.
+Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> F t) f ls,
+  hlist_map ff (hlist_gen f ls) = hlist_gen (fun a => ff _ (f a)) ls.
 Proof.
   induction ls; simpl.
   - reflexivity.
   - rewrite IHls. reflexivity.
 Qed.
 
-Lemma hlist_get_hlist_gen : forall A F f ls (t : A) m,
-  hlist_get m (hlist_gen F f ls) = f t.
+Lemma hlist_get_hlist_gen : forall A F (f : forall a : A, F A) ls t (m : member t ls),
+  hlist_get m (hlist_gen f ls) = f t.
 Proof.
   induction m; simpl; auto.
 Qed.
 
-Lemma hlist_gen_ext : forall A F f g,
+Lemma hlist_gen_ext : forall A F (f g : forall a : A, F a),
   (forall x, f x = g x) ->
-  forall ls : list A, hlist_gen F f ls = hlist_gen F g ls.
+  forall ls, hlist_gen f ls = hlist_gen g ls.
 Proof.
   induction ls; simpl; f_equal; auto.
 Qed.
@@ -857,19 +858,19 @@ Lemma equiv_hlist_gen : forall T (F : T -> Type) (f : forall t, F t) f'
     (R : forall t, F t -> F t -> Prop),
   (forall t, R t (f t) (f' t)) ->
   forall ls,
-    equiv_hlist R (hlist_gen F f ls) (hlist_gen F f' ls).
+    equiv_hlist R (hlist_gen f ls) (hlist_gen f' ls).
 Proof.
   induction ls; simpl; constructor; auto.
 Qed.
 
-Fixpoint hlist_erase A B (ls : list A) (hs : hlist (fun _ => B) ls) :=
+Fixpoint hlist_erase A B (ls : list A) (hs : hlist (fun _ => B) ls) : list B :=
   match hs with
   | Hnil => nil
   | Hcons _ _ x hs' => cons x (hlist_erase hs')
   end.
 
 Lemma hlist_erase_hlist_gen : forall A B ls (f : A -> B),
-  hlist_erase (hlist_gen (fun _ => B) f ls) = map f ls.
+  hlist_erase (hlist_gen f ls) = map f ls.
 Proof.
   induction ls; simpl; intros; f_equal; auto.
 Qed.
