@@ -847,10 +847,10 @@ Proof.
   induction m; simpl; auto.
 Qed.
 
-Lemma hlist_gen_ext : forall A F (f g : forall a : A, F a),
-  (forall x, f x = g x) ->
-  forall ls, hlist_gen f ls = hlist_gen g ls.
+Global Instance hlist_gen_ext : forall A F,
+  Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq)) (@hlist_gen A F).
 Proof.
+  intros A F f1 f2 E1 ls.
   induction ls; simpl; f_equal; auto.
 Qed.
 
@@ -863,7 +863,7 @@ Proof.
   induction ls; simpl; constructor; auto.
 Qed.
 
-Fixpoint hlist_erase A B (ls : list A) (hs : hlist (fun _ => B) ls) : list B :=
+Fixpoint hlist_erase {A B} {ls : list A} (hs : hlist (fun _ => B) ls) : list B :=
   match hs with
   | Hnil => nil
   | Hcons _ _ x hs' => cons x (hlist_erase hs')
