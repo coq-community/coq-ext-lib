@@ -8,6 +8,7 @@ Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Tactics.
+Require Import Coq.Classes.Morphisms.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -822,6 +823,123 @@ Proof.
   - constructor.
   - constructor; eauto.
 Qed.
+
+
+(** Linking Heterogeneous Lists and Lists **)
+
+Section hlist_gen.
+  Variable A : Type.
+  Variable F : A -> Type.
+  Variable f : forall a, F a.
+
+  Fixpoint hlist_gen ls : hlist F ls :=
+    match ls with
+    | nil => Hnil
+    | cons x ls' => Hcons (f x) (hlist_gen ls')
+    end.
+
+  Lemma hlist_get_hlist_gen : forall ls t (m : member t ls),
+    hlist_get m (hlist_gen ls) = f t.
+  Proof.
+    induction m; simpl; auto.
+  Qed.
+
+  (** This function is a generalisation of [hlist_gen] in which the function [f]
+    takes the additional parameter [member a ls]. **)
+  Fixpoint hlist_gen_member ls : (forall a, member a ls -> F a) -> hlist F ls :=
+    match ls as ls return ((forall a : A, member a ls -> F a) -> hlist F ls) with
+    | nil => fun _ => Hnil
+    | a :: ls' => fun fm =>
+        Hcons (fm a (MZ a ls'))
+          (hlist_gen_member (fun a' (M : member a' ls') => fm a' (MN a M)))
+    end.
+
+  Lemma hlist_gen_member_hlist_gen : forall ls,
+    hlist_gen_member (fun a _ => f a) = hlist_gen ls.
+  Proof.
+    induction ls; simpl; f_equal; auto.
+  Qed.
+
+  Lemma hlist_gen_member_ext : forall ls (f g : forall a, member a ls -> F a),
+    (forall x M, f x M = g x M) ->
+    hlist_gen_member f = hlist_gen_member g.
+  Proof.
+    intros. induction ls; simpl; f_equal; auto.
+  Qed.
+
+End hlist_gen.
+
+Arguments hlist_gen {A F} f ls.
+
+Lemma hlist_gen_member_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) ls f,
+  hlist_map ff (hlist_gen_member F (ls := ls) f) = hlist_gen_member G (fun a M => ff _ (f _ M)).
+Proof.
+  intros. induction ls; simpl; f_equal; auto.
+Qed.
+
+Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) f ls,
+  hlist_map ff (hlist_gen f ls) = hlist_gen (fun a => ff _ (f a)) ls.
+Proof.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_hlist_map.
+Qed.
+
+Lemma hlist_gen_ext : forall A F (f g : forall a, F a),
+  (forall x, f x = g x) ->
+  forall ls : list A, hlist_gen f ls = hlist_gen g ls.
+Proof.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_ext. auto.
+Qed.
+
+Global Instance Proper_hlist_gen : forall A F,
+  Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq))
+         (@hlist_gen A F).
+Proof.
+  repeat intro. apply hlist_gen_ext. auto.
+Qed.
+
+Lemma equiv_hlist_gen : forall T (F : T -> Type) (f : forall t, F t) f'
+    (R : forall t, F t -> F t -> Prop),
+  (forall t, R t (f t) (f' t)) ->
+  forall ls,
+    equiv_hlist R (hlist_gen f ls) (hlist_gen f' ls).
+Proof.
+  induction ls; simpl; constructor; auto.
+Qed.
+
+Global Instance Proper_equiv_hlist_gen : forall A (F : A -> Type) R,
+  Proper (forall_relation R ==> forall_relation (@equiv_hlist _ _ R))
+         (@hlist_gen A F).
+Proof.
+  repeat intro. apply equiv_hlist_gen. auto.
+Qed.
+
+Fixpoint hlist_erase {A B} {ls : list A} (hs : hlist (fun _ => B) ls) : list B :=
+  match hs with
+  | Hnil => nil
+  | Hcons _ _ x hs' => cons x (hlist_erase hs')
+  end.
+
+Lemma hlist_erase_hlist_gen : forall A B ls (f : A -> B),
+  hlist_erase (hlist_gen f ls) = map f ls.
+Proof.
+  induction ls; simpl; intros; f_equal; auto.
+Qed.
+
+
+(** Linking Heterogeneous Lists and Predicates **)
+
+Section hlist_Forall.
+  Variable A : Type.
+  Variable P : A -> Prop.
+
+  Fixpoint hlist_Forall ls (hs : hlist P ls) : Forall P ls :=
+    match hs with
+    | Hnil => Forall_nil _
+    | Hcons _ _ H hs' => Forall_cons _ H (hlist_Forall hs')
+    end.
+
+End hlist_Forall.
+
 
 (** Heterogeneous Relations **)
 Section hlist_rel.
