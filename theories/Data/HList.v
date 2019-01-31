@@ -924,6 +924,21 @@ Proof.
 Qed.
 
 
+(** Linking Heterogeneous Lists and Predicates **)
+
+Section hlist_Forall.
+  Variable A : Type.
+  Variable P : A -> Prop.
+
+  Fixpoint hlist_Forall ls (hs : hlist P ls) : Forall P ls :=
+    match hs with
+    | Hnil => Forall_nil _
+    | Hcons _ _ H hs' => Forall_cons _ H (hlist_Forall hs')
+    end.
+
+End hlist_Forall.
+
+
 (** Heterogeneous Relations **)
 Section hlist_rel.
   Variable A : Type.
