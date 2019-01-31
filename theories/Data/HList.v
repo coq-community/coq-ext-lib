@@ -860,6 +860,13 @@ Section hlist_gen.
     induction ls; simpl; f_equal; auto.
   Qed.
 
+  Lemma hlist_gen_member_ext : forall ls (f g : forall a, member a ls -> F a),
+    (forall x M, f x M = g x M) ->
+    hlist_gen_member f = hlist_gen_member g.
+  Proof.
+    intros. induction ls; simpl; f_equal; auto.
+  Qed.
+
 End hlist_gen.
 
 Arguments hlist_gen {A F} f ls.
@@ -876,11 +883,17 @@ Proof.
   intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_hlist_map.
 Qed.
 
-Global Instance hlist_gen_ext : forall A F,
+Lemma hlist_gen_ext : forall A F (f g : forall a, F a),
+  (forall x, f x = g x) ->
+  forall ls : list A, hlist_gen f ls = hlist_gen g ls.
+Proof.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_ext. auto.
+Qed.
+
+Global Instance Proper_hlist_gen : forall A F,
   Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq)) (@hlist_gen A F).
 Proof.
-  intros A F f1 f2 E1 ls.
-  induction ls; simpl; f_equal; auto.
+  repeat intro. apply hlist_gen_ext. auto.
 Qed.
 
 Lemma equiv_hlist_gen : forall T (F : T -> Type) (f : forall t, F t) f'
@@ -890,6 +903,12 @@ Lemma equiv_hlist_gen : forall T (F : T -> Type) (f : forall t, F t) f'
     equiv_hlist R (hlist_gen f ls) (hlist_gen f' ls).
 Proof.
   induction ls; simpl; constructor; auto.
+Qed.
+
+Global Instance Proper_equiv_hlist_gen : forall A (F : A -> Type) ls R,
+  Proper (forall_relation R ==> equiv_hlist R (ls := ls)) (fun f => @hlist_gen A F f ls).
+Proof.
+  repeat intro. apply equiv_hlist_gen. auto.
 Qed.
 
 Fixpoint hlist_erase {A B} {ls : list A} (hs : hlist (fun _ => B) ls) : list B :=
