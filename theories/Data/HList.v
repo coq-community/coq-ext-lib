@@ -846,13 +846,13 @@ Section hlist_gen.
 
   (** This function is a generalisation of [hlist_gen] in which the function [f]
     takes the additional parameter [member a ls]. **)
-  Fixpoint hlist_gen_member ls : (forall a, member a ls -> F a) -> hlist F ls.
-  Proof.
-    intro fm. destruct ls.
-    - exact Hnil.
-    - refine (Hcons (fm _ (MZ _ _)) (hlist_gen_member _ _)).
-      clear - fm. intros a' M. exact (fm _ (MN _ M)).
-  Defined.
+  Fixpoint hlist_gen_member ls : (forall a, member a ls -> F a) -> hlist F ls :=
+    match ls as ls return ((forall a : A, member a ls -> F a) -> hlist F ls) with
+    | nil => fun _ => Hnil
+    | a :: ls' => fun fm =>
+        Hcons (fm a (MZ a ls'))
+          (hlist_gen_member (fun a' (M : member a' ls') => fm a' (MN a M)))
+    end.
 
   Lemma hlist_gen_member_hlist_gen : forall ls,
     hlist_gen_member (fun a _ => f a) = hlist_gen ls.
@@ -891,7 +891,8 @@ Proof.
 Qed.
 
 Global Instance Proper_hlist_gen : forall A F,
-  Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq)) (@hlist_gen A F).
+  Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq))
+         (@hlist_gen A F).
 Proof.
   repeat intro. apply hlist_gen_ext. auto.
 Qed.
@@ -905,8 +906,9 @@ Proof.
   induction ls; simpl; constructor; auto.
 Qed.
 
-Global Instance Proper_equiv_hlist_gen : forall A (F : A -> Type) ls R,
-  Proper (forall_relation R ==> equiv_hlist R (ls := ls)) (fun f => @hlist_gen A F f ls).
+Global Instance Proper_equiv_hlist_gen : forall A (F : A -> Type) R,
+  Proper (forall_relation R ==> forall_relation (@equiv_hlist _ _ R))
+         (@hlist_gen A F).
 Proof.
   repeat intro. apply equiv_hlist_gen. auto.
 Qed.
