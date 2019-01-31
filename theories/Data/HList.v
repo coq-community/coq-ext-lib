@@ -832,7 +832,7 @@ Section hlist_gen.
   Variable F : A -> Type.
   Variable f : forall a, F a.
 
-  Fixpoint hlist_gen (ls : list A) : hlist F ls :=
+  Fixpoint hlist_gen ls : hlist F ls :=
     match ls with
     | nil => Hnil
     | cons x ls' => Hcons (f x) (hlist_gen ls')
@@ -844,16 +844,36 @@ Section hlist_gen.
     induction m; simpl; auto.
   Qed.
 
+  (** This function is a generalisation of [hlist_gen] in which the function [f]
+    takes the additional parameter [member a ls]. **)
+  Fixpoint hlist_gen_member ls : (forall a, member a ls -> F a) -> hlist F ls.
+  Proof.
+    intro fm. destruct ls.
+    - exact Hnil.
+    - refine (Hcons (fm _ (MZ _ _)) (hlist_gen_member _ _)).
+      clear - fm. intros a' M. exact (fm _ (MN _ M)).
+  Defined.
+
+  Lemma hlist_gen_member_hlist_gen : forall ls,
+    hlist_gen_member (fun a _ => f a) = hlist_gen ls.
+  Proof.
+    induction ls; simpl; f_equal; auto.
+  Qed.
+
 End hlist_gen.
 
 Arguments hlist_gen {A F} f ls.
 
-Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> F t) f ls,
+Lemma hlist_gen_member_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) ls f,
+  hlist_map ff (hlist_gen_member F (ls := ls) f) = hlist_gen_member G (fun a M => ff _ (f _ M)).
+Proof.
+  intros. induction ls; simpl; f_equal; auto.
+Qed.
+
+Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) f ls,
   hlist_map ff (hlist_gen f ls) = hlist_gen (fun a => ff _ (f a)) ls.
 Proof.
-  induction ls; simpl.
-  - reflexivity.
-  - rewrite IHls. reflexivity.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_hlist_map.
 Qed.
 
 Global Instance hlist_gen_ext : forall A F,
