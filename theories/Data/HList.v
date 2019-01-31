@@ -8,7 +8,7 @@ Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Tactics.
-Require Import Morphisms.
+Require Import Coq.Classes.Morphisms.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -827,11 +827,26 @@ Qed.
 
 (** Linking Heterogeneous Lists and Lists **)
 
-Fixpoint hlist_gen {A} {F : A -> Type} (f : forall a, F a) (ls : list A) : hlist F ls :=
-  match ls with
-  | nil => Hnil
-  | cons x ls' => Hcons (f x) (hlist_gen f ls')
-  end.
+Section hlist_gen.
+  Variable A : Type.
+  Variable F : A -> Type.
+  Variable f : forall a, F a.
+
+  Fixpoint hlist_gen (ls : list A) : hlist F ls :=
+    match ls with
+    | nil => Hnil
+    | cons x ls' => Hcons (f x) (hlist_gen ls')
+    end.
+
+  Lemma hlist_get_hlist_gen : forall ls t (m : member t ls),
+    hlist_get m (hlist_gen ls) = f t.
+  Proof.
+    induction m; simpl; auto.
+  Qed.
+
+End hlist_gen.
+
+Arguments hlist_gen {A F} f ls.
 
 Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> F t) f ls,
   hlist_map ff (hlist_gen f ls) = hlist_gen (fun a => ff _ (f a)) ls.
@@ -839,12 +854,6 @@ Proof.
   induction ls; simpl.
   - reflexivity.
   - rewrite IHls. reflexivity.
-Qed.
-
-Lemma hlist_get_hlist_gen : forall A F (f : forall a : A, F A) ls t (m : member t ls),
-  hlist_get m (hlist_gen f ls) = f t.
-Proof.
-  induction m; simpl; auto.
 Qed.
 
 Global Instance hlist_gen_ext : forall A F,
