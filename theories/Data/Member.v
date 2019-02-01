@@ -132,4 +132,9 @@ Section member.
         eapply IHm in H. rewrite H. reflexivity. } }
   Qed.
 
+  Lemma member_In : forall ls (t : T), member t ls -> List.In t ls.
+  Proof.
+    induction 1; simpl; auto.
+  Qed.
+
 End member.
