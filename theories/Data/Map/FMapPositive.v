@@ -239,8 +239,9 @@ Section fmap.
 
 End fmap.
 
+Require Import ExtLib.Core.Type.
+
 Section type.
-  Require Import ExtLib.Core.Type.
   Variable T : Type.
   Variable tT : type T.
 
