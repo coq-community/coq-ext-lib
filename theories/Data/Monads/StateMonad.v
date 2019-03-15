@@ -107,6 +107,7 @@ Section StateType.
 
 End StateType.
 
+Arguments mkStateT {S} {m} {t} (_).
 Arguments evalState {S} {t} (c) (s).
 Arguments execState {S} {t} (c) (s).
 Arguments evalStateT {S} {m} {M} {t} (c) (s).
