@@ -99,3 +99,6 @@ Section Trans.
   }.
 
 End Trans.
+
+Arguments mkOptionT {m} {a} (_).
+Arguments unOptionT {m} {a} (_).
