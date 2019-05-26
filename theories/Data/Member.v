@@ -106,9 +106,9 @@ Section member.
       | MN _ _ m => Some m
     end.
 
-  Instance Injective_MN x y ls m m' : Injective (@MN x y ls m = @MN x y ls m') :=
-  { result := m = m' }.
+  Instance Injective_MN x y ls m m' : Injective (@MN x y ls m = @MN x y ls m').
   Proof.
+  refine {| result := m = m' |}.
     intro.
     assert (get_next (MN y m) = get_next (MN y m')).
     { rewrite H. reflexivity. }
@@ -130,6 +130,11 @@ Section member.
           apply IHm. reflexivity. } }
       { intros.
         eapply IHm in H. rewrite H. reflexivity. } }
+  Qed.
+
+  Lemma member_In : forall ls (t : T), member t ls -> List.In t ls.
+  Proof.
+    induction 1; simpl; auto.
   Qed.
 
 End member.

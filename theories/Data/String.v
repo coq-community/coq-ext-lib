@@ -1,4 +1,8 @@
 Require Import Coq.Strings.String.
+Require Import Coq.Program.Program. 
+Require Import Coq.Numbers.Natural.Peano.NPeano.
+Require Import Coq.Arith.Arith.
+
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
@@ -71,8 +75,6 @@ Fixpoint string_cmp (l r : string) : comparison :=
   end.
 
 Section Program_Scope.
-  Require Import Program.
-  Import NPeano.Nat Arith.
   Variable modulus : nat.
   Hypothesis one_lt_mod : 1 < modulus.
 
@@ -121,12 +123,12 @@ repeat constructor.
 Defined.
 
 Global Instance Foldable_string : Foldable string ascii :=
-  fun _ f =>
-    fix go acc ls :=
+  fun _ f base =>
+    fix go ls :=
     match ls with
-      | EmptyString => acc
-      | String l ls =>
-        go (f l acc) ls
+    | EmptyString => base
+    | String l ls =>
+      f l (go ls)
     end.
 
 Section string.

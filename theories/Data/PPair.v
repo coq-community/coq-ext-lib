@@ -55,9 +55,9 @@ Section Injective.
   Context {T : Type@{i}} {U : Type@{j}}.
 
   Global Instance Injective_pprod (a : T) (b : U) c d
-  : Injective (ppair a b = ppair c d) :=
-  { result := a = c /\ b = d }.
+  : Injective (ppair a b = ppair c d).
   Proof.
+  refine {| result := a = c /\ b = d |}.
     intros.
     change a with (pfst@{i j} {| pfst := a ; psnd := b |}).
     change b with (psnd@{i j} {| pfst := a ; psnd := b |}) at 2.

@@ -13,7 +13,7 @@ Polymorphic Class Applicative@{d c} (T : Type@{d} -> Type@{c}) :=
 }.
 
 Module ApplicativeNotation.
-  Notation "f <*> x" := (ap f x) (at level 51, right associativity).
+  Notation "f <*> x" := (ap f x) (at level 51, left associativity).
 End ApplicativeNotation.
 Import ApplicativeNotation.
 

@@ -1,7 +1,6 @@
 Require Import ExtLib.Structures.Monad.
 
 Set Implicit Arguments.
-Set Maximal Implicit Arguments.
 
 Class MonadFix (m : Type -> Type) : Type :=
 { mfix : forall {T U}, ((T -> m U) -> T -> m U) -> T -> m U }.

@@ -8,6 +8,7 @@ Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Tactics.
+Require Import Coq.Classes.Morphisms.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -15,7 +16,8 @@ Set Asymmetric Patterns.
 Set Universe Polymorphism.
 Set Printing Universes.
 
-Lemma app_ass_trans@{X} : forall {T : Type@{X} } (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
+Lemma app_ass_trans@{X}
+: forall {T : Type@{X} } (a b c : list T), (a ++ b) ++ c = a ++ b ++ c.
 Proof.
   induction a; simpl.
   reflexivity.
@@ -31,6 +33,8 @@ Proof.
          end.
 Defined.
 
+Monomorphic Universe hlist_large.
+
 (** Core Type and Functions **)
 Section hlist.
   Polymorphic Universe Ui Uv.
@@ -43,7 +47,7 @@ Section hlist.
   | Hcons : forall l ls, F l -> hlist ls -> hlist (l :: ls).
 
   Definition hlist_hd {a b} (hl : hlist (a :: b)) : F a :=
-    match hl in hlist x return match x with
+    match hl in hlist x return match x return Type@{Uv} with
                                | nil => unit
                                | l :: _ => F l
                                end with
@@ -52,7 +56,7 @@ Section hlist.
     end.
 
   Definition hlist_tl {a b} (hl : hlist (a :: b)) : hlist b :=
-    match hl in hlist x return match x with
+    match hl in hlist x return match x return Type@{hlist_large} with
                                  | nil => unit
                                  | _ :: ls => hlist ls
                                end with
@@ -62,8 +66,8 @@ Section hlist.
 
   Lemma hlist_eta : forall ls (h : hlist ls),
     h = match ls as ls return hlist ls -> hlist ls with
-          | nil => fun _ => Hnil
-          | a :: b => fun h => Hcons (hlist_hd h) (hlist_tl h)
+        | nil => fun _ => Hnil
+        | a :: b => fun h => Hcons (hlist_hd h) (hlist_tl h)
         end h.
   Proof.
     intros. destruct h; auto.
@@ -71,15 +75,16 @@ Section hlist.
 
   Fixpoint hlist_app ll lr (h : hlist ll) : hlist lr -> hlist (ll ++ lr) :=
     match h in hlist ll return hlist lr -> hlist (ll ++ lr) with
-      | Hnil => fun x => x
-      | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
+    | Hnil => fun x => x
+    | Hcons _ _ hd tl => fun r => Hcons hd (hlist_app tl r)
     end.
 
   Lemma hlist_app_nil_r
   : forall ls (h : hlist ls),
-      hlist_app h Hnil = match eq_sym (app_nil_r_trans ls) in _ = t return hlist t with
-                           | eq_refl => h
-                         end.
+      hlist_app h Hnil =
+      match eq_sym (app_nil_r_trans ls) in _ = t return hlist t with
+      | eq_refl => h
+      end.
   Proof.
     induction h; simpl; intros; auto.
     rewrite IHh at 1.
@@ -91,11 +96,13 @@ Section hlist.
 
   Fixpoint hlist_rev' ls ls' (h : hlist ls) : hlist ls' -> hlist (rev ls ++ ls') :=
     match h in hlist ls return hlist ls' -> hlist (rev ls ++ ls') with
-      | Hnil => fun h => h
-      | Hcons l ls0 x h' => fun hacc =>
-        match app_ass_trans (rev ls0) (l :: nil) ls' in _ = t return hlist t -> hlist _ with
-          | eq_refl => fun x => x
-        end (@hlist_rev' _ (l :: ls') h' (Hcons x hacc))
+    | Hnil => fun h => h
+    | Hcons l ls0 x h' => fun hacc =>
+      match app_ass_trans (rev ls0) (l :: nil) ls' in _ = t
+            return hlist t -> hlist _
+      with
+      | eq_refl => fun x => x
+      end (@hlist_rev' _ (l :: ls') h' (Hcons x hacc))
     end.
 
   Definition hlist_rev ls (h : hlist ls) : hlist (rev ls) :=
@@ -302,43 +309,43 @@ Section hlist.
                   | hlist_eqv_nil => I
                   | hlist_eqv_cons l ls x y h1 h2 pf1 pf2 => _
                 end IHx).
-        simpl in *.
+        simpl.
         subst. intros.
-        f_equal. tauto. }
+        f_equal. apply H0. assumption. }
       { intros; subst. constructor; auto.
         reflexivity. } }
   Qed.
 
   Fixpoint hlist_get ls a (m : member a ls) : hlist ls -> F a :=
     match m in member _ ls return hlist ls -> F a with
-    | MZ _ => hlist_hd
-    | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
+      | MZ _ => hlist_hd
+      | MN _ _ r => fun hl => hlist_get r (hlist_tl hl)
     end.
 
   Fixpoint hlist_nth_error {ls} (hs : hlist ls) (n : nat)
-  : option match nth_error ls n with
-           | None => unit
-           | Some x => F x
-           end :=
-    match hs in hlist ls return option match nth_error ls n with
-                                       | None => unit
-                                       | Some x => F x
-                                       end
-    with
-    | Hnil => None
-    | Hcons l ls h hs =>
-      match n as n return option match nth_error (l :: ls) n with
-                                 | None => unit
-                                 | Some x => F x
-                                 end
+    : option (match nth_error ls n with
+                | None => unit
+                | Some x => F x
+              end) :=
+    match hs in hlist ls return option (match nth_error ls n with
+                                          | None => unit
+                                          | Some x => F x
+                                        end)
       with
-      | 0 => Some h
-      | S n => hlist_nth_error hs n
-      end
+      | Hnil => None
+      | Hcons l ls h hs =>
+        match n as n return option (match nth_error (l :: ls) n with
+                                      | None => unit
+                                      | Some x => F x
+                                    end)
+          with
+          | 0 => Some h
+          | S n => hlist_nth_error hs n
+        end
     end.
 
-  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat)
-  : match nth_error ls n return Type with
+  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+    match nth_error ls n return Type with
       | None => unit
       | Some t => F t
     end :=
@@ -584,9 +591,9 @@ Section hlist.
     match goal with
     | |- context [ match ?X with _ => _ end ] =>
       remember X
-    end. destruct p. simpl in *.
+    end. destruct p. simpl.
     change h0 with (fst (h0, h1)).
-    f_equal. assumption.
+    f_equal; trivial.
   Qed.
 
   Lemma hlist_tl_snd_hlist_split
@@ -604,29 +611,29 @@ Section hlist.
     rewrite Heqp. reflexivity.
   Qed.
 
-  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls}
-  : option {t : iT & hlist ls -> F t} :=
+  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
+    option {t : iT & hlist ls -> F t} :=
     match
       ls as ls0
       return option {t : iT & hlist ls0 -> F t}
     with
-    | nil => None
-    | l :: ls0 =>
-      match
-        n as n0
-        return option {t : iT & hlist (l :: ls0) -> F t}
-      with
-      | 0 =>
-        Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
-                      l (@hlist_hd _ _))
-      | S n0 =>
-        match nth_error_get_hlist_nth ls0 n0 with
-        | Some (existT x f) =>
-          Some (@existT _ (fun t => hlist _ -> F t)
-                        x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
-        | None => None
+      | nil => None
+      | l :: ls0 =>
+        match
+          n as n0
+          return option {t : iT & hlist (l :: ls0) -> F t}
+        with
+          | 0 =>
+            Some (@existT _ (fun t => hlist (l :: ls0) -> F t)
+                          l (@hlist_hd _ _))
+          | S n0 =>
+            match nth_error_get_hlist_nth ls0 n0 with
+              | Some (existT x f) =>
+                Some (@existT _ (fun t => hlist _ -> F t)
+                              x (fun h : hlist (l :: ls0) => f (hlist_tl h)))
+              | None => None
+            end
         end
-      end
     end.
 
   Theorem nth_error_get_hlist_nth_Some
@@ -816,6 +823,123 @@ Proof.
   - constructor.
   - constructor; eauto.
 Qed.
+
+
+(** Linking Heterogeneous Lists and Lists **)
+
+Section hlist_gen.
+  Variable A : Type.
+  Variable F : A -> Type.
+  Variable f : forall a, F a.
+
+  Fixpoint hlist_gen ls : hlist F ls :=
+    match ls with
+    | nil => Hnil
+    | cons x ls' => Hcons (f x) (hlist_gen ls')
+    end.
+
+  Lemma hlist_get_hlist_gen : forall ls t (m : member t ls),
+    hlist_get m (hlist_gen ls) = f t.
+  Proof.
+    induction m; simpl; auto.
+  Qed.
+
+  (** This function is a generalisation of [hlist_gen] in which the function [f]
+    takes the additional parameter [member a ls]. **)
+  Fixpoint hlist_gen_member ls : (forall a, member a ls -> F a) -> hlist F ls :=
+    match ls as ls return ((forall a : A, member a ls -> F a) -> hlist F ls) with
+    | nil => fun _ => Hnil
+    | a :: ls' => fun fm =>
+        Hcons (fm a (MZ a ls'))
+          (hlist_gen_member (fun a' (M : member a' ls') => fm a' (MN a M)))
+    end.
+
+  Lemma hlist_gen_member_hlist_gen : forall ls,
+    hlist_gen_member (fun a _ => f a) = hlist_gen ls.
+  Proof.
+    induction ls; simpl; f_equal; auto.
+  Qed.
+
+  Lemma hlist_gen_member_ext : forall ls (f g : forall a, member a ls -> F a),
+    (forall x M, f x M = g x M) ->
+    hlist_gen_member f = hlist_gen_member g.
+  Proof.
+    intros. induction ls; simpl; f_equal; auto.
+  Qed.
+
+End hlist_gen.
+
+Arguments hlist_gen {A F} f ls.
+
+Lemma hlist_gen_member_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) ls f,
+  hlist_map ff (hlist_gen_member F (ls := ls) f) = hlist_gen_member G (fun a M => ff _ (f _ M)).
+Proof.
+  intros. induction ls; simpl; f_equal; auto.
+Qed.
+
+Lemma hlist_gen_hlist_map : forall A (F G : A -> Type) (ff : forall t, F t -> G t) f ls,
+  hlist_map ff (hlist_gen f ls) = hlist_gen (fun a => ff _ (f a)) ls.
+Proof.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_hlist_map.
+Qed.
+
+Lemma hlist_gen_ext : forall A F (f g : forall a, F a),
+  (forall x, f x = g x) ->
+  forall ls : list A, hlist_gen f ls = hlist_gen g ls.
+Proof.
+  intros. do 2 rewrite <- hlist_gen_member_hlist_gen. apply hlist_gen_member_ext. auto.
+Qed.
+
+Global Instance Proper_hlist_gen : forall A F,
+  Proper (forall_relation (fun _ => eq) ==> forall_relation (fun _ => eq))
+         (@hlist_gen A F).
+Proof.
+  repeat intro. apply hlist_gen_ext. auto.
+Qed.
+
+Lemma equiv_hlist_gen : forall T (F : T -> Type) (f : forall t, F t) f'
+    (R : forall t, F t -> F t -> Prop),
+  (forall t, R t (f t) (f' t)) ->
+  forall ls,
+    equiv_hlist R (hlist_gen f ls) (hlist_gen f' ls).
+Proof.
+  induction ls; simpl; constructor; auto.
+Qed.
+
+Global Instance Proper_equiv_hlist_gen : forall A (F : A -> Type) R,
+  Proper (forall_relation R ==> forall_relation (@equiv_hlist _ _ R))
+         (@hlist_gen A F).
+Proof.
+  repeat intro. apply equiv_hlist_gen. auto.
+Qed.
+
+Fixpoint hlist_erase {A B} {ls : list A} (hs : hlist (fun _ => B) ls) : list B :=
+  match hs with
+  | Hnil => nil
+  | Hcons _ _ x hs' => cons x (hlist_erase hs')
+  end.
+
+Lemma hlist_erase_hlist_gen : forall A B ls (f : A -> B),
+  hlist_erase (hlist_gen f ls) = map f ls.
+Proof.
+  induction ls; simpl; intros; f_equal; auto.
+Qed.
+
+
+(** Linking Heterogeneous Lists and Predicates **)
+
+Section hlist_Forall.
+  Variable A : Type.
+  Variable P : A -> Prop.
+
+  Fixpoint hlist_Forall ls (hs : hlist P ls) : Forall P ls :=
+    match hs with
+    | Hnil => Forall_nil _
+    | Hcons _ _ H hs' => Forall_cons _ H (hlist_Forall hs')
+    end.
+
+End hlist_Forall.
+
 
 (** Heterogeneous Relations **)
 Section hlist_rel.

@@ -1,8 +1,10 @@
 Require Import Coq.Lists.List.
+Require Coq.Classes.EquivDec.
 Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
+Require ExtLib.Data.Nat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Tactics.Injection.
 
@@ -45,7 +47,6 @@ Section type.
 End type.
 
 Section EqDec.
-  Require EquivDec.
   Variable T : Type.
   Variable EqDec_T : EquivDec.EqDec _ (@eq T).
 
@@ -155,9 +156,9 @@ Global Instance Monad_list : Monad list :=
   List.fold_right (fun x acc => f x ++ acc) nil x
 }.
 
-Section list.
-  Require ExtLib.Data.Nat.
 
+
+Section list.
   Inductive R_list_len {T} : list T -> list T -> Prop :=
   | R_l_len : forall n m, length n < length m -> R_list_len n m.
 
@@ -220,40 +221,46 @@ Section ListEq.
 
 End ListEq.
 
-Global Instance Injective_cons T (a : T) b c d : Injective (a :: b = c :: d) :=
-  { result := a = c /\ b = d }.
+Global Instance Injective_cons T (a : T) b c d : Injective (a :: b = c :: d).
+refine {| result := a = c /\ b = d |}.
 inversion 1; auto.
 Defined.
 
-Global Instance Injective_cons_nil T (a : T) b : Injective (a :: b = nil) :=
-  { result := False }.
+Global Instance Injective_cons_nil T (a : T) b : Injective (a :: b = nil).
+refine {| result := False |}.
 inversion 1; auto.
 Defined.
 
-Global Instance Injective_nil_cons T (a : T) b : Injective (nil = a :: b) :=
-  { result := False }.
+Global Instance Injective_nil_cons T (a : T) b : Injective (nil = a :: b).
+refine {| result := False |}.
 inversion 1; auto.
 Defined.
 
-Global Instance Injective_nil_nil T : Injective (nil = @nil T) :=
-  { result := True }.
+Global Instance Injective_nil_nil T : Injective (nil = @nil T).
+refine {| result := True |}.
 auto.
 Defined.
 
 Global Instance Injective_app_cons {T} (a : list T) b c d
-: Injective (a ++ b :: nil = (c ++ d :: nil)) :=
-  { result := a = c /\ b = d }.
-Proof. eapply app_inj_tail. Defined.
+: Injective (a ++ b :: nil = (c ++ d :: nil)).
+Proof.
+refine {| result := a = c /\ b = d |}.
+eapply app_inj_tail.
+Defined.
 
 Global Instance Injective_app_same_L {T} (a : list T) b c
-: Injective (b ++ a = b ++ c) :=
-  { result := a = c }.
-Proof. apply app_inv_head. Defined.
+: Injective (b ++ a = b ++ c).
+Proof.
+refine {| result := a = c |}.
+apply app_inv_head.
+Defined.
 
 Global Instance Injective_app_same_R {T} (a : list T) b c
-: Injective (a ++ b = c ++ b) :=
-{ result := a = c }.
-Proof. apply app_inv_tail. Defined.
+: Injective (a ++ b = c ++ b).
+Proof.
+refine {| result := a = c |}.
+apply app_inv_tail.
+Defined.
 
 
 Lemma eq_list_eq

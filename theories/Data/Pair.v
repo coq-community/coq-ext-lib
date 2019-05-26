@@ -25,8 +25,8 @@ Section Eqpair.
   : Transitive Eqpair.
   Proof. red. inversion 1; inversion 1; constructor; etransitivity; eauto. Qed.
 
-  Global Instance Injective_Eqpair a b c d : Injective (Eqpair (a,b) (c,d)) :=
-  { result := rT a c /\ rU b d }.
+  Global Instance Injective_Eqpair a b c d : Injective (Eqpair (a,b) (c,d)).
+  refine {| result := rT a c /\ rU b d |}.
   abstract (inversion 1; auto).
   Defined.
 End Eqpair.
@@ -118,6 +118,6 @@ Section PairEq.
   Qed.
 End PairEq.
 
-Global Instance Injective_pair T U (a :T) (b:U) c d : Injective ((a,b) = (c,d)) :=
-{| result := a = c /\ b = d |}.
+Global Instance Injective_pair T U (a :T) (b:U) c d : Injective ((a,b) = (c,d)).
+refine {| result := a = c /\ b = d |}.
 Proof. abstract (inversion 1; intuition). Defined.

@@ -1,5 +1,6 @@
 Require Import Coq.Classes.EquivDec.
 Require Import ExtLib.Structures.EqDep.
+Require Coq.Logic.Eqdep_dec.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -7,8 +8,6 @@ Set Strict Implicit.
 Section Classes.
   Context {A : Type}.
   Context {dec : EqDec A (@eq A)}.
-
-  Require Eqdep_dec.
 
   Theorem UIP_refl : forall {x : A} (p1 : x = x), p1 = refl_equal _.
     intros.

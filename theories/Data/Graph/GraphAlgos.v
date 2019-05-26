@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import Coq.PArith.BinPos.
 Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Data.Graph.Graph.
@@ -45,9 +46,8 @@ Section GraphAlgos.
 
     End monadic.
 
-    Require Import BinPos.
     Definition dfs (from : V) : list V :=
-      let count := Npos (List.fold_left (fun acc _ => BinPos.Psucc acc) (verticies g) 1%positive) in
+      let count := Npos (List.fold_left (fun acc _ => Pos.succ acc) (verticies g) 1%positive) in
       let res := runGFix (dfs' from nil) count in
       match res with
         | Diverge => (** This should never happen! **)

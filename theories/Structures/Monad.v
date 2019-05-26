@@ -52,6 +52,15 @@ Section monadic.
               {M : Monad m}
               {A B : Type@{d}} (fM:m (A -> B)) (aM:m A) : m B :=
     bind fM (fun f => liftM f aM).
+
+  (* Left-to-right composition of Kleisli arrows. *)
+  Definition mcompose@{c d}
+             {m:Type@{d}->Type@{c}}
+             {M: Monad m}
+             {T U V:Type@{d}}
+             (f: T -> m U) (g: U -> m V): (T -> m V) :=
+    fun x => bind (f x) g.
+
 End monadic.
 
 Module MonadNotation.
@@ -60,12 +69,17 @@ Module MonadNotation.
 
   Notation "c >>= f" := (@pbind _ _ _ _ _ c f) (at level 50, left associativity) : monad_scope.
   Notation "f =<< c" := (@pbind _ _ _ _ _ c f) (at level 51, right associativity) : monad_scope.
+  Notation "f >=> g" := (@mcompose _ _ _ _ _ f g) (at level 60, right associativity) : monad_scope.
 
   Notation "x <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun x => c2))
-    (at level 100, c1 at next level, right associativity) : monad_scope.
+    (at level 60, c1 at next level, right associativity) : monad_scope.
 
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
-    (at level 100, right associativity) : monad_scope.
+    (at level 60, right associativity) : monad_scope.
+
+  Notation "' pat <- c1 ;; c2" :=
+    (@pbind _ _ _ _ _ c1 (fun x => match x with pat => c2 end))
+    (at level 60, pat pattern, c1 at next level, right associativity) : monad_scope.
 
 End MonadNotation.
 

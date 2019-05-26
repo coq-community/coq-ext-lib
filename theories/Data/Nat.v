@@ -101,10 +101,8 @@ Definition Monoid_nat_mult : Monoid nat :=
  ; monoid_unit := 1
  |}.
 
-Global Instance Injective_S (a b : nat) : Injective (S a = S b) :=
-{ result := a = b
-; injection := _
-}.
+Global Instance Injective_S (a b : nat) : Injective (S a = S b).
+refine {| result := a = b |}.
 abstract (inversion 1; auto).
 Defined.
 

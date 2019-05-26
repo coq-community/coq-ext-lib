@@ -1,3 +1,5 @@
+Require Coq.Strings.Ascii.
+Require Coq.Strings.String.
 Require Import Coq.Strings.String.
 Require Import Coq.Program.Wf.
 Require Import Coq.PArith.BinPos.
@@ -133,11 +135,10 @@ Section sum_Show.
         " "%char <<
         payload <<
         ")"%char.
-        
+
 End sum_Show.
 
 Section foldable_Show.
-  Require Import ExtLib.Structures.Reducible.
   Polymorphic Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
 
   Global Polymorphic  Instance foldable_Show : Show B :=
@@ -154,51 +155,51 @@ Polymorphic Fixpoint iter_show (ss : list showM) : showM :=
 Section hiding_notation.
   Import ShowNotation.
   Local Open Scope show_scope.
-  Require Import Ascii.
-  Require Import String.
+  Import Ascii.
+  Import String.
 
-Global Instance unit_Show : Show unit :=
+  Global Instance unit_Show : Show unit :=
   { show u := "tt"%string }.
-Global Instance bool_Show : Show bool :=
+  Global Instance bool_Show : Show bool :=
   { show b := if b then "true"%string else "false"%string }.
-Global Instance ascii_Show : Show ascii :=
-  fun a =>  "'"%char << a << "'"%char.
-Global Instance string_Show : Show string :=
+  Global Instance ascii_Show : Show ascii :=
+    fun a =>  "'"%char << a << "'"%char.
+  Global Instance string_Show : Show string :=
   { show s := """"%char << s << """"%char }.
 
-Program Fixpoint nat_show (n:nat) {measure n} : showM :=
-  if Compare_dec.le_gt_dec n 9 then
-    inject (Char.digit2ascii n)
-  else
-    let n' := NPeano.Nat.div n 10 in
-    (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
-Next Obligation.
-  assert (NPeano.Nat.div n 10 < n) ; eauto.
-  eapply NPeano.Nat.div_lt.
-  inversion H; apply Lt.lt_O_Sn.
-  repeat constructor.
-Defined.
-Global Instance nat_Show : Show nat := { show := nat_show }.
+  Program Fixpoint nat_show (n:nat) {measure n} : showM :=
+    if Compare_dec.le_gt_dec n 9 then
+      inject (Char.digit2ascii n)
+    else
+      let n' := NPeano.Nat.div n 10 in
+      (@nat_show n' _) << (inject (Char.digit2ascii (n - 10 * n'))).
+  Next Obligation.
+    assert (NPeano.Nat.div n 10 < n) ; eauto.
+    eapply NPeano.Nat.div_lt.
+    inversion H; apply Lt.lt_O_Sn.
+    repeat constructor.
+  Defined.
+  Global Instance nat_Show : Show nat := { show := nat_show }.
 
-Global Instance Show_positive : Show positive :=
-  fun x => nat_show (Pos.to_nat x).
+  Global Instance Show_positive : Show positive :=
+    fun x => nat_show (Pos.to_nat x).
 
-Global Instance Show_Z : Show Z :=
-  fun x =>
-    match x with
+  Global Instance Show_Z : Show Z :=
+    fun x =>
+      match x with
       | Z0 => "0"%char
       | Zpos p => show p
       | Zneg p => "-"%char << show p
-    end.
+      end.
 
-Section pair_Show.
-  Polymorphic Definition pair_Show@{a m}
-              {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
-  : Show (A*B) :=
-    fun p =>
-      let (a,b) := p in
-      "("%char << show a << ","%char << show b << ")"%char.
-End pair_Show.
+  Section pair_Show.
+    Polymorphic Definition pair_Show@{a m}
+                {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
+    : Show (A*B) :=
+      fun p =>
+        let (a,b) := p in
+        "("%char << show a << ","%char << show b << ")"%char.
+  End pair_Show.
 End hiding_notation.
 
 
