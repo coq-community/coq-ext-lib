@@ -139,12 +139,39 @@ Section keyed.
       intros. eapply mapsto_remove_neq_alist in H. eapply H.
     Qed.
 
+    Theorem remove_eq_alist:
+      forall (m : alist) (k : K), alist_find k (alist_remove k m) = None.
+    Proof.
+      unfold mapsto_alist.
+      induction m; simpl; eauto; try congruence.
+      intros; consider (k ?[ R ] fst a); simpl; intros; eauto.
+      destruct a; simpl in *.
+      consider (k ?[ R ] k0); eauto. tauto.
+    Qed.
+
+    Theorem remove_neq_alist:
+      forall (m : alist) (k k' : K), ~R k' k -> alist_find k (alist_remove k' m) = alist_find k m.
+    Proof.
+      unfold mapsto_alist.
+      induction m; simpl; eauto; try congruence.
+      destruct a; simpl.
+      intros; consider (k' ?[ R ] k); simpl; intros; eauto.
+      { consider (k0 ?[ R ] k); intros; eauto.
+        exfalso. eapply H. etransitivity; eauto. }
+      { consider (k0 ?[ R ] k); eauto. }
+    Qed.
+
     Global Instance MapLaws_alist : MapOk R Map_alist.
     Proof.
       refine {| mapsto := fun k v m => mapsto_alist m k v |};
       eauto using mapsto_lookup_alist, mapsto_add_eq_alist, mapsto_add_neq_alist.
       { intros; intro. inversion H. }
-    Qed.
+      { unfold mapsto_alist; simpl. intros.
+        rewrite remove_eq_alist. congruence. }
+      { unfold mapsto_alist. simpl; intros.
+        erewrite (@remove_neq_alist m _ _ H).
+        reflexivity. }
+    Defined.
 
   End proofs.
 
