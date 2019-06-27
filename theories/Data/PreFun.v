@@ -8,6 +8,7 @@ Set Strict Implicit.
 
 Polymorphic Definition Fun@{d c} (A : Type@{d}) (B : Type@{c}) := A -> B.
 
+#[universes(polymorphic)]
 Section type.
   Polymorphic Variables (T : Type) (U : Type) (tT : type T) (tU : type U).
 

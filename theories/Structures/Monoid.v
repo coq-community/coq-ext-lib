@@ -4,6 +4,7 @@ Require Import ExtLib.Structures.BinOps.
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 
+#[universes(polymorphic)]
 Section Monoid.
   Polymorphic Variable S : Type.
 

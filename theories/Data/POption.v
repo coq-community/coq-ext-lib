@@ -4,6 +4,7 @@ Require Import ExtLib.Tactics.Injection.
 
 Set Printing Universes.
 
+#[universes(polymorphic)]
 Section poption.
   Polymorphic Universe i.
   Polymorphic Variable T : Type@{i}.
@@ -56,6 +57,7 @@ End poption.
 Arguments pSome {_} _.
 Arguments pNone {_}.
 
+#[universes(polymorphic)]
 Section poption_map.
   Polymorphic Universes i j.
   Polymorphic Context {T : Type@{i}} {U : Type@{j}}.

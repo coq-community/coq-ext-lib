@@ -134,6 +134,7 @@ Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Applicative.
 
+#[universes(polymorphic)]
 Section traversable.
   Polymorphic Context {F : Type -> Type}.
   Polymorphic Context {Applicative_F : Applicative F}.

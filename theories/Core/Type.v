@@ -22,6 +22,7 @@ Polymorphic Definition type_libniz@{t} (T : Type@{t}) : type@{t} T :=
 
 Existing Class proper.
 
+#[universes(polymorphic)]
 Section type.
   Polymorphic Context {T : Type}.
   Polymorphic Variable tT : type T.

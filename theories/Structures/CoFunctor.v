@@ -3,6 +3,7 @@ Require Import ExtLib.Core.Any.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+#[universes(polymorphic)]
 Section functor.
 
   Polymorphic Class CoFunctor@{d c} (F : Type@{d} -> Type@{c}) : Type :=
