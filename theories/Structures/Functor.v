@@ -26,5 +26,5 @@ Polymorphic Definition PFunctor_From_Functor@{d c p}
 Global Existing Instance PFunctor_From_Functor.
 
 Module FunctorNotation.
-  Notation "f <$> x" := (@pfmap _ _ _ _ _ f x) (at level 51, left associativity).
+  Notation "f <$> x" := (@pfmap _ _ _ _ _ f x) (at level 52, left associativity).
 End FunctorNotation.
