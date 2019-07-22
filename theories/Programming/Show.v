@@ -75,6 +75,7 @@ Polymorphic Definition indent (indent : showM) (v : showM) : showM :=
          then monoid_plus mon (inj a) (indent _ inj mon)
          else inj a) mon.
 
+#[universes(polymorphic)]
 Section sepBy.
   Import ShowNotation.
   Local Open Scope show_scope.
@@ -93,6 +94,7 @@ Section sepBy.
     end.
 End sepBy.
 
+#[universes(polymorphic)]
 Section sepBy_f.
   Import ShowNotation.
   Local Open Scope show_scope.
@@ -116,6 +118,7 @@ End sepBy_f.
 Polymorphic Definition wrap (before after : showM) (x : showM) : showM :=
   cat before (cat x after).
 
+#[universes(polymorphic)]
 Section sum_Show.
   Import ShowNotation.
   Local Open Scope show_scope.
@@ -138,6 +141,7 @@ Section sum_Show.
 
 End sum_Show.
 
+#[universes(polymorphic)]
 Section foldable_Show.
   Polymorphic Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
 
@@ -192,15 +196,19 @@ Section hiding_notation.
       | Zneg p => "-"%char << show p
       end.
 
-  Section pair_Show.
-    Polymorphic Definition pair_Show@{a m}
-                {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
-    : Show (A*B) :=
-      fun p =>
-        let (a,b) := p in
-        "("%char << show a << ","%char << show b << ")"%char.
-  End pair_Show.
 End hiding_notation.
+
+#[universes(polymorphic)]
+Section pair_Show.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Polymorphic Definition pair_Show@{a m}
+              {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
+  : Show (A*B) :=
+    fun p =>
+      let (a,b) := p in
+      "("%char << show a << ","%char << show b << ")"%char.
+End pair_Show.
 
 
 

@@ -8,6 +8,7 @@ Require Import ExtLib.Structures.Functor.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+#[universes(polymorphic)]
 Section laws.
 
   Polymorphic Class FunctorLaws@{t u X}

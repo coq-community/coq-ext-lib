@@ -20,7 +20,6 @@ Arguments ppair {_ _} _ _.
 Arguments pfst {_ _} _.
 Arguments psnd {_ _} _.
 
-Section equality.
   Polymorphic Lemma eq_pair_rw
   : forall T U (a b : T) (c d : U) (pf : (ppair a c) = (ppair b d)),
     exists (pf' : a = b) (pf'' : c = d),
@@ -48,7 +47,6 @@ Section equality.
     generalize dependent (ppair a c).
     intros; subst. reflexivity.
   Defined.
-End equality.
 
 Section Injective.
   Polymorphic Universes i j.

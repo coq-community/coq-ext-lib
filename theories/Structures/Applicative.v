@@ -17,6 +17,7 @@ Module ApplicativeNotation.
 End ApplicativeNotation.
 Import ApplicativeNotation.
 
+#[universes(polymorphic)]
 Section applicative.
   Polymorphic Definition liftA@{d c} {T : Type@{d} -> Type@{c}} {AT:Applicative@{d c} T} {A B : Type@{d}} (f:A -> B) (aT:T A) : T B := pure f <*> aT.
   Polymorphic Definition liftA2@{d c} {T : Type@{d} -> Type@{c}} {AT:Applicative@{d c} T} {A B C : Type@{d}} (f:A -> B -> C) (aT:T A) (bT:T B) : T C := liftA f aT <*> bT.

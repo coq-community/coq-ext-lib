@@ -25,6 +25,7 @@ Global Polymorphic Instance PMonad_Monad m (M : Monad m) : PMonad m :=
 ; pbind := fun _ _ _ c f => bind c f
 }.
 
+#[universes(polymorphic)]
 Section monadic.
 
   Polymorphic Definition liftM@{d c}
@@ -52,6 +53,10 @@ Section monadic.
               {M : Monad m}
               {A B : Type@{d}} (fM:m (A -> B)) (aM:m A) : m B :=
     bind fM (fun f => liftM f aM).
+
+End monadic.
+
+Section monadic.
 
   (* Left-to-right composition of Kleisli arrows. *)
   Definition mcompose@{c d}
