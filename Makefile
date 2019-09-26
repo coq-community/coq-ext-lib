@@ -13,9 +13,9 @@ examples: theories
 	$(MAKE) -C examples
 
 clean:
-	$(MAKE) -f Makefile.coq clean
+	if [ -e Makefile.coq ] ; then $(MAKE) -f Makefile.coq cleanall ; fi
 	$(MAKE) -C examples clean
-	@ rm Makefile.coq
+	@rm -f Makefile.coq Makefile.coq.conf
 
 uninstall:
 	$(MAKE) -f Makefile.coq uninstall
