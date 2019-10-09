@@ -7,11 +7,11 @@ Require Import ExtLib.Structures.Functor.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
 
-#[universes(polymorphic)]
 Section laws.
 
-  Polymorphic Class FunctorLaws@{t u X}
+  Class FunctorLaws@{t u X}
               (F : Type@{t} -> Type@{u})
               (Functor_F : Functor F)
               (Feq : type1@{t u X} F)
