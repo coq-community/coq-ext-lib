@@ -263,7 +263,7 @@ refine {| result := a = c |}.
 apply app_inv_tail.
 Defined.
 
-
+(*
 Lemma eq_list_eq@{u v}
 : forall (T : Type@{u}) (a b : T) (pf : a = b) (F : T -> Type@{v}) val,
     match pf in _ = x return list (F x) with
@@ -275,5 +275,6 @@ Proof.
   destruct pf. intros. rewrite map_id. reflexivity.
 Qed.
 Hint Rewrite eq_list_eq : eq_rw.
+*)
 
 Export Coq.Lists.List.
