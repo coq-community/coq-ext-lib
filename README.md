@@ -1,5 +1,6 @@
 coq-ext-lib
 ===========
+[![CircleCI](https://circleci.com/gh/coq-ext-lib/coq-ext-lib.svg?style=svg)](https://circleci.com/gh/coq-ext-lib/coq-ext-lib)
 
 A collection of theories and plugins that may be useful in other Coq developments.
 
