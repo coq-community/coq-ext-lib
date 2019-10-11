@@ -16,8 +16,19 @@ defaults: &defaults
       name: List installed packages
       command: opam list
   - run:
-      name: Build package
+      name: Build, test, and install package
       command: opam install .
+  - run:
+      name: Uninstall package
+      command: opam uninstall .
+  - run:
+      name: Build and test locally
+      command: make
+  - run:
+      name: Cleanup local directory
+      command: |
+        make clean
+        ls -AR
 
 jobs:
   coq.8.8:

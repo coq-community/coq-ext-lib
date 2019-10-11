@@ -6,13 +6,13 @@ bug-reports: "https://github.com/coq-ext-lib/coq-ext-lib/issues"
 authors: ["Gregory Malecha"]
 license: "BSD"
 build: [
-  [make "-j%{jobs}%"]
+  [make "-j%{jobs}%" "theories"]
+]
+run-test: [
+  [make "-j%{jobs}%" "examples"]
 ]
 install: [
   [make "install"]
-]
-remove: [
-  ["rm" "-R" "%{lib}%/coq/user-contrib/ExtLib"]
 ]
 depends: [
   "ocaml"
