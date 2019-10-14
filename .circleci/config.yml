@@ -28,7 +28,7 @@ defaults: &defaults
       name: Cleanup local directory
       command: |
         make clean
-        ls -AR
+        ls -AGR
 
 jobs:
   coq.8.8:
