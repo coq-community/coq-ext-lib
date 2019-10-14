@@ -1,6 +1,6 @@
 coq-ext-lib
 ===========
-[![CircleCI](https://circleci.com/gh/coq-ext-lib/coq-ext-lib.svg?style=svg)](https://circleci.com/gh/coq-ext-lib/coq-ext-lib)
+[![CircleCI](https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg)](https://circleci.com/gh/coq-ext-lib/coq-ext-lib)
 [![Contributing][contributing-shield]][contributing-link]
 [![Code of Conduct][conduct-shield]][conduct-link]
 [![Gitter][gitter-shield]][gitter-link]
