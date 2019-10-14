@@ -24,4 +24,18 @@ uninstall:
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
-.PHONY: all clean dist theories examples
+EXTRA_DIR:=coqdocjs/extra
+
+COQDOCFLAGS:= \
+	--toc --toc-depth 1 --utf8 --interpolate --no-lib-name --parse-comments \
+	--with-header $(EXTRA_DIR)/header.html \
+	--with-footer $(EXTRA_DIR)/footer.html
+
+export COQDOCFLAGS
+
+html: Makefile.coq
+	rm -rf $@
+	$(MAKE) -f $< $@
+	cp $(EXTRA_DIR)/resources/* $@
+
+.PHONY: all clean dist theories examples html

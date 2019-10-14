@@ -17,3 +17,4 @@ deps.dot
 deps.pdf
 .coqdeps.d
 .DS_Store
+html
