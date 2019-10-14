@@ -51,6 +51,8 @@ make install
 After installation, the included modules are available under
 the `ExtLib` namespace.
 
+## Documentation
+- [Development version](https://coq-community.github.io/coq-ext-lib/master/toc.html)
 
 Ideas
 -----

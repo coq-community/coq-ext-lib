@@ -1,58 +1,147 @@
+version: 2.1
+
 defaults: &defaults
   environment:
     OPAMVERBOSE: 1
     OPAMWITHTEST: true
     OPAMYES: true
     TERM: xterm
-  steps:
-  - checkout
-  - run:
-      name: Configure environment
-      command: echo . ~/.profile >> $BASH_ENV
-  - run:
-      name: Install dependencies
-      command: opam install --deps-only .
-  - run: 
-      name: List installed packages
-      command: opam list
-  - run:
-      name: Build, test, and install package
-      command: opam install .
-  - run:
-      name: Uninstall package
-      command: opam uninstall .
-  - run:
-      name: Build and test locally
-      command: make
-  - run:
-      name: Cleanup local directory
-      command: |
-        make clean
-        ls -AGR
+
+commands:
+  startup:
+    steps:
+    - checkout
+    - run:
+        name: Pull submodules
+        command: git submodule update --init
+    - run:
+        name: Configure environment
+        command: echo . ~/.profile >> $BASH_ENV
+    - run:
+        name: Install dependencies
+        command: opam install --deps-only .
+    - run:
+        name: List installed packages
+        command: opam list
+  build:
+    steps:
+    - run:
+        name: Build, test, and install package
+        command: opam install .
+    - run:
+        name: Uninstall package
+        command: opam uninstall .
+    - run:
+        name: Build and test locally
+        command: make
+    - run:
+        name: Cleanup local directory
+        command: |
+          make clean
+          ls -AGR
+  deploy:
+    steps:
+    - run:
+        name: Build Documentation
+        command: make html
+    - run:
+        name: Configure Git
+        command: |
+          git config --global core.autocrlf input
+          git config --global user.name  "Yishuai Li"
+          git config --global user.email "yishuai@cis.upenn.edu"
+    - run:
+        name: Deploy GitHub Pages
+        command: |
+          if [ -z "$CIRCLE_TAG" ]
+          then TAG=$CIRCLE_BRANCH
+          else TAG=$CIRCLE_TAG
+          fi
+          PAGES=coq-ext-lib/$TAG
+          if [ -z "$CIRCLE_PULL_REQUESTS" ] && [ $CIRCLE_PROJECT_USERNAME == coq-community ]
+          then git clone -b gh-pages --depth 1 git@github.com:coq-community/coq-ext-lib.git
+               rm -rf $PAGES/*
+               mkdir -p $PAGES
+               cp -LRf html/* $PAGES
+               cd coq-ext-lib
+               git add .
+               git commit -m "$TAG $CIRCLE_SHA1" || true
+               git push
+          fi
 
 jobs:
-  coq.8.8:
+  coq 8_8:
     <<: *defaults
+    steps:
+    - startup
+    - build
     docker:
     - image: coqorg/coq:8.8
-  coq.8.9:
+  coq 8_9:
     <<: *defaults
+    steps:
+    - startup
+    - build
     docker:
     - image: coqorg/coq:8.9
-  coq.8.10:
+  coq 8_10:
     <<: *defaults
+    steps:
+    - startup
+    - build
     docker:
     - image: coqorg/coq:8.10
-  coq.dev:
+  coq dev:
     <<: *defaults
+    steps:
+    - startup
+    - build
     docker:
     - image: coqorg/coq:dev
+  doc:
+    <<: *defaults
+    steps:
+    - startup
+    - deploy
+    docker:
+    - image: ysli/coq
 
 workflows:
   version: 2
   build:
     jobs:
-    - coq.8.8
-    - coq.8.9
-    - coq.8.10
-    - coq.dev
+    - coq 8_8:
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            only: /^v.*/
+    - coq 8_9:
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            only: /^v.*/
+    - coq 8_10:
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            only: /^v.*/
+    - coq dev:
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            only: /^v.*/
+    - doc:
+        requires:
+        - coq 8_8
+        - coq 8_9
+        - coq 8_10
+        - coq dev
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            only: /^v.*/

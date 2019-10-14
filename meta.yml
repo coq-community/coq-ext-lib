@@ -30,6 +30,9 @@ supported_coq_versions:
 namespace: ExtLib
 
 documentation: |
+  ## Documentation
+  - [Development version](https://coq-community.github.io/coq-ext-lib/master/toc.html)
+
   Ideas
   -----
   - Embrace new features, e.g. universe polymorphism, primitive projections, etc.
