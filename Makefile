@@ -38,4 +38,7 @@ html: Makefile.coq
 	$(MAKE) -f $< $@
 	cp $(EXTRA_DIR)/resources/* $@
 
+README.md: meta.yml templates/README.md.mustache
+	mustache $^ > $@
+
 .PHONY: all clean dist theories examples html

@@ -1,6 +1,6 @@
 ---
 fullname: coq-ext-lib
-shortname: ext-lib
+shortname: coq-ext-lib
 organization: coq-community
 community: true
 
@@ -27,12 +27,15 @@ supported_coq_versions:
   text: Coq 8.8 or later
   opam: '{ >= "8.8" }'
 
+target: theories
 namespace: ExtLib
 
 documentation: |
   ## Documentation
   - [Development version](https://coq-community.github.io/coq-ext-lib/master/toc.html)
-  - Latest release: [v0.10.2](https://coq-community.github.io/coq-ext-lib/v0.10.2/toc.html)
+  - Latest release: [v0.10.3](https://coq-community.github.io/coq-ext-lib/v0.10.3/toc.html)
+  - Previous releases:
+      + [v0.10.2](https://coq-community.github.io/coq-ext-lib/v0.10.2/toc.html)
 
   Ideas
   -----

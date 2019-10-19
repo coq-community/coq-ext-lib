@@ -1,9 +1,12 @@
-coq-ext-lib
-===========
-[![CircleCI](https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg)](https://circleci.com/gh/coq-ext-lib/coq-ext-lib)
+# coq-ext-lib
+
+[![CircleCI][circleci-shield]][circleci-link]
 [![Contributing][contributing-shield]][contributing-link]
 [![Code of Conduct][conduct-shield]][conduct-link]
 [![Gitter][gitter-shield]][gitter-link]
+
+[circleci-shield]: https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg
+[circleci-link]:   https://circleci.com/gh/coq-community/coq-ext-lib
 
 [contributing-shield]: https://img.shields.io/badge/contributions-welcome-%23f7931e.svg
 [contributing-link]: https://github.com/coq-community/manifesto/blob/master/CONTRIBUTING.md
@@ -51,9 +54,12 @@ make install
 After installation, the included modules are available under
 the `ExtLib` namespace.
 
+
 ## Documentation
 - [Development version](https://coq-community.github.io/coq-ext-lib/master/toc.html)
-- Latest release: [v0.10.2](https://coq-community.github.io/coq-ext-lib/v0.10.2/toc.html)
+- Latest release: [v0.10.3](https://coq-community.github.io/coq-ext-lib/v0.10.3/toc.html)
+- Previous releases:
+    + [v0.10.2](https://coq-community.github.io/coq-ext-lib/v0.10.2/toc.html)
 
 Ideas
 -----
