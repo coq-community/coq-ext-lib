@@ -19,7 +19,10 @@ commands:
         command: echo . ~/.profile >> $BASH_ENV
     - run:
         name: Install dependencies
-        command: opam install --deps-only .
+        command: |
+          opam repo -a add coq-extra-dev https://coq.inria.fr/opam/extra-dev
+          opam update
+          opam install --deps-only .
     - run:
         name: List installed packages
         command: opam list
@@ -28,6 +31,14 @@ commands:
     - run:
         name: Build, test, and install package
         command: opam install .
+    - run:
+        name: Test dependants
+        command: |
+          PINS=$(echo `opam list -s --pinned --columns=package` | sed 's/ /,/g')
+          PACKAGES=`opam list -s --depends-on coq-ext-lib --coinstallable-with $PINS`
+          if ! [ -z "$PACKAGES" ]
+          then opam install $PACKAGES
+          fi
     - run:
         name: Uninstall package
         command: opam uninstall .
@@ -57,13 +68,13 @@ commands:
           then TAG=$CIRCLE_BRANCH
           else TAG=$CIRCLE_TAG
           fi
-          PAGES=coq-ext-lib/$TAG
-          if [ -z "$CIRCLE_PULL_REQUESTS" ] && [ $CIRCLE_PROJECT_USERNAME == coq-community ]
-          then git clone -b gh-pages --depth 1 git@github.com:coq-community/coq-ext-lib.git
+          PAGES=$CIRCLE_PROJECT_REPONAME/$TAG
+          if [ -z "$CIRCLE_PULL_REQUESTS" ]
+          then git clone -b gh-pages --depth 1 $CIRCLE_REPOSITORY_URL
                rm -rf $PAGES/*
                mkdir -p $PAGES
                cp -LRf html/* $PAGES
-               cd coq-ext-lib
+               cd $CIRCLE_PROJECT_REPONAME
                git add .
                git commit -m "$TAG $CIRCLE_SHA1" || true
                git push
