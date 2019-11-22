@@ -3,6 +3,7 @@ fullname: coq-ext-lib
 shortname: coq-ext-lib
 organization: coq-community
 community: true
+circleci: true
 
 synopsis: A library of Coq definitions, theorems, and tactics
 description: A collection of theories and plugins that may be useful in other Coq developments.
