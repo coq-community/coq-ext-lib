@@ -24,20 +24,7 @@ uninstall:
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
-EXTRA_DIR:=coqdocjs/extra
-
-COQDOCFLAGS:= \
-	--toc --toc-depth 1 --utf8 --interpolate --no-lib-name --parse-comments \
-	--index indexpage \
-	--with-header $(EXTRA_DIR)/header.html \
-	--with-footer $(EXTRA_DIR)/footer.html
-
-export COQDOCFLAGS
-
-html: Makefile.coq
-	rm -rf $@
-	$(MAKE) -f $< $@
-	cp $(EXTRA_DIR)/resources/* $@
+include tools/Makefile.doc
 
 README.md: meta.yml templates/README.md.mustache
 	mustache $^ > $@
