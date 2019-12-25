@@ -28,6 +28,7 @@ EXTRA_DIR:=coqdocjs/extra
 
 COQDOCFLAGS:= \
 	--toc --toc-depth 1 --utf8 --interpolate --no-lib-name --parse-comments \
+	--index indexpage \
 	--with-header $(EXTRA_DIR)/header.html \
 	--with-footer $(EXTRA_DIR)/footer.html
 

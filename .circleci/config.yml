@@ -13,7 +13,7 @@ commands:
     - checkout
     - run:
         name: Pull submodules
-        command: git submodule update --init
+        command: git submodule update --init --remote
     - run:
         name: Configure environment
         command: echo . ~/.profile >> $BASH_ENV
