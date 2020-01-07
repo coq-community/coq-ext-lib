@@ -25,7 +25,7 @@ Ltac rwHyps :=
 Ltac rwHypsR :=
   repeat match goal with
            [ H: _ = _ |- _] =>  rewrite <- H
-         end; show_hyps.
+         end.
 
 Ltac rwHypsA :=
   repeat match goal with
