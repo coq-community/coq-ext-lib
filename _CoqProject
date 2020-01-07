@@ -8,6 +8,7 @@ theories/Core/CmpDec.v
 theories/Core/EquivDec.v
 theories/Core/RelDec.v
 theories/Core/Type.v
+theories/Core/Decision.v
 
 theories/Structures/Applicative.v
 theories/Structures/BinOps.v
