@@ -106,6 +106,7 @@ theories/Tactics/MonadTac.v
 theories/Tactics/Parametric.v
 theories/Tactics/Reify.v
 theories/Tactics/TypeTac.v
+theories/Tactics/Hide.v
 
 theories/Data/Graph/BuildGraph.v
 theories/Data/Graph/GraphAdjList.v
