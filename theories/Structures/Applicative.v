@@ -5,12 +5,6 @@ Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 Set Universe Polymorphism.
 
-Class PApplicative@{d c p} (T : Type@{d} -> Type@{c}) :=
-{ AppP : Type@{d} -> Type@{p}
-; ppure : forall {A : Type@{d}} {P : AppP A}, A -> T A
-; pap : forall {A B : Type@{d}} {P : AppP B}, T (A -> B) -> T A -> T B
-}.
-
 Class Applicative@{d c} (T : Type@{d} -> Type@{c}) :=
 { pure : forall {A : Type@{d}}, A -> T A
 ; ap : forall {A B : Type@{d}}, T (A -> B) -> T A -> T B

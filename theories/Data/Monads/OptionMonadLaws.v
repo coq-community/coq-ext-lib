@@ -1,13 +1,10 @@
 Require Import RelationClasses.
 Require Import Setoid.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Monads.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.Option.
 Require Import ExtLib.Data.Monads.OptionMonad.
-Require Import ExtLib.Tactics.TypeTac.
 
 Set Implicit Arguments.
 Set Strict Implicit.
