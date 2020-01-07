@@ -7,7 +7,6 @@ theories/Core/Any.v
 theories/Core/CmpDec.v
 theories/Core/EquivDec.v
 theories/Core/RelDec.v
-theories/Core/Type.v
 
 theories/Structures/Applicative.v
 theories/Structures/BinOps.v
@@ -18,7 +17,6 @@ theories/Structures/EqDep.v
 theories/Structures/Foldable.v
 theories/Structures/FunctorLaws.v
 theories/Structures/Functor.v
-theories/Structures/Identity.v
 theories/Structures/Maps.v
 theories/Structures/MonadCont.v
 theories/Structures/MonadExc.v
@@ -33,7 +31,6 @@ theories/Structures/Monad.v
 theories/Structures/MonadWriter.v
 theories/Structures/MonadZero.v
 theories/Structures/Monoid.v
-theories/Structures/Proper.v
 theories/Structures/Reducible.v
 theories/Structures/Sets.v
 theories/Structures/Traversable.v
@@ -104,7 +101,6 @@ theories/Tactics/Injection.v
 theories/Tactics/MonadTac.v
 theories/Tactics/Parametric.v
 theories/Tactics/Reify.v
-theories/Tactics/TypeTac.v
 
 theories/Data/Graph/BuildGraph.v
 theories/Data/Graph/GraphAdjList.v

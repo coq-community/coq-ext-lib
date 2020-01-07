@@ -63,10 +63,6 @@ Global Instance Foldable_listset {T} (R : T -> T -> Prop)
   fun _ f a t => List.fold_left (fun x y => f y x) t a.
 
 Require Import ExtLib.Structures.Functor.
-Require Import ExtLib.Programming.Eqv.
 
-Global Instance PFunctor_listset : PFunctor lset :=
-{ FunP := fun t => { eqT : Eqv t & RelDec eqv }
-; pfmap := fun _ B eqv_dec f s => 
-  List.fold_left (fun acc x => lset_add (@rel_dec B (@eqv B (projT1 eqv_dec)) (projT2 eqv_dec)) (f x) acc) s (@lset_empty _)
-}.
+Global Instance Functor_listset : Functor lset :=
+{ fmap := map }.

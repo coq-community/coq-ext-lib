@@ -18,3 +18,6 @@ deps.pdf
 .coqdeps.d
 .DS_Store
 html
+*.coq.d
+*.vok
+*.vos

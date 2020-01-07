@@ -282,21 +282,5 @@ Section fmap.
 
 End fmap.
 
-Require Import ExtLib.Core.Type.
-
-Section type.
-  Variable T : Type.
-  Variable tT : type T.
-
-  Instance type_pmap : type (pmap T) :=
-    type_from_equal
-      (fun l r =>
-            (forall k v,
-               mapsto k v l -> exists v', mapsto k v' r /\ equal v v')
-         /\ (forall k v,
-               mapsto k v r -> exists v', mapsto k v' l /\ equal v v')).
-
-End type.
-
 Global Instance Functor_pmap : Functor pmap :=
 { fmap := fmap_pmap }.
