@@ -5,7 +5,7 @@ Inductive Hidden (P:Type) : Prop:=
 | hidden (p:P): Hidden P.
 
 Ltac show_hyp H :=
-  destruct H.
+  destruct H as [H].
 
 Ltac hide_hyp H :=
   apply hidden in H.
