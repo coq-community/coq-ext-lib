@@ -1,5 +1,4 @@
 Require Import Coq.Lists.List.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monoid.
 
 Set Implicit Arguments.
@@ -26,7 +25,7 @@ Section foldable.
   Variable Add : A -> T -> T -> Prop.
 
   Class FoldableOk : Type :=
-  { fold_ind : forall m (M : Monoid m) (t : type m) (ML : MonoidLaws M) (P : m -> Prop) f u,
+  { fold_ind : forall m (M : Monoid m) (ML : MonoidLaws M) (P : m -> Prop) f u,
                  P (monoid_unit M) ->
                  (forall x y z,
                     Add x y z ->

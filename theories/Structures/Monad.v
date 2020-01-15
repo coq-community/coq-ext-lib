@@ -11,21 +11,6 @@ Class Monad@{d c} (m : Type@{d} -> Type@{c}) : Type :=
 ; bind : forall {t u : Type@{d}}, m t -> (t -> m u) -> m u
 }.
 
-Class PMonad@{d c p} (m : Type@{d} -> Type@{c}) : Type :=
-{ MonP : Type@{d} -> Type@{p}
-; pret : forall {t : Type@{d}} {Pt : MonP t}, t -> m t
-; pbind : forall {t u : Type@{d}} {Pu : MonP u}, m t -> (t -> m u) -> m u
-}.
-
-Existing Class MonP.
-Hint Extern 0 (@MonP _ _ _) => progress (simpl MonP) : typeclass_instances.
-
-Global Instance PMonad_Monad@{d c p} (m : Type@{d} -> Type@{c}) (M : Monad m) : PMonad@{d c p} m :=
-{ MonP := Any
-; pret := fun _ _ x => ret x
-; pbind := fun _ _ _ c f => bind c f
-}.
-
 Section monadic.
 
   Definition liftM@{d c}
@@ -68,18 +53,18 @@ Module MonadNotation.
 
   Delimit Scope monad_scope with monad.
 
-  Notation "c >>= f" := (@pbind _ _ _ _ _ c f) (at level 50, left associativity) : monad_scope.
-  Notation "f =<< c" := (@pbind _ _ _ _ _ c f) (at level 51, right associativity) : monad_scope.
+  Notation "c >>= f" := (@bind _ _ _ _ c f) (at level 62, left associativity) : monad_scope.
+  Notation "f =<< c" := (@bind _ _ _ _ c f) (at level 61, right associativity) : monad_scope.
   Notation "f >=> g" := (@mcompose _ _ _ _ _ f g) (at level 61, right associativity) : monad_scope.
 
-  Notation "x <- c1 ;; c2" := (@pbind _ _ _ _ _ c1 (fun x => c2))
+  Notation "x <- c1 ;; c2" := (@bind _ _ _ _ c1 (fun x => c2))
     (at level 61, c1 at next level, right associativity) : monad_scope.
 
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
-    (at level 61, right associativity) : monad_scope.
+    (at level 62, left associativity) : monad_scope.
 
   Notation "' pat <- c1 ;; c2" :=
-    (@pbind _ _ _ _ _ c1 (fun x => match x with pat => c2 end))
+    (@bind _ _ _ _ c1 (fun x => match x with pat => c2 end))
     (at level 61, pat pattern, c1 at next level, right associativity) : monad_scope.
 
 End MonadNotation.
@@ -95,22 +80,6 @@ Global Instance Functor_Monad@{} : Functor m :=
 Global Instance Applicative_Monad@{} : Applicative m :=
 { pure := @ret _ _
 ; ap := @apM _ _
-}.
-
-Universe p.
-Context {PM : PMonad@{d c p} m}.
-
-Global Instance PFunctor_PMonad@{} : PFunctor m :=
-{ FunP := MonP
-; pfmap := fun _ _ _ f a =>
-  pbind a (fun x => pret (f x))
-}.
-
-Global Instance PApplicative_PMonad@{} : PApplicative m :=
-{ AppP := MonP
-; ppure := fun _ _ x => pret x
-; pap := fun _ _ _ f x =>
-  pbind f (fun f => pbind x (fun x => pret (f x)))
 }.
 
 End Instances.

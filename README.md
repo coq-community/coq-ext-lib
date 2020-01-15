@@ -20,7 +20,6 @@
 
 A collection of theories and plugins that may be useful in other Coq developments.
 
-
 ## Meta
 
 - Author(s):
@@ -31,6 +30,8 @@ A collection of theories and plugins that may be useful in other Coq development
 - License: [The FreeBSD Copyright](LICENSE)
 - Compatible Coq versions: Coq 8.8 or later
 - Additional Coq dependencies: none
+- Coq namespace: `ExtLib`
+- Related publication(s): none
 
 ## Building and installation instructions
 
@@ -51,15 +52,6 @@ make theories  # or make -j <number-of-cores-on-your-machine> theories
 make install
 ```
 
-After installation, the included modules are available under
-the `ExtLib` namespace.
-
-
-## Documentation
-- [Development version](https://coq-community.github.io/coq-ext-lib/master/toc.html)
-- Latest release: [v0.10.3](https://coq-community.github.io/coq-ext-lib/v0.10.3/toc.html)
-- Previous releases:
-    + [v0.10.2](https://coq-community.github.io/coq-ext-lib/v0.10.2/toc.html)
 
 Ideas
 -----

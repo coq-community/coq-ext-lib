@@ -1,12 +1,10 @@
 (** [member] is the proof relevant version of [In] **)
 Require Import Coq.Lists.List.
 Require Import Relations RelationClasses.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Data.ListNth.
 Require Import ExtLib.Data.Option.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.
 

@@ -26,7 +26,10 @@ dist:
 
 include tools/Makefile.doc
 
-README.md: meta.yml templates/README.md.mustache
+%.md: meta.yml templates/%.md.mustache
 	mustache $^ > $@
+
+%.html: %.md
+	pandoc -s -o $@ $<
 
 .PHONY: all clean dist theories examples html

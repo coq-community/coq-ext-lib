@@ -1,14 +1,12 @@
 Require Import Coq.Relations.Relation_Definitions.
 Require Import Coq.Classes.RelationClasses.
 Require Import Coq.Classes.Morphisms.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.FunctorLaws.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.Consider.
@@ -100,41 +98,6 @@ Section relation.
   Defined.
 
 End relation.
-
-Section type.
-  Variable T : Type.
-  Variable tT : type T.
-
-  Global Instance type_option : type (option T) :=
-  { equal := Roption equal
-  ; proper := fun x => match x with
-                         | None => True
-                         | Some y => proper y
-                       end }.
-
-  Variable tTOk : typeOk tT.
-
-  Global Instance typeOk_option : typeOk type_option.
-  Proof.
-    constructor.
-    { inversion 1.
-      split; constructor.
-      split; simpl; eapply only_proper; eauto. symmetry; eauto. }
-    { red. destruct x; simpl. constructor.
-      eapply preflexive; [ | eapply H ].
-      eapply equiv_prefl; auto. constructor. }
-    { red. destruct 1. constructor. constructor. symmetry. assumption. }
-    { red. destruct 1; inversion 1; subst. assumption.
-      constructor. etransitivity; eauto. }
-  Qed.
-
-  Global Instance proper_Some : proper (@Some T).
-  Proof. constructor; assumption. Qed.
-
-  Global Instance proper_None : proper (@None T).
-  Proof. constructor. Qed.
-
-End type.
 
 (*
 Global Instance FunctorLaws_option : FunctorLaws Functor_option type_option.

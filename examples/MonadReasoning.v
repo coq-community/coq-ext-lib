@@ -1,4 +1,3 @@
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.MonadLaws.
 Require Import ExtLib.Data.PreFun.

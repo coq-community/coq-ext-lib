@@ -1,6 +1,5 @@
 Require Import Coq.Lists.List.
 Require Coq.Classes.EquivDec.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
@@ -11,42 +10,6 @@ Require Import ExtLib.Tactics.Injection.
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Universe Polymorphism.
-
-Section type.
-  Universe u.
-  Variable T : Type@{u}.
-  Context {type_T : type T}.
-
-  Inductive list_eq@{} : list T -> list T -> Prop :=
-  | nil_eq : list_eq nil nil
-  | cons_eq : forall x xs y ys, equal x y -> list_eq xs ys -> list_eq (x :: xs) (y :: ys).
-
-  Instance type_list@{} : type@{u} (list T) :=
-  { equal := list_eq
-  ; proper := Forall proper
-  }.
-
-  Context {typeOk_T : typeOk type_T}.
-
-  Instance typeOk_list@{} : typeOk type_list.
-  Proof.
-    constructor.
-    { intros. induction H.
-      { intuition; constructor. }
-      { apply only_proper in H; auto. intuition; constructor; intuition. } }
-    { intro. induction x; intros.
-      { constructor. }
-      { inversion H; clear H; subst.
-        constructor; auto.
-        apply equiv_prefl; auto. apply IHx. apply H3. } }
-    { intro. induction 1; constructor; auto.
-      apply equiv_sym; auto. }
-    { intro. do 3 intro.  revert z. induction H.
-      { remember nil. destruct 1; try congruence. constructor. }
-      { remember (y :: ys). destruct 1; try congruence. inversion Heql; clear Heql; subst.
-        constructor. eapply equiv_trans; eauto. eapply IHlist_eq. apply H2. } }
-  Qed.
-End type.
 
 Section EqDec.
   Universe u.

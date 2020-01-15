@@ -1,4 +1,3 @@
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Data.PreFun.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
@@ -7,11 +6,6 @@ Require Import ExtLib.Structures.Monoid.
 
 Set Implicit Arguments.
 Set Strict Implicit.
-
-Global Instance proper_id (T : Type) {tT : type T} : proper (fun x => x).
-Proof.
-  repeat red; intros. apply H.
-Qed.
 
 
 Section functors.
