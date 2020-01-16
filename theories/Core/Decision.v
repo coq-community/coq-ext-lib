@@ -1,6 +1,6 @@
 Require Import Coq.Classes.DecidableClass.
 
-Definition decideP (P : Prop) (D : Decidable P) : {P} + {~P} :=
+Definition decideP (P : Prop) {D : Decidable P} : {P} + {~P} :=
   match @Decidable_witness P D as X return (X = true -> P) -> (X = false -> ~P) -> {P} + {~P} with
   | true => fun pf _ => left (pf eq_refl)
   | false => fun _ pf => right (pf eq_refl)
