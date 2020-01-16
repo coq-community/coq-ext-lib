@@ -1,14 +1,10 @@
 Require Import Coq.Classes.DecidableClass.
 
-Definition decideP (P:Prop) `{Decidable P} : {P} + {~P}.
-  remember (decide P) as dec. 
-  destruct dec; [left | right];
-  symmetry in Heqdec;
-  unfold decide in Heqdec;
-  pose proof Decidable_spec; try tauto.
-  intro Hc.
-  rewrite <- H0 in Hc. congruence.
-Defined.
+Definition decideP (P : Prop) (D : Decidable P) : {P} + {~P} :=
+  match @Decidable_witness P D as X return (X = true -> P) -> (X = false -> ~P) -> {P} + {~P} with
+  | true => fun pf _ => left (pf eq_refl)
+  | false => fun _ pf => right (pf eq_refl)
+  end (@Decidable_sound _ D) (@Decidable_complete_alt _ D).
 
 Ltac cases_ifd Hn :=
   match goal with
