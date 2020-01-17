@@ -2,10 +2,13 @@ version: 2.1
 
 defaults: &defaults
   environment:
+    OPAMBESTEFFORT: true
+    OPAMJOBS: 2
     OPAMVERBOSE: 1
     OPAMWITHTEST: true
     OPAMYES: true
     TERM: xterm
+  resource_class: medium
 
 commands:
   startup:
@@ -44,17 +47,17 @@ commands:
         command: opam uninstall .
     - run:
         name: Build and test locally
-        command: make
+        command: make -j`nproc`
     - run:
         name: Cleanup local directory
         command: |
-          make clean
+          make -j`nproc` clean
           ls -AGR
   deploy:
     steps:
     - run:
         name: Build Documentation
-        command: make html
+        command: make -j`nproc` html
     - run:
         name: Configure Git
         command: |

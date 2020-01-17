@@ -53,7 +53,7 @@ Module MonadNotation.
 
   Delimit Scope monad_scope with monad.
 
-  Notation "c >>= f" := (@bind _ _ _ _ c f) (at level 62, left associativity) : monad_scope.
+  Notation "c >>= f" := (@bind _ _ _ _ c f) (at level 58, left associativity) : monad_scope.
   Notation "f =<< c" := (@bind _ _ _ _ c f) (at level 61, right associativity) : monad_scope.
   Notation "f >=> g" := (@mcompose _ _ _ _ _ f g) (at level 61, right associativity) : monad_scope.
 
@@ -61,7 +61,7 @@ Module MonadNotation.
     (at level 61, c1 at next level, right associativity) : monad_scope.
 
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
-    (at level 62, left associativity) : monad_scope.
+    (at level 61, right associativity) : monad_scope.
 
   Notation "' pat <- c1 ;; c2" :=
     (@bind _ _ _ _ c1 (fun x => match x with pat => c2 end))
