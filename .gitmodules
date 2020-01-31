@@ -1,6 +1,6 @@
 [submodule "coqdocjs"]
 	path = coqdocjs
-	url = https://github.com/tebbi/coqdocjs.git
+	url = https://github.com/coq-community/coqdocjs.git
 [submodule "templates"]
 	path = templates
 	url = https://github.com/coq-ext-lib/templates.git

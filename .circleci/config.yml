@@ -118,7 +118,7 @@ jobs:
     - startup
     - deploy
     docker:
-    - image: ysli/coq
+    - image: coqorg/coq
 
 workflows:
   version: 2

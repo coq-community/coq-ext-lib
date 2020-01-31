@@ -18,6 +18,7 @@
 [gitter-link]: https://gitter.im/coq-community/Lobby
 
 
+
 A collection of theories and plugins that may be useful in other Coq developments.
 
 ## Meta
@@ -29,7 +30,7 @@ A collection of theories and plugins that may be useful in other Coq development
   - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
 - License: [The FreeBSD Copyright](LICENSE)
 - Compatible Coq versions: Coq 8.8 or later
-- Additional Coq dependencies: none
+- Additional dependencies: none
 - Coq namespace: `ExtLib`
 - Related publication(s): none
 
