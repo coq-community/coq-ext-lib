@@ -13,9 +13,9 @@ examples: theories
 	$(MAKE) -C examples
 
 clean:
-	$(MAKE) -f Makefile.coq clean
+	if [ -e Makefile.coq ] ; then $(MAKE) -f Makefile.coq cleanall ; fi
 	$(MAKE) -C examples clean
-	@ rm Makefile.coq
+	@rm -f Makefile.coq Makefile.coq.conf
 
 uninstall:
 	$(MAKE) -f Makefile.coq uninstall
@@ -24,4 +24,12 @@ uninstall:
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
-.PHONY: all clean dist theories examples
+include tools/Makefile.doc
+
+%.md: meta.yml templates/%.md.mustache
+	mustache $^ > $@
+
+%.html: %.md
+	pandoc -s -o $@ $<
+
+.PHONY: all clean dist theories examples html

@@ -1,6 +1,5 @@
 Require Coq.Arith.Arith.
 Require Import ExtLib.Core.RelDec.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Tactics.Injection.
@@ -11,23 +10,6 @@ Set Strict Implicit.
 
 Global Instance RelDec_eq : RelDec (@eq nat) :=
 { rel_dec := EqNat.beq_nat }.
-
-Global Instance type_nat : type nat :=
-{ equal := @eq nat
-; proper := fun _ => True
-}.
-
-Global Instance typeOk_nat : typeOk type_nat.
-Proof.
-  constructor.
-  { compute; auto. }
-  { compute; auto. }
-  { compute; auto. }
-  { compute. intros. etransitivity; eauto. }
-Qed.
-
-Global Instance nat_proper (n : nat) : proper n.
-Proof. exact I. Qed.
 
 Require Coq.Numbers.Natural.Peano.NPeano.
 

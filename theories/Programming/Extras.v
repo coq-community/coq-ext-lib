@@ -28,6 +28,23 @@ Definition compose A B C (g:B -> C) (f:A -> B) (x:A) : C := g (f x).
 
 Definition uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
 
+Definition curry  {A B C} (f : A * B -> C) (a : A) (b : B) : C := f (a, b).
+
+Lemma uncurry_curry : forall A B C (f : A -> B -> C) a b,
+    curry (uncurry f) a b = f a b.
+Proof.
+  unfold curry, uncurry.
+  reflexivity.
+Qed.
+
+Lemma curry_uncurry : forall A B C (f : A * B -> C) ab,
+    uncurry (curry f) ab = f ab.
+Proof.
+  unfold uncurry, curry.
+  destruct ab.
+  reflexivity.
+Qed.
+
 Definition const A B (x:B) : A -> B := fun _ => x.
 
 Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=

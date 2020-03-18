@@ -14,15 +14,16 @@ Require Import ExtLib.Core.RelDec.
 
 Set Implicit Arguments.
 Set Strict Implicit.
+Set Universe Polymorphism.
 
 Set Printing Universes.
 
-Universe Ushow.
+Monomorphic Universe Ushow.
 
-Polymorphic Definition showM@{T} : Type@{Ushow} :=
+Definition showM@{T} : Type@{Ushow} :=
   forall m : Type@{T}, Injection ascii m -> Monoid m -> m.
 
-Polymorphic Class ShowScheme@{t} (T : Type@{t}) : Type :=
+Class ShowScheme@{t} (T : Type@{t}) : Type :=
 { show_mon : Monoid@{t} T
 ; show_inj : Injection ascii T
 }.
@@ -37,23 +38,23 @@ Global Instance ShowScheme_string_compose : ShowScheme (string -> string) :=
 ; show_inj := String
 }.
 
-Polymorphic Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
+Definition runShow {T} {M : ShowScheme T} (m : showM) : T :=
   m _ show_inj show_mon.
 
-Polymorphic Class Show@{t m} (T : Type@{t}) : Type :=
+Class Show@{t m} (T : Type@{t}) : Type :=
   show : T -> showM@{m}.
 
-Polymorphic Definition to_string {T} {M : Show T} (v : T) : string :=
+Definition to_string {T} {M : Show T} (v : T) : string :=
   runShow (show v) ""%string.
 
-Polymorphic Definition empty : showM :=
+Definition empty : showM :=
   fun _ _ m => monoid_unit m.
-Polymorphic Definition cat (a b : showM) : showM :=
+Definition cat (a b : showM) : showM :=
   fun _ i m => monoid_plus m (a _ i m) (b _ i m).
-Global Polymorphic Instance Injection_ascii_showM : Injection ascii showM :=
+Global Instance Injection_ascii_showM : Injection ascii showM :=
   fun v => fun _ i _ => i v.
 
-Polymorphic Fixpoint show_exact (s : string) : showM :=
+Fixpoint show_exact (s : string) : showM :=
   match s with
     | EmptyString => empty
     | String a s' => cat (inject a) (show_exact s')
@@ -68,7 +69,7 @@ Module ShowNotation.
   Coercion _inject_char : ascii >-> showM.
 End ShowNotation.
 
-Polymorphic Definition indent (indent : showM) (v : showM) : showM :=
+Definition indent (indent : showM) (v : showM) : showM :=
   let nl := Ascii.ascii_of_nat 10 in
     fun _ inj mon =>
       v _ (fun a => if eq_dec a nl
@@ -79,7 +80,7 @@ Section sepBy.
   Import ShowNotation.
   Local Open Scope show_scope.
 
-  Polymorphic Definition sepBy {T : Type}
+  Definition sepBy {T : Type}
               {F : Foldable T showM} (sep : showM) (ls : T) : showM :=
     match
       fold (fun s acc =>
@@ -96,11 +97,11 @@ End sepBy.
 Section sepBy_f.
   Import ShowNotation.
   Local Open Scope show_scope.
-  Polymorphic Variables (T : Type) (E : Type).
-  Polymorphic Context {F : Foldable T E}.
-  Polymorphic Variable (f : E -> showM).
+  Variables (T : Type) (E : Type).
+  Context {F : Foldable T E}.
+  Variable (f : E -> showM).
 
-  Polymorphic Definition sepBy_f (sep : showM) (ls : T) : showM :=
+  Definition sepBy_f (sep : showM) (ls : T) : showM :=
     match
       fold (fun s acc =>
         match acc with
@@ -113,14 +114,14 @@ Section sepBy_f.
     end.
 End sepBy_f.
 
-Polymorphic Definition wrap (before after : showM) (x : showM) : showM :=
+Definition wrap (before after : showM) (x : showM) : showM :=
   cat before (cat x after).
 
 Section sum_Show.
   Import ShowNotation.
   Local Open Scope show_scope.
 
-  Polymorphic Definition sum_Show@{a m}
+  Definition sum_Show@{a m}
               {A : Type@{a}} {B : Type@{a}} {AS:Show@{a m} A} {BS:Show@{a m} B}
   : Show@{a m} (A+B) :=
     fun s =>
@@ -139,14 +140,14 @@ Section sum_Show.
 End sum_Show.
 
 Section foldable_Show.
-  Polymorphic Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
+  Context {A:Type} {B:Type} {F : Foldable B A} {BS : Show A}.
 
-  Global Polymorphic  Instance foldable_Show : Show B :=
+  Global Instance foldable_Show : Show B :=
     { show s := sepBy_f show (show_exact ", "%string) s }.
 
 End foldable_Show.
 
-Polymorphic Fixpoint iter_show (ss : list showM) : showM :=
+Fixpoint iter_show (ss : list showM) : showM :=
   match ss with
     | nil => empty
     | cons s ss => cat s (iter_show ss)
@@ -192,17 +193,18 @@ Section hiding_notation.
       | Zneg p => "-"%char << show p
       end.
 
-  Section pair_Show.
-    Polymorphic Definition pair_Show@{a m}
-                {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
-    : Show (A*B) :=
-      fun p =>
-        let (a,b) := p in
-        "("%char << show a << ","%char << show b << ")"%char.
-  End pair_Show.
 End hiding_notation.
 
-
+Section pair_Show.
+  Import ShowNotation.
+  Local Open Scope show_scope.
+  Definition pair_Show@{a m t}
+              {A : Type@{a}} {B : Type@{a}} {AS:Show A} {BS:Show B}
+  : Show@{_ t} (A*B) :=
+    fun p =>
+      let (a,b) := p in
+      "("%char << show a << ","%char << show b << ")"%char.
+End pair_Show.
 
 (*
 Examples:

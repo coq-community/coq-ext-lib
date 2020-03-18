@@ -31,53 +31,53 @@ Section pmap.
       | Branch _ _ r => r
     end.
 
-  Fixpoint pmap_lookup (p : positive) (m : pmap) : option T :=
+  Fixpoint pmap_lookup (p : positive) (m : pmap) {struct p} : option T :=
     match m with
-      | Empty => None
-      | Branch d l r =>
-        match p with
-          | xH => d
-          | xO p => pmap_lookup p l
-          | xI p => pmap_lookup p r
-        end
+    | Empty => None
+    | Branch d l r =>
+      match p with
+      | xH => d
+      | xO p => pmap_lookup p l
+      | xI p => pmap_lookup p r
+      end
     end.
 
-  Fixpoint pmap_insert (p : positive) (v : T) (m : pmap) : pmap :=
+  Fixpoint pmap_insert (p : positive) (v : T) (m : pmap) {struct p} : pmap :=
     match p with
-      | xH => Branch (Some v) (pmap_left m) (pmap_right m)
-      | xO p =>
-        Branch (pmap_here m) (pmap_insert p v (pmap_left m)) (pmap_right m)
-      | xI p =>
-        Branch (pmap_here m) (pmap_left m) (pmap_insert p v (pmap_right m))
+    | xH => Branch (Some v) (pmap_left m) (pmap_right m)
+    | xO p =>
+      Branch (pmap_here m) (pmap_insert p v (pmap_left m)) (pmap_right m)
+    | xI p =>
+      Branch (pmap_here m) (pmap_left m) (pmap_insert p v (pmap_right m))
     end.
 
   Definition branch (o : option T) (l r : pmap) : pmap :=
     match o , l , r with
-      | None , Empty , Empty => Empty
-      | _ , _ , _ => Branch o l r
+    | None , Empty , Empty => Empty
+    | _ , _ , _ => Branch o l r
     end.
 
-  Fixpoint pmap_remove (p : positive) (m : pmap) : pmap :=
+  Fixpoint pmap_remove (p : positive) (m : pmap) {struct p} : pmap :=
     match m with
-      | Empty => Empty
-      | Branch d l r =>
-        match p with
-          | xH => branch None l r
-          | xO p => branch d (pmap_remove p l) r
-          | xI p => branch d l (pmap_remove p r)
-        end
+    | Empty => Empty
+    | Branch d l r =>
+      match p with
+      | xH => branch None l r
+      | xO p => branch d (pmap_remove p l) r
+      | xI p => branch d l (pmap_remove p r)
+      end
     end.
 
   Definition pmap_empty : pmap := Empty.
 
   Fixpoint pmap_union (f m : pmap) : pmap :=
     match f with
-      | Empty => m
-      | Branch d l r =>
-        Branch (match d with
-                  | Some x => Some x
-                  | None => pmap_here m
-                end) (pmap_union l (pmap_left m)) (pmap_union r (pmap_right m))
+    | Empty => m
+    | Branch d l r =>
+      Branch (match d with
+              | Some x => Some x
+              | None => pmap_here m
+              end) (pmap_union l (pmap_left m)) (pmap_union r (pmap_right m))
     end.
 
   Global Instance Map_pmap : Map positive T pmap :=
@@ -153,7 +153,7 @@ Section pmap.
     { destruct k'; simpl; destruct m; simpl;
       autorewrite with pmap_rw; Cases.rewrite_all_goal; try reflexivity; try congruence. }
   Qed.
- 
+
   Lemma pmap_lookup_insert_None_neq
   : forall (m : pmap) (k : positive) (v : T) (k' : positive),
       k <> k' ->
@@ -185,6 +185,47 @@ Section pmap.
       apply pmap_lookup_insert_None_neq; intuition].
   Qed.
 
+  Lemma pmap_lookup_remove_eq
+  : forall (m : pmap) (k : positive) (v : T),
+      pmap_lookup k (pmap_remove k m) <> Some v.
+  Proof.
+    induction m; destruct k; simpl; intros; try congruence.
+    { destruct o; simpl; eauto.
+      destruct m1; simpl; eauto.
+      destruct (pmap_remove k m2) eqn:?; try congruence.
+      rewrite <- Heqp. eauto. }
+    { destruct o; simpl; eauto.
+      destruct (pmap_remove k m1) eqn:?; try congruence.
+      - destruct m2; try congruence; eauto.
+        destruct k; simpl; congruence.
+      - rewrite <- Heqp. eauto. }
+    { destruct m1; try congruence.
+      destruct m2; try congruence. }
+  Qed.
+
+  Lemma pmap_lookup_remove_neq
+  : forall (m : pmap) (k k' : positive),
+      k <> k' ->
+      forall v' : T, pmap_lookup k' m = Some v' <-> pmap_lookup k' (pmap_remove k m) = Some v'.
+  Proof.
+    induction m.
+    Local Ltac t :=
+      unfold branch;
+      repeat match goal with
+             | |- context [ match ?X with _ => _ end ] =>
+               lazymatch X with
+               | match _ with _ => _ end => fail
+               | _ => destruct X eqn:?; subst; try tauto
+               end
+             end.
+    { destruct k; simpl; split; try congruence. }
+    { destruct k', k; simpl; intros; try solve [ t; rewrite lookup_empty; tauto ].
+      { assert (k <> k') by congruence.
+        rewrite IHm2; eauto. simpl. t. rewrite lookup_empty. tauto. }
+      { assert (k <> k') by congruence.
+        rewrite IHm1; eauto. simpl. t. rewrite lookup_empty. tauto. } }
+  Qed.
+
   Global Instance MapOk_pmap : MapOk (@eq _) Map_pmap.
   Proof.
   refine {| mapsto := fun k v m => pmap_lookup k m = Some v |}.
@@ -192,6 +233,8 @@ Section pmap.
     { abstract (induction k; simpl; intros; forward). }
     { eauto using pmap_lookup_insert_eq. }
     { eauto using pmap_lookup_insert_Some_neq. }
+    { eauto using pmap_lookup_remove_eq. }
+    { eauto using pmap_lookup_remove_neq. }
   Defined.
 
   Definition from_list : list T -> pmap :=
@@ -238,22 +281,6 @@ Section fmap.
   Qed.
 
 End fmap.
-
-Require Import ExtLib.Core.Type.
-
-Section type.
-  Variable T : Type.
-  Variable tT : type T.
-
-  Instance type_pmap : type (pmap T) :=
-    type_from_equal
-      (fun l r =>
-            (forall k v,
-               mapsto k v l -> exists v', mapsto k v' r /\ equal v v')
-         /\ (forall k v,
-               mapsto k v r -> exists v', mapsto k v' l /\ equal v v')).
-
-End type.
 
 Global Instance Functor_pmap : Functor pmap :=
 { fmap := fmap_pmap }.

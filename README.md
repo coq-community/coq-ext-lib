@@ -1,7 +1,58 @@
-coq-ext-lib
-===========
+# coq-ext-lib
+
+[![CircleCI][circleci-shield]][circleci-link]
+[![Contributing][contributing-shield]][contributing-link]
+[![Code of Conduct][conduct-shield]][conduct-link]
+[![Gitter][gitter-shield]][gitter-link]
+
+[circleci-shield]: https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg
+[circleci-link]:   https://circleci.com/gh/coq-community/coq-ext-lib
+
+[contributing-shield]: https://img.shields.io/badge/contributions-welcome-%23f7931e.svg
+[contributing-link]: https://github.com/coq-community/manifesto/blob/master/CONTRIBUTING.md
+
+[conduct-shield]: https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-%23f15a24.svg
+[conduct-link]: https://github.com/coq-community/manifesto/blob/master/CODE_OF_CONDUCT.md
+
+[gitter-shield]: https://img.shields.io/badge/chat-on%20gitter-%23c1272d.svg
+[gitter-link]: https://gitter.im/coq-community/Lobby
+
+
 
 A collection of theories and plugins that may be useful in other Coq developments.
+
+## Meta
+
+- Author(s):
+  - Gregory Malecha (initial)
+- Coq-community maintainer(s):
+  - Gregory Malecha ([**@gmalecha**](https://github.com/gmalecha))
+  - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
+- License: [The FreeBSD Copyright](LICENSE)
+- Compatible Coq versions: Coq 8.8 or later
+- Additional dependencies: none
+- Coq namespace: `ExtLib`
+- Related publication(s): none
+
+## Building and installation instructions
+
+The easiest way to install the latest released version of coq-ext-lib
+is via [OPAM](https://opam.ocaml.org/doc/Install.html):
+
+```shell
+opam repo add coq-released https://coq.inria.fr/opam/released
+opam install coq-ext-lib
+```
+
+To instead build and install manually, do:
+
+``` shell
+git clone https://github.com/coq-community/coq-ext-lib
+cd coq-ext-lib
+make theories  # or make -j <number-of-cores-on-your-machine> theories
+make install
+```
+
 
 Ideas
 -----
@@ -23,12 +74,3 @@ File Structure
 * theories/
   - Base directory to the provided theories
 
-Install from OPAM
------------------
-Make sure you added the [Coq repository](coq.io/opam/):
-
-    opam repo add coq-released https://coq.inria.fr/opam/released
-
-and run:
-
-    opam install coq-ext-lib

@@ -1,3 +1,4 @@
+From Coq Require Import PArith.
 Require Import ExtLib.Data.Map.FMapPositive.
 Require Import ExtLib.Data.Eq.
 Require Import ExtLib.Tactics.Injection.
