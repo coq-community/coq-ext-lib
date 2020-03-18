@@ -2,6 +2,7 @@ From Coq Require Import PArith.
 Require Import ExtLib.Data.Map.FMapPositive.
 Require Import ExtLib.Data.Eq.
 Require Import ExtLib.Tactics.Injection.
+From Coq Require Import PArith.
 
 Fixpoint pmap_lookup' (ts : pmap Type) (p : positive) : option Type :=
   match p with
