@@ -1,7 +1,7 @@
+Require Import Coq.Bool.Bool.
 Require NPeano.
 Import NPeano.Nat.
 Require Import ExtLib.Tactics.Consider.
-Require Import Coq.Bool.Bool.
 Require Import ExtLib.Data.Nat.
 
 Require Import Coq.ZArith.ZArith.
