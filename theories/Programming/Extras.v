@@ -1,4 +1,3 @@
-Require Import Coq.Program.Syntax.
 Require Import List.
 Require Import String.
 
@@ -7,7 +6,7 @@ Require Import ExtLib.Core.RelDec.
 (*Require Import Injection. *)
 
 Open Scope string_scope.
-Import MonadNotation.
+Import MonadNotation ListNotations.
 Open Scope monad_scope.
 
 Set Implicit Arguments.
