@@ -135,7 +135,7 @@ Section keyed.
           let acc := f k1 v1 acc in
           let acc := twothree_fold acc m in
           let acc := f k2 v2 acc in
-          twothree_fold acc m
+          twothree_fold acc r
       end.
 
   End fold.
