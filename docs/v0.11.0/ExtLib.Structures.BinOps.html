@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.BinOps</h1>
+
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="unit_op"><span class="id" title="section">unit_op</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="unit_op.op"><span class="id" title="variable">op</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="unit_op.u"><span class="id" title="variable">u</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="unit_op.equ"><span class="id" title="variable">equ</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="LeftUnit"><span class="id" title="record">LeftUnit</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="lunit"><span class="id" title="projection">lunit</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span>, <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.equ"><span class="id" title="variable">equ</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.u"><span class="id" title="variable">u</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a>) <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="RightUnit"><span class="id" title="record">RightUnit</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="runit"><span class="id" title="projection">runit</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span>, <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.equ"><span class="id" title="variable">equ</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op.u"><span class="id" title="variable">u</span></a>) <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.BinOps.html#unit_op"><span class="id" title="section">unit_op</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="comm_op"><span class="id" title="section">comm_op</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> <span class="id" title="var">U</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="comm_op.op"><span class="id" title="variable">op</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.U"><span class="id" title="variable">U</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="comm_op.equ"><span class="id" title="variable">equ</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.U"><span class="id" title="variable">U</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.U"><span class="id" title="variable">U</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Commutative"><span class="id" title="record">Commutative</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="commut"><span class="id" title="projection">commut</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.equ"><span class="id" title="variable">equ</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#b"><span class="id" title="variable">b</span></a>) (<a class="idref" href="ExtLib.Structures.BinOps.html#comm_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.BinOps.html#comm_op"><span class="id" title="section">comm_op</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="assoc_op"><span class="id" title="section">assoc_op</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="assoc_op.op"><span class="id" title="variable">op</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.T"><span class="id" title="variable">T</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="assoc_op.equ"><span class="id" title="variable">equ</span></a> : <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.11.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Associative"><span class="id" title="record">Associative</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="assoc"><span class="id" title="projection">assoc</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>, <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.equ"><span class="id" title="variable">equ</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.op"><span class="id" title="variable">op</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#b"><span class="id" title="variable">b</span></a>) <a class="idref" href="ExtLib.Structures.BinOps.html#c"><span class="id" title="variable">c</span></a>) (<a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#a"><span class="id" title="variable">a</span></a> (<a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op.op"><span class="id" title="variable">op</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="ExtLib.Structures.BinOps.html#c"><span class="id" title="variable">c</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.BinOps.html#assoc_op"><span class="id" title="section">assoc_op</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

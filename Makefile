@@ -1,35 +1,36 @@
 all: theories examples
 
-theories: Makefile.coq
-	$(MAKE) -f Makefile.coq
+include coqdocjs/Makefile.doc
 
-Makefile.coq:
-	$(COQBIN)coq_makefile -f _CoqProject -o Makefile.coq
+theories: $(COQMAKEFILE)
+	$(MAKE) -f $(COQMAKEFILE)
 
-install: Makefile.coq
-	$(MAKE) -f Makefile.coq install
+$(COQMAKEFILE):
+	$(COQBIN)coq_makefile -f _CoqProject -o $(COQMAKEFILE)
+
+install: $(COQMAKEFILE)
+	$(MAKE) -f $(COQMAKEFILE) install
 
 examples: theories
 	$(MAKE) -C examples
 
 clean:
-	if [ -e Makefile.coq ] ; then $(MAKE) -f Makefile.coq cleanall ; fi
+	if [ -e $(COQMAKEFILE) ] ; then $(MAKE) -f $(COQMAKEFILE) cleanall ; fi
 	$(MAKE) -C examples clean
-	@rm -f Makefile.coq Makefile.coq.conf
+	@rm -f $(COQMAKEFILE) $(COQMAKEFILE).conf
 
 uninstall:
-	$(MAKE) -f Makefile.coq uninstall
-
+	$(MAKE) -f $(COQMAKEFILE) uninstall
 
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
-include tools/Makefile.doc
-
-%.md: meta.yml templates/%.md.mustache
-	mustache $^ > $@
-
-%.html: %.md
-	pandoc -s -o $@ $<
-
 .PHONY: all clean dist theories examples html
+
+TEMPLATES ?= ../templates
+
+docs/index.html: index.md
+	pandoc -s $^ -o $@
+
+index.md: meta.yml
+	$(TEMPLATES)/generate.sh $@

@@ -1,9 +1,11 @@
 ---
 fullname: coq-ext-lib
 shortname: coq-ext-lib
+opam_name: coq-ext-lib
 organization: coq-community
 community: true
 circleci: true
+ci_test_dependants: true
 
 synopsis: A library of Coq definitions, theorems, and tactics
 description: A collection of theories and plugins that may be useful in other Coq developments.
@@ -18,7 +20,7 @@ maintainers:
 - name: Yishuai Li
   nickname: liyishuai
 
-opam-file-maintainer: "Yishuai Li <yishuai@cis.upenn.edu>"
+opam-file-maintainer: "gmalecha@gmail.com"
 
 license:
   fullname: The FreeBSD Copyright
@@ -27,6 +29,13 @@ license:
 supported_coq_versions:
   text: Coq 8.8 or later
   opam: '{ >= "8.8" }'
+
+tested_coq_opam_versions:
+  - version: '8.8'
+  - version: '8.9'
+  - version: '8.10'
+  - version: '8.11'
+  - version: 'dev'
 
 target: theories
 namespace: ExtLib
@@ -51,4 +60,9 @@ documentation: |
   --------------
   * theories/
     - Base directory to the provided theories
+
+coqdoc_index: |
+  - [0.11.1](v0.11.1/toc.html)
+  - [0.11.0](v0.11.0/toc.html)
+  - [0.10.3](v0.10.3/toc.html)
 ---
