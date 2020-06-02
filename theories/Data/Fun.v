@@ -11,11 +11,7 @@ Set Strict Implicit.
 Section functors.
   Variable A : Type.
 
-  Instance FunFunctor A : Functor (Fun A) :=
-  { fmap _A _B g f x := g (f x)
-  }.
-
-  Local Instance Functor_Fun : Functor (Fun A) :=
+  Global Instance Functor_Fun : Functor (Fun A) :=
   { fmap _A _B g f x := g (f x) }.
 
   Local Instance CoFunctor_Fun T : CoFunctor (fun x => x -> T) :=
