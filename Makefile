@@ -1,6 +1,7 @@
 all: theories examples
 
 -include coqdocjs/Makefile.doc
+COQMAKEFILE?=Makefile.coq
 
 theories: $(COQMAKEFILE)
 	$(MAKE) -f $(COQMAKEFILE)
