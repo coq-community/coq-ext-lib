@@ -60,6 +60,9 @@ Module MonadNotation.
   Notation "x <- c1 ;; c2" := (@bind _ _ _ _ c1 (fun x => c2))
     (at level 61, c1 at next level, right associativity) : monad_scope.
 
+  Notation "` x : t <- c1 ;; c2" := (@bind _ _ _ _ c1 (fun x : t => c2))
+    (at level 61, t at next level, c1 at next level, x ident, right associativity) : monad_scope.
+
   Notation "e1 ;; e2" := (_ <- e1%monad ;; e2%monad)%monad
     (at level 61, right associativity) : monad_scope.
 
