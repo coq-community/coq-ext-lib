@@ -23,10 +23,12 @@ Module FunNotation.
 End FunNotation.
 Import FunNotation.
 
-Definition compose A B C (g:B -> C) (f:A -> B) (x:A) : C := g (f x).
-
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
 Definition uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
 Definition curry  {A B C} (f : A * B -> C) (a : A) (b : B) : C := f (a, b).
 
 Lemma uncurry_curry : forall A B C (f : A -> B -> C) a b,
@@ -43,8 +45,6 @@ Proof.
   destruct ab.
   reflexivity.
 Qed.
-
-Definition const A B (x:B) : A -> B := fun _ => x.
 
 Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=
   match xs, ys with

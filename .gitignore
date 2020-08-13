@@ -22,3 +22,4 @@ index.md
 *.coq.d
 *.vok
 *.vos
+.lia.cache
