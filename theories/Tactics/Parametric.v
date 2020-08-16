@@ -6,7 +6,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 (** The purpose of this tactic is to try to automatically derive morphisms
- ** for functions
+    for functions
  **)
 
 Theorem Proper_red : forall T U (rT : relation T) (rU : relation U) (f : T -> U),

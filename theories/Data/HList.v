@@ -701,7 +701,7 @@ Arguments Hcons {_ _ _ _} _ _.
 Arguments equiv_hlist {_ F} R {_} _ _ : rename.
 
 (** Weak Map
- ** This is weak because it does not change the key type
+    This is weak because it does not change the key type
  **)
 Section hlist_map.
   Variable A : Type.

@@ -8,7 +8,7 @@ Set Strict Implicit.
 Definition Lazy (t : Type) : Type := unit -> t.
 
 (** Note: in order for this to have the right behavior, it must
- ** be beta-delta reduced.
+    be beta-delta reduced.
  **)
 Definition _lazy {T : Type} (l : T) : Lazy T := fun _ => l.
 

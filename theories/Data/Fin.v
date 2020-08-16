@@ -9,7 +9,7 @@ Set Strict Implicit.
 Set Asymmetric Patterns.
 
 (** `fin n` corresponds to "naturals less than `n`",
- ** i.e. a finite set of size n
+    i.e. a finite set of size n
  **)
 Inductive fin : nat -> Type :=
 | F0 : forall {n}, fin (S n)

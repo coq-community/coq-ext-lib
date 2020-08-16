@@ -4,8 +4,8 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 (** This tactic will perform case splits on terms that
- ** are matched on. It only does this on terms where only
- ** one of the cases is non-trivial (i.e. by [intuition congruence]).
+    are matched on. It only does this on terms where only
+    one of the cases is non-trivial (i.e. by [intuition congruence]).
  **
  **)
 Ltac forward' dst sol :=

@@ -30,7 +30,7 @@ dist:
 
 TEMPLATES ?= ../templates
 
-docs/index.html: index.md
+index.html: index.md
 	pandoc -s $^ -o $@
 
 index.md: meta.yml

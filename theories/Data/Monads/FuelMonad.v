@@ -12,7 +12,7 @@ Arguments Diverge {_}.
 Arguments Term {_} _.
 
 (** The GFix monad is like monad fix except that
- ** it encapsulates the "gas" that is used as the measure
+    it encapsulates the "gas" that is used as the measure
  **)
 Section gfix.
   (** This is essentially ReaderT (optionT m)) **)

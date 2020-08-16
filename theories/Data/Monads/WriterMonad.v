@@ -128,7 +128,7 @@ End CastWriterT.
 
 
 (** Simple wrapper around `writerT` specializing the underlying monad to `Identity`
- ** which yields the `writer` monad.
+    which yields the `writer` monad.
  **)
 Section WriterMonad.
 

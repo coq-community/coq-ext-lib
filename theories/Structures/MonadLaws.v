@@ -12,11 +12,11 @@ Section MonadLaws.
   Variable M : Monad m.
 
   (** This <= relation is a computational <= relation based on the ideas
-   ** of domain theory. It generalizes the usual equivalence relation by,
-   ** enabling the relation to talk about computations that are "more defined"
-   ** than others.
-   **
-   ** This generalization is done to support the fixpoint law.
+      of domain theory. It generalizes the usual equivalence relation by,
+      enabling the relation to talk about computations that are "more defined"
+      than others.
+   
+      This generalization is done to support the fixpoint law.
    **)
 
   Class MonadLaws :=

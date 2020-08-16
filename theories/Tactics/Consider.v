@@ -1,7 +1,7 @@
 (** The [consider] tactic recovers some of the ease of reasoning about
- ** decision procedures when they are implemented as functions into bool.
+    decision procedures when they are implemented as functions into bool.
  **
- ** Implementation by Thomas Braibant (thomas.braibant@gmail.com)
+    Implementation by Thomas Braibant (thomas.braibant@gmail.com)
  **)
 (*Require Setoid. *)
 
