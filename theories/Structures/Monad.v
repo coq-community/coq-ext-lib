@@ -69,9 +69,6 @@ Module MonadNotation.
   Notation "x <- c1 ;; c2" := (@bind _ _ _ _ c1 (fun x => c2))
     (at level 61, c1 at next level, right associativity) : monad_scope.
 
-  Notation "` x : t <- c1 ;; c2" := (@bind _ _ _ _ c1 (fun x : t => c2))
-    (at level 61, t at next level, c1 at next level, x ident, right associativity) : monad_scope.
-
   Notation "' pat <- c1 ;; c2" :=
     (@bind _ _ _ _ c1 (fun x => match x with pat => c2 end))
     (at level 61, pat pattern, c1 at next level, right associativity) : monad_scope.
@@ -84,9 +81,6 @@ Module MonadLetNotation.
 
   Notation "'let*' x ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun x => c2))
     (at level 61, c1 at next level, right associativity) : monad_scope.
-
-  Notation "'`let*' x ':' t ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun x : t => c2))
-    (at level 61, t at next level, c1 at next level, x ident, right associativity) : monad_scope.
 
 End MonadLetNotation.
 
