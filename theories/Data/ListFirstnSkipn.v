@@ -41,7 +41,7 @@ Lemma firstn_cons : forall T n a (b : list T),
 Proof.
   destruct n; intros.
   omega.
-  simpl. cutrewrite (n - 0 = n); [ | omega ]. reflexivity.
+  simpl. replace (n - 0) with n; [ | omega ]. reflexivity.
 Qed.
 
 Hint Rewrite firstn_app_L firstn_app_R firstn_all firstn_0 firstn_cons using omega : list_rw.
@@ -86,7 +86,7 @@ Lemma skipn_cons : forall T n a (b : list T),
 Proof.
   destruct n; intros.
   omega.
-  simpl. cutrewrite (n - 0 = n); [ | omega ]. reflexivity.
+  simpl. replace (n - 0) with n; [ | omega ]. reflexivity.
 Qed.
 
 Hint Rewrite skipn_app_L skipn_app_R skipn_0 skipn_all skipn_cons using omega : list_rw.
