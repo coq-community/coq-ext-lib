@@ -1,3 +1,5 @@
+From Coq Require Import
+     Basics.
 Require Import ExtLib.Core.Any.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
@@ -46,6 +48,8 @@ Section monadic.
              {T U V:Type@{d}}
              (f: T -> m U) (g: U -> m V): (T -> m V) :=
     fun x => bind (f x) g.
+
+  Definition join {m a} `{Monad m} : m (m a) -> m a := flip bind id.
 
 End monadic.
 
