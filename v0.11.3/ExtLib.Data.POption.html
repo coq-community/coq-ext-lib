@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.POption</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Functor.html#"><span class="id" title="library">ExtLib.Structures.Functor</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Applicative.html#"><span class="id" title="library">ExtLib.Structures.Applicative</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Tactics.Injection.html#"><span class="id" title="library">ExtLib.Tactics.Injection</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+<span class="id" title="keyword">Set Printing Universes</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="poption" class="idref" href="#poption"><span class="id" title="section">poption</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Universe</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="poption.T" class="idref" href="#poption.T"><span class="id" title="variable">T</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">i</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a id="poption" class="idref" href="#poption"><span class="id" title="inductive">poption</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">i</span>} :=<br/>
+&nbsp;&nbsp;| <a id="pSome" class="idref" href="#pSome"><span class="id" title="constructor">pSome</span></a> : <a class="idref" href="ExtLib.Data.POption.html#poption.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.POption.html#poption:2"><span class="id" title="inductive">poption</span></a><br/>
+&nbsp;&nbsp;| <a id="pNone" class="idref" href="#pNone"><span class="id" title="constructor">pNone</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Injective_pSome" class="idref" href="#Injective_pSome"><span class="id" title="instance">Injective_pSome@</span></a>{} <a id="a:4" class="idref" href="#a:4"><span class="id" title="binder">a</span></a> <a id="b:5" class="idref" href="#b:5"><span class="id" title="binder">b</span></a><br/>
+&nbsp;&nbsp;: <a class="idref" href="ExtLib.Tactics.Injection.html#Injective"><span class="id" title="class">Injective</span></a> (<a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <a class="idref" href="ExtLib.Data.POption.html#a:4"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <a class="idref" href="ExtLib.Data.POption.html#b:5"><span class="id" title="variable">b</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Tactics.Injection.html#result"><span class="id" title="method">result</span></a> := <span class="id" title="var">a</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">b</span><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Tactics.Injection.html#injection"><span class="id" title="method">injection</span></a> := <span class="id" title="keyword">fun</span> <a id="pf:6" class="idref" href="#pf:6"><span class="id" title="binder">pf</span></a> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#pf:6"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">return</span> <span class="id" title="var">a</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#X:7"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <span class="id" title="var">y</span> =&gt; <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="var">a</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> }.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Injective_pSome_pNone" class="idref" href="#Injective_pSome_pNone"><span class="id" title="instance">Injective_pSome_pNone</span></a> <a id="a:10" class="idref" href="#a:10"><span class="id" title="binder">a</span></a><br/>
+&nbsp;&nbsp;: <a class="idref" href="ExtLib.Tactics.Injection.html#Injective"><span class="id" title="class">Injective</span></a> (<a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <a class="idref" href="ExtLib.Data.POption.html#a:10"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Tactics.Injection.html#result"><span class="id" title="method">result</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Tactics.Injection.html#injection"><span class="id" title="method">injection</span></a> := <span class="id" title="keyword">fun</span> <a id="pf:11" class="idref" href="#pf:11"><span class="id" title="binder">pf</span></a> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#pf:11"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">return</span> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#X:12"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">return</span> <span class="id" title="keyword">Prop</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <span class="id" title="var">y</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#I"><span class="id" title="constructor">I</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> }.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Injective_pNone_pSome" class="idref" href="#Injective_pNone_pSome"><span class="id" title="instance">Injective_pNone_pSome@</span></a>{} <a id="a:15" class="idref" href="#a:15"><span class="id" title="binder">a</span></a><br/>
+&nbsp;&nbsp;: <a class="idref" href="ExtLib.Tactics.Injection.html#Injective"><span class="id" title="class">Injective</span></a> (<a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <a class="idref" href="ExtLib.Data.POption.html#a:15"><span class="id" title="variable">a</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Tactics.Injection.html#result"><span class="id" title="method">result</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Tactics.Injection.html#injection"><span class="id" title="method">injection</span></a> := <span class="id" title="keyword">fun</span> <a id="pf:16" class="idref" href="#pf:16"><span class="id" title="binder">pf</span></a> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#pf:16"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">return</span> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#X:17"><span class="id" title="variable">X</span></a> <span class="id" title="keyword">return</span> <span class="id" title="keyword">Prop</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#I"><span class="id" title="constructor">I</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> }.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="section">poption</span></a>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> {<span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="var">Arguments</span> <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a> {<span class="id" title="var">_</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="poption_map" class="idref" href="#poption_map"><span class="id" title="section">poption_map</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Universes</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<a id="T:20" class="idref" href="#T:20"><span class="id" title="binder">T</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">i</span>}} {<a id="U:21" class="idref" href="#U:21"><span class="id" title="binder">U</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">j</span>}}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="poption_map.f" class="idref" href="#poption_map.f"><span class="id" title="variable">f</span></a> : <a class="idref" href="ExtLib.Data.POption.html#poption_map.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.POption.html#poption_map.U"><span class="id" title="variable">U</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="fmap_poption" class="idref" href="#fmap_poption"><span class="id" title="definition">fmap_poption@</span></a>{} (<a id="x:23" class="idref" href="#x:23"><span class="id" title="binder">x</span></a> : <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">i</span>} <a class="idref" href="ExtLib.Data.POption.html#poption_map.T"><span class="id" title="variable">T</span></a>) : <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">j</span>} <a class="idref" href="ExtLib.Data.POption.html#poption_map.U"><span class="id" title="variable">U</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#x:23"><span class="id" title="variable">x</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a> =&gt; <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone@</span></a>{<span class="id" title="var">j</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome@</span></a>{<span class="id" title="var">j</span>} (<a class="idref" href="ExtLib.Data.POption.html#poption_map.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Data.POption.html#x:23"><span class="id" title="variable">x</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="ap_poption" class="idref" href="#ap_poption"><span class="id" title="definition">ap_poption@</span></a>{}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="f:25" class="idref" href="#f:25"><span class="id" title="binder">f</span></a> : <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">i</span>} (<a class="idref" href="ExtLib.Data.POption.html#poption_map.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.POption.html#poption_map.U"><span class="id" title="variable">U</span></a>)) (<a id="x:26" class="idref" href="#x:26"><span class="id" title="binder">x</span></a> : <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">i</span>} <a class="idref" href="ExtLib.Data.POption.html#poption_map.T"><span class="id" title="variable">T</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">j</span>} <a class="idref" href="ExtLib.Data.POption.html#poption_map.U"><span class="id" title="variable">U</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.POption.html#f:25"><span class="id" title="variable">f</span></a> , <a class="idref" href="ExtLib.Data.POption.html#x:26"><span class="id" title="variable">x</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <span class="id" title="var">f</span> , <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome</span></a> (<a class="idref" href="ExtLib.Data.POption.html#f:25"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Data.POption.html#x:26"><span class="id" title="variable">x</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> , <span class="id" title="var">_</span> =&gt; <a class="idref" href="ExtLib.Data.POption.html#pNone"><span class="id" title="constructor">pNone</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.POption.html#poption_map"><span class="id" title="section">poption_map</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="Functor_poption" class="idref" href="#Functor_poption"><span class="id" title="definition">Functor_poption@</span></a>{<span class="id" title="var">i</span>} : <a class="idref" href="ExtLib.Structures.Functor.html#Functor"><span class="id" title="class">Functor@</span></a>{<span class="id" title="var">i</span> <span class="id" title="var">i</span>} <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">i</span>} :=<br/>
+{| <a class="idref" href="ExtLib.Structures.Functor.html#fmap"><span class="id" title="method">fmap</span></a> := @<a class="idref" href="ExtLib.Data.POption.html#fmap_poption"><span class="id" title="definition">fmap_poption@</span></a>{<span class="id" title="var">i</span> <span class="id" title="var">i</span>} |}.<br/>
+<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">Functor_poption</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="Applicative_poption" class="idref" href="#Applicative_poption"><span class="id" title="definition">Applicative_poption@</span></a>{<span class="id" title="var">i</span>} : <a class="idref" href="ExtLib.Structures.Applicative.html#Applicative"><span class="id" title="class">Applicative@</span></a>{<span class="id" title="var">i</span> <span class="id" title="var">i</span>} <a class="idref" href="ExtLib.Data.POption.html#poption"><span class="id" title="inductive">poption@</span></a>{<span class="id" title="var">i</span>} :=<br/>
+{| <a class="idref" href="ExtLib.Structures.Applicative.html#pure"><span class="id" title="method">pure</span></a> := @<a class="idref" href="ExtLib.Data.POption.html#pSome"><span class="id" title="constructor">pSome@</span></a>{<span class="id" title="var">i</span>}<br/>
+&nbsp;; <a class="idref" href="ExtLib.Structures.Applicative.html#ap"><span class="id" title="method">ap</span></a>   := @<a class="idref" href="ExtLib.Data.POption.html#ap_poption"><span class="id" title="definition">ap_poption</span></a> |}.<br/>
+<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">Applicative_poption</span>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

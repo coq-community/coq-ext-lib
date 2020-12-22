@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.SigT</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Classes.EquivDec.html#"><span class="id" title="library">Coq.Classes.EquivDec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.EqDep.html#"><span class="id" title="library">ExtLib.Structures.EqDep</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Tactics.Injection.html#"><span class="id" title="library">ExtLib.Tactics.Injection</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Tactics.EqDep.html#"><span class="id" title="library">ExtLib.Tactics.EqDep</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set Printing Universes</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="injective" class="idref" href="#injective"><span class="id" title="section">injective</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="injective.T" class="idref" href="#injective.T"><span class="id" title="variable">T</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="injective.F" class="idref" href="#injective.F"><span class="id" title="variable">F</span></a> : <a class="idref" href="ExtLib.Data.SigT.html#injective.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="injective.ED" class="idref" href="#injective.ED"><span class="id" title="variable">ED</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Classes.EquivDec.html#EqDec"><span class="id" title="class">EquivDec.EqDec</span></a> <span class="id" title="var">_</span> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Data.SigT.html#injective.T"><span class="id" title="variable">T</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Injective_existT" class="idref" href="#Injective_existT"><span class="id" title="instance">Injective_existT</span></a> <a id="a:4" class="idref" href="#a:4"><span class="id" title="binder">a</span></a> <a id="b:5" class="idref" href="#b:5"><span class="id" title="binder">b</span></a> <a id="d:6" class="idref" href="#d:6"><span class="id" title="binder">d</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="ExtLib.Tactics.Injection.html#Injective"><span class="id" title="class">Injective</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#injective.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#a:4"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Data.SigT.html#b:5"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#injective.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#a:4"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Data.SigT.html#d:6"><span class="id" title="variable">d</span></a>) | 1.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> {| <a class="idref" href="ExtLib.Tactics.Injection.html#result"><span class="id" title="method">result</span></a> := <span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">d</span> |}.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">eauto</span> <span class="id" title="keyword">using</span> <a class="idref" href="ExtLib.Tactics.EqDep.html#inj_pair2"><span class="id" title="lemma">inj_pair2</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Injective_existT_dif" class="idref" href="#Injective_existT_dif"><span class="id" title="instance">Injective_existT_dif</span></a> <a id="a:7" class="idref" href="#a:7"><span class="id" title="binder">a</span></a> <a id="b:8" class="idref" href="#b:8"><span class="id" title="binder">b</span></a> <a id="c:9" class="idref" href="#c:9"><span class="id" title="binder">c</span></a> <a id="d:10" class="idref" href="#d:10"><span class="id" title="binder">d</span></a><br/>
+&nbsp;&nbsp;: <a class="idref" href="ExtLib.Tactics.Injection.html#Injective"><span class="id" title="class">Injective</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#injective.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#a:7"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Data.SigT.html#b:8"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#injective.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#c:9"><span class="id" title="variable">c</span></a> <a class="idref" href="ExtLib.Data.SigT.html#d:10"><span class="id" title="variable">d</span></a>) | 2.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> {| <a class="idref" href="ExtLib.Tactics.Injection.html#result"><span class="id" title="method">result</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">exists</span></a> <a id="pf:14" class="idref" href="#pf:14"><span class="id" title="binder">pf</span></a> : <span class="id" title="var">c</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">a</span><a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#a883bdd010993579f99d60b3775bcf54"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">b</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.SigT.html#pf:11"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">t</span> <span class="id" title="keyword">return</span> <a class="idref" href="ExtLib.Data.SigT.html#injective.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#t:13"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <span class="id" title="var">d</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> |}.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">inversion</span> 1; <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">exists</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>; <span class="id" title="tactic">auto</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.SigT.html#injective"><span class="id" title="section">injective</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a id="eq_sigT_rw" class="idref" href="#eq_sigT_rw"><span class="id" title="lemma">eq_sigT_rw</span></a><br/>
+: <span class="id" title="keyword">forall</span> <a id="T:17" class="idref" href="#T:17"><span class="id" title="binder">T</span></a> <a id="U:18" class="idref" href="#U:18"><span class="id" title="binder">U</span></a> <a id="F:19" class="idref" href="#F:19"><span class="id" title="binder">F</span></a> (<a id="a:20" class="idref" href="#a:20"><span class="id" title="binder">a</span></a> <a id="b:21" class="idref" href="#b:21"><span class="id" title="binder">b</span></a> : <a class="idref" href="ExtLib.Data.SigT.html#T:17"><span class="id" title="variable">T</span></a>) (<a id="pf:22" class="idref" href="#pf:22"><span class="id" title="binder">pf</span></a> : <a class="idref" href="ExtLib.Data.SigT.html#a:20"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Data.SigT.html#b:21"><span class="id" title="variable">b</span></a>) <a id="s:23" class="idref" href="#s:23"><span class="id" title="binder">s</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.SigT.html#pf:22"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">x</span> <span class="id" title="keyword">return</span> @<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#sigT"><span class="id" title="inductive">sigT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#U:18"><span class="id" title="variable">U</span></a> (<a class="idref" href="ExtLib.Data.SigT.html#F:19"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#x:25"><span class="id" title="variable">x</span></a>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="ExtLib.Data.SigT.html#s:23"><span class="id" title="variable">s</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Data.SigT.html#U:18"><span class="id" title="variable">U</span></a> (<a class="idref" href="ExtLib.Data.SigT.html#F:19"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#b:21"><span class="id" title="variable">b</span></a>) (<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#projT1"><span class="id" title="definition">projT1</span></a> <a class="idref" href="ExtLib.Data.SigT.html#s:23"><span class="id" title="variable">s</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.SigT.html#pf:22"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">x</span> <span class="id" title="keyword">return</span> <a class="idref" href="ExtLib.Data.SigT.html#F:19"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.SigT.html#x:27"><span class="id" title="variable">x</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#projT1"><span class="id" title="definition">projT1</span></a> <a class="idref" href="ExtLib.Data.SigT.html#s:23"><span class="id" title="variable">s</span></a>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; (<a class="idref" href="http://coq.inria.fr/distrib/V8.12.0/stdlib//Coq.Init.Specif.html#projT2"><span class="id" title="definition">projT2</span></a> <a class="idref" href="ExtLib.Data.SigT.html#s:23"><span class="id" title="variable">s</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">pf</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">s</span>; <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Hint Rewrite</span> <a class="idref" href="ExtLib.Data.SigT.html#eq_sigT_rw"><span class="id" title="lemma">eq_sigT_rw</span></a> : <span class="id" title="var">eq_rw</span>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
