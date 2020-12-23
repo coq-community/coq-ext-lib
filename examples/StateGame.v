@@ -13,7 +13,7 @@
        = (Bool, Int)
  *)
 
-Require Import Coq.ZArith.ZArith_base Coq.Strings.String.
+Require Import Coq.ZArith.ZArith_base Coq.Strings.String Coq.Strings.Ascii.
 Require Import ExtLib.Data.Monads.StateMonad ExtLib.Structures.Monads.
 
 Section StateGame.
