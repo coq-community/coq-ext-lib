@@ -104,3 +104,6 @@ Section except.
   }.
 
 End except.
+
+Arguments mkEitherT {T} {m} {A} (_).
+Arguments unEitherT {T} {m} {A} (_).

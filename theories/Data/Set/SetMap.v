@@ -5,7 +5,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 
 (** Canonical instance, a set is the same as a map where the values
- ** are unit
+    are unit
  **)
 (*
 Section SetFromMap.

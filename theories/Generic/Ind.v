@@ -65,7 +65,7 @@ Global Instance Data_nat : Data nat :=
     | inr (inr x) => match x with end
   end
 ; rec := fun c _ A z s d =>
-  coret ((fix recur (d : nat) {struct d} : c A :=
+  extract ((fix recur (d : nat) {struct d} : c A :=
     match d with
       | 0 => z
       | S n => s (recur n)
@@ -86,7 +86,7 @@ Global Instance Data_list {A} : Data (list A) :=
     | inr (inr x) => match x with end
   end
 ; rec := fun c _ T n co d =>
-  coret ((fix recur (ds : list A) {struct ds} : c T :=
+  extract ((fix recur (ds : list A) {struct ds} : c T :=
     match ds with
       | nil => n
       | d :: ds => co d (recur ds)
@@ -99,8 +99,8 @@ Require Import ExtLib.Data.Monads.IdentityMonad.
 Require Import ExtLib.Structures.Monads.
 
 Global Instance Comoand_Id : CoMonad id :=
-{ coret := fun _ x => x
-; cobind := fun _ _ f x => x f
+{ extract := fun _ x => x
+; extend := fun _ _ x f => x f
 }.
 
 (*

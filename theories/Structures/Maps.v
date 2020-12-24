@@ -29,6 +29,10 @@ Section Maps.
   ; mapsto_add_neq : forall m k v k',
                        ~R k k' ->
                        forall v', (mapsto k' v' m <-> mapsto k' v' (add k v m))
+  ; mapsto_remove_eq: forall m k v, ~ mapsto k v (remove k m)
+  ; mapsto_remove_neq : forall m k k',
+          ~ R k k' ->
+          forall v', (mapsto k' v' m <-> mapsto k' v' (remove k m))
   }.
 
   Variable M : Map.
@@ -61,8 +65,8 @@ Section Maps.
         else acc) empty m.
 
   Definition submap_with (le : V -> V -> bool) (m1 m2 : map) : bool :=
-    fold (fun k_v (acc : bool) => 
-      if acc then 
+    fold (fun k_v (acc : bool) =>
+      if acc then
         let '(k,v) := k_v in
         match lookup k m2 with
           | None => false

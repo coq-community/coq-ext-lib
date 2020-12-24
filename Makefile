@@ -1,27 +1,37 @@
 all: theories examples
 
-theories: Makefile.coq
-	$(MAKE) -f Makefile.coq
+-include coqdocjs/Makefile.doc
+COQMAKEFILE?=Makefile.coq
 
-Makefile.coq:
-	$(COQBIN)coq_makefile -f _CoqProject -o Makefile.coq
+theories: $(COQMAKEFILE)
+	$(MAKE) -f $(COQMAKEFILE)
 
-install: Makefile.coq
-	$(MAKE) -f Makefile.coq install
+$(COQMAKEFILE):
+	$(COQBIN)coq_makefile -f _CoqProject -o $(COQMAKEFILE)
+
+install: $(COQMAKEFILE)
+	$(MAKE) -f $(COQMAKEFILE) install
 
 examples: theories
 	$(MAKE) -C examples
 
 clean:
-	$(MAKE) -f Makefile.coq clean
+	if [ -e $(COQMAKEFILE) ] ; then $(MAKE) -f $(COQMAKEFILE) cleanall ; fi
 	$(MAKE) -C examples clean
-	@ rm Makefile.coq
+	@rm -f $(COQMAKEFILE) $(COQMAKEFILE).conf
 
 uninstall:
-	$(MAKE) -f Makefile.coq uninstall
-
+	$(MAKE) -f $(COQMAKEFILE) uninstall
 
 dist:
 	@ git archive --prefix coq-ext-lib/ HEAD -o $(PROJECT_NAME).tgz
 
-.PHONY: all clean dist theories examples
+.PHONY: all clean dist theories examples html
+
+TEMPLATES ?= ../templates
+
+index.html: index.md
+	pandoc -s $^ -o $@
+
+index.md: meta.yml
+	$(TEMPLATES)/generate.sh $@

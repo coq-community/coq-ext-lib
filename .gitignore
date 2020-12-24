@@ -7,7 +7,7 @@
 *.native
 *.o
 *.aux
-Makefile.coq
+Makefile.coq*
 Makefile.opam.coq
 *~
 \#*
@@ -15,3 +15,11 @@ Makefile.opam.coq
 .dir-locals.el
 deps.dot
 deps.pdf
+.coqdeps.d
+.DS_Store
+html
+index.md
+*.coq.d
+*.vok
+*.vos
+.lia.cache

@@ -12,3 +12,6 @@ Section Ident.
   }.
 
 End Ident.
+
+Arguments mkIdent {A} (_).
+Arguments unIdent {A} (_).

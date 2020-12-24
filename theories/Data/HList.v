@@ -1,8 +1,6 @@
 Require Import Coq.Lists.List.
 Require Import Relations RelationClasses.
-Require Import ExtLib.Core.Type.
 Require Import ExtLib.Core.RelDec.
-Require Import ExtLib.Structures.Proper.
 Require Import ExtLib.Data.SigT.
 Require Import ExtLib.Data.Member.
 Require Import ExtLib.Data.ListNth.
@@ -453,54 +451,6 @@ Section hlist.
   Qed.
 
   Section type.
-    Variable eqv : forall x, type (F x).
-
-    Global Instance type_hlist (ls : list iT): type (hlist ls) :=
-    { equal := @equiv_hlist (fun x => @equal _ (eqv x)) ls
-    ; proper :=
-      (fix recur ls (h : hlist ls) : Prop :=
-        match h with
-          | Hnil => True
-          | Hcons _ _ x y => proper x /\ recur _ y
-        end) ls
-    }.
-
-    Variable eqvOk : forall x, typeOk (eqv x).
-
-    Global Instance typeOk_hlist (ls : list iT): typeOk (type_hlist ls).
-    Proof.
-      constructor.
-      { induction ls; intros.
-        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          clear. compute; auto. }
-        { rewrite (hlist_eta x) in *. rewrite (hlist_eta y) in *.
-          simpl in H.
-          inv_all. eapply IHls in H1.
-          eapply only_proper in H0; eauto.
-          simpl; tauto. } }
-      { intro. induction ls; simpl.
-        { rewrite (hlist_eta x); intros; constructor. }
-        { rewrite (hlist_eta x); intros; intuition; constructor.
-          eapply preflexive; [ | eauto with typeclass_instances ].
-          eauto with typeclass_instances.
-          eapply IHls; eauto. } }
-      { red. induction 1.
-        { constructor. }
-        { constructor. symmetry. assumption. assumption. } }
-      { red. induction 1.
-        { auto. }
-        { intro H1.
-          etransitivity; [ | eassumption ].
-          constructor; eauto. } }
-    Qed.
-
-    Global Instance proper_hlist_app l l' : proper (@hlist_app l l').
-    Proof.
-      do 6 red. induction 1; simpl; auto.
-      { intros. constructor; eauto.
-        eapply IHequiv_hlist. exact H1. }
-    Qed.
-
     Lemma hlist_app_assoc : forall ls ls' ls''
                                  (a : hlist ls) (b : hlist ls') (c : hlist ls''),
       hlist_app (hlist_app a b) c =
@@ -751,7 +701,7 @@ Arguments Hcons {_ _ _ _} _ _.
 Arguments equiv_hlist {_ F} R {_} _ _ : rename.
 
 (** Weak Map
- ** This is weak because it does not change the key type
+    This is weak because it does not change the key type
  **)
 Section hlist_map.
   Variable A : Type.

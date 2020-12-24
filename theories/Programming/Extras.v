@@ -1,4 +1,3 @@
-Require Import Coq.Program.Syntax.
 Require Import List.
 Require Import String.
 
@@ -7,7 +6,7 @@ Require Import ExtLib.Core.RelDec.
 (*Require Import Injection. *)
 
 Open Scope string_scope.
-Import MonadNotation.
+Import MonadNotation ListNotations.
 Open Scope monad_scope.
 
 Set Implicit Arguments.
@@ -24,11 +23,28 @@ Module FunNotation.
 End FunNotation.
 Import FunNotation.
 
-Definition compose A B C (g:B -> C) (f:A -> B) (x:A) : C := g (f x).
-
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
 Definition uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
 
-Definition const A B (x:B) : A -> B := fun _ => x.
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
+Definition curry  {A B C} (f : A * B -> C) (a : A) (b : B) : C := f (a, b).
+
+Lemma uncurry_curry : forall A B C (f : A -> B -> C) a b,
+    curry (uncurry f) a b = f a b.
+Proof.
+  unfold curry, uncurry.
+  reflexivity.
+Qed.
+
+Lemma curry_uncurry : forall A B C (f : A * B -> C) ab,
+    uncurry (curry f) ab = f ab.
+Proof.
+  unfold uncurry, curry.
+  destruct ab.
+  reflexivity.
+Qed.
 
 Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=
   match xs, ys with

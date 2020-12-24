@@ -16,3 +16,34 @@ Ltac forward_reason :=
                clear H'
              end
          end.
+
+Ltac rwHyps :=
+  repeat match goal with
+           [ H: _ = _ |- _] =>  rewrite -> H
+         end.
+
+Ltac rwHypsR :=
+  repeat match goal with
+           [ H: _ = _ |- _] =>  rewrite <- H
+         end.
+
+Ltac rwHypsA :=
+  repeat match goal with
+           [ H: _ = _ |- _] =>  rewrite -> H in *
+         end.
+
+Ltac rwHypsRA :=
+  repeat match goal with
+           [ H: _ = _ |- _] =>  rewrite <- H in *
+         end.
+
+(* based on a tactic written by Vincent Rahli *)
+Ltac clear_trivials :=
+  repeat match goal with
+           | [ H : ?T = ?T |- _ ] => clear H
+           | [ H : ?T <-> ?T |- _ ] => clear H
+           | [ H : ?T -> ?T |- _ ] => clear H
+           | [ H1 : ?T, H2 : ?T |- _ ] => clear H2
+           | [ H : True |- _ ] => clear H
+           | [ H : not False |- _ ] => clear H
+         end.

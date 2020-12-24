@@ -1,7 +1,7 @@
 (** The contents in this file are reconstructed from the proof of Bruno Barras
- ** in the Coq standard library. It is duplicated so that the definitions
- ** can be made transparent, and therefore computable.
- ** See Coq.Logic.Eqdep_dec for complete information
+    in the Coq standard library. It is duplicated so that the definitions
+    can be made transparent, and therefore computable.
+    See Coq.Logic.Eqdep_dec for complete information
  **)
 Section uip_trans.
   Context {A : Type}.
