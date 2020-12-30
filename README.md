@@ -1,3 +1,7 @@
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
 # coq-ext-lib
 
 [![CircleCI][circleci-shield]][circleci-link]
@@ -28,7 +32,7 @@ A collection of theories and plugins that may be useful in other Coq development
 - Coq-community maintainer(s):
   - Gregory Malecha ([**@gmalecha**](https://github.com/gmalecha))
   - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
-- License: [The FreeBSD Copyright](LICENSE)
+- License: [BSD 2-Clause FreeBSD License](LICENSE)
 - Compatible Coq versions: Coq 8.8 or later
 - Additional dependencies: none
 - Coq namespace: `ExtLib`
@@ -47,7 +51,7 @@ opam install coq-ext-lib
 To instead build and install manually, do:
 
 ``` shell
-git clone https://github.com/coq-community/coq-ext-lib.git
+git clone --recurse-submodules https://github.com/coq-community/coq-ext-lib.git
 cd coq-ext-lib
 make theories  # or make -j <number-of-cores-on-your-machine> theories
 make install
