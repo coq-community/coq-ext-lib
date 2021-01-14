@@ -43,7 +43,9 @@ Section StateType.
   Definition execStateT {t} (c : stateT t) (s : S) : m S :=
     bind (runStateT c s) (fun x => ret (snd x)).
 
-
+  (* Monad_stateT is not a Global Instance because it can cause an infinite loop
+     in typeclass inference under certain circumstances. Use "Existing Instance
+     Monad_stateT" to bring the instance into context. *)
   Instance Monad_stateT : Monad stateT :=
   { ret := fun _ x => mkStateT (fun s => @ret _ M _ (x,s))
   ; bind := fun _ _ c1 c2 =>
