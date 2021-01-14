@@ -44,7 +44,7 @@ Section StateType.
     bind (runStateT c s) (fun x => ret (snd x)).
 
 
-  Global Instance Monad_stateT : Monad stateT :=
+  Instance Monad_stateT : Monad stateT :=
   { ret := fun _ x => mkStateT (fun s => @ret _ M _ (x,s))
   ; bind := fun _ _ c1 c2 =>
     mkStateT (fun s =>
