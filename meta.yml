@@ -42,7 +42,17 @@ tested_coq_opam_versions:
   - version: 'dev'
 
 make_target: theories
+test_target: examples
 namespace: ExtLib
+
+circleci_after_script: |2-
+      - run:
+          name: Generate Coqdoc
+          command: |
+            make -j`nproc` html
+            tar cfz coqdoc.tgz html
+      - store_artifacts:
+          path: coqdoc.tgz
 
 documentation: |
   Ideas
