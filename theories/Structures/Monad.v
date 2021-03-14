@@ -81,8 +81,8 @@ Module MonadLetNotation.
 
   Export MonadBaseNotation.
 
-  Notation "'let*' x ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun x => c2))
-    (at level 61, c1 at next level, right associativity) : monad_scope.
+  Notation "'let*' p ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun p => c2))
+    (at level 61, p as pattern, c1 at next level, right associativity) : monad_scope.
 
 End MonadLetNotation.
 
