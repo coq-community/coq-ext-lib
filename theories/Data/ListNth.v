@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import Coq.Arith.Lt Coq.Arith.Plus.
 
 Set Implicit Arguments.
 Set Strict Implicit.
