@@ -5,6 +5,7 @@ Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Data.Nat.
 
 Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -15,7 +16,7 @@ Section test.
                  ltb x z = true.
   intros x y z.
   consider (ltb x y && ltb y z).
-  consider (ltb x z); auto. intros. exfalso. omega.
+  consider (ltb x z); auto. intros. exfalso. lia.
   Qed.
 
   Goal forall x y z,
@@ -24,7 +25,7 @@ Section test.
     ltb x z = true.
   Proof.
     intros. consider (ltb x y); consider (ltb y z); consider (ltb x z); intros; auto.
-    exfalso; omega.
+    exfalso; lia.
   Qed.
 
 End test.
