@@ -25,8 +25,8 @@ maintainers:
 opam-file-maintainer: "gmalecha@gmail.com"
 
 license:
-  fullname: BSD 2-Clause FreeBSD License
-  identifier: BSD-2-Clause-FreeBSD
+  fullname: BSD 2-Clause "Simplified" License
+  identifier: BSD-2-Clause
 
 supported_coq_versions:
   text: Coq 8.8 or later

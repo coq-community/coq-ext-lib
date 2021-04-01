@@ -32,7 +32,7 @@ A collection of theories and plugins that may be useful in other Coq development
 - Coq-community maintainer(s):
   - Gregory Malecha ([**@gmalecha**](https://github.com/gmalecha))
   - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
-- License: [BSD 2-Clause FreeBSD License](LICENSE)
+- License: [BSD 2-Clause "Simplified" License](LICENSE)
 - Compatible Coq versions: Coq 8.8 or later
 - Additional dependencies: none
 - Coq namespace: `ExtLib`
