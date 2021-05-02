@@ -25,6 +25,14 @@ Global Instance Plus_option : MonadPlus option :=
     end
 }.
 
+Global Instance Exception_option : MonadExc unit option :=
+{ raise _ _   := None
+; catch _ c h := match c with
+                 | None   => h tt
+                 | Some x => Some x
+                 end
+}.
+
 Section Trans.
   Variable m : Type -> Type.
 
