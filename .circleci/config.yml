@@ -69,14 +69,14 @@ workflows:
         name: "Coq 8.10"
         coq: "coqorg/coq:8.10"
     - build:
-        name: "Coq 8.11"
-        coq: "coqorg/coq:8.11"
+        name: "Coq 8.11-ocaml-4.11-flambda"
+        coq: "coqorg/coq:8.11-ocaml-4.11-flambda"
     - build:
-        name: "Coq 8.12"
-        coq: "coqorg/coq:8.12"
+        name: "Coq 8.12-ocaml-4.11-flambda"
+        coq: "coqorg/coq:8.12-ocaml-4.11-flambda"
     - build:
-        name: "Coq 8.13"
-        coq: "coqorg/coq:8.13"
+        name: "Coq 8.13-ocaml-4.11-flambda"
+        coq: "coqorg/coq:8.13-ocaml-4.11-flambda"
     - build:
-        name: "Coq dev"
-        coq: "coqorg/coq:dev"
+        name: "Coq dev-ocaml-4.11-flambda"
+        coq: "coqorg/coq:dev-ocaml-4.11-flambda"
