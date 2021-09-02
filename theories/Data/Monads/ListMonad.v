@@ -6,11 +6,7 @@ Set Strict Implicit.
 
 Global Instance Monad_list : Monad list :=
 { ret := fun _ v => v :: nil
-; bind := fun _ _ => fix recur c1 c2 :=
-  match c1 with
-    | nil => nil
-    | a :: b => c2 a ++ recur b c2
-  end
+; bind := fun _ _ l f => flat_map f l
 }.
 
 Global Instance MonadZero_list : MonadZero list :=
