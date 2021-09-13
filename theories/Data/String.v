@@ -18,6 +18,8 @@ Local Notation "x >> y" := (match x with
                               | z => z
                             end) (only parsing, at level 30).
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since="8.12",note="Use Bool.compare instead.")] *)
 Definition bool_cmp (l r : bool) : comparison :=
   match l , r with
     | true , false => Gt
@@ -26,6 +28,8 @@ Definition bool_cmp (l r : bool) : comparison :=
     | false , false => Eq
   end.
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since="8.15",note="Use Ascii.compare instead.")] *)
 Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
@@ -34,6 +38,8 @@ Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
       bool_cmp l4 r4 >> bool_cmp l3 r3 >> bool_cmp l2 r2 >> bool_cmp l1 r1
   end.
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since="8.9",note="Use String.eqb instead.")] *)
 Fixpoint string_dec (l r : string) : bool :=
   match l , r with
     | EmptyString , EmptyString => true
@@ -43,6 +49,8 @@ Fixpoint string_dec (l r : string) : bool :=
     | _ , _ => false
   end.
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since="8.9",note="Use String.eqb_spec instead.")] *)
 Theorem string_dec_sound : forall l r,
   string_dec l r = true <-> l = r.
 Proof.
@@ -65,6 +73,8 @@ Proof.
   apply iff_to_reflect; auto using string_dec_sound.
 Qed.
 
+(* Uncomment the following line after we drop Coq 8.8: *)
+(* #[deprecated(since="8.15",note="Use String.compare instead.")] *)
 Fixpoint string_cmp (l r : string) : comparison :=
   match l , r with
     | EmptyString , EmptyString => Eq
