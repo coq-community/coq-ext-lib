@@ -77,6 +77,8 @@ documentation: |
     - Base directory to the provided theories
 
 coqdoc_index: |
+  - [0.11.4](v0.11.4/toc.html)
+  - [0.11.3](v0.11.3/toc.html)
   - [0.11.2](v0.11.2/toc.html)
   - [0.11.1](v0.11.1/toc.html)
   - [0.11.0](v0.11.0/toc.html)

@@ -19,6 +19,7 @@ deps.pdf
 .DS_Store
 html
 index.md
+index.html
 *.coq.d
 *.vok
 *.vos

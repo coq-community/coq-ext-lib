@@ -28,7 +28,7 @@ dist:
 
 .PHONY: all clean dist theories examples html
 
-TEMPLATES ?= ../templates
+TEMPLATES ?= templates
 
 index.html: index.md
 	pandoc -s $^ -o $@
