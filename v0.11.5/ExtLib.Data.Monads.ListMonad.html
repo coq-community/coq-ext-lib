@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Monads.ListMonad</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monads.html#"><span class="id" title="library">ExtLib.Structures.Monads</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Lists.List.html#"><span class="id" title="library">List</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="Monad_list" class="idref" href="#Monad_list"><span class="id" title="instance">Monad_list</span></a> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> :=<br/>
+{ <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <a id="v:1" class="idref" href="#v:1"><span class="id" title="binder">v</span></a> =&gt; <a class="idref" href="ExtLib.Data.Monads.ListMonad.html#v:1"><span class="id" title="variable">v</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a id="l:2" class="idref" href="#l:2"><span class="id" title="binder">l</span></a> <a id="f:3" class="idref" href="#f:3"><span class="id" title="binder">f</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Lists.List.html#flat_map"><span class="id" title="definition">flat_map</span></a> <a class="idref" href="ExtLib.Data.Monads.ListMonad.html#f:3"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Data.Monads.ListMonad.html#l:2"><span class="id" title="variable">l</span></a><br/>
+}.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="MonadZero_list" class="idref" href="#MonadZero_list"><span class="id" title="instance">MonadZero_list</span></a> : <a class="idref" href="ExtLib.Structures.MonadZero.html#MonadZero"><span class="id" title="class">MonadZero</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> :=<br/>
+{ <a class="idref" href="ExtLib.Structures.MonadZero.html#mzero"><span class="id" title="method">mzero</span></a> := @<a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="MonadPlus_list" class="idref" href="#MonadPlus_list"><span class="id" title="instance">MonadPlus_list</span></a> : <a class="idref" href="ExtLib.Structures.MonadPlus.html#MonadPlus"><span class="id" title="class">MonadPlus</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> :=<br/>
+{ <a class="idref" href="ExtLib.Structures.MonadPlus.html#mplus"><span class="id" title="method">mplus</span></a> <a id="_A:4" class="idref" href="#_A:4"><span class="id" title="binder">_A</span></a> <a id="_B:5" class="idref" href="#_B:5"><span class="id" title="binder">_B</span></a> <a id="a:6" class="idref" href="#a:6"><span class="id" title="binder">a</span></a> <a id="b:7" class="idref" href="#b:7"><span class="id" title="binder">b</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Lists.List.html#map"><span class="id" title="definition">List.map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#inl"><span class="id" title="constructor">inl</span></a> <a class="idref" href="ExtLib.Data.Monads.ListMonad.html#a:6"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#bc347c51eaf667706ae54503b26d52c6"><span class="id" title="notation">++</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Lists.List.html#map"><span class="id" title="definition">List.map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#inr"><span class="id" title="constructor">inr</span></a> <a class="idref" href="ExtLib.Data.Monads.ListMonad.html#b:7"><span class="id" title="variable">b</span></a><br/>
+}.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

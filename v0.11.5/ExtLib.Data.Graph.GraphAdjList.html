@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Graph.GraphAdjList</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.RelDec.html#"><span class="id" title="library">ExtLib.Core.RelDec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monads.html#"><span class="id" title="library">ExtLib.Structures.Monads</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monoid.html#"><span class="id" title="library">ExtLib.Structures.Monoid</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Reducible.html#"><span class="id" title="library">ExtLib.Structures.Reducible</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Maps.html#"><span class="id" title="library">ExtLib.Structures.Maps</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.List.html#"><span class="id" title="library">ExtLib.Data.List</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.PPair.html#"><span class="id" title="library">ExtLib.Data.PPair</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Monads.WriterMonad.html#"><span class="id" title="library">ExtLib.Data.Monads.WriterMonad</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Monads.IdentityMonad.html#"><span class="id" title="library">ExtLib.Data.Monads.IdentityMonad</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Graph.Graph.html#"><span class="id" title="library">ExtLib.Data.Graph.Graph</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Graph.BuildGraph.html#"><span class="id" title="library">ExtLib.Data.Graph.BuildGraph</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="GraphImpl" class="idref" href="#GraphImpl"><span class="id" title="section">GraphImpl</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="GraphImpl.V" class="idref" href="#GraphImpl.V"><span class="id" title="variable">V</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="GraphImpl.map" class="idref" href="#GraphImpl.map"><span class="id" title="variable">map</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="GraphImpl.Map" class="idref" href="#GraphImpl.Map"><span class="id" title="variable">Map</span></a> : <a class="idref" href="ExtLib.Structures.Maps.html#Map"><span class="id" title="class">Map</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>) <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.map"><span class="id" title="variable">map</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="GraphImpl.FMap" class="idref" href="#GraphImpl.FMap"><span class="id" title="variable">FMap</span></a> : <a class="idref" href="ExtLib.Structures.Reducible.html#Foldable"><span class="id" title="class">Foldable</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.map"><span class="id" title="variable">map</span></a> (<a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#11c698c8685bb8ab1cf725545c085ac4"><span class="id" title="notation">*</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#11c698c8685bb8ab1cf725545c085ac4"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#11c698c8685bb8ab1cf725545c085ac4"><span class="id" title="notation">)</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="GraphImpl.RelDec_V" class="idref" href="#GraphImpl.RelDec_V"><span class="id" title="variable">RelDec_V</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="adj_graph" class="idref" href="#adj_graph"><span class="id" title="definition">adj_graph</span></a> : <span class="id" title="keyword">Type</span> := <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.map"><span class="id" title="variable">map</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="verts" class="idref" href="#verts"><span class="id" title="definition">verts</span></a> (<a id="g:6" class="idref" href="#g:6"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <a id="c:9" class="idref" href="#c:9"><span class="id" title="binder">c</span></a> := <a class="idref" href="ExtLib.Structures.Reducible.html#foldM"><span class="id" title="definition">foldM</span></a> (<span class="id" title="var">m</span> := <a class="idref" href="ExtLib.Data.Monads.WriterMonad.html#writerT"><span class="id" title="record">writerT</span></a> (<a class="idref" href="ExtLib.Data.List.html#Monoid_list_app"><span class="id" title="definition">Monoid_list_app</span></a>) <a class="idref" href="ExtLib.Data.Monads.IdentityMonad.html#ident"><span class="id" title="record">ident</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <a id="k_v:7" class="idref" href="#k_v:7"><span class="id" title="binder">k_v</span></a> <span class="id" title="var">_</span> =&gt; <span class="id" title="keyword">let</span> <a id="k:8" class="idref" href="#k:8"><span class="id" title="binder">k</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#fst"><span class="id" title="definition">fst</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#k_v:7"><span class="id" title="variable">k_v</span></a> <span class="id" title="tactic">in</span> <a class="idref" href="ExtLib.Structures.MonadWriter.html#tell"><span class="id" title="method">tell</span></a> (<a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#k:8"><span class="id" title="variable">k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>)) (<a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a>) <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:6"><span class="id" title="variable">g</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Data.PPair.html#psnd"><span class="id" title="projection">psnd</span></a> (<a class="idref" href="ExtLib.Data.Monads.IdentityMonad.html#unIdent"><span class="id" title="projection">unIdent</span></a> (<a class="idref" href="ExtLib.Data.Monads.WriterMonad.html#runWriterT"><span class="id" title="projection">runWriterT</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#c:9"><span class="id" title="variable">c</span></a>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="succs" class="idref" href="#succs"><span class="id" title="definition">succs</span></a> (<a id="g:10" class="idref" href="#g:10"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a>) (<a id="v:11" class="idref" href="#v:11"><span class="id" title="binder">v</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Structures.Maps.html#lookup"><span class="id" title="method">lookup</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#v:11"><span class="id" title="variable">v</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:10"><span class="id" title="variable">g</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">vs</span> =&gt; <span class="id" title="var">vs</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="Graph_adj_graph" class="idref" href="#Graph_adj_graph"><span class="id" title="instance">Graph_adj_graph</span></a> : <a class="idref" href="ExtLib.Data.Graph.Graph.html#Graph"><span class="id" title="class">Graph</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Data.Graph.Graph.html#verticies"><span class="id" title="method">verticies</span></a> := <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#verts"><span class="id" title="definition">verts</span></a><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Data.Graph.Graph.html#successors"><span class="id" title="method">successors</span></a> := <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#succs"><span class="id" title="definition">succs</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="add_vertex" class="idref" href="#add_vertex"><span class="id" title="definition">add_vertex</span></a> (<a id="v:12" class="idref" href="#v:12"><span class="id" title="binder">v</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>) (<a id="g:13" class="idref" href="#g:13"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a>) : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="ExtLib.Structures.Maps.html#contains"><span class="id" title="definition">contains</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#v:12"><span class="id" title="variable">v</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:13"><span class="id" title="variable">g</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:13"><span class="id" title="variable">g</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="ExtLib.Structures.Maps.html#add"><span class="id" title="method">add</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#v:12"><span class="id" title="variable">v</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:13"><span class="id" title="variable">g</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: Move this 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a id="list_in_dec" class="idref" href="#list_in_dec"><span class="id" title="definition">list_in_dec</span></a> <a id="v:14" class="idref" href="#v:14"><span class="id" title="binder">v</span></a> (<a id="ls:15" class="idref" href="#ls:15"><span class="id" title="binder">ls</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#ls:15"><span class="id" title="variable">ls</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">l</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <span class="id" title="var">ls</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="ExtLib.Core.RelDec.html#eq_dec"><span class="id" title="definition">eq_dec</span></a> <span class="id" title="var">l</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#v:14"><span class="id" title="variable">v</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#list_in_dec:16"><span class="id" title="definition">list_in_dec</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#v:14"><span class="id" title="variable">v</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#ls:15"><span class="id" title="variable">ls</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="add_edge" class="idref" href="#add_edge"><span class="id" title="definition">add_edge</span></a> (<a id="f:18" class="idref" href="#f:18"><span class="id" title="binder">f</span></a> <a id="t:19" class="idref" href="#t:19"><span class="id" title="binder">t</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a>) (<a id="g:20" class="idref" href="#g:20"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a>) : <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Structures.Maps.html#lookup"><span class="id" title="method">lookup</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#f:18"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:20"><span class="id" title="variable">g</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Maps.html#add"><span class="id" title="method">add</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#f:18"><span class="id" title="variable">f</span></a> (<a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#t:19"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>) <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:20"><span class="id" title="variable">g</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">vs</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#list_in_dec"><span class="id" title="definition">list_in_dec</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#t:19"><span class="id" title="variable">t</span></a> <span class="id" title="var">vs</span> <span class="id" title="keyword">then</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:20"><span class="id" title="variable">g</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">else</span> <a class="idref" href="ExtLib.Structures.Maps.html#add"><span class="id" title="method">add</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#f:18"><span class="id" title="variable">f</span></a> (<a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#t:19"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Datatypes.html#::list_scope:x_'::'_x"><span class="id" title="notation">::</span></a> <span class="id" title="var">vs</span>) <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#g:20"><span class="id" title="variable">g</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="GraphBuilder_adj_graph" class="idref" href="#GraphBuilder_adj_graph"><span class="id" title="instance">GraphBuilder_adj_graph</span></a> : <a class="idref" href="ExtLib.Data.Graph.BuildGraph.html#BuildGraph"><span class="id" title="class">BuildGraph</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl.V"><span class="id" title="variable">V</span></a> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#adj_graph"><span class="id" title="definition">adj_graph</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Data.Graph.BuildGraph.html#emptyGraph"><span class="id" title="method">emptyGraph</span></a> := <a class="idref" href="ExtLib.Structures.Maps.html#empty"><span class="id" title="method">empty</span></a><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Data.Graph.BuildGraph.html#addVertex"><span class="id" title="method">addVertex</span></a> := <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#add_vertex"><span class="id" title="definition">add_vertex</span></a><br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Data.Graph.BuildGraph.html#addEdge"><span class="id" title="method">addEdge</span></a>   := <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#add_edge"><span class="id" title="definition">add_edge</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.Graph.GraphAdjList.html#GraphImpl"><span class="id" title="section">GraphImpl</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

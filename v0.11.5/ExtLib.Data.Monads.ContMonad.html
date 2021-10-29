@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Monads.ContMonad</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monad.html#"><span class="id" title="library">ExtLib.Structures.Monad</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="comment">(*<br/>
+Section&nbsp;ContType.<br/>
+&nbsp;&nbsp;Variable&nbsp;Ans&nbsp;:&nbsp;Type.<br/>
+<br/>
+<br/>
+<span class="comment">(*<br/>
+&nbsp;&nbsp;Record&nbsp;cont&nbsp;(t&nbsp;:&nbsp;Type)&nbsp;:&nbsp;Type&nbsp;:=&nbsp;mkCont<br/>
+&nbsp;&nbsp;{&nbsp;runCont&nbsp;:&nbsp;(t&nbsp;-&gt;&nbsp;Ans)&nbsp;-&gt;&nbsp;Ans&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Monad_cont&nbsp;:&nbsp;Monad&nbsp;cont&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;ret&nbsp;&nbsp;:=&nbsp;fun&nbsp;_&nbsp;v&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;k&nbsp;=&gt;&nbsp;k&nbsp;v)<br/>
+&nbsp;&nbsp;;&nbsp;bind&nbsp;:=&nbsp;fun&nbsp;_&nbsp;c1&nbsp;_&nbsp;c2&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;k&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runCont&nbsp;c1&nbsp;(fun&nbsp;t&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runCont&nbsp;(c2&nbsp;t)&nbsp;k))<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Cont_cont&nbsp;:&nbsp;Cont&nbsp;cont&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;callCC&nbsp;:=&nbsp;fun&nbsp;_&nbsp;_&nbsp;f&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;c&nbsp;=&gt;&nbsp;runCont&nbsp;(f&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;_&nbsp;=&gt;&nbsp;c&nbsp;x)))&nbsp;c)<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;mapCont&nbsp;(f&nbsp;:&nbsp;Ans&nbsp;-&gt;&nbsp;Ans)&nbsp;{a}&nbsp;(c&nbsp;:&nbsp;cont&nbsp;a)&nbsp;:&nbsp;cont&nbsp;a&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;f&nbsp;(runCont&nbsp;c&nbsp;x)).<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;withCont&nbsp;{a&nbsp;b}&nbsp;(f&nbsp;:&nbsp;(b&nbsp;-&gt;&nbsp;Ans)&nbsp;-&gt;&nbsp;(a&nbsp;-&gt;&nbsp;Ans))&nbsp;(c&nbsp;:&nbsp;cont&nbsp;a)&nbsp;:&nbsp;cont&nbsp;b&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;runCont&nbsp;c&nbsp;(f&nbsp;x)).<br/>
+*)</span><br/>
+<br/>
+&nbsp;&nbsp;Variable&nbsp;m&nbsp;:&nbsp;Type&nbsp;-&gt;&nbsp;Type.<br/>
+<br/>
+&nbsp;&nbsp;Record&nbsp;contT&nbsp;(t&nbsp;:&nbsp;Type)&nbsp;:&nbsp;Type&nbsp;:=&nbsp;mkContT<br/>
+&nbsp;&nbsp;{&nbsp;runContT&nbsp;:&nbsp;(t&nbsp;-&gt;&nbsp;m&nbsp;Ans)&nbsp;-&gt;&nbsp;m&nbsp;Ans&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Monad_contT&nbsp;:&nbsp;Monad&nbsp;contT&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;ret&nbsp;:=&nbsp;fun&nbsp;_&nbsp;x&nbsp;=&gt;&nbsp;mkContT&nbsp;(fun&nbsp;k&nbsp;=&gt;&nbsp;k&nbsp;x)<br/>
+&nbsp;&nbsp;;&nbsp;bind&nbsp;:=&nbsp;fun&nbsp;_&nbsp;c1&nbsp;_&nbsp;c2&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkContT&nbsp;(fun&nbsp;c&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runContT&nbsp;c1&nbsp;(fun&nbsp;a&nbsp;=&gt;&nbsp;runContT&nbsp;(c2&nbsp;a)&nbsp;c))<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Cont_contT&nbsp;:&nbsp;Cont&nbsp;contT&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;callCC&nbsp;:=&nbsp;fun&nbsp;_&nbsp;_&nbsp;f&nbsp;=&gt;&nbsp;mkContT&nbsp;(fun&nbsp;c&nbsp;=&gt;&nbsp;runContT&nbsp;(f&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;mkContT&nbsp;(fun&nbsp;_&nbsp;=&gt;&nbsp;c&nbsp;x)))&nbsp;c)<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadT_contT&nbsp;(M&nbsp;:&nbsp;Monad&nbsp;m)&nbsp;:&nbsp;MonadT&nbsp;contT&nbsp;m&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;lift&nbsp;:=&nbsp;fun&nbsp;_&nbsp;c&nbsp;=&gt;&nbsp;mkContT&nbsp;(bind&nbsp;c)<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+<span class="comment">(*<br/>
+&nbsp;&nbsp;Definition&nbsp;mapContT&nbsp;(f&nbsp;:&nbsp;m&nbsp;Ans&nbsp;-&gt;&nbsp;m&nbsp;Ans)&nbsp;{a}&nbsp;(c&nbsp;:&nbsp;contT&nbsp;a)&nbsp;:&nbsp;contT&nbsp;a&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkContT&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;f&nbsp;(runContT&nbsp;c&nbsp;x)).<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;withContT&nbsp;{a&nbsp;b}&nbsp;(f&nbsp;:&nbsp;(b&nbsp;-&gt;&nbsp;m&nbsp;Ans)&nbsp;-&gt;&nbsp;(a&nbsp;-&gt;&nbsp;m&nbsp;Ans))&nbsp;(c&nbsp;:&nbsp;contT&nbsp;a)&nbsp;:&nbsp;contT&nbsp;b&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkContT&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;runContT&nbsp;c&nbsp;(f&nbsp;x)).<br/>
+*)</span><br/>
+<br/>
+End&nbsp;ContType.<br/>
+*)</span></div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

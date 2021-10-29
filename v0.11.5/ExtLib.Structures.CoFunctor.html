@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.CoFunctor</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.Any.html#"><span class="id" title="library">ExtLib.Core.Any</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="functor" class="idref" href="#functor"><span class="id" title="section">functor</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a id="CoFunctor" class="idref" href="#CoFunctor"><span class="id" title="record">CoFunctor@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>} (<a id="F:1" class="idref" href="#F:1"><span class="id" title="binder">F</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>}) : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;{ <a id="cofmap" class="idref" href="#cofmap"><span class="id" title="projection">cofmap</span></a> : <span class="id" title="keyword">forall</span> {<a id="A:3" class="idref" href="#A:3"><span class="id" title="binder">A</span></a> <a id="B:4" class="idref" href="#B:4"><span class="id" title="binder">B</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}}, <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="ExtLib.Structures.CoFunctor.html#B:4"><span class="id" title="variable">B</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#A:3"><span class="id" title="variable">A</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:1"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#A:3"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:1"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#B:4"><span class="id" title="variable">B</span></a> }.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a id="CoPFunctor" class="idref" href="#CoPFunctor"><span class="id" title="record">CoPFunctor@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span> <span class="id" title="var">p</span>} (<a id="F:6" class="idref" href="#F:6"><span class="id" title="binder">F</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>}) : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;{ <a id="CoFunP" class="idref" href="#CoFunP"><span class="id" title="projection">CoFunP</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">p</span>}<br/>
+&nbsp;&nbsp;; <a id="copfmap" class="idref" href="#copfmap"><span class="id" title="projection">copfmap</span></a> : <span class="id" title="keyword">forall</span> {<a id="A:9" class="idref" href="#A:9"><span class="id" title="binder">A</span></a> <a id="B:10" class="idref" href="#B:10"><span class="id" title="binder">B</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}} {<a id="P:11" class="idref" href="#P:11"><span class="id" title="binder">P</span></a> : <a class="idref" href="ExtLib.Structures.CoFunctor.html#CoFunP:8"><span class="id" title="method">CoFunP</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#B:10"><span class="id" title="variable">B</span></a>}, <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="ExtLib.Structures.CoFunctor.html#B:10"><span class="id" title="variable">B</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#A:9"><span class="id" title="variable">A</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:6"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#A:9"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:6"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#B:10"><span class="id" title="variable">B</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Existing Class</span> <span class="id" title="var">CoFunP</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hint Extern</span> 0 (@<a class="idref" href="ExtLib.Structures.CoFunctor.html#CoFunP"><span class="id" title="class">CoFunP</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) =&gt; <span class="id" title="tactic">progress</span> (<span class="id" title="tactic">simpl</span> <span class="id" title="var">CoFunP</span>) : <span class="id" title="var">typeclass_instances</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a id="CoPFunctor_From_CoFunctor" class="idref" href="#CoPFunctor_From_CoFunctor"><span class="id" title="instance">CoPFunctor_From_CoFunctor@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span> <span class="id" title="var">p</span>} (<a id="F:13" class="idref" href="#F:13"><span class="id" title="binder">F</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14+rc1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>}) (<a id="F_:14" class="idref" href="#F_:14"><span class="id" title="binder">F_</span></a> : <a class="idref" href="ExtLib.Structures.CoFunctor.html#CoFunctor"><span class="id" title="class">CoFunctor@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>} <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:13"><span class="id" title="variable">F</span></a>) : <a class="idref" href="ExtLib.Structures.CoFunctor.html#CoPFunctor"><span class="id" title="class">CoPFunctor@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span> <span class="id" title="var">p</span>} <a class="idref" href="ExtLib.Structures.CoFunctor.html#F:13"><span class="id" title="variable">F</span></a> :=<br/>
+&nbsp;&nbsp;{| <a class="idref" href="ExtLib.Structures.CoFunctor.html#CoFunP"><span class="id" title="class">CoFunP</span></a> := <a class="idref" href="ExtLib.Core.Any.html#Any"><span class="id" title="class">Any@</span></a>{<span class="id" title="var">p</span>}<br/>
+&nbsp;&nbsp;&nbsp;; <a class="idref" href="ExtLib.Structures.CoFunctor.html#copfmap"><span class="id" title="method">copfmap</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a id="f:15" class="idref" href="#f:15"><span class="id" title="binder">f</span></a> <a id="x:16" class="idref" href="#x:16"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="ExtLib.Structures.CoFunctor.html#cofmap"><span class="id" title="method">cofmap</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#f:15"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Structures.CoFunctor.html#x:16"><span class="id" title="variable">x</span></a><br/>
+&nbsp;&nbsp;&nbsp;|}.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.CoFunctor.html#functor"><span class="id" title="section">functor</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
