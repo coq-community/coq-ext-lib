@@ -19,8 +19,11 @@ Ltac forward_reason :=
 
 Ltac rwHyps :=
   repeat match goal with
-           [ H: _ = _ |- _] =>  rewrite -> H
-         end.
+           [ H: ?l = ?r |- _] =>
+           match r with
+           | context [l] => idtac
+           | _ => rewrite -> H
+           end
 
 Ltac rwHypsR :=
   repeat match goal with
