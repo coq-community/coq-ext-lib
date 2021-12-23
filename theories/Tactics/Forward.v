@@ -24,6 +24,7 @@ Ltac rwHyps :=
            | context [l] => idtac
            | _ => rewrite -> H
            end
+         end.
 
 Ltac rwHypsR :=
   repeat match goal with
