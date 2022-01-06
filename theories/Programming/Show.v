@@ -177,7 +177,7 @@ Section hiding_notation.
   Next Obligation.
     assert (NPeano.Nat.div n 10 < n) ; eauto.
     eapply NPeano.Nat.div_lt.
-    inversion H; apply Lt.lt_O_Sn.
+    match goal with [ H : n > _ |- _ ] => inversion H end; apply Lt.lt_O_Sn.
     repeat constructor.
   Defined.
   Global Instance nat_Show : Show nat := { show := nat_show }.
