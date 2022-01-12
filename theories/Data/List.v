@@ -98,7 +98,7 @@ Global Instance Foldable_list@{u} {T : Type@{u}} : Foldable (list T) T :=
 
 Require Import ExtLib.Structures.Traversable.
 Require Import ExtLib.Structures.Functor.
-Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.Monads.
 Require Import ExtLib.Structures.Applicative.
 
 Section traversable.
@@ -123,7 +123,14 @@ Monomorphic Universe listU.
 Global Instance Monad_list@{} : Monad@{listU listU} list :=
 { ret  := fun _ x => x :: nil
 ; bind := fun _ _ x f =>
-  List.fold_right (fun x acc => f x ++ acc) nil x
+  flat_map f x
+}.
+
+Global Instance MonadZero_list : MonadZero list :=
+{ mzero := @nil }.
+
+Global Instance MonadPlus_list : MonadPlus list :=
+{ mplus _A _B a b := List.map inl a ++ List.map inr b
 }.
 
 Section list.
