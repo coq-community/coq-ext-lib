@@ -6,7 +6,6 @@ organization: coq-community
 community: true
 circleci: true
 ci_test_dependants: true
-ci_extra_dev: true
 submodule: true
 
 synopsis: A library of Coq definitions, theorems, and tactics
@@ -40,6 +39,7 @@ tested_coq_opam_versions:
   - version: '8.12-ocaml-4.11-flambda'
   - version: '8.13-ocaml-4.11-flambda'
   - version: '8.14-ocaml-4.12-flambda'
+  - version: '8.15-ocaml-4.12-flambda'
   - version: 'dev-ocaml-4.11-flambda'
 
 make_target: theories
