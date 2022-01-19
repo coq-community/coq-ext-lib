@@ -35,3 +35,7 @@ index.html: index.md
 
 index.md: meta.yml
 	$(TEMPLATES)/generate.sh $@
+
+publish%:
+	opam publish --packages-directory=released/packages \
+		--repo=coq/opam-coq-archive --tag=v$* -v $* coq-community/coq-ext-lib
