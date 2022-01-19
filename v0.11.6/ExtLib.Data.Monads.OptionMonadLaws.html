@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Monads.OptionMonadLaws</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.RelationClasses.html#"><span class="id" title="library">RelationClasses</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Setoids.Setoid.html#"><span class="id" title="library">Setoid</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Fun.html#"><span class="id" title="library">ExtLib.Data.Fun</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monads.html#"><span class="id" title="library">ExtLib.Structures.Monads</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.MonadLaws.html#"><span class="id" title="library">ExtLib.Structures.MonadLaws</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Option.html#"><span class="id" title="library">ExtLib.Data.Option</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Monads.OptionMonad.html#"><span class="id" title="library">ExtLib.Data.Monads.OptionMonad</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="comment">(*<br/>
+Section&nbsp;Laws.<br/>
+&nbsp;&nbsp;Variable&nbsp;m&nbsp;:&nbsp;Type&nbsp;-&gt;&nbsp;Type.<br/>
+&nbsp;&nbsp;Variable&nbsp;Monad_m&nbsp;:&nbsp;Monad&nbsp;m.<br/>
+&nbsp;&nbsp;Variable&nbsp;mtype&nbsp;:&nbsp;forall&nbsp;T,&nbsp;type&nbsp;T&nbsp;-&gt;&nbsp;type&nbsp;(m&nbsp;T).<br/>
+&nbsp;&nbsp;Variable&nbsp;mtypeOk&nbsp;:&nbsp;forall&nbsp;T&nbsp;(tT&nbsp;:&nbsp;type&nbsp;T),&nbsp;typeOk&nbsp;tT&nbsp;-&gt;&nbsp;typeOk&nbsp;(mtype&nbsp;tT).<br/>
+&nbsp;&nbsp;Variable&nbsp;ML_m&nbsp;:&nbsp;MonadLaws&nbsp;Monad_m&nbsp;mtype.<br/>
+<br/>
+&nbsp;&nbsp;Section&nbsp;parametric.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Variable&nbsp;T&nbsp;:&nbsp;Type.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Variable&nbsp;tT&nbsp;:&nbsp;type&nbsp;T.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Definition&nbsp;optionT_eq&nbsp;(a&nbsp;b&nbsp;:&nbsp;optionT&nbsp;m&nbsp;T)&nbsp;:&nbsp;Prop&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;(unOptionT&nbsp;a)&nbsp;(unOptionT&nbsp;b).<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Global&nbsp;Instance&nbsp;type_optionT&nbsp;:&nbsp;type&nbsp;(optionT&nbsp;m&nbsp;T)&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_from_equal&nbsp;optionT_eq.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Variable&nbsp;tokT&nbsp;:&nbsp;typeOk&nbsp;tT.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Global&nbsp;Instance&nbsp;typeOk_readerT&nbsp;:&nbsp;typeOk&nbsp;type_optionT.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;typeOk_from_equal.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq.&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generalize&nbsp;(only_proper&nbsp;_&nbsp;_&nbsp;_&nbsp;H);&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;split;&nbsp;solve_equal.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;red.&nbsp;unfold&nbsp;equal;&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;Morphisms.respectful;&nbsp;simpl.&nbsp;symmetry.&nbsp;auto.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;red.&nbsp;unfold&nbsp;equal;&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;Morphisms.respectful;&nbsp;simpl.&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etransitivity;&nbsp;eauto.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Qed.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Global&nbsp;Instance&nbsp;proper_unOptionT&nbsp;:&nbsp;proper&nbsp;(@unOptionT&nbsp;m&nbsp;T).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Proof.&nbsp;do&nbsp;3&nbsp;red;&nbsp;eauto.&nbsp;Qed.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Global&nbsp;Instance&nbsp;proper_mkOptionT&nbsp;:&nbsp;proper&nbsp;(@mkOptionT&nbsp;m&nbsp;T).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Proof.&nbsp;do&nbsp;5&nbsp;red;&nbsp;eauto.&nbsp;Qed.<br/>
+&nbsp;&nbsp;End&nbsp;parametric.<br/>
+<br/>
+&nbsp;&nbsp;Theorem&nbsp;equal_match&nbsp;:&nbsp;forall&nbsp;(A&nbsp;B&nbsp;:&nbsp;Type)&nbsp;(eA&nbsp;:&nbsp;type&nbsp;A)&nbsp;(eB&nbsp;:&nbsp;type&nbsp;B),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;typeOk&nbsp;eA&nbsp;-&gt;&nbsp;typeOk&nbsp;eB&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(x&nbsp;y&nbsp;:&nbsp;option&nbsp;A)&nbsp;(a&nbsp;b&nbsp;:&nbsp;B)&nbsp;(f&nbsp;g&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;B),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;x&nbsp;y&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;a&nbsp;b&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;f&nbsp;g&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;match&nbsp;x&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Some&nbsp;a&nbsp;=&gt;&nbsp;f&nbsp;a<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;None&nbsp;=&gt;&nbsp;a<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;y&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Some&nbsp;a&nbsp;=&gt;&nbsp;g&nbsp;a<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;None&nbsp;=&gt;&nbsp;b<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end.<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;x;&nbsp;destruct&nbsp;y;&nbsp;intros;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;inversion&nbsp;H1.&nbsp;assumption.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;inversion&nbsp;H1.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;inversion&nbsp;H1.&nbsp;}<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+&nbsp;&nbsp;Instance&nbsp;proper_match&nbsp;:&nbsp;forall&nbsp;(A&nbsp;B&nbsp;:&nbsp;Type)&nbsp;(eA&nbsp;:&nbsp;type&nbsp;A)&nbsp;(eB&nbsp;:&nbsp;type&nbsp;B),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;typeOk&nbsp;eA&nbsp;-&gt;&nbsp;typeOk&nbsp;eB&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(x&nbsp;:&nbsp;option&nbsp;A),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;proper&nbsp;x&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;f&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;optionT&nbsp;m&nbsp;B,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;proper&nbsp;f&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;proper&nbsp;match&nbsp;x&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Some&nbsp;a&nbsp;=&gt;&nbsp;unOptionT&nbsp;(f&nbsp;a)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;None&nbsp;=&gt;&nbsp;ret&nbsp;None<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end.<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;x;&nbsp;intros;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadLaws_optionT&nbsp;:&nbsp;MonadLaws&nbsp;(@Monad_optionT&nbsp;_&nbsp;Monad_m)&nbsp;type_optionT.<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;constructor.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<span class="comment">(*&nbsp;bind_of_return&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intros.&nbsp;do&nbsp;3&nbsp;red.&nbsp;unfold&nbsp;bind,&nbsp;optionT_eq;&nbsp;simpl.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<span class="comment">(*&nbsp;return_of_bind&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;return_of_bind;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;intros;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;x;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<span class="comment">(*&nbsp;bind_associativity&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;intros;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;x;&nbsp;destruct&nbsp;y;&nbsp;try&nbsp;solve&nbsp;<span class="inlinecode"></span> <span class="inlinecode"><span class="id" title="tactic">inversion</span></span> <span class="inlinecode"><span class="id" title="var">H5</span></span> <span class="inlinecode"></span>;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inversion&nbsp;H5;&nbsp;assumption.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.&nbsp;red;&nbsp;simpl;&nbsp;intros.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.&nbsp;red;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;red;&nbsp;simpl;&nbsp;intros.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+<span class="comment">(*&nbsp;&nbsp;Theorem&nbsp;equal_match_option&nbsp;:&nbsp;forall&nbsp;T&nbsp;U&nbsp;(tT&nbsp;:&nbsp;type&nbsp;T)&nbsp;(tU&nbsp;:&nbsp;type&nbsp;U),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;typeOk&nbsp;tT&nbsp;-&gt;&nbsp;typeOk&nbsp;tU&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(a&nbsp;b&nbsp;:&nbsp;option&nbsp;T)&nbsp;(f&nbsp;g&nbsp;:&nbsp;T&nbsp;-&gt;&nbsp;U)&nbsp;(x&nbsp;y&nbsp;:&nbsp;U),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;a&nbsp;b&nbsp;-&gt;&nbsp;equal&nbsp;f&nbsp;g&nbsp;-&gt;&nbsp;equal&nbsp;x&nbsp;y&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;match&nbsp;a&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Some&nbsp;a&nbsp;=&gt;&nbsp;f&nbsp;a<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;None&nbsp;=&gt;&nbsp;x<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;b&nbsp;with<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Some&nbsp;b&nbsp;=&gt;&nbsp;g&nbsp;b<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;None&nbsp;=&gt;&nbsp;y<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end.<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;clear.&nbsp;destruct&nbsp;a;&nbsp;destruct&nbsp;b;&nbsp;simpl;&nbsp;intros;&nbsp;try&nbsp;contradiction;&nbsp;auto.<br/>
+&nbsp;&nbsp;Qed.<br/>
+*)</span><br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadTLaws_optionT&nbsp;:&nbsp;MonadTLaws&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;(@MonadT_optionT&nbsp;_&nbsp;Monad_m).<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;constructor.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;liftM.&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;lift,&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;liftM.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;unfold&nbsp;lift,&nbsp;liftM;&nbsp;simpl;&nbsp;intros.&nbsp;unfold&nbsp;liftM.&nbsp;red;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadReaderLaws_optionT&nbsp;(s&nbsp;:&nbsp;Type)&nbsp;(t&nbsp;:&nbsp;type&nbsp;s)&nbsp;(tT&nbsp;:&nbsp;typeOk&nbsp;t)&nbsp;(Mr&nbsp;:&nbsp;MonadReader&nbsp;s&nbsp;m)&nbsp;(MLr&nbsp;:&nbsp;MonadReaderLaws&nbsp;Monad_m&nbsp;_&nbsp;_&nbsp;Mr)&nbsp;:&nbsp;MonadReaderLaws&nbsp;_&nbsp;_&nbsp;_&nbsp;(@Reader_optionT&nbsp;_&nbsp;_&nbsp;_&nbsp;Mr).<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;constructor.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_bind;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(erewrite&nbsp;bind_proper;&nbsp;<span class="inlinecode"></span> <span class="inlinecode">|</span> <span class="inlinecode">|</span> <span class="inlinecode">|</span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="tactic">eapply</span></span> <span class="inlinecode"><span class="id" title="var">ask_local</span></span> <span class="inlinecode">|</span> <span class="inlinecode"></span>);&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;6:&nbsp;eapply&nbsp;preflexive.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_ret;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apply&nbsp;proper_fun;&nbsp;intros.&nbsp;repeat&nbsp;rewrite&nbsp;local_ret;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;apply&nbsp;proper_fun;&nbsp;intros.&nbsp;repeat&nbsp;rewrite&nbsp;local_ret;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_bind;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;x;&nbsp;destruct&nbsp;y;&nbsp;try&nbsp;solve&nbsp;<span class="inlinecode"></span> <span class="inlinecode"><span class="id" title="tactic">inversion</span></span> <span class="inlinecode"><span class="id" title="var">H4</span></span> <span class="inlinecode"></span>;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inversion&nbsp;H4;&nbsp;assumption.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_ret;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_ret;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl.&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;local_local;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;unfold&nbsp;local;&nbsp;simpl;&nbsp;intros.&nbsp;red.&nbsp;red.&nbsp;intros.&nbsp;red&nbsp;in&nbsp;H0.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;red;&nbsp;simpl.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;Opaque&nbsp;lift.&nbsp;unfold&nbsp;ask;&nbsp;simpl;&nbsp;intros.&nbsp;red.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;lift_proper;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.&nbsp;Transparent&nbsp;lift.&nbsp;}<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+<span class="comment">(*<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadStateLaws_optionT&nbsp;(s&nbsp;:&nbsp;Type)&nbsp;(t&nbsp;:&nbsp;type&nbsp;s)&nbsp;(tT&nbsp;:&nbsp;typeOk&nbsp;t)&nbsp;(Ms&nbsp;:&nbsp;MonadState&nbsp;s&nbsp;m)&nbsp;(MLs&nbsp;:&nbsp;MonadStateLaws&nbsp;Monad_m&nbsp;_&nbsp;_&nbsp;Ms)&nbsp;:&nbsp;MonadStateLaws&nbsp;_&nbsp;_&nbsp;_&nbsp;(@State_optionT&nbsp;_&nbsp;_&nbsp;_&nbsp;Ms).<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;constructor.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM;&nbsp;simpl.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;erewrite&nbsp;bind_proper;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2:&nbsp;instantiate&nbsp;(1&nbsp;:=&nbsp;get);&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instantiate&nbsp;(1&nbsp;:=&nbsp;fun&nbsp;a&nbsp;=&gt;&nbsp;bind&nbsp;(put&nbsp;a)&nbsp;(fun&nbsp;x&nbsp;:&nbsp;unit&nbsp;=&gt;&nbsp;ret&nbsp;(Some&nbsp;x))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;&lt;-&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;erewrite&nbsp;bind_proper;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2:&nbsp;eapply&nbsp;get_put;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instantiate&nbsp;(1&nbsp;:=&nbsp;fun&nbsp;x&nbsp;=&gt;&nbsp;ret&nbsp;(Some&nbsp;x)).&nbsp;simpl.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;type_tac.&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type_tac.&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match_option;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;eapply&nbsp;equal_match_option;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros;&nbsp;unfold&nbsp;liftM;&nbsp;simpl.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;repeat&nbsp;rewrite&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;solve&nbsp;<span class="inlinecode"></span> <span class="inlinecode"><span class="id" title="var">type_tac</span>;</span> <span class="inlinecode"><span class="id" title="tactic">eapply</span></span> <span class="inlinecode"><span class="id" title="var">equal_match_option</span>;</span> <span class="inlinecode"><span class="id" title="tactic">eauto</span></span> <span class="inlinecode"><span class="id" title="keyword">with</span></span> <span class="inlinecode"><span class="id" title="var">typeclass_instances</span>;</span> <span class="inlinecode"><span class="id" title="var">type_tac</span></span> <span class="inlinecode"></span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_proper;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2:&nbsp;eapply&nbsp;preflexive;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instantiate&nbsp;(1&nbsp;:=&nbsp;fun&nbsp;a&nbsp;:&nbsp;unit&nbsp;=&gt;&nbsp;bind&nbsp;get&nbsp;(fun&nbsp;x0&nbsp;:&nbsp;s&nbsp;=&gt;&nbsp;ret&nbsp;(Some&nbsp;x0))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;&lt;-&nbsp;bind_associativity;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Require&nbsp;Import&nbsp;MonadTac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ltac&nbsp;cl&nbsp;:=&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ltac&nbsp;tcl&nbsp;:=&nbsp;solve&nbsp;<span class="inlinecode"></span> <span class="inlinecode"><span class="id" title="var">cl</span></span> <span class="inlinecode"></span>.<br/>
+Ltac&nbsp;monad_rewrite&nbsp;t&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;first&nbsp;<span class="inlinecode"></span> <span class="inlinecode"><span class="id" title="var">t</span></span>
+                <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> <span class="inlinecode"><span class="id" title="var">bind_rw_0</span>;</span> <span class="inlinecode">[</span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">t</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">type_tac</span></span> <span class="inlinecode">]</span>
+                <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> <span class="inlinecode"><span class="id" title="var">bind_rw_1</span></span> <span class="inlinecode"></span>.<br/>
+monad_rewrite&nbsp;ltac:(eapply&nbsp;put_get;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances).<br/>
+rewrite&nbsp;bind_associativity;&nbsp;cl;&nbsp;try&nbsp;solve_proper.<br/>
+rewrite&nbsp;bind_rw_1;&nbsp;<span class="inlinecode"></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">tcl</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="tactic">intros</span></span> <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">type_tac</span></span> <span class="inlinecode"></span>.<br/>
+Focus&nbsp;2.<br/>
+etransitivity.&nbsp;eapply&nbsp;bind_of_return;&nbsp;cl;&nbsp;type_tac.<br/>
+instantiate&nbsp;(1&nbsp;:=&nbsp;fun&nbsp;_&nbsp;=&gt;&nbsp;ret&nbsp;(Some&nbsp;x)).&nbsp;simpl.&nbsp;type_tac.<br/>
+Add&nbsp;Parametric&nbsp;Morphism&nbsp;(T&nbsp;:&nbsp;Type)&nbsp;(tT&nbsp;:&nbsp;type&nbsp;T)&nbsp;(tokT&nbsp;:&nbsp;typeOk&nbsp;tT)&nbsp;:&nbsp;(@equal&nbsp;_&nbsp;tT)<br/>
+&nbsp;&nbsp;with&nbsp;signature&nbsp;(equal&nbsp;==&gt;&nbsp;equal&nbsp;==&gt;&nbsp;iff)<br/>
+&nbsp;&nbsp;as&nbsp;equal_mor.<br/>
+Proof.<br/>
+&nbsp;&nbsp;clear&nbsp;-&nbsp;tokT.&nbsp;intros.&nbsp;split;&nbsp;intros.<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity.&nbsp;symmetry;&nbsp;eassumption.&nbsp;etransitivity;&nbsp;eassumption.&nbsp;}<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity;&nbsp;eauto.&nbsp;etransitivity;&nbsp;eauto.&nbsp;symmetry;&nbsp;auto.&nbsp;}<br/>
+Qed.<br/>
+Add&nbsp;Parametric&nbsp;Morphism&nbsp;(T&nbsp;:&nbsp;Type)&nbsp;(tT&nbsp;:&nbsp;type&nbsp;T)&nbsp;(tokT&nbsp;:&nbsp;typeOk&nbsp;tT)&nbsp;:&nbsp;(@equal&nbsp;_&nbsp;tT)<br/>
+&nbsp;&nbsp;with&nbsp;signature&nbsp;(equal&nbsp;==&gt;&nbsp;eq&nbsp;==&gt;&nbsp;iff)<br/>
+&nbsp;&nbsp;as&nbsp;equal_left_mor.<br/>
+Proof.<br/>
+&nbsp;&nbsp;clear&nbsp;-&nbsp;tokT.&nbsp;intros.&nbsp;split;&nbsp;intros.<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity.&nbsp;symmetry;&nbsp;eassumption.&nbsp;eassumption.&nbsp;}<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity;&nbsp;eauto.&nbsp;}<br/>
+Qed.<br/>
+Add&nbsp;Parametric&nbsp;Morphism&nbsp;(T&nbsp;:&nbsp;Type)&nbsp;(tT&nbsp;:&nbsp;type&nbsp;T)&nbsp;(tokT&nbsp;:&nbsp;typeOk&nbsp;tT)&nbsp;:&nbsp;(@equal&nbsp;_&nbsp;tT)<br/>
+&nbsp;&nbsp;with&nbsp;signature&nbsp;(eq&nbsp;==&gt;&nbsp;equal&nbsp;==&gt;&nbsp;iff)<br/>
+&nbsp;&nbsp;as&nbsp;equal_right_mor.<br/>
+Proof.<br/>
+&nbsp;&nbsp;clear&nbsp;-&nbsp;tokT.&nbsp;intros.&nbsp;split;&nbsp;intros.<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity.&nbsp;eassumption.&nbsp;eassumption.&nbsp;}<br/>
+&nbsp;&nbsp;{&nbsp;etransitivity;&nbsp;eauto.&nbsp;symmetry;&nbsp;auto.&nbsp;}<br/>
+Qed.<br/>
+assert&nbsp;(Morphisms.Proper&nbsp;(equal&nbsp;==&gt;&nbsp;Basics.flip&nbsp;Basics.impl)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(equal&nbsp;(bind&nbsp;(put&nbsp;x)&nbsp;(fun&nbsp;_&nbsp;:&nbsp;unit&nbsp;=&gt;&nbsp;ret&nbsp;(Some&nbsp;x)))))&nbsp;by&nbsp;cl.<br/>
+assert&nbsp;(Morphisms.Proper<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Morphisms.pointwise_relation&nbsp;unit&nbsp;equal&nbsp;==&gt;&nbsp;equal)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(bind&nbsp;(@put&nbsp;_&nbsp;_&nbsp;Ms&nbsp;x))).<br/>
+{&nbsp;red.&nbsp;red.&nbsp;intros.&nbsp;eapply&nbsp;bind_proper;&nbsp;cl.&nbsp;solve_proper.<br/>
+&nbsp;&nbsp;red;&nbsp;simpl.&nbsp;red&nbsp;in&nbsp;H1.&nbsp;red.<br/>
+<br/>
+assert&nbsp;bind_proper.<br/>
+debug&nbsp;eauto&nbsp;with&nbsp;typeclass_instances.<br/>
+<br/>
+<br/>
+setoid_rewrite&nbsp;bind_of_return.<br/>
+2:&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_rw_0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3:&nbsp;instantiate&nbsp;(1&nbsp;:=&nbsp;(bind&nbsp;(put&nbsp;x)&nbsp;(fun&nbsp;_&nbsp;:&nbsp;unit&nbsp;=&gt;&nbsp;get))).<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Theorem&nbsp;bind_rw_0&nbsp;:&nbsp;forall&nbsp;A&nbsp;B&nbsp;(tA&nbsp;:&nbsp;type&nbsp;A)&nbsp;(tB&nbsp;:&nbsp;type&nbsp;B),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typeOk&nbsp;tA&nbsp;-&gt;&nbsp;typeOk&nbsp;tB&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;(x&nbsp;z&nbsp;:&nbsp;m&nbsp;A)&nbsp;(y&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;m&nbsp;B)z,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;x&nbsp;z&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;proper&nbsp;y&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;equal&nbsp;(bind&nbsp;x&nbsp;y)&nbsp;(bind&nbsp;z&nbsp;y).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Proof.<br/>
+<br/>
+<br/>
+&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;type_tac.&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match_option;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}&nbsp;}<br/>
+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Print&nbsp;MonadStateLaws.<br/>
+*)</span><br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;MonadZeroLaws_optionT&nbsp;:&nbsp;MonadZeroLaws&nbsp;(@Monad_optionT&nbsp;_&nbsp;Monad_m)&nbsp;type_optionT&nbsp;_.<br/>
+&nbsp;&nbsp;Proof.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;constructor.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;simpl;&nbsp;unfold&nbsp;optionT_eq;&nbsp;simpl;&nbsp;intros.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;bind_of_return;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eapply&nbsp;equal_match;&nbsp;eauto&nbsp;with&nbsp;typeclass_instances;&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;unfold&nbsp;mzero;&nbsp;simpl;&nbsp;intros.&nbsp;red;&nbsp;simpl.&nbsp;type_tac.&nbsp;}<br/>
+&nbsp;&nbsp;Qed.<br/>
+<br/>
+End&nbsp;Laws.<br/>
+*)</span><br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
