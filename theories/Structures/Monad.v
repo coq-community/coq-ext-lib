@@ -10,6 +10,8 @@ Class Monad@{d c} (m : Type@{d} -> Type@{c}) : Type :=
 ; bind : forall {t u : Type@{d}}, m t -> (t -> m u) -> m u
 }.
 
+Global Hint Mode Monad ! : typeclass_instances.
+
 Section monadic.
 
   Definition liftM@{d c}

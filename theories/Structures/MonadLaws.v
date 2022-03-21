@@ -40,9 +40,9 @@ Section MonadLaws.
     Context {S : Type}.
 
     Class MonadStateLaws  (MS : MonadState S m) : Type :=
-    { get_put : bind get put = ret tt
+    { get_put : bind get put = ret tt :> m unit
     ; put_get : forall x : S,
-        bind (put x) (fun _ => get) = bind (put x) (fun _ => ret x)
+        bind (put x) (fun _ => get) = bind (put x) (fun _ => ret x) :> m S
     ; put_put : forall {A} (x y : S) (f : unit -> m A),
         bind (put x) (fun _ => bind (put y) f) = bind (put y) f
     ; get_get : forall {A} (f : S -> S -> m A),

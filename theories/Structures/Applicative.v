@@ -10,6 +10,8 @@ Class Applicative@{d c} (T : Type@{d} -> Type@{c}) :=
 ; ap : forall {A B : Type@{d}}, T (A -> B) -> T A -> T B
 }.
 
+Global Hint Mode Applicative ! : typeclass_instances.
+
 Module ApplicativeNotation.
   Notation "f <*> x" := (ap f x) (at level 52, left associativity).
 End ApplicativeNotation.

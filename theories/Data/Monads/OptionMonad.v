@@ -54,7 +54,7 @@ Section Trans.
   { mzero _A := mkOptionT (ret None) }.
 
   Global Instance MonadT_optionT : MonadT optionT m :=
-  { lift _A aM := mkOptionT (liftM ret aM) }.
+  { lift _A aM := mkOptionT (liftM Some aM) }.
 
   Global Instance State_optionT {T} (SM : MonadState T m) : MonadState T optionT :=
   { get := lift get
