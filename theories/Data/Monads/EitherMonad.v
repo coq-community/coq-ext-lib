@@ -70,7 +70,7 @@ Section except.
   }.
 
   Global Instance MonadT_eitherT : MonadT eitherT m :=
-  { lift := fun _ c => mkEitherT (liftM ret c) }.
+  { lift := fun _ c => mkEitherT (liftM inr c) }.
 
   Global Instance MonadState_eitherT {T} (MS : MonadState T m) : MonadState T eitherT :=
   { get := lift get
