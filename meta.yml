@@ -37,10 +37,10 @@ tested_coq_opam_versions:
   - version: '8.10'
   - version: '8.11-ocaml-4.11-flambda'
   - version: '8.12-ocaml-4.11-flambda'
-  - version: '8.13-ocaml-4.11-flambda'
+  - version: '8.13-ocaml-4.12-flambda'
   - version: '8.14-ocaml-4.12-flambda'
   - version: '8.15-ocaml-4.12-flambda'
-  - version: 'dev-ocaml-4.11-flambda'
+  - version: 'dev-ocaml-4.12-flambda'
 
 make_target: theories
 test_target: examples
