@@ -2,6 +2,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.micromega.Lia.
 
+(** For backwards compatibility with hint locality attributes. *)
+Set Warnings "-unsupported-attributes".
+
 Lemma firstn_app_L : forall T n (a b : list T),
   n <= length a ->
   firstn n (a ++ b) = firstn n a.
@@ -45,6 +48,7 @@ Proof.
   simpl. replace (n - 0) with n; [ | lia ]. reflexivity.
 Qed.
 
+#[global]
 Hint Rewrite firstn_app_L firstn_app_R firstn_all firstn_0 firstn_cons using lia : list_rw.
 
 Lemma skipn_app_R : forall T n (a b : list T),
@@ -90,4 +94,5 @@ Proof.
   simpl. replace (n - 0) with n; [ | lia ]. reflexivity.
 Qed.
 
+#[global]
 Hint Rewrite skipn_app_L skipn_app_R skipn_0 skipn_all skipn_cons using lia : list_rw.

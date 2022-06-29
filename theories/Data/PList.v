@@ -216,6 +216,7 @@ End pmap.
 
 Polymorphic Definition Functor_plist@{i} : Functor@{i i} plist@{i} :=
 {| fmap := @fmap_plist@{i i} |}.
+#[global]
 Existing Instance Functor_plist.
 
 

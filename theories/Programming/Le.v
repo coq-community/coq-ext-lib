@@ -8,9 +8,11 @@ Definition neg_lte {T} {L:Lte T} (x:T) (y:T) : Prop := not (lte x y).
 Definition lt {T} {L:Lte T} x y := lte x y /\ ~lte y x.
 Definition neg_lt {T} {L:Lte T} x y := not (lt x y).
 
+#[global]
 Instance lt_RelDec {T} {L:Lte T} {RD:RelDec lte} : RelDec lt :=
   { rel_dec x y := (rel_dec x y && negb (rel_dec y x))%bool }.
 
+#[global]
 Instance lt_RelDecCorrect {T} {L:Lte T} {RD:RelDec lte} {RDC:RelDec_Correct RD}
   : RelDec_Correct lt_RelDec.
 Proof. constructor.
@@ -29,6 +31,7 @@ Class LteWF T :=
 ; lteWFPreOrder :> PreOrder lte
 }.
 
+#[global]
 Instance LteWF_Build {T} {L:Lte T} {PO:PreOrder lte} : LteWF T :=
   { lteWFLte := L ; lteWFPreOrder := PO }.
 

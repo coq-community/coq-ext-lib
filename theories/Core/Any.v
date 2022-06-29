@@ -10,4 +10,5 @@ Polymorphic Definition RESOLVE (T : Type) : Type := T.
 
 Existing Class RESOLVE.
 
+#[global]
 Hint Extern 0 (RESOLVE _) => unfold RESOLVE : typeclass_instances.

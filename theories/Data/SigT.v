@@ -7,6 +7,9 @@ Set Implicit Arguments.
 Set Strict Implicit.
 Set Printing Universes.
 
+(** For backwards compatibility with hint locality attributes. *)
+Set Warnings "-unsupported-attributes".
+
 Section injective.
   Variable T : Type.
   Variable F : T -> Type.
@@ -39,4 +42,5 @@ Lemma eq_sigT_rw
             end.
 Proof. destruct pf. destruct s; reflexivity. Qed.
 
+#[global]
 Hint Rewrite eq_sigT_rw : eq_rw.

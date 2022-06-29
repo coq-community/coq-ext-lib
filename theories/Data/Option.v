@@ -14,6 +14,9 @@ Require Import ExtLib.Tactics.Consider.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(** For backwards compatibility with hint locality attributes. *)
+Set Warnings "-unsupported-attributes".
+
 Global Instance Foldable_option {T} : Foldable (option T) T :=
   fun _ f d v =>
     match v with
@@ -180,4 +183,5 @@ Proof.
   destruct pf. destruct val; reflexivity.
 Defined.
 
+#[global]
 Hint Rewrite eq_option_eq : eq_rw.

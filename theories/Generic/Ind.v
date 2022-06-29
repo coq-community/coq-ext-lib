@@ -132,7 +132,9 @@ Ltac all_resolve :=
              | |- _ => solve [ eauto with typeclass_instances ]
            end.
 
+#[global]
 Hint Extern 0 (ProductResolve _ _) => all_resolve : typeclass_instances.
+#[global]
 Hint Extern 0 (VariantResolve _ _) => all_resolve : typeclass_instances.
 
 Definition comma_before (b : bool) (s : showM) : showM :=
