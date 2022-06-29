@@ -3,6 +3,10 @@ Require Import Coq.Bool.Bool.
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(** For backwards compatibility with hint locality attributes. *)
+Set Warnings "-unsupported-attributes".
+
+#[global]
 Hint Rewrite negb_orb negb_andb negb_involutive if_negb : bool_rw.
 
 Lemma negb_true : forall a, negb a = true -> a = false.

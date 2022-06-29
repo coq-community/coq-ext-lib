@@ -101,6 +101,7 @@ Section from_rel_dec.
   Qed.
 End from_rel_dec.
 
+#[global]
 Hint Extern 10 (@Reflect (?f ?a ?b) _ _) =>
   eapply (@Reflect_RelDecCorrect _ _ (@Build_RelDec _ _ f) _) : typeclass_instances.
 

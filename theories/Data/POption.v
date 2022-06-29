@@ -80,9 +80,11 @@ End poption_map.
 
 Definition Functor_poption@{i} : Functor@{i i} poption@{i} :=
 {| fmap := @fmap_poption@{i i} |}.
+#[global]
 Existing Instance Functor_poption.
 
 Definition Applicative_poption@{i} : Applicative@{i i} poption@{i} :=
 {| pure := @pSome@{i}
  ; ap   := @ap_poption |}.
+#[global]
 Existing Instance Applicative_poption.

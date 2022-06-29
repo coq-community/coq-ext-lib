@@ -9,6 +9,7 @@ Class EqvWF T :=
 { eqvWFEqv :> Eqv T
 ; eqvWFEquivalence :> Equivalence eqv
 }.
+#[global]
 Instance EqvWF_Build {T} {E:Eqv T} {EV:Equivalence eqv} : EqvWF T :=
   { eqvWFEqv := E ; eqvWFEquivalence := EV }.
 

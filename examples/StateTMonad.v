@@ -8,7 +8,7 @@ Fail Definition foo : stateT unit option unit :=
   ret tt.
 
 (** Use [Existing Instance] to bring the Local [Monad_stateT] instance into context *)
-Existing Instance Monad_stateT.
+#[global] Existing Instance Monad_stateT.
 
 (** Now the definition succeeds *)
 Definition foo : stateT unit option unit :=
