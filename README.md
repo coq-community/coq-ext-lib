@@ -33,7 +33,7 @@ A collection of theories and plugins that may be useful in other Coq development
   - Gregory Malecha ([**@gmalecha**](https://github.com/gmalecha))
   - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
 - License: [BSD 2-Clause "Simplified" License](LICENSE)
-- Compatible Coq versions: Coq 8.8 or later
+- Compatible Coq versions: Coq 8.11 or later or 8.9
 - Additional dependencies: none
 - Coq namespace: `ExtLib`
 - Related publication(s): none
