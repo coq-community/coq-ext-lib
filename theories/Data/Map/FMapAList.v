@@ -53,7 +53,7 @@ Section keyed.
     induction m; intuition.
     unfold alist_find', compose.
     simpl.
-    destruct (k ?[ R ] a0) eqn:Heq; intuition.
+    destruct (k ?[ R ] a0) eqn:Heq; [intuition|].
     rewrite IHm.
     reflexivity.
   Qed.
