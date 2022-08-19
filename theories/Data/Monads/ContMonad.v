@@ -1,12 +1,12 @@
 Require Import ExtLib.Structures.Monad.
+Require Import ExtLib.Structures.MonadTrans.
 
 Set Implicit Arguments.
-Set Strict Implicit.
+Set Contextual Implicit.
+Set Maximal Implicit Insertion.
 
-(*
 Section ContType.
-  Variable Ans : Type.
-
+  Variable R : Type.
 
 (*
   Record cont (t : Type) : Type := mkCont
@@ -31,23 +31,19 @@ Section ContType.
     mkCont (fun x => runCont c (f x)).
 *)
 
-  Variable m : Type -> Type.
+  Variable M : Type -> Type.
 
-  Record contT (t : Type) : Type := mkContT
-  { runContT : (t -> m Ans) -> m Ans }.
+  Record contT (A : Type) : Type := mkContT
+  { runContT : (A -> M R) -> M R }.
 
   Global Instance Monad_contT : Monad contT :=
   { ret := fun _ x => mkContT (fun k => k x)
-  ; bind := fun _ c1 _ c2 =>
+  ; bind := fun _ _ c1 c2 =>
     mkContT (fun c =>
       runContT c1 (fun a => runContT (c2 a) c))
   }.
 
-  Global Instance Cont_contT : Cont contT :=
-  { callCC := fun _ _ f => mkContT (fun c => runContT (f (fun x => mkContT (fun _ => c x))) c)
-  }.
-
-  Global Instance MonadT_contT (M : Monad m) : MonadT contT m :=
+  Global Instance MonadT_contT {Monad_M : Monad M} : MonadT contT M :=
   { lift := fun _ c => mkContT (bind c)
   }.
 
@@ -60,4 +56,10 @@ Section ContType.
 *)
 
 End ContType.
-*)
+
+Definition resetT {M} {Monad_M : Monad M} {R R'} (u : contT R M R) : contT R' M R :=
+  mkContT (fun k => bind (runContT u ret) k).
+
+Definition shiftT {M} {Monad_M : Monad M} {R A}
+    (f : (A -> M R) -> contT R M R) : contT R M A :=
+  mkContT (fun k => runContT (f k) ret).
