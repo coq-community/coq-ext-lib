@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Recur.Relation</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Relations.TransitiveClosure.html#"><span class="id" title="library">ExtLib.Relations.TransitiveClosure</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="rightTrans" class="idref" href="#rightTrans"><span class="id" title="section">rightTrans</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> (<a id="rightTrans.A" class="idref" href="#rightTrans.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>) (<a id="rightTrans.R" class="idref" href="#rightTrans.R"><span class="id" title="variable">R</span></a> : <a class="idref" href="ExtLib.Recur.Relation.html#A:1"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Recur.Relation.html#A:1"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="rightTrans.wf_R" class="idref" href="#rightTrans.wf_R"><span class="id" title="variable">wf_R</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans.R"><span class="id" title="variable">R</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="wf_rightTrans" class="idref" href="#wf_rightTrans"><span class="id" title="lemma">wf_rightTrans</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> (<a class="idref" href="ExtLib.Relations.TransitiveClosure.html#rightTrans"><span class="id" title="inductive">rightTrans</span></a> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans.R"><span class="id" title="variable">R</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Wf.html#Fix"><span class="id" title="definition">Fix</span></a>. <span class="id" title="tactic">eapply</span> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans.wf_R"><span class="id" title="variable">wf_R</span></a>. <span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">constructor</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eauto</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">IHrightTrans</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">IHrightTrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>). <span class="id" title="tactic">inversion</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eapply</span> <span class="id" title="var">H2</span>. <span class="id" title="tactic">eapply</span> <a class="idref" href="ExtLib.Relations.TransitiveClosure.html#RTFin"><span class="id" title="constructor">RTFin</span></a>. <span class="id" title="var">eassumption</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a id="wf_leftTrans" class="idref" href="#wf_leftTrans"><span class="id" title="lemma">wf_leftTrans</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> (<a class="idref" href="ExtLib.Relations.TransitiveClosure.html#leftTrans"><span class="id" title="inductive">leftTrans</span></a> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans.R"><span class="id" title="variable">R</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Wf.html#Fix"><span class="id" title="definition">Fix</span></a>. <span class="id" title="tactic">eapply</span> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans.wf_R"><span class="id" title="variable">wf_R</span></a>. <span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">constructor</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eauto</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">IHleftTrans</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">IHleftTrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eapply</span> <span class="id" title="var">H1</span>. <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="ExtLib.Relations.TransitiveClosure.html#LTFin"><span class="id" title="constructor">LTFin</span></a>. <span class="id" title="tactic">auto</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Recur.Relation.html#rightTrans"><span class="id" title="section">rightTrans</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

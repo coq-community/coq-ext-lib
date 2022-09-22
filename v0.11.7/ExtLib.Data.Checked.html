@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Checked</h1>
+
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Asymmetric</span> <span class="id" title="var">Patterns</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="checked" class="idref" href="#checked"><span class="id" title="section">checked</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<a id="T:1" class="idref" href="#T:1"><span class="id" title="binder">T</span></a> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a id="checked.F" class="idref" href="#checked.F"><span class="id" title="variable">F</span></a> : <a class="idref" href="ExtLib.Data.Checked.html#checked.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a id="Checked" class="idref" href="#Checked"><span class="id" title="inductive">Checked</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="ExtLib.Data.Checked.html#checked.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;| <a id="Success" class="idref" href="#Success"><span class="id" title="constructor">Success</span></a> : <span class="id" title="keyword">forall</span> {<a id="v:5" class="idref" href="#v:5"><span class="id" title="binder">v</span></a>}, <a class="idref" href="ExtLib.Data.Checked.html#checked.F"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Data.Checked.html#v:5"><span class="id" title="variable">v</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.Checked.html#Checked:3"><span class="id" title="inductive">Checked</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="ExtLib.Data.Checked.html#v:5"><span class="id" title="variable">v</span></a>)<br/>
+&nbsp;&nbsp;| <a id="Failure" class="idref" href="#Failure"><span class="id" title="constructor">Failure</span></a> : <a class="idref" href="ExtLib.Data.Checked.html#Checked:3"><span class="id" title="inductive">Checked</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="succeeded" class="idref" href="#succeeded"><span class="id" title="definition">succeeded</span></a> (<a id="o:6" class="idref" href="#o:6"><span class="id" title="binder">o</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="ExtLib.Data.Checked.html#checked.T"><span class="id" title="variable">T</span></a>) (<a id="d:7" class="idref" href="#d:7"><span class="id" title="binder">d</span></a> : <a class="idref" href="ExtLib.Data.Checked.html#Checked"><span class="id" title="inductive">Checked</span></a> <a class="idref" href="ExtLib.Data.Checked.html#o:6"><span class="id" title="variable">o</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Checked.html#d:7"><span class="id" title="variable">d</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Success"><span class="id" title="constructor">Success</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Failure"><span class="id" title="constructor">Failure</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="failed" class="idref" href="#failed"><span class="id" title="definition">failed</span></a> (<a id="o:9" class="idref" href="#o:9"><span class="id" title="binder">o</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="ExtLib.Data.Checked.html#checked.T"><span class="id" title="variable">T</span></a>) (<a id="d:10" class="idref" href="#d:10"><span class="id" title="binder">d</span></a> : <a class="idref" href="ExtLib.Data.Checked.html#Checked"><span class="id" title="inductive">Checked</span></a> <a class="idref" href="ExtLib.Data.Checked.html#o:9"><span class="id" title="variable">o</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Checked.html#d:10"><span class="id" title="variable">d</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Success"><span class="id" title="constructor">Success</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Failure"><span class="id" title="constructor">Failure</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="asOption" class="idref" href="#asOption"><span class="id" title="definition">asOption</span></a> (<a id="o:12" class="idref" href="#o:12"><span class="id" title="binder">o</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="ExtLib.Data.Checked.html#checked.T"><span class="id" title="variable">T</span></a>) (<a id="d:13" class="idref" href="#d:13"><span class="id" title="binder">d</span></a> : <a class="idref" href="ExtLib.Data.Checked.html#Checked"><span class="id" title="inductive">Checked</span></a> <a class="idref" href="ExtLib.Data.Checked.html#o:12"><span class="id" title="variable">o</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> (<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Checked.html#o:12"><span class="id" title="variable">o</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Data.Checked.html#checked.F"><span class="id" title="variable">F</span></a> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Checked.html#d:13"><span class="id" title="variable">d</span></a> <span class="id" title="tactic">in</span> <a class="idref" href="ExtLib.Data.Checked.html#Checked"><span class="id" title="inductive">Checked</span></a> <span class="id" title="var">o</span> <span class="id" title="keyword">return</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Checked.html#o:16"><span class="id" title="variable">o</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Data.Checked.html#checked.F"><span class="id" title="variable">F</span></a> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Success"><span class="id" title="constructor">Success</span></a> <span class="id" title="var">_</span> <span class="id" title="var">x</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="ExtLib.Data.Checked.html#Failure"><span class="id" title="constructor">Failure</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.Checked.html#checked"><span class="id" title="section">checked</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

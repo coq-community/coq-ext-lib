@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Positive</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#"><span class="id" title="library">Coq.PArith.BinPos</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.RelDec.html#"><span class="id" title="library">ExtLib.Core.RelDec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;Decidable&nbsp;Instances&nbsp;*)</span><br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_peq" class="idref" href="#RelDec_peq"><span class="id" title="instance">RelDec_peq</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.eqb"><span class="id" title="definition">Pos.eqb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_plt" class="idref" href="#RelDec_plt"><span class="id" title="instance">RelDec_plt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.lt"><span class="id" title="definition">Pos.lt</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ltb"><span class="id" title="definition">Pos.ltb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_ple" class="idref" href="#RelDec_ple"><span class="id" title="instance">RelDec_ple</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.le"><span class="id" title="definition">Pos.le</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.leb"><span class="id" title="definition">Pos.leb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_pgt" class="idref" href="#RelDec_pgt"><span class="id" title="instance">RelDec_pgt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.gt"><span class="id" title="definition">Pos.gt</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <span class="id" title="keyword">fun</span> <a id="x:1" class="idref" href="#x:1"><span class="id" title="binder">x</span></a> <a id="y:2" class="idref" href="#y:2"><span class="id" title="binder">y</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#negb"><span class="id" title="definition">negb</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.leb"><span class="id" title="definition">Pos.leb</span></a> <a class="idref" href="ExtLib.Data.Positive.html#x:1"><span class="id" title="variable">x</span></a> <a class="idref" href="ExtLib.Data.Positive.html#y:2"><span class="id" title="variable">y</span></a>) }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_pge" class="idref" href="#RelDec_pge"><span class="id" title="instance">RelDec_pge</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ge"><span class="id" title="definition">Pos.ge</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <span class="id" title="keyword">fun</span> <a id="x:3" class="idref" href="#x:3"><span class="id" title="binder">x</span></a> <a id="y:4" class="idref" href="#y:4"><span class="id" title="binder">y</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.Init.Datatypes.html#negb"><span class="id" title="definition">negb</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ltb"><span class="id" title="definition">Pos.ltb</span></a> <a class="idref" href="ExtLib.Data.Positive.html#x:3"><span class="id" title="variable">x</span></a> <a class="idref" href="ExtLib.Data.Positive.html#y:4"><span class="id" title="variable">y</span></a>) }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_peq" class="idref" href="#RelDec_Correct_peq"><span class="id" title="instance">RelDec_Correct_peq</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Positive.html#RelDec_peq"><span class="id" title="instance">RelDec_peq</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.eqb_eq"><span class="id" title="lemma">Pos.eqb_eq</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_plt" class="idref" href="#RelDec_Correct_plt"><span class="id" title="instance">RelDec_Correct_plt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Positive.html#RelDec_plt"><span class="id" title="instance">RelDec_plt</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ltb_lt"><span class="id" title="lemma">Pos.ltb_lt</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_ple" class="idref" href="#RelDec_Correct_ple"><span class="id" title="instance">RelDec_Correct_ple</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Positive.html#RelDec_ple"><span class="id" title="instance">RelDec_ple</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.leb_le"><span class="id" title="lemma">Pos.leb_le</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_pgt" class="idref" href="#RelDec_Correct_pgt"><span class="id" title="instance">RelDec_Correct_pgt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Positive.html#RelDec_pgt"><span class="id" title="instance">RelDec_pgt</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ltb_antisym"><span class="id" title="lemma">Pos.ltb_antisym</span></a>. <span class="id" title="tactic">rewrite</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ltb_lt"><span class="id" title="lemma">Pos.ltb_lt</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intuition</span>; [ <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.lt_gt"><span class="id" title="lemma">Pos.lt_gt</span></a> | <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.gt_lt"><span class="id" title="lemma">Pos.gt_lt</span></a> ]; <span class="id" title="tactic">auto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_pge" class="idref" href="#RelDec_Correct_pge"><span class="id" title="instance">RelDec_Correct_pge</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Positive.html#RelDec_pge"><span class="id" title="instance">RelDec_pge</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.leb_antisym"><span class="id" title="lemma">Pos.leb_antisym</span></a>. <span class="id" title="tactic">rewrite</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.leb_le"><span class="id" title="lemma">Pos.leb_le</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intuition</span>; [ <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.le_ge"><span class="id" title="lemma">Pos.le_ge</span></a> | <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#Pos.ge_le"><span class="id" title="lemma">Pos.ge_le</span></a> ]; <span class="id" title="tactic">auto</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Export</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.17+alpha/stdlib//Coq.PArith.BinPos.html#"><span class="id" title="module">Coq.PArith.BinPos</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

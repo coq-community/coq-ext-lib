@@ -30,6 +30,9 @@
         font-size: 0.9em;
         padding: 1em;
       }
+      h1 {
+        font-size: 1.8em;
+      }
     }
     @media print {
       body {
@@ -134,41 +137,62 @@
     #TOC li {
       list-style: none;
     }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
     #TOC a:not(:hover) {
       text-decoration: none;
     }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
   <style type="text/css"> body {font-family: Arial, Helvetica; margin-left: 5em; font-size: large;} </style>
   <style type="text/css"> h1 {margin-left: 0em; padding: 0px; text-align: center} </style>
   <style type="text/css"> h2 {margin-left: 0em; padding: 0px; color: #580909} </style>
   <style type="text/css"> h3 {margin-left: 1em; padding: 0px; color: #C05001;} </style>
   <style type="text/css"> body { width: 1100px; margin-left: 30px; }</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">coq-ext-lib</h1>
 </header>
 <div style="text-align:left">
-<img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" height="25" style="border:0px"> <a href="https://github.com/coq-community/coq-ext-lib">View the project on GitHub</a> <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" height="25" style="border:0px">
+<img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" height="25" style="border:0px">
+<a href="https://github.com/coq-community/coq-ext-lib">View the project
+on GitHub</a>
+<img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" height="25" style="border:0px">
 </div>
 <h2 id="about">About</h2>
-<p>Welcome to the coq-ext-lib project website! This project is part of <a href="https://github.com/coq-community/manifesto">coq-community</a>.</p>
-<p>A collection of theories and plugins that may be useful in other Coq developments.</p>
-<p>This is an open source project, licensed under the BSD 2-Clause “Simplified” License.</p>
+<p>Welcome to the coq-ext-lib project website! This project is part of
+<a
+href="https://github.com/coq-community/manifesto">coq-community</a>.</p>
+<p>A collection of theories and plugins that may be useful in other Coq
+developments.</p>
+<p>This is an open source project, licensed under the BSD 2-Clause
+“Simplified” License.</p>
 <h2 id="get-the-code">Get the code</h2>
-<p>The current stable release of coq-ext-lib can be <a href="https://github.com/coq-community/coq-ext-lib/releases">downloaded from GitHub</a>.</p>
+<p>The current stable release of coq-ext-lib can be <a
+href="https://github.com/coq-community/coq-ext-lib/releases">downloaded
+from GitHub</a>.</p>
 <h2 id="documentation">Documentation</h2>
 <ul>
+<li><a href="v0.11.7/toc.html">0.11.7</a></li>
 <li><a href="v0.11.6/toc.html">0.11.6</a></li>
 <li><a href="v0.11.5/toc.html">0.11.5</a></li>
 <li><a href="v0.11.4/toc.html">0.11.4</a></li>
@@ -181,9 +205,12 @@
 <p>Other related publications, if any, are listed below.</p>
 <h2 id="help-and-contact">Help and contact</h2>
 <ul>
-<li>Report issues on <a href="https://github.com/coq-community/coq-ext-lib/issues">GitHub</a></li>
-<li>Chat with us on <a href="https://coq.zulipchat.com/#narrow/stream/237663-coq-community-devs.20.26.20users">Zulip</a></li>
-<li>Discuss with us on Coq’s <a href="https://coq.discourse.group">Discourse</a> forum</li>
+<li>Report issues on <a
+href="https://github.com/coq-community/coq-ext-lib/issues">GitHub</a></li>
+<li>Chat with us on <a
+href="https://coq.zulipchat.com/#narrow/stream/237663-coq-community-devs.20.26.20users">Zulip</a></li>
+<li>Discuss with us on Coq’s <a
+href="https://coq.discourse.group">Discourse</a> forum</li>
 </ul>
 <h2 id="authors-and-contributors">Authors and contributors</h2>
 <ul>
