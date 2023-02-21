@@ -678,7 +678,7 @@ Section hlist.
           (projT2 x) (hlist_app vs vs') = y vs'.
   Proof.
     clear. induction tvs; simpl; intros.
-    { rewrite <- Minus.minus_n_O.
+    { rewrite PeanoNat.Nat.sub_0_r.
       rewrite H0. destruct x. simpl.
       eexists; split; eauto. intros.
       rewrite (hlist_eta vs). reflexivity. }
