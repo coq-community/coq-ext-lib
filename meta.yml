@@ -4,7 +4,7 @@ shortname: coq-ext-lib
 opam_name: coq-ext-lib
 organization: coq-community
 community: true
-circleci: true
+circleci: false
 ci_test_dependants: true
 submodule: true
 
