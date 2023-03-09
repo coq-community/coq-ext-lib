@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Monads.ContMonad</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monad.html#"><span class="id" title="library">ExtLib.Structures.Monad</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.MonadTrans.html#"><span class="id" title="library">ExtLib.Structures.MonadTrans</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Contextual</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Maximal</span> <span class="id" title="keyword">Implicit</span> <span class="id" title="var">Insertion</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="ContType"><span class="id" title="section">ContType</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="ContType.R"><span class="id" title="variable">R</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+<span class="comment">(*<br/>
+&nbsp;&nbsp;Record&nbsp;cont&nbsp;(t&nbsp;:&nbsp;Type)&nbsp;:&nbsp;Type&nbsp;:=&nbsp;mkCont<br/>
+&nbsp;&nbsp;{&nbsp;runCont&nbsp;:&nbsp;(t&nbsp;-&gt;&nbsp;Ans)&nbsp;-&gt;&nbsp;Ans&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Monad_cont&nbsp;:&nbsp;Monad&nbsp;cont&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;ret&nbsp;&nbsp;:=&nbsp;fun&nbsp;_&nbsp;v&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;k&nbsp;=&gt;&nbsp;k&nbsp;v)<br/>
+&nbsp;&nbsp;;&nbsp;bind&nbsp;:=&nbsp;fun&nbsp;_&nbsp;c1&nbsp;_&nbsp;c2&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;k&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runCont&nbsp;c1&nbsp;(fun&nbsp;t&nbsp;=&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runCont&nbsp;(c2&nbsp;t)&nbsp;k))<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Global&nbsp;Instance&nbsp;Cont_cont&nbsp;:&nbsp;Cont&nbsp;cont&nbsp;:=<br/>
+&nbsp;&nbsp;{&nbsp;callCC&nbsp;:=&nbsp;fun&nbsp;_&nbsp;_&nbsp;f&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;c&nbsp;=&gt;&nbsp;runCont&nbsp;(f&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;mkCont&nbsp;(fun&nbsp;_&nbsp;=&gt;&nbsp;c&nbsp;x)))&nbsp;c)<br/>
+&nbsp;&nbsp;}.<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;mapCont&nbsp;(f&nbsp;:&nbsp;Ans&nbsp;-&gt;&nbsp;Ans)&nbsp;{a}&nbsp;(c&nbsp;:&nbsp;cont&nbsp;a)&nbsp;:&nbsp;cont&nbsp;a&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;f&nbsp;(runCont&nbsp;c&nbsp;x)).<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;withCont&nbsp;{a&nbsp;b}&nbsp;(f&nbsp;:&nbsp;(b&nbsp;-&gt;&nbsp;Ans)&nbsp;-&gt;&nbsp;(a&nbsp;-&gt;&nbsp;Ans))&nbsp;(c&nbsp;:&nbsp;cont&nbsp;a)&nbsp;:&nbsp;cont&nbsp;b&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkCont&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;runCont&nbsp;c&nbsp;(f&nbsp;x)).<br/>
+*)</span><br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="ContType.M"><span class="id" title="variable">M</span></a> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Record</span> <a name="contT"><span class="id" title="record">contT</span></a> (<span class="id" title="var">A</span> : <span class="id" title="keyword">Type</span>) : <span class="id" title="keyword">Type</span> := <a name="mkContT"><span class="id" title="constructor">mkContT</span></a><br/>
+&nbsp;&nbsp;{ <a name="runContT"><span class="id" title="projection">runContT</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><a class="idref" href="ExtLib.Data.Monads.ContMonad.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.R"><span class="id" title="variable">R</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.R"><span class="id" title="variable">R</span></a> }.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="Monad_contT"><span class="id" title="instance">Monad_contT</span></a> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#mkContT"><span class="id" title="constructor">mkContT</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">k</span> =&gt; <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#k"><span class="id" title="variable">k</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#x"><span class="id" title="variable">x</span></a>)<br/>
+&nbsp;&nbsp;; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c1</span> <span class="id" title="var">c2</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#mkContT"><span class="id" title="constructor">mkContT</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">c</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#runContT"><span class="id" title="projection">runContT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#c1"><span class="id" title="variable">c1</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> =&gt; <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#runContT"><span class="id" title="projection">runContT</span></a> (<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#c2"><span class="id" title="variable">c2</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#a"><span class="id" title="variable">a</span></a>) <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#c"><span class="id" title="variable">c</span></a>))<br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="MonadT_contT"><span class="id" title="instance">MonadT_contT</span></a> {<span class="id" title="var">Monad_M</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.M"><span class="id" title="variable">M</span></a>} : <a class="idref" href="ExtLib.Structures.MonadTrans.html#MonadT"><span class="id" title="class">MonadT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType.M"><span class="id" title="variable">M</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Structures.MonadTrans.html#lift"><span class="id" title="method">lift</span></a> := <span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">c</span> =&gt; <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#mkContT"><span class="id" title="constructor">mkContT</span></a> (<a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#c"><span class="id" title="variable">c</span></a>)<br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="comment">(*<br/>
+&nbsp;&nbsp;Definition&nbsp;mapContT&nbsp;(f&nbsp;:&nbsp;m&nbsp;Ans&nbsp;-&gt;&nbsp;m&nbsp;Ans)&nbsp;{a}&nbsp;(c&nbsp;:&nbsp;contT&nbsp;a)&nbsp;:&nbsp;contT&nbsp;a&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkContT&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;f&nbsp;(runContT&nbsp;c&nbsp;x)).<br/>
+<br/>
+&nbsp;&nbsp;Definition&nbsp;withContT&nbsp;{a&nbsp;b}&nbsp;(f&nbsp;:&nbsp;(b&nbsp;-&gt;&nbsp;m&nbsp;Ans)&nbsp;-&gt;&nbsp;(a&nbsp;-&gt;&nbsp;m&nbsp;Ans))&nbsp;(c&nbsp;:&nbsp;contT&nbsp;a)&nbsp;:&nbsp;contT&nbsp;b&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;mkContT&nbsp;(fun&nbsp;x&nbsp;=&gt;&nbsp;runContT&nbsp;c&nbsp;(f&nbsp;x)).<br/>
+*)</span><br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#ContType"><span class="id" title="section">ContType</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="resetT"><span class="id" title="definition">resetT</span></a> {<span class="id" title="var">M</span>} {<span class="id" title="var">Monad_M</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a>} {<span class="id" title="var">R</span> <span class="id" title="var">R'</span>} (<span class="id" title="var">u</span> : <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a>) : <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R'"><span class="id" title="variable">R'</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#mkContT"><span class="id" title="constructor">mkContT</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">k</span> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> (<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#runContT"><span class="id" title="projection">runContT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#u"><span class="id" title="variable">u</span></a> <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a>) <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#k"><span class="id" title="variable">k</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="shiftT"><span class="id" title="definition">shiftT</span></a> {<span class="id" title="var">M</span>} {<span class="id" title="var">Monad_M</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a>} {<span class="id" title="var">R</span> <span class="id" title="var">A</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">(</span></a><a class="idref" href="ExtLib.Data.Monads.ContMonad.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a>) : <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#contT"><span class="id" title="record">contT</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#mkContT"><span class="id" title="constructor">mkContT</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">k</span> =&gt; <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#runContT"><span class="id" title="projection">runContT</span></a> (<a class="idref" href="ExtLib.Data.Monads.ContMonad.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Data.Monads.ContMonad.html#k"><span class="id" title="variable">k</span></a>) <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a>).<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

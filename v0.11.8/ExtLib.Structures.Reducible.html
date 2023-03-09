@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.Reducible</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.RelationClasses.html#"><span class="id" title="library">Coq.Classes.RelationClasses</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.BinOps.html#"><span class="id" title="library">ExtLib.Structures.BinOps</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monad.html#"><span class="id" title="library">ExtLib.Structures.Monad</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="Reducible"><span class="id" title="record">Reducible</span></a> (<span class="id" title="var">T</span> <span class="id" title="var">E</span> : <span class="id" title="keyword">Type</span>) : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;<a name="reduce"><span class="id" title="projection">reduce</span></a> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">A</span>} (<span class="id" title="var">base</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">single</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#E"><span class="id" title="variable">E</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">join</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>), <a class="idref" href="ExtLib.Structures.Reducible.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="Foldable"><span class="id" title="record">Foldable</span></a> (<span class="id" title="var">T</span> <span class="id" title="var">E</span> : <span class="id" title="keyword">Type</span>) : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;<a name="fold"><span class="id" title="projection">fold</span></a> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">A</span>} (<span class="id" title="var">add</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#E"><span class="id" title="variable">E</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">base</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>), <a class="idref" href="ExtLib.Structures.Reducible.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="RedFold"><span class="id" title="section">RedFold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variables</span> <a name="RedFold.T"><span class="id" title="variable">T</span></a> <a name="RedFold.E"><span class="id" title="variable">E</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="Reducible_from_Foldable"><span class="id" title="instance">Reducible_from_Foldable</span></a> (<span class="id" title="var">R</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#Foldable"><span class="id" title="class">Foldable</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#RedFold.T"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#RedFold.E"><span class="id" title="variable">E</span></a>) : <a class="idref" href="ExtLib.Structures.Reducible.html#Reducible"><span class="id" title="class">Reducible</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#RedFold.T"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#RedFold.E"><span class="id" title="variable">E</span></a> | 100 :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">A</span> <span class="id" title="var">base</span> <span class="id" title="var">single</span> <span class="id" title="var">join</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="ExtLib.Structures.Reducible.html#fold"><span class="id" title="definition">fold</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">R</span> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Structures.Reducible.html#join"><span class="id" title="variable">join</span></a> (<a class="idref" href="ExtLib.Structures.Reducible.html#single"><span class="id" title="variable">single</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#x"><span class="id" title="variable">x</span></a>)) <a class="idref" href="ExtLib.Structures.Reducible.html#base"><span class="id" title="variable">base</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.Reducible.html#RedFold"><span class="id" title="section">RedFold</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="foldM"><span class="id" title="section">foldM</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> <span class="id" title="var">E</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Foldable_te</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#Foldable"><span class="id" title="class">Foldable</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.T"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.E"><span class="id" title="variable">E</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">m</span> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Monad_m</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.m"><span class="id" title="variable">m</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="foldM"><span class="id" title="definition">foldM</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">add</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.E"><span class="id" title="variable">E</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">base</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">t</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.T"><span class="id" title="variable">T</span></a>) : <a class="idref" href="ExtLib.Structures.Reducible.html#foldM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Reducible.html#fold"><span class="id" title="definition">fold</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> <span class="id" title="var">acc</span> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#acc"><span class="id" title="variable">acc</span></a> (<a class="idref" href="ExtLib.Structures.Reducible.html#add"><span class="id" title="variable">add</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#x"><span class="id" title="variable">x</span></a>)) <a class="idref" href="ExtLib.Structures.Reducible.html#base"><span class="id" title="variable">base</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#t"><span class="id" title="variable">t</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.Reducible.html#foldM"><span class="id" title="section">foldM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="reduceM"><span class="id" title="section">reduceM</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> <span class="id" title="var">E</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Reducible_te</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#Reducible"><span class="id" title="class">Reducible</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.T"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.E"><span class="id" title="variable">E</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">m</span> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Monad_m</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.m"><span class="id" title="variable">m</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="reduceM"><span class="id" title="definition">reduceM</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">base</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">single</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.E"><span class="id" title="variable">E</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">join</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a>)  (<span class="id" title="var">t</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.T"><span class="id" title="variable">T</span></a>) : <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Reducible.html#reduce"><span class="id" title="definition">reduce</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#base"><span class="id" title="variable">base</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#single"><span class="id" title="variable">single</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#x"><span class="id" title="variable">x</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#y"><span class="id" title="variable">y</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">y</span> =&gt; <a class="idref" href="ExtLib.Structures.Reducible.html#join"><span class="id" title="variable">join</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#y"><span class="id" title="variable">y</span></a>))) <a class="idref" href="ExtLib.Structures.Reducible.html#t"><span class="id" title="variable">t</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.Reducible.html#reduceM"><span class="id" title="section">reduceM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="iterM"><span class="id" title="section">iterM</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> <span class="id" title="var">E</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">U</span> <span class="id" title="var">V</span> : <span class="id" title="keyword">Type</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">m</span> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Monad_m</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.m"><span class="id" title="variable">m</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Red_te</span> : <a class="idref" href="ExtLib.Structures.Reducible.html#Reducible"><span class="id" title="class">Reducible</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.T"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.E"><span class="id" title="variable">E</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="iterM.f"><span class="id" title="variable">f</span></a> : <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.E"><span class="id" title="variable">E</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="iterM"><span class="id" title="definition">iterM</span></a> : <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.m"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Reducible.html#reduce"><span class="id" title="definition">reduce</span></a> (<a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a>) <a class="idref" href="ExtLib.Structures.Reducible.html#iterM.f"><span class="id" title="variable">f</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Structures.Reducible.html#x"><span class="id" title="variable">x</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <a class="idref" href="ExtLib.Structures.Reducible.html#y"><span class="id" title="variable">y</span></a>)).<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.Reducible.html#iterM"><span class="id" title="section">iterM</span></a>.<br/>
+
+<br/>
+<span class="comment">(*<br/>
+Section&nbsp;Laws.<br/>
+&nbsp;&nbsp;Context&nbsp;(T&nbsp;E&nbsp;:&nbsp;Type).<br/>
+&nbsp;&nbsp;Context&nbsp;(R&nbsp;:&nbsp;Reducible&nbsp;T&nbsp;E).<br/>
+<br/>
+&nbsp;&nbsp;Class&nbsp;ReducibleLaw&nbsp;:&nbsp;Prop&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;reduce_spec&nbsp;:&nbsp;forall&nbsp;A<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(unit&nbsp;:&nbsp;A)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(single&nbsp;:&nbsp;E&nbsp;-&gt;&nbsp;A)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(join&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;A&nbsp;-&gt;&nbsp;A)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(eqA&nbsp;:&nbsp;A&nbsp;-&gt;&nbsp;A&nbsp;-&gt;&nbsp;Prop),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LeftUnit&nbsp;join&nbsp;unit&nbsp;eqA&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RightUnit&nbsp;join&nbsp;unit&nbsp;eqA&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commutative&nbsp;join&nbsp;eqA&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Associative&nbsp;join&nbsp;eqA&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forall&nbsp;t,&nbsp;eqA&nbsp;(reduce&nbsp;unit&nbsp;single&nbsp;join&nbsp;t)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fold_right&nbsp;(fun&nbsp;acc&nbsp;x&nbsp;=&gt;&nbsp;join&nbsp;acc&nbsp;(single&nbsp;x))&nbsp;??&nbsp;unit)<br/>
+*)</span></div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

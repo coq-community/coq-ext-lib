@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Recur.Facts</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.RelationClasses.html#"><span class="id" title="library">Coq.Classes.RelationClasses</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="wf_anti_sym"><span class="id" title="lemma">wf_anti_sym</span></a> <span class="id" title="var">T</span> (<span class="id" title="var">R</span> : <a class="idref" href="ExtLib.Recur.Facts.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>) (<span class="id" title="keyword">wf</span> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#R"><span class="id" title="variable">R</span></a>)<br/>
+: <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.RelationClasses.html#Irreflexive"><span class="id" title="class">Irreflexive</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#R"><span class="id" title="variable">R</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#Fix"><span class="id" title="definition">Fix</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="keyword">wf</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> =&gt; <a class="idref" href="ExtLib.Recur.Facts.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">R</span> <a class="idref" href="ExtLib.Recur.Facts.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> <span class="id" title="keyword">rec</span> <span class="id" title="var">pf</span> <span class="id" title="var">pfr</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Recur.Facts.html#rec"><span class="id" title="variable">rec</span></a> <span class="id" title="var">_</span> <span class="id" title="keyword">match</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_sym"><span class="id" title="lemma">eq_sym</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#pf"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">t</span> <span class="id" title="keyword">return</span> <span class="id" title="var">R</span> <a class="idref" href="ExtLib.Recur.Facts.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="ExtLib.Recur.Facts.html#pfr"><span class="id" title="variable">pfr</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> <a class="idref" href="ExtLib.Recur.Facts.html#pf"><span class="id" title="variable">pf</span></a> <a class="idref" href="ExtLib.Recur.Facts.html#pfr"><span class="id" title="variable">pfr</span></a>)) <a class="idref" href="ExtLib.Recur.Facts.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

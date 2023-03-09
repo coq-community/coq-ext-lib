@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.EqDep</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Logic.Eqdep_dec.html#"><span class="id" title="library">Coq.Logic.Eqdep_dec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#"><span class="id" title="library">EquivDec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.RelDec.html#"><span class="id" title="library">ExtLib.Core.RelDec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Tactics.Consider.html#"><span class="id" title="library">ExtLib.Tactics.Consider</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="Classes"><span class="id" title="section">Classes</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">A</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">dec</span> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#EqDec"><span class="id" title="class">EquivDec.EqDec</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a>)}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="UIP_refl"><span class="id" title="lemma">UIP_refl</span></a> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">x</span> : <a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a>} (<span class="id" title="var">p1</span> : <a class="idref" href="ExtLib.Structures.EqDep.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#x"><span class="id" title="variable">x</span></a>), <a class="idref" href="ExtLib.Structures.EqDep.html#p1"><span class="id" title="variable">p1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#refl_equal"><span class="id" title="abbreviation">refl_equal</span></a> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Logic.Eqdep_dec.html#UIP_dec"><span class="id" title="lemma">Coq.Logic.Eqdep_dec.UIP_dec</span></a>. <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#equiv_dec"><span class="id" title="definition">EquivDec.equiv_dec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="UIP_equal"><span class="id" title="lemma">UIP_equal</span></a> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a>} (<span class="id" title="var">p1</span> <span class="id" title="var">p2</span> : <a class="idref" href="ExtLib.Structures.EqDep.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#y"><span class="id" title="variable">y</span></a>), <a class="idref" href="ExtLib.Structures.EqDep.html#p1"><span class="id" title="variable">p1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#p2"><span class="id" title="variable">p2</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Logic.Eqdep_dec.html#UIP_dec"><span class="id" title="lemma">Coq.Logic.Eqdep_dec.UIP_dec</span></a>. <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#equiv_dec"><span class="id" title="definition">EquivDec.equiv_dec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="inj_pair2"><span class="id" title="lemma">inj_pair2</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<span class="id" title="var">P</span>:<a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>) (<span class="id" title="var">p</span>:<a class="idref" href="ExtLib.Structures.EqDep.html#Classes.A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span>:<a class="idref" href="ExtLib.Structures.EqDep.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#p"><span class="id" title="variable">p</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Specif.html#existT"><span class="id" title="constructor">existT</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#y"><span class="id" title="variable">y</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eapply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Logic.Eqdep_dec.html#inj_pair2_eq_dec"><span class="id" title="lemma">Coq.Logic.Eqdep_dec.inj_pair2_eq_dec</span></a>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="equiv_dec_refl_left"><span class="id" title="lemma">equiv_dec_refl_left</span></a> : <span class="id" title="keyword">forall</span> <span class="id" title="var">a</span>, @<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#equiv_dec"><span class="id" title="definition">EquivDec.equiv_dec</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="ExtLib.Structures.EqDep.html#Classes.dec"><span class="id" title="variable">dec</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Specif.html#left"><span class="id" title="constructor">left</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#equiv_dec"><span class="id" title="definition">EquivDec.equiv_dec</span></a> <span class="id" title="var">a</span> <span class="id" title="var">a</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">f_equal</span>. <span class="id" title="tactic">apply</span> <a class="idref" href="ExtLib.Structures.EqDep.html#UIP_equal"><span class="id" title="lemma">UIP_equal</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.EqDep.html#Classes"><span class="id" title="section">Classes</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="from_rel_dec"><span class="id" title="section">from_rel_dec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="from_rel_dec.T"><span class="id" title="variable">T</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="from_rel_dec.RD"><span class="id" title="variable">RD</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#from_rel_dec.T"><span class="id" title="variable">T</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="from_rel_dec.RDC"><span class="id" title="variable">RDC</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#from_rel_dec.RD"><span class="id" title="variable">RD</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="EqDec_RelDec"><span class="id" title="instance">EqDec_RelDec</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.EquivDec.html#EqDec"><span class="id" title="class">EquivDec.EqDec</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#from_rel_dec.T"><span class="id" title="variable">T</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Structures.EqDep.html#from_rel_dec.T"><span class="id" title="variable">T</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">consider</span> (<span class="id" title="var">x</span> <a class="idref" href="ExtLib.Core.RelDec.html#0994f8b39b74616a326872d8b5301c5c"><span class="id" title="notation">?[</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="ExtLib.Core.RelDec.html#0994f8b39b74616a326872d8b5301c5c"><span class="id" title="notation">]</span></a> <span class="id" title="var">y</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">left</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.EqDep.html#from_rel_dec"><span class="id" title="section">from_rel_dec</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

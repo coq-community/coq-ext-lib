@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.MonadZero</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monad.html#"><span class="id" title="library">ExtLib.Structures.Monad</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="MonadZero"><span class="id" title="record">MonadZero</span></a> (<span class="id" title="var">m</span> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>) : <span class="id" title="keyword">Type</span> :=<br/>
+{ <a name="mzero"><span class="id" title="projection">mzero</span></a> : <span class="id" title="keyword">forall</span> {<span class="id" title="var">T</span>}, <a class="idref" href="ExtLib.Structures.MonadZero.html#m"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadZero.html#T"><span class="id" title="variable">T</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="ZeroFuncs"><span class="id" title="section">ZeroFuncs</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">m</span> : <span class="id" title="keyword">Type</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Monad_m</span> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.MonadZero.html#ZeroFuncs.m"><span class="id" title="variable">m</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">Zero_m</span> : <a class="idref" href="ExtLib.Structures.MonadZero.html#MonadZero"><span class="id" title="class">MonadZero</span></a> <a class="idref" href="ExtLib.Structures.MonadZero.html#ZeroFuncs.m"><span class="id" title="variable">m</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="assert"><span class="id" title="definition">assert</span></a> (<span class="id" title="var">b</span> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>) : <a class="idref" href="ExtLib.Structures.MonadZero.html#ZeroFuncs.m"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">if</span> <a class="idref" href="ExtLib.Structures.MonadZero.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="keyword">then</span> <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a> <span class="id" title="keyword">else</span> <a class="idref" href="ExtLib.Structures.MonadZero.html#mzero"><span class="id" title="method">mzero</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.MonadZero.html#ZeroFuncs"><span class="id" title="section">ZeroFuncs</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

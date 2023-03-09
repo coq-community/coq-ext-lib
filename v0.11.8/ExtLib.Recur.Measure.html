@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Recur.Measure</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Classes.RelationClasses.html#"><span class="id" title="library">Coq.Classes.RelationClasses</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Arith.Wf_nat.html#"><span class="id" title="library">Coq.Arith.Wf_nat</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="parametric"><span class="id" title="section">parametric</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> <span class="id" title="var">U</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="parametric.f"><span class="id" title="variable">f</span></a> : <a class="idref" href="ExtLib.Recur.Measure.html#parametric.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.U"><span class="id" title="variable">U</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="parametric.R"><span class="id" title="variable">R</span></a> : <a class="idref" href="ExtLib.Recur.Measure.html#parametric.U"><span class="id" title="variable">U</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.U"><span class="id" title="variable">U</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <a name="parametric.well_founded_R"><span class="id" title="variable">well_founded_R</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.R"><span class="id" title="variable">R</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="compose"><span class="id" title="definition">compose</span></a> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="ExtLib.Recur.Measure.html#parametric.T"><span class="id" title="variable">T</span></a>) : <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Recur.Measure.html#parametric.R"><span class="id" title="variable">R</span></a> (<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#a"><span class="id" title="variable">a</span></a>) (<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#b"><span class="id" title="variable">b</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="well_founded_compose"><span class="id" title="definition">well_founded_compose</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#compose"><span class="id" title="definition">compose</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">t</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#Fix"><span class="id" title="definition">Fix</span></a> <span class="id" title="var">_</span> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.R"><span class="id" title="variable">R</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.well_founded_R"><span class="id" title="variable">well_founded_R</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> =&gt; <span class="id" title="keyword">forall</span> <span class="id" title="var">y</span>, <a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#Acc"><span class="id" title="inductive">Acc</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#compose"><span class="id" title="definition">compose</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y"><span class="id" title="variable">y</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> <span class="id" title="var">recur</span> <span class="id" title="var">y</span> <span class="id" title="var">pf</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#Acc_intro"><span class="id" title="constructor">Acc_intro</span></a> <span class="id" title="var">_</span> <a class="idref" href="ExtLib.Recur.Measure.html#compose"><span class="id" title="definition">compose</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y"><span class="id" title="variable">y</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">y'</span> (<span class="id" title="var">pf'</span> : <a class="idref" href="ExtLib.Recur.Measure.html#parametric.R"><span class="id" title="variable">R</span></a> (<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y'"><span class="id" title="variable">y'</span></a>) (<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y"><span class="id" title="variable">y</span></a>)) =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Recur.Measure.html#recur"><span class="id" title="variable">recur</span></a> <span class="id" title="var">_</span> <span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Recur.Measure.html#pf"><span class="id" title="variable">pf</span></a> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">t</span> <span class="id" title="keyword">return</span> <a class="idref" href="ExtLib.Recur.Measure.html#parametric.R"><span class="id" title="variable">R</span></a> (<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#y'"><span class="id" title="variable">y'</span></a>) <a class="idref" href="ExtLib.Recur.Measure.html#t"><span class="id" title="variable">t</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a> =&gt; <a class="idref" href="ExtLib.Recur.Measure.html#pf'"><span class="id" title="variable">pf'</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="ExtLib.Recur.Measure.html#parametric.f"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#t"><span class="id" title="variable">t</span></a>) <a class="idref" href="ExtLib.Recur.Measure.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#eq_refl"><span class="id" title="constructor">eq_refl</span></a>)).<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Recur.Measure.html#parametric"><span class="id" title="section">parametric</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A well-founded relation induced by a measure to nat 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="measure"><span class="id" title="section">measure</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">T</span> : <span class="id" title="keyword">Type</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="measure.m"><span class="id" title="variable">m</span></a> : <a class="idref" href="ExtLib.Recur.Measure.html#measure.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="mlt"><span class="id" title="definition">mlt</span></a> : <a class="idref" href="ExtLib.Recur.Measure.html#measure.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#measure.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Logic.html#1c93e43e07fbeaeb6a625cb6614beb5d"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Recur.Measure.html#compose"><span class="id" title="definition">compose</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#measure.m"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Peano.html#lt"><span class="id" title="definition">lt</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="well_founded_mlt"><span class="id" title="definition">well_founded_mlt</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Wf.html#well_founded"><span class="id" title="definition">well_founded</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#mlt"><span class="id" title="definition">mlt</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="ExtLib.Recur.Measure.html#well_founded_compose"><span class="id" title="definition">well_founded_compose</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#measure.T"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="ExtLib.Recur.Measure.html#measure.m"><span class="id" title="variable">m</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Init.Peano.html#lt"><span class="id" title="definition">lt</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.9.1/stdlib//Coq.Arith.Wf_nat.html#lt_wf"><span class="id" title="lemma">Wf_nat.lt_wf</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Recur.Measure.html#measure"><span class="id" title="section">measure</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
