@@ -18,9 +18,7 @@ Local Notation "x >> y" := (match x with
                               | z => z
                             end) (only parsing, at level 30).
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since="8.12",note="Use Bool.compare instead.")] *)
-Definition bool_cmp (l r : bool) : comparison :=
+Definition deprecated_bool_cmp (l r : bool) : comparison :=
   match l , r with
     | true , false => Gt
     | false , true => Lt
@@ -28,9 +26,10 @@ Definition bool_cmp (l r : bool) : comparison :=
     | false , false => Eq
   end.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since="8.15",note="Use Ascii.compare instead.")] *)
-Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
+#[deprecated(since="8.12",note="Use Bool.compare instead.")]
+Notation bool_cmp := deprecated_bool_cmp.
+
+Definition deprecated_ascii_cmp (l r : Ascii.ascii) : comparison :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
       Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
@@ -38,51 +37,57 @@ Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
       bool_cmp l4 r4 >> bool_cmp l3 r3 >> bool_cmp l2 r2 >> bool_cmp l1 r1
   end.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since="8.9",note="Use String.eqb instead.")] *)
-Fixpoint string_dec (l r : string) : bool :=
+#[deprecated(since="8.15",note="Use Ascii.compare instead.")]
+Notation ascii_cmp := deprecated_ascii_cmp.
+
+Fixpoint deprecated_string_dec (l r : string) : bool :=
   match l , r with
     | EmptyString , EmptyString => true
     | String l ls , String r rs =>
-      if ascii_dec l r then string_dec ls rs
+      if Ascii.eqb l r then deprecated_string_dec ls rs
       else false
     | _ , _ => false
   end.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since="8.9",note="Use String.eqb_spec instead.")] *)
-Theorem string_dec_sound : forall l r,
+#[deprecated(since="8.9",note="Use String.eqb instead.")]
+Notation string_dec := deprecated_string_dec.
+
+Theorem deprecated_string_dec_sound : forall l r,
   string_dec l r = true <-> l = r.
 Proof.
-  induction l; destruct r; simpl; split; try solve [ intuition ; congruence ];
-  consider (ascii_dec a a0); intros; subst. f_equal. eapply IHl; auto.
-  apply IHl. congruence.
-  inversion H. congruence.
+  induction l; destruct r; try (constructor; easy); simpl.
+  case (Ascii.eqb_spec a a0); simpl; [intros -> | constructor; now intros [= ]].
+  case (IHl r); intros; constructor; intros; f_equal; auto.
+  inversion H1; subst; auto.
 Qed.
 
+#[deprecated(since="8.9",note="Use String.eqb_eq instead.")]
+Notation string_dec_sound := deprecated_string_dec_sound.
+
 Global Instance RelDec_string : RelDec (@eq string) :=
-{| rel_dec := string_dec |}.
+{| rel_dec := String.eqb |}.
 
 Global Instance RelDec_Correct_string : RelDec_Correct RelDec_string.
 Proof.
-  constructor; auto using string_dec_sound.
+  constructor; auto using String.eqb_eq.
 Qed.
 
-Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> b).
+Global Instance Reflect_string_dec a b : Reflect (String.eqb a b) (a = b) (a <> b).
 Proof.
-  apply iff_to_reflect; auto using string_dec_sound.
+  apply iff_to_reflect; auto using String.eqb_eq.
 Qed.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since="8.15",note="Use String.compare instead.")] *)
-Fixpoint string_cmp (l r : string) : comparison :=
+Fixpoint deprecated_string_cmp (l r : string) : comparison :=
   match l , r with
     | EmptyString , EmptyString => Eq
     | EmptyString , _ => Lt
     | _ , EmptyString => Gt
     | String l ls , String r rs =>
-      ascii_cmp l r >> string_cmp ls rs
+      ascii_cmp l r >> deprecated_string_cmp ls rs
   end.
+
+#[deprecated(since="8.15",note="Use String.compare instead.")]
+Notation string_cmp := deprecated_string_cmp.
 
 Section Program_Scope.
   Variable modulus : nat.

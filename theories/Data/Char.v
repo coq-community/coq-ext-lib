@@ -6,7 +6,7 @@ Require Import ExtLib.Core.RelDec.
 Set Implicit Arguments.
 Set Strict Implicit.
 
-Definition ascii_dec (l r : Ascii.ascii) : bool :=
+Definition deprecated_ascii_dec (l r : Ascii.ascii) : bool :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
       Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
@@ -28,7 +28,10 @@ Definition ascii_dec (l r : Ascii.ascii) : bool :=
         else false
   end.
 
-Theorem ascii_dec_sound : forall l r,
+#[deprecated(since="8.9",note="Use Ascii.eqb instead.")]
+Notation ascii_dec := deprecated_ascii_dec.
+
+Theorem deprecated_ascii_dec_sound : forall l r,
   ascii_dec l r = true <-> l = r.
 Proof.
   unfold ascii_dec. intros.
@@ -39,17 +42,20 @@ Proof.
          end; split; congruence.
 Qed.
 
+#[deprecated(since="8.9",note="Use Ascii.eqb_eq instead.")]
+Notation ascii_dec_sound := deprecated_ascii_dec_sound.
+
 Global Instance RelDec_ascii : RelDec (@eq Ascii.ascii) :=
-{ rel_dec := ascii_dec }.
+{ rel_dec := Ascii.eqb }.
 
 Global Instance RelDec_Correct_ascii : RelDec_Correct RelDec_ascii.
 Proof.
-  constructor; auto using ascii_dec_sound.
+  constructor; auto using Ascii.eqb_eq.
 Qed.
 
-Global Instance Reflect_ascii_dec a b : Reflect (ascii_dec a b) (a = b) (a <> b).
+Global Instance Reflect_ascii_dec a b : Reflect (Ascii.eqb a b) (a = b) (a <> b).
 Proof.
-  apply iff_to_reflect; auto using ascii_dec_sound.
+  apply iff_to_reflect; auto using Ascii.eqb_eq.
 Qed.
 
 Definition digit2ascii (n:nat) : Ascii.ascii :=
