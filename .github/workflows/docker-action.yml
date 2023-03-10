@@ -45,17 +45,19 @@ jobs:
             endGroup
 
             startGroup "Test dependants"
+              opam install conf-clang
               PINS=$(opam list -s --pinned --columns=package | xargs | tr ' ' ,)
               PACKAGES=`opam list -s --depends-on coq-ext-lib --coinstallable-with $PINS`
               for PACKAGE in $PACKAGES
               do DEPS_FAILED=false
-                 opam install -y --deps-only $PACKAGE || DEPS_FAILED=true
+                 opam install --deps-only $PACKAGE || DEPS_FAILED=true
                  [ $DEPS_FAILED == true ] || opam install -t $PACKAGE
               done
             endGroup
-          export: 'OPAMWITHTEST'
+          export: 'OPAMWITHTEST OPAMCONFIRMLEVEL'
         env:
           OPAMWITHTEST: true
+          OPAMCONFIRMLEVEL: unsafe-yes
       - name: Revert permissions
         # to avoid a warning at cleanup time
         if: ${{ always() }}
