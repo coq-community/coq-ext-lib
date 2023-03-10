@@ -4,7 +4,7 @@ shortname: coq-ext-lib
 opam_name: coq-ext-lib
 organization: coq-community
 community: true
-circleci: false
+action: false
 ci_test_dependants: true
 submodule: true
 
@@ -38,6 +38,8 @@ tested_coq_opam_versions:
   - version: '8.13'
   - version: '8.14'
   - version: '8.15'
+  - version: '8.16'
+  - version: '8.17'
   - version: 'dev'
 
 make_target: theories
@@ -52,6 +54,11 @@ circleci_after_script: |2-
             tar cfz coqdoc.tgz html
       - store_artifacts:
           path: coqdoc.tgz
+
+action_appendix: |2-
+            export: 'OPAMWITHTEST'
+          env:
+            OPAMWITHTEST: true
 
 documentation: |
   Ideas
