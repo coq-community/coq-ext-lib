@@ -3,6 +3,7 @@ Require Import ExtLib.Structures.Applicative.
 Require Import ExtLib.Tactics.Injection.
 
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 Set Printing Universes.
 
 Section poption.

@@ -3,6 +3,7 @@ Require Import ExtLib.Structures.BinOps.
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Section Monoid.
   Universe u.

@@ -8,11 +8,12 @@ Require Import Coq.Program.Basics. (* for (∘) *)
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Set Printing Universes.
 
 Section WriterType.
-  Polymorphic Universe s d c.
+  Universe s d c.
   Variable S : Type@{s}.
 
   Record writerT (Monoid_S : Monoid@{s} S) (m : Type@{d} -> Type@{c})

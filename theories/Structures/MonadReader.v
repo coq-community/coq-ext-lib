@@ -3,6 +3,7 @@
 Require Import ExtLib.Structures.Monad.
 
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 Set Printing Universes.
 
 Class MonadReader@{d c} (T : Type@{d}) (m : Type@{d} -> Type@{c})

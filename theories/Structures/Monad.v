@@ -4,6 +4,7 @@ Require Import ExtLib.Structures.Applicative.
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Class Monad@{d c} (m : Type@{d} -> Type@{c}) : Type :=
 { ret : forall {t : Type@{d}}, t -> m t

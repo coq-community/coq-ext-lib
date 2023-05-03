@@ -4,6 +4,7 @@ From ExtLib Require Import
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Class Applicative@{d c} (T : Type@{d} -> Type@{c}) :=
 { pure : forall {A : Type@{d}}, A -> T A
