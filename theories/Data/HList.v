@@ -32,6 +32,8 @@ Proof.
          end.
 Defined.
 
+Monomorphic Universe hlist_large.
+
 (** Core Type and Functions **)
 Section hlist.
   Universe Ui Uv.
@@ -53,7 +55,7 @@ Section hlist.
     end.
 
   Definition hlist_tl {a b} (hl : hlist (a :: b)) : hlist b :=
-    match hl in hlist x return match x return Type@{max(Set,Ui,Uv)} with
+    match hl in hlist x return match x return Type@{hlist_large} with
                                  | nil => unit
                                  | _ :: ls => hlist ls
                                end with
