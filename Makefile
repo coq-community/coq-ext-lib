@@ -1,5 +1,6 @@
 all: theories examples
 
+COQDOCJS_LN?=true
 -include coqdocjs/Makefile.doc
 COQMAKEFILE?=Makefile.coq
 
