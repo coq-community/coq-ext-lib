@@ -1,6 +1,5 @@
 Require Import Coq.Bool.Bool.
-Require NPeano.
-Import NPeano.Nat.
+Require Import Arith.PeanoNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Data.Nat.
 
@@ -12,19 +11,19 @@ Set Strict Implicit.
 
 (**  Some tests *)
 Section test.
-  Goal forall x y z,  (ltb x y && ltb y z) = true ->
-                 ltb x z = true.
+  Goal forall x y z,  (Nat.ltb x y && Nat.ltb y z) = true ->
+                 Nat.ltb x z = true.
   intros x y z.
-  consider (ltb x y && ltb y z).
-  consider (ltb x z); auto. intros. exfalso. lia.
+  consider (Nat.ltb x y && Nat.ltb y z).
+  consider (Nat.ltb x z); auto. intros. exfalso. lia.
   Qed.
 
   Goal forall x y z,
-    ltb x y = true ->
-    ltb y z = true ->
-    ltb x z = true.
+    Nat.ltb x y = true ->
+    Nat.ltb y z = true ->
+    Nat.ltb x z = true.
   Proof.
-    intros. consider (ltb x y); consider (ltb y z); consider (ltb x z); intros; auto.
+    intros. consider (Nat.ltb x y); consider (Nat.ltb y z); consider (Nat.ltb x z); intros; auto.
     exfalso; lia.
   Qed.
 

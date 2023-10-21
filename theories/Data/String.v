@@ -1,7 +1,6 @@
 Require Import Coq.Strings.String.
 Require Import Coq.Program.Program. 
-Require Import Coq.Numbers.Natural.Peano.NPeano.
-Require Import Coq.Arith.Arith.
+Require Import Coq.Arith.PeanoNat.
 
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
@@ -99,19 +98,19 @@ Section Program_Scope.
     destruct n; destruct m; intros.
     inversion H. exfalso. apply H0. etransitivity. 2: eassumption. repeat constructor.
     inversion H.
-    eapply neq_0_lt. congruence.
+    now apply Nat.lt_0_succ.
   Qed.
 
   Program Fixpoint nat2string (n:nat) {measure n}: string :=
-    match NPeano.Nat.ltb n modulus as x return NPeano.Nat.ltb n modulus = x -> string with
+    match Nat.ltb n modulus as x return Nat.ltb n modulus = x -> string with
       | true => fun _ => String (digit2ascii n) EmptyString
       | false => fun pf =>
-        let m := NPeano.Nat.div n modulus in
+        let m := Nat.div n modulus in
         append (nat2string m) (String (digit2ascii (n - modulus * m)) EmptyString)
-    end (@Logic.eq_refl _ (NPeano.Nat.ltb n modulus)).
+    end (@Logic.eq_refl _ (Nat.ltb n modulus)).
   Next Obligation.
-    eapply NPeano.Nat.div_lt; auto.
-    consider (NPeano.Nat.ltb n modulus); try congruence. intros.
+    eapply Nat.div_lt; auto.
+    consider (Nat.ltb n modulus); try congruence. intros.
     eapply _xxx; eassumption.
   Defined.
 
