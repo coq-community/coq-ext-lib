@@ -39,30 +39,6 @@ Definition deprecated_ascii_cmp (l r : Ascii.ascii) : comparison :=
 #[deprecated(since="8.15",note="Use Ascii.compare instead.")]
 Notation ascii_cmp := deprecated_ascii_cmp.
 
-Fixpoint deprecated_string_dec (l r : string) : bool :=
-  match l , r with
-    | EmptyString , EmptyString => true
-    | String l ls , String r rs =>
-      if Ascii.eqb l r then deprecated_string_dec ls rs
-      else false
-    | _ , _ => false
-  end.
-
-#[deprecated(since="8.9",note="Use String.eqb instead.")]
-Notation string_dec := deprecated_string_dec.
-
-Theorem deprecated_string_dec_sound : forall l r,
-  string_dec l r = true <-> l = r.
-Proof.
-  induction l; destruct r; try (constructor; easy); simpl.
-  case (Ascii.eqb_spec a a0); simpl; [intros -> | constructor; now intros [= ]].
-  case (IHl r); intros; constructor; intros; f_equal; auto.
-  inversion H1; subst; auto.
-Qed.
-
-#[deprecated(since="8.9",note="Use String.eqb_eq instead.")]
-Notation string_dec_sound := deprecated_string_dec_sound.
-
 Global Instance RelDec_string : RelDec (@eq string) :=
 {| rel_dec := String.eqb |}.
 
