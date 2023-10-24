@@ -1,3 +1,5 @@
+# This file was generated from `meta.yml`, please do not edit manually.
+# Follow the instructions on https://github.com/coq-community/templates to regenerate.
 name: Docker CI
 
 on:
@@ -14,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        coq:
-          - '8.9'
-          - '8.11'
-          - '8.12'
-          - '8.13'
-          - '8.14'
-          - '8.15'
-          - '8.16'
-          - '8.17'
-          - 'dev'
+        image:
+          - 'coqorg/coq:8.9'
+          - 'coqorg/coq:8.11'
+          - 'coqorg/coq:8.12'
+          - 'coqorg/coq:8.13'
+          - 'coqorg/coq:8.14'
+          - 'coqorg/coq:8.15'
+          - 'coqorg/coq:8.16'
+          - 'coqorg/coq:8.17'
+          - 'coqorg/coq:dev'
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -32,27 +34,25 @@ jobs:
       - uses: coq-community/docker-coq-action@v1
         with:
           opam_file: 'coq-ext-lib.opam'
-          coq_version: ${{ matrix.coq }}
-          before_script: |
-            startGroup "Workaround permission issue"
-              sudo chown -R coq:coq .
-            endGroup
+          custom_image: ${{ matrix.image }}
           after_script: |
+            startGroup "Test dependants"
+              PINS=$(opam list -s --pinned --columns=package | xargs | tr ' ' ,)
+              PACKAGES=`opam list -s --depends-on coq-ext-lib --coinstallable-with $PINS`
+              for PACKAGE in $PACKAGES
+              do DEPS_FAILED=false
+                 opam install -y --deps-only $PACKAGE || DEPS_FAILED=true
+                 [ $DEPS_FAILED == true ] || opam install -t $PACKAGE
+              done
+            endGroup
             set -o pipefail  # recommended if the script uses pipes
 
             startGroup "Generate Coqdoc"
               make -j`nproc` coqdoc
             endGroup
-
-            startGroup "Test dependants"
-              opam install conf-clang
-              PINS=$(opam list -s --pinned --columns=package | xargs | tr ' ' ,)
-              PACKAGES=`opam list -s --depends-on coq-ext-lib --coinstallable-with $PINS`
-              for PACKAGE in $PACKAGES
-              do DEPS_FAILED=false
-                 opam install --deps-only $PACKAGE || DEPS_FAILED=true
-                 [ $DEPS_FAILED == true ] || opam install -t $PACKAGE
-              done
+          before_script: |
+            startGroup "Workaround permission issue"
+              sudo chown -R coq:coq .
             endGroup
           export: 'OPAMWITHTEST OPAMCONFIRMLEVEL'
         env:
