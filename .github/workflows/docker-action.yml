@@ -51,6 +51,9 @@ jobs:
               make -j`nproc` coqdoc
             endGroup
           before_script: |
+            startGroup "Install and configure Clang"
+              opam install conf-clang
+            endGroup
             startGroup "Workaround permission issue"
               sudo chown -R coq:coq .
             endGroup
