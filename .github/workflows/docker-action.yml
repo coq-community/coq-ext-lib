@@ -41,7 +41,7 @@ jobs:
             set -o pipefail  # recommended if the script uses pipes
 
             startGroup "Generate Coqdoc"
-              make -j`nproc` html
+              make -j`nproc` coqdoc
             endGroup
 
             startGroup "Test dependants"
