@@ -40,6 +40,7 @@ tested_coq_opam_versions:
   - version: '8.15'
   - version: '8.16'
   - version: '8.17'
+  - version: '8.18'
   - version: 'dev'
 
 make_target: theories
