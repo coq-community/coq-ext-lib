@@ -4,7 +4,7 @@ shortname: coq-ext-lib
 opam_name: coq-ext-lib
 organization: coq-community
 community: true
-circleci: false
+action: true
 ci_test_dependants: true
 submodule: true
 
@@ -38,21 +38,40 @@ tested_coq_opam_versions:
   - version: '8.13'
   - version: '8.14'
   - version: '8.15'
+  - version: '8.16'
+  - version: '8.17'
+  - version: '8.18'
   - version: 'dev'
 
 make_target: theories
 test_target: examples
 namespace: ExtLib
 
-circleci_after_script: |2-
-      - run:
-          name: Generate Coqdoc
-          command: |
-            make -j`nproc` html
-            tar cfz coqdoc.tgz html
-      - store_artifacts:
-          path: coqdoc.tgz
+action_appendix: |2-
+              set -o pipefail  # recommended if the script uses pipes
 
+              startGroup "Generate Coqdoc"
+                make -j`nproc` coqdoc
+              endGroup
+            before_script: |
+              startGroup "Install and configure Clang"
+                opam install conf-clang
+              endGroup
+              startGroup "Workaround permission issue"
+                sudo chown -R coq:coq .
+              endGroup
+            export: 'OPAMWITHTEST OPAMCONFIRMLEVEL'
+          env:
+            OPAMWITHTEST: true
+            OPAMCONFIRMLEVEL: unsafe-yes
+        - name: Revert permissions
+          # to avoid a warning at cleanup time
+          if: ${{ always() }}
+          run: sudo chown -R 1001:116 .
+        - uses: actions/upload-artifact@v3
+          with:
+            name: coqdoc
+            path: html
 documentation: |
   Ideas
   -----

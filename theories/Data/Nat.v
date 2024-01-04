@@ -9,47 +9,45 @@ Set Strict Implicit.
 
 
 Global Instance RelDec_eq : RelDec (@eq nat) :=
-{ rel_dec := EqNat.beq_nat }.
-
-Require Coq.Numbers.Natural.Peano.NPeano.
+{ rel_dec := Nat.eqb }.
 
 Global Instance RelDec_lt : RelDec lt :=
-{ rel_dec := NPeano.Nat.ltb }.
+{ rel_dec := Nat.ltb }.
 
 Global Instance RelDec_le : RelDec le :=
-{ rel_dec := NPeano.Nat.leb }.
+{ rel_dec := Nat.leb }.
 
 Global Instance RelDec_gt : RelDec gt :=
-{ rel_dec := fun x y => NPeano.Nat.ltb y x }.
+{ rel_dec := fun x y => Nat.ltb y x }.
 
 Global Instance RelDec_ge : RelDec ge :=
-{ rel_dec := fun x y => NPeano.Nat.leb y x }.
+{ rel_dec := fun x y => Nat.leb y x }.
 
 Global Instance RelDecCorrect_eq : RelDec_Correct RelDec_eq.
 Proof.
-  constructor; simpl. apply EqNat.beq_nat_true_iff.
+  constructor; simpl. apply PeanoNat.Nat.eqb_eq.
 Qed.
 
 Global Instance RelDecCorrect_lt : RelDec_Correct RelDec_lt.
 Proof.
-  constructor; simpl. eapply NPeano.Nat.ltb_lt.
+  constructor; simpl. eapply PeanoNat.Nat.ltb_lt.
 Qed.
 
 Global Instance RelDecCorrect_le : RelDec_Correct RelDec_le.
 Proof.
-  constructor; simpl. eapply NPeano.Nat.leb_le.
+  constructor; simpl. eapply PeanoNat.Nat.leb_le.
 Qed.
 
 Global Instance RelDecCorrect_gt : RelDec_Correct RelDec_gt.
 Proof.
   constructor; simpl. unfold rel_dec; simpl.
-  intros. eapply NPeano.Nat.ltb_lt.
+  intros. eapply PeanoNat.Nat.ltb_lt.
 Qed.
 
 Global Instance RelDecCorrect_ge : RelDec_Correct RelDec_ge.
 Proof.
   constructor; simpl. unfold rel_dec; simpl.
-  intros. eapply NPeano.Nat.leb_le.
+  intros. eapply PeanoNat.Nat.leb_le.
 Qed.
 
 Inductive R_nat_S : nat -> nat -> Prop :=

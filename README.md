@@ -4,13 +4,13 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 --->
 # coq-ext-lib
 
-[![CircleCI][circleci-shield]][circleci-link]
+[![Docker CI][docker-action-shield]][docker-action-link]
 [![Contributing][contributing-shield]][contributing-link]
 [![Code of Conduct][conduct-shield]][conduct-link]
 [![Zulip][zulip-shield]][zulip-link]
 
-[circleci-shield]: https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg
-[circleci-link]:   https://circleci.com/gh/coq-community/coq-ext-lib
+[docker-action-shield]: https://github.com/coq-community/coq-ext-lib/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-link]: https://github.com/coq-community/coq-ext-lib/actions?query=workflow:"Docker%20CI"
 
 [contributing-shield]: https://img.shields.io/badge/contributions-welcome-%23f7931e.svg
 [contributing-link]: https://github.com/coq-community/manifesto/blob/master/CONTRIBUTING.md
