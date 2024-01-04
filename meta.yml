@@ -4,9 +4,8 @@ shortname: coq-ext-lib
 opam_name: coq-ext-lib
 organization: coq-community
 community: true
-circleci: true
+action: true
 ci_test_dependants: true
-ci_extra_dev: true
 submodule: true
 
 synopsis: A library of Coq definitions, theorems, and tactics
@@ -25,25 +24,54 @@ maintainers:
 opam-file-maintainer: "gmalecha@gmail.com"
 
 license:
-  fullname: The FreeBSD Copyright
-  identifier: BSD
+  fullname: BSD 2-Clause "Simplified" License
+  identifier: BSD-2-Clause
 
 supported_coq_versions:
-  text: Coq 8.8 or later
-  opam: '{ >= "8.8" }'
+  text: Coq 8.11 or later or 8.9
+  opam: '{ >= "8.9" < "8.10" | >= "8.11" }'
 
 tested_coq_opam_versions:
-  - version: '8.8'
   - version: '8.9'
-  - version: '8.10'
   - version: '8.11'
   - version: '8.12'
   - version: '8.13'
+  - version: '8.14'
+  - version: '8.15'
+  - version: '8.16'
+  - version: '8.17'
+  - version: '8.18'
   - version: 'dev'
 
 make_target: theories
+test_target: examples
 namespace: ExtLib
 
+action_appendix: |2-
+              set -o pipefail  # recommended if the script uses pipes
+
+              startGroup "Generate Coqdoc"
+                make -j`nproc` coqdoc
+              endGroup
+            before_script: |
+              startGroup "Install and configure Clang"
+                opam install conf-clang
+              endGroup
+              startGroup "Workaround permission issue"
+                sudo chown -R coq:coq .
+              endGroup
+            export: 'OPAMWITHTEST OPAMCONFIRMLEVEL'
+          env:
+            OPAMWITHTEST: true
+            OPAMCONFIRMLEVEL: unsafe-yes
+        - name: Revert permissions
+          # to avoid a warning at cleanup time
+          if: ${{ always() }}
+          run: sudo chown -R 1001:116 .
+        - uses: actions/upload-artifact@v3
+          with:
+            name: coqdoc
+            path: html
 documentation: |
   Ideas
   -----
@@ -66,6 +94,12 @@ documentation: |
     - Base directory to the provided theories
 
 coqdoc_index: |
+  - [0.11.8](v0.11.8/toc.html)
+  - [0.11.7](v0.11.7/toc.html)
+  - [0.11.6](v0.11.6/toc.html)
+  - [0.11.5](v0.11.5/toc.html)
+  - [0.11.4](v0.11.4/toc.html)
+  - [0.11.3](v0.11.3/toc.html)
   - [0.11.2](v0.11.2/toc.html)
   - [0.11.1](v0.11.1/toc.html)
   - [0.11.0](v0.11.0/toc.html)

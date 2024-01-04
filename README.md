@@ -1,12 +1,16 @@
+<!---
+This file was generated from `meta.yml`, please do not edit manually.
+Follow the instructions on https://github.com/coq-community/templates to regenerate.
+--->
 # coq-ext-lib
 
-[![CircleCI][circleci-shield]][circleci-link]
+[![Docker CI][docker-action-shield]][docker-action-link]
 [![Contributing][contributing-shield]][contributing-link]
 [![Code of Conduct][conduct-shield]][conduct-link]
 [![Zulip][zulip-shield]][zulip-link]
 
-[circleci-shield]: https://circleci.com/gh/coq-community/coq-ext-lib.svg?style=svg
-[circleci-link]:   https://circleci.com/gh/coq-community/coq-ext-lib
+[docker-action-shield]: https://github.com/coq-community/coq-ext-lib/workflows/Docker%20CI/badge.svg?branch=master
+[docker-action-link]: https://github.com/coq-community/coq-ext-lib/actions?query=workflow:"Docker%20CI"
 
 [contributing-shield]: https://img.shields.io/badge/contributions-welcome-%23f7931e.svg
 [contributing-link]: https://github.com/coq-community/manifesto/blob/master/CONTRIBUTING.md
@@ -28,8 +32,8 @@ A collection of theories and plugins that may be useful in other Coq development
 - Coq-community maintainer(s):
   - Gregory Malecha ([**@gmalecha**](https://github.com/gmalecha))
   - Yishuai Li ([**@liyishuai**](https://github.com/liyishuai))
-- License: [The FreeBSD Copyright](LICENSE)
-- Compatible Coq versions: Coq 8.8 or later
+- License: [BSD 2-Clause "Simplified" License](LICENSE)
+- Compatible Coq versions: Coq 8.11 or later or 8.9
 - Additional dependencies: none
 - Coq namespace: `ExtLib`
 - Related publication(s): none
@@ -47,7 +51,7 @@ opam install coq-ext-lib
 To instead build and install manually, do:
 
 ``` shell
-git clone https://github.com/coq-community/coq-ext-lib.git
+git clone --recurse-submodules https://github.com/coq-community/coq-ext-lib.git
 cd coq-ext-lib
 make theories  # or make -j <number-of-cores-on-your-machine> theories
 make install

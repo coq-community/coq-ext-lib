@@ -1,5 +1,6 @@
 all: theories examples
 
+COQDOCJS_LN?=true
 -include coqdocjs/Makefile.doc
 COQMAKEFILE?=Makefile.coq
 
@@ -28,10 +29,14 @@ dist:
 
 .PHONY: all clean dist theories examples html
 
-TEMPLATES ?= ../templates
+TEMPLATES ?= templates
 
 index.html: index.md
 	pandoc -s $^ -o $@
 
 index.md: meta.yml
 	$(TEMPLATES)/generate.sh $@
+
+publish%:
+	opam publish --packages-directory=released/packages \
+		--repo=coq/opam-coq-archive --tag=v$* -v $* coq-community/coq-ext-lib

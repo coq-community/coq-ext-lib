@@ -121,7 +121,6 @@ theories/Data/Monads/FuelMonad.v
 theories/Data/Monads/IdentityMonadLaws.v
 theories/Data/Monads/IdentityMonad.v
 theories/Data/Monads/IStateMonad.v
-theories/Data/Monads/ListMonad.v
 theories/Data/Monads/OptionMonadLaws.v
 theories/Data/Monads/OptionMonad.v
 theories/Data/Monads/ReaderMonadLaws.v

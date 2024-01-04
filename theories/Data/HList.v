@@ -1,4 +1,4 @@
-Require Import Coq.Lists.List.
+Require Import Coq.Lists.List Coq.Arith.PeanoNat.
 Require Import Relations RelationClasses.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.SigT.
@@ -658,7 +658,7 @@ Section hlist.
       { clear H IHtvs.
         eexists; split; eauto. eexists; split; eauto.
         simpl. intros. rewrite (hlist_eta vs). reflexivity. }
-      { apply Lt.lt_S_n in H.
+      { apply Nat.succ_lt_mono in H.
         { specialize (IHtvs _ H).
           forward_reason.
           rewrite H0. rewrite H1.
@@ -678,7 +678,7 @@ Section hlist.
           (projT2 x) (hlist_app vs vs') = y vs'.
   Proof.
     clear. induction tvs; simpl; intros.
-    { rewrite <- Minus.minus_n_O.
+    { rewrite PeanoNat.Nat.sub_0_r.
       rewrite H0. destruct x. simpl.
       eexists; split; eauto. intros.
       rewrite (hlist_eta vs). reflexivity. }

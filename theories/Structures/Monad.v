@@ -1,6 +1,3 @@
-From Coq Require Import
-     Basics.
-Require Import ExtLib.Core.Any.
 Require Import ExtLib.Structures.Functor.
 Require Import ExtLib.Structures.Applicative.
 
@@ -49,7 +46,8 @@ Section monadic.
              (f: T -> m U) (g: U -> m V): (T -> m V) :=
     fun x => bind (f x) g.
 
-  Definition join {m a} `{Monad m} : m (m a) -> m a := flip bind id.
+  Definition join@{d c} {m : Type@{d} -> Type@{c}} {a} `{Monad m} : m (m a) -> m a :=
+    fun x => bind x (fun y => y).
 
 End monadic.
 
@@ -83,8 +81,8 @@ Module MonadLetNotation.
 
   Export MonadBaseNotation.
 
-  Notation "'let*' x ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun x => c2))
-    (at level 61, c1 at next level, right associativity) : monad_scope.
+  Notation "'let*' p ':=' c1 'in' c2" := (@bind _ _ _ _ c1 (fun p => c2))
+    (at level 61, p as pattern, c1 at next level, right associativity) : monad_scope.
 
 End MonadLetNotation.
 

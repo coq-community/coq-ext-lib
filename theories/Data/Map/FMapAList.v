@@ -6,6 +6,15 @@ Require Import ExtLib.Structures.Maps.
 Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Reducible.
 Require Import ExtLib.Structures.Functor.
+From Coq Require Import
+     Basics.
+From ExtLib Require Import
+     Extras
+     OptionMonad.
+Import
+  FunNotation
+  FunctorNotation.
+Open Scope program_scope.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -35,6 +44,20 @@ Section keyed.
           alist_find k ms
     end.
 
+  Definition alist_find' (k: K) : alist -> option V :=
+    fmap snd ∘ find (rel_dec k ∘ fst).
+
+  Lemma alist_find_alt (m: alist) : forall k: K,
+      alist_find k m = alist_find' k m.
+  Proof.
+    induction m; intuition.
+    unfold alist_find', compose.
+    simpl.
+    destruct (k ?[ R ] a0) eqn:Heq; [intuition|].
+    rewrite IHm.
+    reflexivity.
+  Qed.
+
   Section fold.
     Import MonadNotation.
     Local Open Scope monad_scope.
@@ -49,6 +72,19 @@ Section keyed.
           let acc := f k v acc in
           fold_alist acc m
       end.
+
+    Definition fold_alist' : T -> alist -> T :=
+      flip $ fold_left (flip $ uncurry f).
+
+    Lemma fold_alist_alt (map: alist) : forall acc: T,
+        fold_alist acc map = fold_alist' acc map.
+    Proof.
+      induction map; intuition.
+      simpl.
+      rewrite IHmap.
+      reflexivity.
+    Qed.
+
   End fold.
 
   Definition alist_union (m1 m2 : alist) : alist :=

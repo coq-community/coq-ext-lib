@@ -22,6 +22,8 @@ Section MonadLaws.
   Class MonadLaws :=
   { bind_of_return : forall {A B} (a : A) (f : A -> m B),
       bind (ret a) f = f a
+  ; return_of_bind : forall {A} (aM: m A),
+      bind aM ret = aM
   ; bind_associativity :
       forall {A B C} (aM:m A) (f:A -> m B) (g:B -> m C),
         bind (bind aM f) g = bind aM (fun a => bind (f a) g)

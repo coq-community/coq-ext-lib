@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import Coq.Arith.PeanoNat.
 
 Set Implicit Arguments.
 Set Strict Implicit.
@@ -13,7 +14,7 @@ Section parametric.
     induction A; destruct n; simpl; intros; auto.
     { inversion H. }
     { inversion H. }
-    { eapply IHA. apply Lt.lt_S_n; assumption. }
+    { eapply IHA. apply Nat.succ_lt_mono; assumption. }
   Qed.
 
   Lemma nth_error_app_R : forall (A B : list T) n,
@@ -22,7 +23,7 @@ Section parametric.
   Proof.
     induction A; destruct n; simpl; intros; auto.
     + inversion H.
-    + apply IHA. apply Le.le_S_n; assumption.
+    + apply IHA. apply Nat.succ_le_mono; assumption.
   Qed.
 
   Lemma nth_error_weaken : forall ls' (ls : list T) n v,
@@ -44,15 +45,15 @@ Section parametric.
   Proof.
     clear. induction ls; destruct n; simpl; intros; auto.
     + inversion H.
-    + apply IHls. apply Le.le_S_n; assumption.
+    + apply IHls. apply Nat.succ_le_mono; assumption.
   Qed.
 
   Lemma nth_error_length : forall (ls ls' : list T) n,
     nth_error (ls ++ ls') (n + length ls) = nth_error ls' n.
   Proof.
     induction ls; simpl; intros.
-    rewrite Plus.plus_0_r. auto.
-    rewrite <- Plus.plus_Snm_nSm.
+    rewrite Nat.add_0_r. auto.
+    rewrite <-Nat.add_succ_comm.
     simpl. eapply IHls.
   Qed.
 
@@ -60,9 +61,9 @@ Section parametric.
     nth_error ls n = None -> length ls <= n.
   Proof.
     induction ls; destruct n; simpl in *; auto; simpl in *.
-    + intro. apply Le.le_0_n.
+    + intro. apply Nat.le_0_l.
     + inversion 1.
-    + intros. eapply Le.le_n_S. auto.
+    + intros. apply ->Nat.succ_le_mono. auto.
   Qed.
 
   Lemma nth_error_length_lt : forall {T} (ls : list T) n val,
@@ -71,8 +72,8 @@ Section parametric.
     induction ls; destruct n; simpl; intros; auto.
     + inversion H.
     + inversion H.
-    + apply Lt.lt_0_Sn.
-    + apply Lt.lt_n_S. eauto.
+    + apply Nat.lt_0_succ.
+    + apply ->Nat.succ_lt_mono. apply IHls with (1 := H).
   Qed.
 
 

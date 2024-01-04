@@ -1,7 +1,6 @@
 Require Import Coq.Strings.String.
 Require Import Coq.Program.Program. 
-Require Import Coq.Numbers.Natural.Peano.NPeano.
-Require Import Coq.Arith.Arith.
+Require Import Coq.Arith.PeanoNat.
 
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.
@@ -18,7 +17,7 @@ Local Notation "x >> y" := (match x with
                               | z => z
                             end) (only parsing, at level 30).
 
-Definition bool_cmp (l r : bool) : comparison :=
+Definition deprecated_bool_cmp (l r : bool) : comparison :=
   match l , r with
     | true , false => Gt
     | false , true => Lt
@@ -26,7 +25,10 @@ Definition bool_cmp (l r : bool) : comparison :=
     | false , false => Eq
   end.
 
-Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
+#[deprecated(since="8.12",note="Use Bool.compare instead.")]
+Notation bool_cmp := deprecated_bool_cmp.
+
+Definition deprecated_ascii_cmp (l r : Ascii.ascii) : comparison :=
   match l , r with
     | Ascii.Ascii l1 l2 l3 l4 l5 l6 l7 l8 ,
       Ascii.Ascii r1 r2 r3 r4 r5 r6 r7 r8 =>
@@ -34,45 +36,33 @@ Definition ascii_cmp (l r : Ascii.ascii) : comparison :=
       bool_cmp l4 r4 >> bool_cmp l3 r3 >> bool_cmp l2 r2 >> bool_cmp l1 r1
   end.
 
-Fixpoint string_dec (l r : string) : bool :=
-  match l , r with
-    | EmptyString , EmptyString => true
-    | String l ls , String r rs =>
-      if ascii_dec l r then string_dec ls rs
-      else false
-    | _ , _ => false
-  end.
-
-Theorem string_dec_sound : forall l r,
-  string_dec l r = true <-> l = r.
-Proof.
-  induction l; destruct r; simpl; split; try solve [ intuition ; congruence ];
-  consider (ascii_dec a a0); intros; subst. f_equal. eapply IHl; auto.
-  apply IHl. congruence.
-  inversion H. congruence.
-Qed.
+#[deprecated(since="8.15",note="Use Ascii.compare instead.")]
+Notation ascii_cmp := deprecated_ascii_cmp.
 
 Global Instance RelDec_string : RelDec (@eq string) :=
-{| rel_dec := string_dec |}.
+{| rel_dec := String.eqb |}.
 
 Global Instance RelDec_Correct_string : RelDec_Correct RelDec_string.
 Proof.
-  constructor; auto using string_dec_sound.
+  constructor; auto using String.eqb_eq.
 Qed.
 
-Global Instance Reflect_string_dec a b : Reflect (string_dec a b) (a = b) (a <> b).
+Global Instance Reflect_string_dec a b : Reflect (String.eqb a b) (a = b) (a <> b).
 Proof.
-  apply iff_to_reflect; auto using string_dec_sound.
+  apply iff_to_reflect; auto using String.eqb_eq.
 Qed.
 
-Fixpoint string_cmp (l r : string) : comparison :=
+Fixpoint deprecated_string_cmp (l r : string) : comparison :=
   match l , r with
     | EmptyString , EmptyString => Eq
     | EmptyString , _ => Lt
     | _ , EmptyString => Gt
     | String l ls , String r rs =>
-      ascii_cmp l r >> string_cmp ls rs
+      ascii_cmp l r >> deprecated_string_cmp ls rs
   end.
+
+#[deprecated(since="8.15",note="Use String.compare instead.")]
+Notation string_cmp := deprecated_string_cmp.
 
 Section Program_Scope.
   Variable modulus : nat.
@@ -84,19 +74,19 @@ Section Program_Scope.
     destruct n; destruct m; intros.
     inversion H. exfalso. apply H0. etransitivity. 2: eassumption. repeat constructor.
     inversion H.
-    eapply neq_0_lt. congruence.
+    now apply Nat.lt_0_succ.
   Qed.
 
   Program Fixpoint nat2string (n:nat) {measure n}: string :=
-    match NPeano.Nat.ltb n modulus as x return NPeano.Nat.ltb n modulus = x -> string with
+    match Nat.ltb n modulus as x return Nat.ltb n modulus = x -> string with
       | true => fun _ => String (digit2ascii n) EmptyString
       | false => fun pf =>
-        let m := NPeano.Nat.div n modulus in
+        let m := Nat.div n modulus in
         append (nat2string m) (String (digit2ascii (n - modulus * m)) EmptyString)
-    end (@Logic.eq_refl _ (NPeano.Nat.ltb n modulus)).
+    end (@Logic.eq_refl _ (Nat.ltb n modulus)).
   Next Obligation.
-    eapply NPeano.Nat.div_lt; auto.
-    consider (NPeano.Nat.ltb n modulus); try congruence. intros.
+    eapply Nat.div_lt; auto.
+    consider (Nat.ltb n modulus); try congruence. intros.
     eapply _xxx; eassumption.
   Defined.
 

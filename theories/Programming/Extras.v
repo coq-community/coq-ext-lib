@@ -23,22 +23,27 @@ Module FunNotation.
 End FunNotation.
 Import FunNotation.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
-Definition uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
+Definition deprecated_uncurry A B C (f:A -> B -> C) (x:A * B) : C := let (a,b) := x in f a b.
 
-(* Uncomment the following line after we drop Coq 8.8: *)
-(* #[deprecated(since = "8.13", note = "Use standard library.")] *)
-Definition curry  {A B C} (f : A * B -> C) (a : A) (b : B) : C := f (a, b).
+#[deprecated(since = "8.13", note = "Use standard library.")]
+Notation uncurry := deprecated_uncurry.
 
-Lemma uncurry_curry : forall A B C (f : A -> B -> C) a b,
+Definition deprecated_curry  {A B C} (f : A * B -> C) (a : A) (b : B) : C := f (a, b).
+
+#[deprecated(since = "8.13", note = "Use standard library.")]
+Notation curry := deprecated_curry.
+
+Lemma deprecated_uncurry_curry : forall A B C (f : A -> B -> C) a b,
     curry (uncurry f) a b = f a b.
 Proof.
   unfold curry, uncurry.
   reflexivity.
 Qed.
 
-Lemma curry_uncurry : forall A B C (f : A * B -> C) ab,
+#[deprecated(since = "8.13", note = "Use standard library.")]
+Notation uncurry_curry := deprecated_uncurry_curry.
+
+Lemma deprecated_curry_uncurry : forall A B C (f : A * B -> C) ab,
     uncurry (curry f) ab = f ab.
 Proof.
   unfold uncurry, curry.
@@ -46,19 +51,28 @@ Proof.
   reflexivity.
 Qed.
 
-Fixpoint zip A B (xs:list A) (ys:list B) : list (A * B) :=
+#[deprecated(since = "8.13", note = "Use standard library.")]
+Notation curry_uncurry := deprecated_curry_uncurry.
+
+Fixpoint deprecated_zip A B (xs:list A) (ys:list B) : list (A * B) :=
   match xs, ys with
   | [], _ => []
   | _, [] => []
-  | x::xs, y::ys => (x,y)::zip xs ys
+  | x::xs, y::ys => (x,y)::deprecated_zip xs ys
   end
 .
 
-Fixpoint unzip A B (xys:list (A * B)) : list A * list B :=
+#[deprecated(note = "Use List.combine instead.")]
+Notation zip := deprecated_zip.
+
+Fixpoint deprecated_unzip A B (xys:list (A * B)) : list A * list B :=
 match xys with
 | [] => ([], [])
-| (x,y)::xys => let (xs,ys) := unzip xys in (x::xs,y::ys)
+| (x,y)::xys => let (xs,ys) := deprecated_unzip xys in (x::xs,y::ys)
 end.
+
+#[deprecated(note = "Use List.split instead.")]
+Notation unzip := deprecated_unzip.
 
 Definition sum_tot {A} (x:A + A) : A := match x with inl a => a | inr a => a end.
 

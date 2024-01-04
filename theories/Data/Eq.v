@@ -4,6 +4,9 @@
 Set Implicit Arguments.
 Set Strict Implicit.
 
+(** For backwards compatibility with hint locality attributes. *)
+Set Warnings "-unsupported-attributes".
+
 Create HintDb eq_rw discriminated.
 
 Lemma eq_sym_eq
@@ -28,6 +31,7 @@ Lemma match_eq_sym_eq
 Proof.
   destruct pf. reflexivity.
 Defined.
+#[global]
 Hint Rewrite match_eq_sym_eq : eq_rw.
 
 Lemma match_eq_sym_eq'
@@ -40,6 +44,7 @@ Lemma match_eq_sym_eq'
 Proof.
   destruct pf. reflexivity.
 Defined.
+#[global]
 Hint Rewrite match_eq_sym_eq' : eq_rw.
 
 
@@ -73,6 +78,7 @@ Lemma eq_Const_eq
 Proof.
   destruct pf. reflexivity.
 Defined.
+#[global]
 Hint Rewrite eq_Const_eq : eq_rw.
 
 Lemma eq_Arr_eq
@@ -88,11 +94,13 @@ Lemma eq_Arr_eq
 Proof.
   destruct pf. reflexivity.
 Defined.
+#[global]
 Hint Rewrite eq_Arr_eq : eq_rw.
 
 Lemma eq_sym_eq_sym : forall (T : Type) (a b : T) (pf : a = b),
                         eq_sym (eq_sym pf) = pf.
 Proof. destruct pf. reflexivity. Defined.
+#[global]
 Hint Rewrite eq_sym_eq_sym : eq_rw.
 
 Ltac autorewrite_eq_rw :=
