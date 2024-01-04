@@ -28,10 +28,9 @@ Module IxMonadNotation.
 
 End IxMonadNotation.
 
+  Global
   Polymorphic Instance Applicative_Monad {m i} {M:IxMonad m}
     : Applicative (m i i) :=
     {| Applicative.pure := fun (A : Type) (X : A) => ret X
        ; Applicative.ap := fun (A B : Type) (X : m i i (A -> B)) (X0 : m i i A) => bind X (fun X1 : A -> B => bind X0 (fun X2 : A => ret (X1 X2)))
     |}.
-  
-  
