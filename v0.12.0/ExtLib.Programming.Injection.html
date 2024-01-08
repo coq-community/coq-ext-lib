@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Programming.Injection</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.Ascii.html#"><span class="id" title="library">Coq.Strings.Ascii</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#"><span class="id" title="library">Coq.Strings.String</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Maximal</span> <span class="id" title="keyword">Implicit</span> <span class="id" title="var">Insertion</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Polymorphic Class</span> <a id="Injection" class="idref" href="#Injection"><span class="id" title="inductive, record"><span id="Injection" class="id">Injection</span></span></a> (<a id="x:1" class="idref" href="#x:1"><span class="id" title="binder">x</span></a> : <span class="id" title="keyword">Type</span>) (<a id="t:2" class="idref" href="#t:2"><span class="id" title="binder">t</span></a> : <span class="id" title="keyword">Type</span>) := <a id="inject" class="idref" href="#inject"><span class="id" title="constructor, projection"><span id="inject" class="id">inject</span></span></a> : <a class="idref" href="ExtLib.Programming.Injection.html#x:1"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Programming.Injection.html#t:2"><span class="id" title="variable">t</span></a>.<br/>
+<span class="comment">(*<br/>
+Class&nbsp;Projection&nbsp;x&nbsp;t&nbsp;:=&nbsp;{&nbsp;project&nbsp;:&nbsp;t&nbsp;-&gt;&nbsp;x&nbsp;;&nbsp;pmodify&nbsp;:&nbsp;(x&nbsp;-&gt;&nbsp;x)&nbsp;-&gt;&nbsp;(t&nbsp;-&gt;&nbsp;t)&nbsp;}.<br/>
+*)</span><br/>
+
+<br/>
+#[<span class="id" title="var">global</span>]<br/>
+<span class="id" title="var">Polymorphic</span> <span class="id" title="keyword">Instance</span> <a id="Injection_refl" class="idref" href="#Injection_refl"><span class="id" title="instance">Injection_refl</span></a> {<a id="T:5" class="idref" href="#T:5"><span class="id" title="binder">T</span></a> : <span class="id" title="keyword">Type</span>} : <a class="idref" href="ExtLib.Programming.Injection.html#Injection"><span class="id" title="class">Injection</span></a> <a class="idref" href="ExtLib.Programming.Injection.html#T:5"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Programming.Injection.html#T:5"><span class="id" title="variable">T</span></a> :=<br/>
+{ <a class="idref" href="ExtLib.Programming.Injection.html#inject"><span class="id" title="definition">inject</span></a> := @<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#id"><span class="id" title="definition">id</span></a> <span class="id" title="var">T</span> }.<br/>
+
+<br/>
+#[<span class="id" title="var">global</span>]<br/>
+<span class="id" title="keyword">Instance</span> <a id="Injection_ascii_string" class="idref" href="#Injection_ascii_string"><span class="id" title="instance">Injection_ascii_string</span></a> : <a class="idref" href="ExtLib.Programming.Injection.html#Injection"><span class="id" title="class">Injection</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.Ascii.html#ascii"><span class="id" title="inductive">ascii</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#string"><span class="id" title="inductive">string</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Programming.Injection.html#inject"><span class="id" title="definition">inject</span></a> <a id="a:6" class="idref" href="#a:6"><span class="id" title="binder">a</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#String"><span class="id" title="constructor">String</span></a> <a class="idref" href="ExtLib.Programming.Injection.html#a:6"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#EmptyString"><span class="id" title="constructor">EmptyString</span></a> }.<br/>
+#[<span class="id" title="var">global</span>]<br/>
+<span class="id" title="keyword">Instance</span> <a id="Injection_ascii_string_cons" class="idref" href="#Injection_ascii_string_cons"><span class="id" title="instance">Injection_ascii_string_cons</span></a> : <a class="idref" href="ExtLib.Programming.Injection.html#Injection"><span class="id" title="class">Injection</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.Ascii.html#ascii"><span class="id" title="inductive">ascii</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#string"><span class="id" title="inductive">string</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#string"><span class="id" title="inductive">string</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="ExtLib.Programming.Injection.html#inject"><span class="id" title="definition">inject</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Strings.String.html#String"><span class="id" title="constructor">String</span></a> }.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

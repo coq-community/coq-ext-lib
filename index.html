@@ -60,6 +60,10 @@
     img {
       max-width: 100%;
     }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
     h1, h2, h3, h4, h5, h6 {
       margin-top: 1.4em;
     }
@@ -152,8 +156,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -165,9 +172,6 @@
   <style type="text/css"> h2 {margin-left: 0em; padding: 0px; color: #580909} </style>
   <style type="text/css"> h3 {margin-left: 1em; padding: 0px; color: #C05001;} </style>
   <style type="text/css"> body { width: 1100px; margin-left: 30px; }</style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header id="title-block-header">
@@ -193,6 +197,7 @@ href="https://github.com/coq-community/coq-ext-lib/releases">downloaded
 from GitHub</a>.</p>
 <h2 id="documentation">Documentation</h2>
 <ul>
+<li><a href="v0.12.0/toc.html">0.12.0</a></li>
 <li><a href="v0.11.8/toc.html">0.11.8</a></li>
 <li><a href="v0.11.7/toc.html">0.11.7</a></li>
 <li><a href="v0.11.6/toc.html">0.11.6</a></li>

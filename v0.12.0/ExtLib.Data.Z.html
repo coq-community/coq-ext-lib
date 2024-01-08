@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Z</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.ZArith.html#"><span class="id" title="library">ZArith</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.RelDec.html#"><span class="id" title="library">ExtLib.Core.RelDec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_zeq" class="idref" href="#RelDec_zeq"><span class="id" title="instance">RelDec_zeq</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.eqb"><span class="id" title="definition">Z.eqb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_zlt" class="idref" href="#RelDec_zlt"><span class="id" title="instance">RelDec_zlt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.lt"><span class="id" title="definition">Z.lt</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.ltb"><span class="id" title="definition">Z.ltb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_zle" class="idref" href="#RelDec_zle"><span class="id" title="instance">RelDec_zle</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.le"><span class="id" title="definition">Z.le</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.leb"><span class="id" title="definition">Z.leb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_zgt" class="idref" href="#RelDec_zgt"><span class="id" title="instance">RelDec_zgt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.gt"><span class="id" title="definition">Z.gt</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.gtb"><span class="id" title="definition">Z.gtb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_zge" class="idref" href="#RelDec_zge"><span class="id" title="instance">RelDec_zge</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.ge"><span class="id" title="definition">Z.ge</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.geb"><span class="id" title="definition">Z.geb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_zeq" class="idref" href="#RelDec_Correct_zeq"><span class="id" title="instance">RelDec_Correct_zeq</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Z.html#RelDec_zeq"><span class="id" title="instance">RelDec_zeq</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#Z.eqb_eq"><span class="id" title="lemma">Z.eqb_eq</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_zlt" class="idref" href="#RelDec_Correct_zlt"><span class="id" title="instance">RelDec_Correct_zlt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Z.html#RelDec_zlt"><span class="id" title="instance">RelDec_zlt</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.Zbool.html#Zlt_cases"><span class="id" title="lemma">Zlt_cases</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> ((<span class="id" title="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#f1746f02f141d025b1e53605943919bf"><span class="id" title="notation">&lt;?</span></a> <span class="id" title="var">y</span>)%<span class="id" title="var">Z</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">intuition</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_zle" class="idref" href="#RelDec_Correct_zle"><span class="id" title="instance">RelDec_Correct_zle</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Z.html#RelDec_zle"><span class="id" title="instance">RelDec_zle</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.Zbool.html#Zle_cases"><span class="id" title="lemma">Zle_cases</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> ((<span class="id" title="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#90a0b0fc12252358f48538aa18bc4b8e"><span class="id" title="notation">&lt;=?</span></a> <span class="id" title="var">y</span>)%<span class="id" title="var">Z</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">intuition</span>; <span class="id" title="tactic">congruence</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_zgt" class="idref" href="#RelDec_Correct_zgt"><span class="id" title="instance">RelDec_Correct_zgt</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Z.html#RelDec_zgt"><span class="id" title="instance">RelDec_zgt</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.Zbool.html#Zgt_cases"><span class="id" title="lemma">Zgt_cases</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> ((<span class="id" title="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#0f6d3b46a03d1336a5ac68936077dc02"><span class="id" title="notation">&gt;?</span></a> <span class="id" title="var">y</span>)%<span class="id" title="var">Z</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">intuition</span>; <span class="id" title="tactic">congruence</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_zge" class="idref" href="#RelDec_Correct_zge"><span class="id" title="instance">RelDec_Correct_zge</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Z.html#RelDec_zge"><span class="id" title="instance">RelDec_zge</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.Zbool.html#Zge_cases"><span class="id" title="lemma">Zge_cases</span></a> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> ((<span class="id" title="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ZArith.BinInt.html#a1c27bbd9f48118f287c317de583e02e"><span class="id" title="notation">&gt;=?</span></a> <span class="id" title="var">y</span>)%<span class="id" title="var">Z</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">intuition</span>; <span class="id" title="tactic">congruence</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
