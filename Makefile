@@ -29,12 +29,12 @@ dist:
 
 .PHONY: all clean dist theories examples html
 
-TEMPLATES ?= templates
+TEMPLATES ?= ../templates
 
-index.html: index.md
+resources/index.html: resources/index.md
 	pandoc -s $^ -o $@
 
-index.md: meta.yml
+resources/index.md: meta.yml $(TEMPLATES)/index.md.mustache
 	$(TEMPLATES)/generate.sh $@
 
 publish%:

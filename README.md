@@ -8,9 +8,10 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [![Contributing][contributing-shield]][contributing-link]
 [![Code of Conduct][conduct-shield]][conduct-link]
 [![Zulip][zulip-shield]][zulip-link]
+[![coqdoc][coqdoc-shield]][coqdoc-link]
 
-[docker-action-shield]: https://github.com/coq-community/coq-ext-lib/workflows/Docker%20CI/badge.svg?branch=master
-[docker-action-link]: https://github.com/coq-community/coq-ext-lib/actions?query=workflow:"Docker%20CI"
+[docker-action-shield]: https://github.com/coq-community/coq-ext-lib/actions/workflows/docker-action.yml/badge.svg?branch=master
+[docker-action-link]: https://github.com/coq-community/coq-ext-lib/actions/workflows/docker-action.yml
 
 [contributing-shield]: https://img.shields.io/badge/contributions-welcome-%23f7931e.svg
 [contributing-link]: https://github.com/coq-community/manifesto/blob/master/CONTRIBUTING.md
@@ -21,6 +22,8 @@ Follow the instructions on https://github.com/coq-community/templates to regener
 [zulip-shield]: https://img.shields.io/badge/chat-on%20zulip-%23c1272d.svg
 [zulip-link]: https://coq.zulipchat.com/#narrow/stream/237663-coq-community-devs.20.26.20users
 
+[coqdoc-shield]: https://img.shields.io/badge/docs-coqdoc-blue.svg
+[coqdoc-link]: https://coq-community.org/coq-ext-lib
 
 
 A collection of theories and plugins that may be useful in other Coq developments.

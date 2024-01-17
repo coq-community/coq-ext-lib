@@ -8,6 +8,7 @@ version: "dev"
 homepage: "https://github.com/coq-community/coq-ext-lib"
 dev-repo: "git+https://github.com/coq-community/coq-ext-lib.git"
 bug-reports: "https://github.com/coq-community/coq-ext-lib/issues"
+doc: "https://coq-community.github.io/coq-ext-lib/"
 license: "BSD-2-Clause"
 
 synopsis: "A library of Coq definitions, theorems, and tactics"
