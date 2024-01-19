@@ -5,6 +5,7 @@ Require Import ExtLib.Structures.Functor.
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Section laws.
 

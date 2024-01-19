@@ -1,6 +1,7 @@
 Require Import ExtLib.Structures.Monad.
 
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 Set Printing Universes.
 
 Class MonadState@{s d c} (T : Type@{s}) (m : Type@{d} -> Type@{c}) : Type :=

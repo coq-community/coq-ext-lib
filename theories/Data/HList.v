@@ -12,6 +12,7 @@ Set Implicit Arguments.
 Set Strict Implicit.
 Set Asymmetric Patterns.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 Set Printing Universes.
 
 Lemma app_ass_trans@{X}
@@ -35,7 +36,7 @@ Monomorphic Universe hlist_large.
 
 (** Core Type and Functions **)
 Section hlist.
-  Polymorphic Universe Ui Uv.
+  Universe Ui Uv.
 
   Context {iT : Type@{Ui}}.
   Variable F : iT -> Type@{Uv}.
@@ -342,7 +343,7 @@ Section hlist.
         end
     end.
 
-  Polymorphic Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
+  Fixpoint hlist_nth ls (h : hlist ls) (n : nat) :
     match nth_error ls n return Type with
       | None => unit
       | Some t => F t
@@ -561,7 +562,7 @@ Section hlist.
     rewrite Heqp. reflexivity.
   Qed.
 
-  Polymorphic Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
+  Fixpoint nth_error_get_hlist_nth (ls : list iT) (n : nat) {struct ls} :
     option {t : iT & hlist ls -> F t} :=
     match
       ls as ls0

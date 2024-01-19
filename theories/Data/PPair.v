@@ -4,12 +4,13 @@ Require Import ExtLib.Tactics.Injection.
 Set Printing Universes.
 Set Primitive Projections.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Section pair.
-  Polymorphic Universes i j.
+  Universes i j.
   Variable (T : Type@{i}) (U : Type@{j}).
 
-  Polymorphic Record pprod : Type@{max (i, j)} := ppair
+  Record pprod : Type@{max (i, j)} := ppair
   { pfst : T
   ; psnd : U }.
 
@@ -20,7 +21,7 @@ Arguments ppair {_ _} _ _.
 Arguments pfst {_ _} _.
 Arguments psnd {_ _} _.
 
-  Polymorphic Lemma eq_pair_rw
+  Lemma eq_pair_rw
   : forall T U (a b : T) (c d : U) (pf : (ppair a c) = (ppair b d)),
     exists (pf' : a = b) (pf'' : c = d),
       pf = match pf' , pf'' with
@@ -49,7 +50,7 @@ Arguments psnd {_ _} _.
   Defined.
 
 Section Injective.
-  Polymorphic Universes i j.
+  Universes i j.
   Context {T : Type@{i}} {U : Type@{j}}.
 
   Global Instance Injective_pprod (a : T) (b : U) c d
@@ -64,21 +65,21 @@ Section Injective.
 End Injective.
 
 Section PProdEq.
-  Polymorphic Universes i j.
+  Universes i j.
   Context {T : Type@{i}} {U : Type@{j}}.
   Context {EDT : RelDec (@eq T)}.
   Context {EDU : RelDec (@eq U)}.
   Context {EDCT : RelDec_Correct EDT}.
   Context {EDCU : RelDec_Correct EDU}.
 
-  Polymorphic Definition ppair_eqb (p1 p2 : pprod T U) : bool :=
+  Definition ppair_eqb (p1 p2 : pprod T U) : bool :=
     pfst p1 ?[ eq ] pfst p2 && psnd p1 ?[ eq ] psnd p2.
 
   (** Specialization for equality **)
-  Global Polymorphic Instance RelDec_eq_ppair : RelDec (@eq (@pprod T U)) :=
+  Global Instance RelDec_eq_ppair : RelDec (@eq (@pprod T U)) :=
   { rel_dec := ppair_eqb }.
 
-  Global Polymorphic Instance RelDec_Correct_eq_ppair
+  Global Instance RelDec_Correct_eq_ppair
   : RelDec_Correct RelDec_eq_ppair.
   Proof.
     constructor. intros p1 p2. destruct p1, p2. simpl.

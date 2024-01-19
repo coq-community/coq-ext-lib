@@ -2,6 +2,7 @@ Require Import ExtLib.Structures.Monad.
 Require Import ExtLib.Structures.Monoid.
 
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 Set Printing Universes.
 
 Class MonadWriter@{d c s} (T : Type@{s}) (M : Monoid T)

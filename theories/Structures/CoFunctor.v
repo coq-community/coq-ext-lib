@@ -3,6 +3,7 @@ Require Import ExtLib.Core.Any.
 Set Implicit Arguments.
 Set Strict Implicit.
 Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
 Section functor.
 

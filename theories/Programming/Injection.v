@@ -3,14 +3,16 @@ Require Import Coq.Strings.String.
 
 Set Implicit Arguments.
 Set Maximal Implicit Insertion.
+Set Universe Polymorphism.
+Set Polymorphic Inductive Cumulativity.
 
-Polymorphic Class Injection (x : Type) (t : Type) := inject : x -> t.
+Class Injection (x : Type) (t : Type) := inject : x -> t.
 (*
 Class Projection x t := { project : t -> x ; pmodify : (x -> x) -> (t -> t) }.
 *)
 
 #[global]
-Polymorphic Instance Injection_refl {T : Type} : Injection T T :=
+Instance Injection_refl {T : Type} : Injection T T :=
 { inject := @id T }.
 
 #[global]
