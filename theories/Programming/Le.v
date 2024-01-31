@@ -27,9 +27,11 @@ Proof. constructor.
 Qed.
 
 Class LteWF T :=
-{ lteWFLte :> Lte T
-; lteWFPreOrder :> PreOrder lte
+{ lteWFLte : Lte T
+; lteWFPreOrder : PreOrder lte
 }.
+#[global] Existing Instance lteWFLte.
+#[global] Existing Instance lteWFPreOrder.
 
 #[global]
 Instance LteWF_Build {T} {L:Lte T} {PO:PreOrder lte} : LteWF T :=
