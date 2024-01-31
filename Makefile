@@ -39,4 +39,4 @@ resources/index.md: meta.yml $(TEMPLATES)/index.md.mustache
 
 publish%:
 	opam publish --packages-directory=released/packages \
-		--repo=coq/opam-coq-archive --tag=v$* -v $* coq-community/coq-ext-lib
+		--repo=coq/opam --tag=v$* -v $* coq-community/coq-ext-lib
