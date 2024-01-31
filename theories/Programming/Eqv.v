@@ -6,9 +6,11 @@ Class Eqv T := eqv : T -> T -> Prop.
 Definition neg_eqv {T} {E:Eqv T} (x:T) (y:T) : Prop := not (eqv x y).
 
 Class EqvWF T :=
-{ eqvWFEqv :> Eqv T
-; eqvWFEquivalence :> Equivalence eqv
+{ eqvWFEqv : Eqv T
+; eqvWFEquivalence : Equivalence eqv
 }.
+#[global] Existing Instance eqvWFEqv.
+#[global] Existing Instance eqvWFEquivalence.
 #[global]
 Instance EqvWF_Build {T} {E:Eqv T} {EV:Equivalence eqv} : EqvWF T :=
   { eqvWFEqv := E ; eqvWFEquivalence := EV }.
