@@ -41,6 +41,7 @@ tested_coq_opam_versions:
   - version: '8.16'
   - version: '8.17'
   - version: '8.18'
+  - version: '8.19'
   - version: 'dev'
 
 make_target: theories
@@ -54,9 +55,6 @@ action_appendix: |2-
                 make -j`nproc` coqdoc
               endGroup
             before_script: |
-              startGroup "Install and configure Clang"
-                opam install conf-clang
-              endGroup
               startGroup "Workaround permission issue"
                 sudo chown -R coq:coq .
               endGroup

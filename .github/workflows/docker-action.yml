@@ -26,6 +26,7 @@ jobs:
           - 'coqorg/coq:8.16'
           - 'coqorg/coq:8.17'
           - 'coqorg/coq:8.18'
+          - 'coqorg/coq:8.19'
           - 'coqorg/coq:dev'
       fail-fast: false
     steps:
@@ -52,9 +53,6 @@ jobs:
               make -j`nproc` coqdoc
             endGroup
           before_script: |
-            startGroup "Install and configure Clang"
-              opam install conf-clang
-            endGroup
             startGroup "Workaround permission issue"
               sudo chown -R coq:coq .
             endGroup
