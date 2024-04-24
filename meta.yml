@@ -66,10 +66,11 @@ action_appendix: |2-
           # to avoid a warning at cleanup time
           if: ${{ always() }}
           run: sudo chown -R 1001:116 .
-        - uses: actions/upload-artifact@v3
+        - uses: actions/upload-artifact@v4
           with:
             name: coqdoc
             path: html
+            overwrite: true
 documentation: |
   Ideas
   -----
