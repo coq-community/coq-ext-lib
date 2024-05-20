@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Data.Char</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#"><span class="id" title="library">Coq.Strings.Ascii</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Bool.html#"><span class="id" title="library">ExtLib.Data.Bool</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Tactics.Consider.html#"><span class="id" title="library">ExtLib.Tactics.Consider</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Core.RelDec.html#"><span class="id" title="library">ExtLib.Core.RelDec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_ascii" class="idref" href="#RelDec_ascii"><span class="id" title="instance">RelDec_ascii</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec"><span class="id" title="class">RelDec</span></a> (@<a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#ascii"><span class="id" title="inductive">Ascii.ascii</span></a>) :=<br/>
+{ <a class="idref" href="ExtLib.Core.RelDec.html#rel_dec"><span class="id" title="method">rel_dec</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#eqb"><span class="id" title="definition">Ascii.eqb</span></a> }.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="RelDec_Correct_ascii" class="idref" href="#RelDec_Correct_ascii"><span class="id" title="instance">RelDec_Correct_ascii</span></a> : <a class="idref" href="ExtLib.Core.RelDec.html#RelDec_Correct"><span class="id" title="class">RelDec_Correct</span></a> <a class="idref" href="ExtLib.Data.Char.html#RelDec_ascii"><span class="id" title="instance">RelDec_ascii</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span> <span class="id" title="keyword">using</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#eqb_eq"><span class="id" title="lemma">Ascii.eqb_eq</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a id="Reflect_ascii_dec" class="idref" href="#Reflect_ascii_dec"><span class="id" title="instance">Reflect_ascii_dec</span></a> <a id="a:1" class="idref" href="#a:1"><span class="id" title="binder">a</span></a> <a id="b:2" class="idref" href="#b:2"><span class="id" title="binder">b</span></a> : <a class="idref" href="ExtLib.Tactics.Consider.html#Reflect"><span class="id" title="class">Reflect</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#eqb"><span class="id" title="definition">Ascii.eqb</span></a> <a class="idref" href="ExtLib.Data.Char.html#a:1"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtLib.Data.Char.html#b:2"><span class="id" title="variable">b</span></a>) (<a class="idref" href="ExtLib.Data.Char.html#a:1"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Data.Char.html#b:2"><span class="id" title="variable">b</span></a>) (<a class="idref" href="ExtLib.Data.Char.html#a:1"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'&lt;&gt;'_x"><span class="id" title="notation">&lt;&gt;</span></a> <a class="idref" href="ExtLib.Data.Char.html#b:2"><span class="id" title="variable">b</span></a>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="ExtLib.Tactics.Consider.html#iff_to_reflect"><span class="id" title="lemma">iff_to_reflect</span></a>; <span class="id" title="tactic">auto</span> <span class="id" title="keyword">using</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#eqb_eq"><span class="id" title="lemma">Ascii.eqb_eq</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="digit2ascii" class="idref" href="#digit2ascii"><span class="id" title="definition">digit2ascii</span></a> (<a id="n:3" class="idref" href="#n:3"><span class="id" title="binder">n</span></a>:<a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#ascii"><span class="id" title="inductive">Ascii.ascii</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="ExtLib.Data.Char.html#n:3"><span class="id" title="variable">n</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; "0"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 1 =&gt; "1"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 2 =&gt; "2"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 3 =&gt; "3"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 4 =&gt; "4"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 5 =&gt; "5"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 6 =&gt; "6"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 7 =&gt; "7"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 8 =&gt; "8"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| 9 =&gt; "9"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">n</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#ascii_of_nat"><span class="id" title="definition">ascii_of_nat</span></a> (<a class="idref" href="ExtLib.Data.Char.html#n:3"><span class="id" title="variable">n</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Peano.html#::nat_scope:x_'-'_x"><span class="id" title="notation">-</span></a> 10 <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Peano.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#nat_of_ascii"><span class="id" title="definition">nat_of_ascii</span></a> "A")<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>%<span class="id" title="var">char</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="chr_newline" class="idref" href="#chr_newline"><span class="id" title="definition">chr_newline</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#ascii"><span class="id" title="inductive">ascii</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Eval</span> <span class="id" title="tactic">compute</span> <span class="id" title="tactic">in</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Strings.Ascii.html#ascii_of_nat"><span class="id" title="definition">ascii_of_nat</span></a> 10.<br/>
+
+<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">Ascii</span>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

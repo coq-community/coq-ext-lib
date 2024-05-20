@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.MonadReader</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+The Reader Monad Class
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Monad.html#"><span class="id" title="library">ExtLib.Structures.Monad</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+<span class="id" title="keyword">Set Printing Universes</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a id="MonadReader" class="idref" href="#MonadReader"><span class="id" title="record">MonadReader@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>} (<a id="T:1" class="idref" href="#T:1"><span class="id" title="binder">T</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}) (<a id="m:2" class="idref" href="#m:2"><span class="id" title="binder">m</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>})<br/>
+: <span class="id" title="keyword">Type</span> :=<br/>
+{ <a id="local" class="idref" href="#local"><span class="id" title="projection">local</span></a> : <span class="id" title="keyword">forall</span> {<a id="t:4" class="idref" href="#t:4"><span class="id" title="binder">t</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}}, <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">(</span></a><a class="idref" href="ExtLib.Structures.MonadReader.html#T:1"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:1"><span class="id" title="variable">T</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:2"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#t:4"><span class="id" title="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:2"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#t:4"><span class="id" title="variable">t</span></a><br/>
+; <a id="ask" class="idref" href="#ask"><span class="id" title="projection">ask</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#m:2"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:1"><span class="id" title="variable">T</span></a><br/>
+}.<br/>
+
+<br/>
+<span class="id" title="keyword">Arguments</span> <a class="idref" href="ExtLib.Structures.MonadReader.html#local"><span class="id" title="method">local</span></a> {<span class="id" title="var">T</span>} {<span class="id" title="var">m</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">t</span>} <span class="id" title="var">_</span> <span class="id" title="var">_</span> : <span class="id" title="tactic">rename</span>.<br/>
+<span class="id" title="keyword">Arguments</span> <a class="idref" href="ExtLib.Structures.MonadReader.html#ask"><span class="id" title="method">ask</span></a> {<span class="id" title="var">T</span>} {<span class="id" title="var">m</span>} {<span class="id" title="var">_</span>} : <span class="id" title="tactic">rename</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="asks" class="idref" href="#asks"><span class="id" title="definition">asks@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="m:7" class="idref" href="#m:7"><span class="id" title="binder">m</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>}}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="M:8" class="idref" href="#M:8"><span class="id" title="binder">M</span></a> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:7"><span class="id" title="variable">m</span></a>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="T:9" class="idref" href="#T:9"><span class="id" title="binder">T</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="MR:10" class="idref" href="#MR:10"><span class="id" title="binder">MR</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#MonadReader"><span class="id" title="class">MonadReader@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>} <a class="idref" href="ExtLib.Structures.MonadReader.html#T:9"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:7"><span class="id" title="variable">m</span></a>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="U:11" class="idref" href="#U:11"><span class="id" title="binder">U</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}} (<a id="f:12" class="idref" href="#f:12"><span class="id" title="binder">f</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#T:9"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#U:11"><span class="id" title="variable">U</span></a>) : <a class="idref" href="ExtLib.Structures.MonadReader.html#m:7"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#U:11"><span class="id" title="variable">U</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Monad.html#bind"><span class="id" title="method">bind</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#ask"><span class="id" title="method">ask</span></a> (<span class="id" title="keyword">fun</span> <a id="x:13" class="idref" href="#x:13"><span class="id" title="binder">x</span></a> =&gt; <a class="idref" href="ExtLib.Structures.Monad.html#ret"><span class="id" title="method">ret</span></a> (<a class="idref" href="ExtLib.Structures.MonadReader.html#f:12"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#x:13"><span class="id" title="variable">x</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a id="ReaderProd" class="idref" href="#ReaderProd"><span class="id" title="definition">ReaderProd@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="m:14" class="idref" href="#m:14"><span class="id" title="binder">m</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>} <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <span class="id" title="var">Type@</span>{<span class="id" title="var">c</span>}}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="M:15" class="idref" href="#M:15"><span class="id" title="binder">M</span></a> : <a class="idref" href="ExtLib.Structures.Monad.html#Monad"><span class="id" title="class">Monad</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="T:16" class="idref" href="#T:16"><span class="id" title="binder">T</span></a> <a id="S:17" class="idref" href="#S:17"><span class="id" title="binder">S</span></a> : <span class="id" title="var">Type@</span>{<span class="id" title="var">d</span>}}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<a id="MR:18" class="idref" href="#MR:18"><span class="id" title="binder">MR</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#MonadReader"><span class="id" title="class">MonadReader</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="f:19" class="idref" href="#f:19"><span class="id" title="binder">f</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#S:17"><span class="id" title="variable">S</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a id="g:20" class="idref" href="#g:20"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#S:17"><span class="id" title="variable">S</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.14.1/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a>)<br/>
+: <a class="idref" href="ExtLib.Structures.MonadReader.html#MonadReader"><span class="id" title="class">MonadReader@</span></a>{<span class="id" title="var">d</span> <span class="id" title="var">c</span>} <a class="idref" href="ExtLib.Structures.MonadReader.html#S:17"><span class="id" title="variable">S</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a> :=<br/>
+{| <a class="idref" href="ExtLib.Structures.MonadReader.html#ask"><span class="id" title="method">ask</span></a> := @<a class="idref" href="ExtLib.Structures.MonadReader.html#asks"><span class="id" title="definition">asks</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#M:15"><span class="id" title="variable">M</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#MR:18"><span class="id" title="variable">MR</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#S:17"><span class="id" title="variable">S</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#f:19"><span class="id" title="variable">f</span></a><br/>
+&nbsp;; <a class="idref" href="ExtLib.Structures.MonadReader.html#local"><span class="id" title="method">local</span></a> := <span class="id" title="keyword">fun</span> <a id="_T:21" class="idref" href="#_T:21"><span class="id" title="binder">_T</span></a> <a id="up:22" class="idref" href="#up:22"><span class="id" title="binder">up</span></a> (<a id="c:23" class="idref" href="#c:23"><span class="id" title="binder">c</span></a> : <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#_T:21"><span class="id" title="variable">_T</span></a>)  =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="ExtLib.Structures.MonadReader.html#local"><span class="id" title="method">local</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#T:16"><span class="id" title="variable">T</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#m:14"><span class="id" title="variable">m</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#MR:18"><span class="id" title="variable">MR</span></a> <span class="id" title="var">_</span> (<span class="id" title="keyword">fun</span> <a id="s:24" class="idref" href="#s:24"><span class="id" title="binder">s</span></a> =&gt; <a class="idref" href="ExtLib.Structures.MonadReader.html#g:20"><span class="id" title="variable">g</span></a> (<a class="idref" href="ExtLib.Structures.MonadReader.html#up:22"><span class="id" title="variable">up</span></a> (<a class="idref" href="ExtLib.Structures.MonadReader.html#f:19"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Structures.MonadReader.html#s:24"><span class="id" title="variable">s</span></a>)) <a class="idref" href="ExtLib.Structures.MonadReader.html#s:24"><span class="id" title="variable">s</span></a>) <a class="idref" href="ExtLib.Structures.MonadReader.html#c:23"><span class="id" title="variable">c</span></a><br/>
+&nbsp;|}.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>

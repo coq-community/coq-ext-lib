@@ -1,2 +1,8 @@
 resources
 .DS_Store
+.Makefile.coq.d
+.lia.cache
+Makefile.coq
+Makefile.coq.conf
+examples
+theories
