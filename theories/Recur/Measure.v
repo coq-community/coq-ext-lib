@@ -1,5 +1,5 @@
-Require Import Coq.Classes.RelationClasses.
-Require Coq.Arith.Wf_nat.
+From Coq.Classes Require Import RelationClasses.
+From Coq.Arith Require Wf_nat.
 
 Set Implicit Arguments.
 Set Strict Implicit.

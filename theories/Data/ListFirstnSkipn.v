@@ -1,6 +1,6 @@
-Require Import Coq.Lists.List.
-Require Import Coq.ZArith.ZArith.
-Require Import Coq.micromega.Lia.
+From Coq.Lists Require Import List.
+From Coq.ZArith Require Import ZArith.
+From Coq.micromega Require Import Lia.
 
 (** For backwards compatibility with hint locality attributes. *)
 Set Warnings "-unsupported-attributes".

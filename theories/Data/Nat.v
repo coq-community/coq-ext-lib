@@ -1,4 +1,4 @@
-Require Coq.Arith.Arith.
+From Coq.Arith Require Arith.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Tactics.Consider.

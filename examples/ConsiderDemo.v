@@ -1,10 +1,10 @@
-Require Import Coq.Bool.Bool.
-Require Import Arith.PeanoNat.
+From Coq Require Import Bool.
+From Coq Require Import PeanoNat.
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Data.Nat.
 
-Require Import Coq.ZArith.ZArith.
-Require Import Coq.micromega.Lia.
+From Coq Require Import ZArith.
+From Coq Require Import Lia.
 
 Set Implicit Arguments.
 Set Strict Implicit.

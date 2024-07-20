@@ -1,4 +1,4 @@
-Require Import Coq.Classes.EquivDec.
+From Coq.Classes Require Import EquivDec.
 
 Theorem EquivDec_refl_left {T : Type} {c : EqDec T (@eq T)} :
   forall (n : T), equiv_dec n n = left (refl_equal _).
@@ -9,4 +9,4 @@ Proof.
   reflexivity.
 Qed.
 
-Export Coq.Classes.EquivDec.
+Export EquivDec.
