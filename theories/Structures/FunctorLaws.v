@@ -1,4 +1,4 @@
-Require Import Coq.Relations.Relations.
+From Coq.Relations Require Import Relations.
 Require Import ExtLib.Data.Fun.
 Require Import ExtLib.Structures.Functor.
 

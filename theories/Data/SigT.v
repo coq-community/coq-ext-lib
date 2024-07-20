@@ -1,4 +1,4 @@
-Require Coq.Classes.EquivDec.
+From Coq.Classes Require EquivDec.
 Require Import ExtLib.Structures.EqDep.
 Require Import ExtLib.Tactics.Injection.
 Require Import ExtLib.Tactics.EqDep.

@@ -1,5 +1,4 @@
-Require Import Coq.Lists.List.
-Require Coq.Classes.EquivDec.
+From Coq Require Import List EquivDec.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Structures.Monoid.
 Require Import ExtLib.Structures.Reducible.
@@ -20,7 +19,7 @@ Section EqDec.
   Proof.
     red. unfold Equivalence.equiv, RelationClasses.complement.
     intros.
-    change (x = y -> False) with (x <> y).
+    change (x = y -> False) with (not (x = y)).
     decide equality. eapply EqDec_T.
   Qed.
 End EqDec.

@@ -1,6 +1,4 @@
-Require Import Coq.Strings.String.
-Require Import Coq.Program.Program. 
-Require Import Coq.Arith.PeanoNat.
+From Coq Require Import String Program PeanoNat.
 
 Require Import ExtLib.Tactics.Consider.
 Require Import ExtLib.Core.RelDec.

@@ -1,4 +1,4 @@
-Require Import Coq.Lists.List Coq.Arith.PeanoNat.
+From Coq Require Import List PeanoNat.
 Require Import Relations RelationClasses.
 Require Import ExtLib.Core.RelDec.
 Require Import ExtLib.Data.SigT.

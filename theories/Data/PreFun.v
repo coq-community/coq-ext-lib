@@ -1,5 +1,5 @@
-Require Import Coq.Classes.Morphisms.
-Require Import Coq.Relations.Relations.
+From Coq.Classes Require Import Morphisms.
+From Coq.Relations Require Import Relations.
 
 Set Implicit Arguments.
 Set Strict Implicit.
