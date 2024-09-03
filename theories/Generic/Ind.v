@@ -1,4 +1,4 @@
-Require Import List String.
+From Coq Require Import List String.
 Require Import ExtLib.Structures.CoMonad.
 
 Set Implicit Arguments.
