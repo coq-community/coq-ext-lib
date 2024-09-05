@@ -1,4 +1,4 @@
-resources
+/resources
 .DS_Store
 .Makefile.coq.d
 .lia.cache
