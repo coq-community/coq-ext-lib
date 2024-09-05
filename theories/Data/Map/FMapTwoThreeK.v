@@ -9,7 +9,6 @@ Set Strict Implicit.
 
 Section keyed.
   Variable K : Type.
-  Variable K_le : K -> K -> Prop.
   Variable RD_K : K -> K -> comparison.
 
   Inductive twothree (T : Type) : Type :=
