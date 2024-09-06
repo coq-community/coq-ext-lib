@@ -65,6 +65,7 @@ jobs:
         if: ${{ always() }}
         run: sudo chown -R 1001:116 .
       - uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: coqdoc
           path: html
