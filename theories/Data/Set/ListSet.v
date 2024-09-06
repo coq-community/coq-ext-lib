@@ -58,7 +58,7 @@ Global Instance DSet_weak_listset {T} (R : T -> T -> Prop)
 ; filter     := @List.filter _
 }.
 
-Global Instance Foldable_listset {T} (R : T -> T -> Prop)
+Global Instance Foldable_listset {T}
   : Foldable (lset T) T :=
   fun _ f a t => List.fold_left (fun x y => f y x) t a.
 
