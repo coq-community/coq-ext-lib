@@ -10,7 +10,7 @@ Section CoMonadLaws.
   Variable m : Type -> Type.
   Variable C : CoMonad m.
 
-  Class CoMonadLaws : Type :=
+  Class CoMonadLaws :=
     {
       extend_extract: forall (A B:Type),
         extend (B:=A) extract = id ;

@@ -39,7 +39,7 @@ Section MonadLaws.
   Section with_state.
     Context {S : Type}.
 
-    Class MonadStateLaws  (MS : MonadState S m) : Type :=
+    Class MonadStateLaws  (MS : MonadState S m) :=
     { get_put : bind get put = ret tt :> m unit
     ; put_get : forall x : S,
         bind (put x) (fun _ => get) = bind (put x) (fun _ => ret x) :> m S
@@ -51,7 +51,7 @@ Section MonadLaws.
         bind get (fun _ => aM) = aM
     }.
 
-    Class MonadReaderLaws (MR : MonadReader S m) : Type :=
+    Class MonadReaderLaws (MR : MonadReader S m) :=
     { ask_local : forall f : S -> S,
         local f ask = bind ask (fun x => ret (f x))
     ; local_bind : forall {A B} (aM : m A) (f : S -> S) (g : A -> m B),
@@ -64,7 +64,7 @@ Section MonadLaws.
 
   End with_state.
 
-  Class MonadZeroLaws (MZ : MonadZero m) : Type :=
+  Class MonadZeroLaws (MZ : MonadZero m) :=
   { bind_zero : forall {A B} (f : A -> m B),
       bind mzero f = mzero
   }.
