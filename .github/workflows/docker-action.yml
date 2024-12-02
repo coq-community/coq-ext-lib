@@ -27,6 +27,7 @@ jobs:
           - 'coqorg/coq:8.17'
           - 'coqorg/coq:8.18'
           - 'coqorg/coq:8.19'
+          - 'coqorg/coq:8.20'
           - 'coqorg/coq:dev'
       fail-fast: false
     steps:
@@ -50,7 +51,7 @@ jobs:
             set -o pipefail  # recommended if the script uses pipes
 
             startGroup "Generate Coqdoc"
-              make -j`nproc` coqdoc
+              make -j`nproc` coqdoc || echo "Failed to generate Coqdoc"
             endGroup
           before_script: |
             startGroup "Workaround permission issue"

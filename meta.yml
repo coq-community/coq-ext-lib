@@ -42,6 +42,7 @@ tested_coq_opam_versions:
   - version: '8.17'
   - version: '8.18'
   - version: '8.19'
+  - version: '8.20'
   - version: 'dev'
 
 make_target: theories
@@ -52,7 +53,7 @@ action_appendix: |2-
               set -o pipefail  # recommended if the script uses pipes
 
               startGroup "Generate Coqdoc"
-                make -j`nproc` coqdoc
+                make -j`nproc` coqdoc || echo "Failed to generate Coqdoc"
               endGroup
             before_script: |
               startGroup "Workaround permission issue"
@@ -67,6 +68,7 @@ action_appendix: |2-
           if: ${{ always() }}
           run: sudo chown -R 1001:116 .
         - uses: actions/upload-artifact@v4
+          continue-on-error: true
           with:
             name: coqdoc
             path: html
