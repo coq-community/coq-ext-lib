@@ -19,7 +19,7 @@ jobs:
         image:
           - 'coqorg/coq:8.9'
           - 'coqorg/coq:8.11'
-          - 'coqorg/coq:8.12'
+          - 'coqorg/coq:8.12-ocaml-4.10-flambda'
           - 'coqorg/coq:8.13'
           - 'coqorg/coq:8.14'
           - 'coqorg/coq:8.15'
