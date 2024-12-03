@@ -5,6 +5,7 @@ opam_name: coq-ext-lib
 organization: coq-community
 community: true
 action: true
+ci_extra_dev: true
 ci_test_dependants: true
 submodule: true
 
