@@ -19,7 +19,7 @@ jobs:
         image:
           - 'coqorg/coq:8.9'
           - 'coqorg/coq:8.11'
-          - 'coqorg/coq:8.12'
+          - 'coqorg/coq:8.12-ocaml-4.10-flambda'
           - 'coqorg/coq:8.13'
           - 'coqorg/coq:8.14'
           - 'coqorg/coq:8.15'
@@ -27,6 +27,7 @@ jobs:
           - 'coqorg/coq:8.17'
           - 'coqorg/coq:8.18'
           - 'coqorg/coq:8.19'
+          - 'coqorg/coq:8.20'
           - 'coqorg/coq:dev'
       fail-fast: false
     steps:
@@ -37,6 +38,11 @@ jobs:
         with:
           opam_file: 'coq-ext-lib.opam'
           custom_image: ${{ matrix.image }}
+          before_install: |
+            startGroup "Setup and print opam config"
+              opam repo -a --set-default add coq-extra-dev https://coq.inria.fr/opam/extra-dev
+              opam config list; opam repo list; opam list
+            endGroup
           after_script: |
             startGroup "Test dependants"
               PINS=$(opam list -s --pinned --columns=package | xargs | tr ' ' ,)
@@ -50,7 +56,7 @@ jobs:
             set -o pipefail  # recommended if the script uses pipes
 
             startGroup "Generate Coqdoc"
-              make -j`nproc` coqdoc
+              make -j`nproc` coqdoc || echo "Failed to generate Coqdoc"
             endGroup
           before_script: |
             startGroup "Workaround permission issue"

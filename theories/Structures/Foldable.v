@@ -24,7 +24,7 @@ Section foldable.
 
   Variable Add : A -> T -> T -> Prop.
 
-  Class FoldableOk : Type :=
+  Class FoldableOk :=
   { fold_ind : forall m (M : Monoid m) (ML : MonoidLaws M) (P : m -> Prop) f u,
                  P (monoid_unit M) ->
                  (forall x y z,
