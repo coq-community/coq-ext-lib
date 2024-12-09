@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="resources/coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="resources/coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/config.js"></script>
+<script type="text/javascript" src="resources/coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="../">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">ExtLib.Structures.FunctorLaws</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Relations.Relations.html#"><span class="id" title="library">Coq.Relations.Relations</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Data.Fun.html#"><span class="id" title="library">ExtLib.Data.Fun</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="ExtLib.Structures.Functor.html#"><span class="id" title="library">ExtLib.Structures.Functor</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="laws" class="idref" href="#laws"><span class="id" title="section">laws</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a id="FunctorLaws" class="idref" href="#FunctorLaws"><span class="id" title="record">FunctorLaws</span></a> {<a id="F:1" class="idref" href="#F:1"><span class="id" title="binder">F</span></a>} (<a id="Functor_F:2" class="idref" href="#Functor_F:2"><span class="id" title="binder">Functor_F</span></a> : <a class="idref" href="ExtLib.Structures.Functor.html#Functor"><span class="id" title="class">Functor</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#F:1"><span class="id" title="variable">F</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a id="fmap_id" class="idref" href="#fmap_id"><span class="id" title="projection">fmap_id</span></a> : <span class="id" title="keyword">forall</span> {<a id="T:4" class="idref" href="#T:4"><span class="id" title="binder">T</span></a>} (<a id="x:5" class="idref" href="#x:5"><span class="id" title="binder">x</span></a> : <a class="idref" href="ExtLib.Structures.FunctorLaws.html#F:1"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#T:4"><span class="id" title="variable">T</span></a>), <a class="idref" href="ExtLib.Structures.Functor.html#fmap"><span class="id" title="method">fmap</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Init.Datatypes.html#id"><span class="id" title="definition">id</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#x:5"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#x:5"><span class="id" title="variable">x</span></a><br/>
+&nbsp;&nbsp;; <a id="fmap_compose" class="idref" href="#fmap_compose"><span class="id" title="projection">fmap_compose</span></a> : <span class="id" title="keyword">forall</span> {<a id="T:7" class="idref" href="#T:7"><span class="id" title="binder">T</span></a> <a id="U:8" class="idref" href="#U:8"><span class="id" title="binder">U</span></a> <a id="V:9" class="idref" href="#V:9"><span class="id" title="binder">V</span></a>} (<a id="f:10" class="idref" href="#f:10"><span class="id" title="binder">f</span></a> : <a class="idref" href="ExtLib.Structures.FunctorLaws.html#T:7"><span class="id" title="variable">T</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#U:8"><span class="id" title="variable">U</span></a>) (<a id="g:11" class="idref" href="#g:11"><span class="id" title="binder">g</span></a> : <a class="idref" href="ExtLib.Structures.FunctorLaws.html#U:8"><span class="id" title="variable">U</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Init.Logic.html#::type_scope:x_'-&gt;'_x"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#V:9"><span class="id" title="variable">V</span></a>) (<a id="x:12" class="idref" href="#x:12"><span class="id" title="binder">x</span></a> : <a class="idref" href="ExtLib.Structures.FunctorLaws.html#F:1"><span class="id" title="variable">F</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#T:7"><span class="id" title="variable">T</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="ExtLib.Structures.Functor.html#fmap"><span class="id" title="method">fmap</span></a> (<a class="idref" href="ExtLib.Data.PreFun.html#compose"><span class="id" title="definition">compose</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#g:11"><span class="id" title="variable">g</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#f:10"><span class="id" title="variable">f</span></a>) <a class="idref" href="ExtLib.Structures.FunctorLaws.html#x:12"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/doc/V8.20.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="ExtLib.Structures.Functor.html#fmap"><span class="id" title="method">fmap</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#g:11"><span class="id" title="variable">g</span></a> (<a class="idref" href="ExtLib.Structures.Functor.html#fmap"><span class="id" title="method">fmap</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#f:10"><span class="id" title="variable">f</span></a> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#x:12"><span class="id" title="variable">x</span></a>)<br/>
+&nbsp;&nbsp;}.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="ExtLib.Structures.FunctorLaws.html#laws"><span class="id" title="section">laws</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/coq-community/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
