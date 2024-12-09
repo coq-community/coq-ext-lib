@@ -99,6 +99,8 @@ coqdoc: true
 index_documentation: |
   Documentation
   -------------
+  - [0.13.0](v0.13.0/toc.html)
+  - [0.12.2](v0.12.2/toc.html)
   - [0.12.1](v0.12.1/toc.html)
   - [0.12.0](v0.12.0/toc.html)
   - [0.11.8](v0.11.8/toc.html)
